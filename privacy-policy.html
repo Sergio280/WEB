@@ -3,289 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Política de Privacidad de BIMS - Plugin para Autodesk Revit">
+    <meta name="description" content="Política de Privacidad de BIMS - Plugin para Autodesk Revit desarrollado por SGAZ">
     <title>BIMS - Política de Privacidad</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: #f5f5f5;
+            background: #f0f2f5;
         }
 
-        /* Header */
         header {
-            background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);
+            background: linear-gradient(135deg, #0078D7 0%, #003f74 100%);
             color: white;
-            padding: 40px 20px;
+            padding: 50px 20px 36px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+        header h1 { font-size: 2.4em; margin-bottom: 8px; }
+        header p   { font-size: 1.05em; opacity: 0.88; }
 
-        header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
-
-        /* Back Button */
         .back-link {
             display: inline-block;
             background: white;
             color: #0078D7;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 9px 22px;
+            border-radius: 6px;
             text-decoration: none;
             margin-top: 20px;
             font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.95em;
+            transition: all 0.2s;
         }
 
-        .back-link:hover {
-            background: #f0f0f0;
-            transform: translateY(-2px);
-        }
+        .back-link:hover { background: #e8f4ff; transform: translateY(-2px); }
 
-        /* Container */
         .container {
-            max-width: 900px;
-            margin: 40px auto;
+            max-width: 860px;
+            margin: 44px auto;
             background: white;
-            padding: 50px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 52px 56px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
         }
 
-        /* Date */
-        .date {
-            color: #666;
+        .update-date {
+            color: #888;
             font-style: italic;
-            margin-bottom: 30px;
             text-align: center;
-            font-size: 1.1em;
+            margin-bottom: 36px;
+            font-size: 0.97em;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #eee;
         }
 
-        /* Headings */
         h2 {
             color: #0078D7;
-            font-size: 1.6em;
-            margin-top: 35px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.3em;
+            margin-top: 36px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e8f0fc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        h2:first-of-type {
-            margin-top: 0;
-        }
+        h2:first-of-type { margin-top: 0; }
 
-        /* Lists */
+        p  { margin-bottom: 14px; color: #444; line-height: 1.8; }
+
         ul {
-            margin: 15px 0 15px 25px;
+            margin: 12px 0 16px 24px;
         }
 
-        li {
-            margin-bottom: 10px;
-            line-height: 1.7;
-        }
+        li { margin-bottom: 9px; line-height: 1.7; color: #444; }
 
-        strong {
-            color: #0078D7;
-            font-weight: 600;
-        }
+        strong { color: #0078D7; font-weight: 600; }
 
-        /* Paragraphs */
-        p {
-            margin-bottom: 15px;
-            line-height: 1.8;
-        }
-
-        /* Links */
         a {
             color: #0078D7;
             text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: border-bottom 0.3s ease;
         }
 
-        a:hover {
-            border-bottom: 1px solid #0078D7;
-        }
+        a:hover { text-decoration: underline; }
 
-        /* Contact Box */
-        .contact {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            margin-top: 40px;
+        .highlight-box {
+            background: #f0f6ff;
             border-left: 4px solid #0078D7;
+            border-radius: 0 6px 6px 0;
+            padding: 18px 22px;
+            margin: 20px 0;
         }
 
-        .contact h2 {
-            margin-top: 0;
+        .highlight-box p { margin: 0; color: #333; }
+
+        .contact-box {
+            background: #f8f9fb;
+            border-radius: 8px;
+            padding: 26px 28px;
+            margin-top: 40px;
+            border: 1px solid #e0e8f4;
+        }
+
+        .contact-box h2 {
             border-bottom: none;
+            margin-top: 0;
+            padding-bottom: 0;
         }
 
-        .contact p {
-            margin-bottom: 10px;
-        }
+        .contact-box p { margin-bottom: 6px; }
 
-        /* Footer */
         hr {
             border: none;
-            border-top: 1px solid #ddd;
-            margin: 40px 0 20px 0;
+            border-top: 1px solid #eee;
+            margin: 40px 0 20px;
         }
 
-        .footer {
+        .footer-note {
             text-align: center;
-            color: #666;
-            font-size: 14px;
+            color: #888;
+            font-size: 0.88em;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 30px 20px;
-                margin: 20px 10px;
-            }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            h2 {
-                font-size: 1.3em;
-            }
+            .container { padding: 28px 20px; margin: 20px 12px; }
+            header h1  { font-size: 1.8em; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🔒 Política de Privacidad</h1>
-        <p>BIMS - Plugin para Autodesk Revit</p>
-        <a href="index.html" class="back-link">← Volver al inicio</a>
-    </header>
 
-    <div class="container">
-        <p class="date">Última actualización: 23 de febrero de 2026</p>
+<header>
+    <h1>🔒 Política de Privacidad</h1>
+    <p>BIMS — Plugin para Autodesk Revit · Desarrollado por SGAZ</p>
+    <a href="index.html" class="back-link">← Volver al inicio</a>
+</header>
 
-        <h2>1. Información que Recopilamos</h2>
-        <p>BIMS recopila la siguiente información:</p>
-        <ul>
-            <li><strong>Correo electrónico:</strong> Para crear y gestionar su cuenta de usuario</li>
-            <li><strong>ID de licencia:</strong> Para validar su licencia de uso del software</li>
-            <li><strong>ID de hardware:</strong> Un identificador único generado de las características de su computadora (placa base, procesador) para gestionar las activaciones de licencia</li>
-            <li><strong>Fecha y hora de validaciones:</strong> Registro de cuándo se valida su licencia</li>
-            <li><strong>Versión del software:</strong> Para gestionar actualizaciones</li>
-        </ul>
+<div class="container">
 
-        <h2>2. Cómo Recopilamos la Información</h2>
-        <p>Los datos se recopilan de las siguientes maneras:</p>
-        <ul>
-            <li>Directamente de usted cuando crea una cuenta</li>
-            <li>Automáticamente cuando el software se conecta a nuestros servidores para validar la licencia</li>
-            <li>A través de Firebase Authentication y Firebase Realtime Database (servicios de Google)</li>
-        </ul>
+    <p class="update-date">Última actualización: 23 de febrero de 2026</p>
 
-        <h2>3. Uso de la Información</h2>
-        <p>Utilizamos su información para:</p>
-        <ul>
-            <li>Validar y gestionar licencias de software</li>
-            <li>Prevenir uso no autorizado del software</li>
-            <li>Proporcionar actualizaciones de software</li>
-            <li>Ofrecer soporte técnico cuando lo solicite</li>
-            <li>Comunicar cambios importantes del servicio</li>
-        </ul>
-
-        <h2>4. Compartir Información con Terceros</h2>
-        <p>Sus datos se almacenan en:</p>
-        <ul>
-            <li><strong>Firebase (Google LLC):</strong> Utilizado para autenticación y almacenamiento de datos de licencias</li>
-            <li>Firebase cumple con el GDPR y proporciona protección de datos según sus políticas de privacidad</li>
-            <li><strong>No vendemos ni compartimos</strong> sus datos con terceros para fines de marketing</li>
-        </ul>
-        <p>Para más información sobre Firebase: <a href="https://firebase.google.com/support/privacy" target="_blank">https://firebase.google.com/support/privacy</a></p>
-
-        <h2>5. Retención de Datos</h2>
-        <p>Conservamos sus datos mientras:</p>
-        <ul>
-            <li>Su licencia esté activa</li>
-            <li>Durante 90 días después de la expiración de su licencia (para renovaciones)</li>
-            <li>Puede solicitar eliminación inmediata de sus datos en cualquier momento</li>
-        </ul>
-
-        <h2>6. Seguridad de los Datos</h2>
-        <p>Implementamos medidas de seguridad incluyendo:</p>
-        <ul>
-            <li>Conexiones HTTPS encriptadas</li>
-            <li>Almacenamiento seguro en Firebase (certificado SOC 2, ISO 27001)</li>
-            <li>Autenticación de usuarios con contraseñas encriptadas</li>
-            <li>Validación de hardware para prevenir accesos no autorizados</li>
-        </ul>
-
-        <h2>7. Sus Derechos</h2>
-        <p>Usted tiene derecho a:</p>
-        <ul>
-            <li><strong>Acceder</strong> a sus datos personales</li>
-            <li><strong>Rectificar</strong> datos incorrectos</li>
-            <li><strong>Eliminar</strong> su cuenta y todos sus datos</li>
-            <li><strong>Revocar consentimiento</strong> y dejar de usar el servicio</li>
-            <li><strong>Portabilidad</strong> de sus datos en formato estructurado</li>
-        </ul>
-
-        <h2>8. Cómo Ejercer sus Derechos</h2>
-        <p>Para cualquier solicitud relacionada con sus datos:</p>
-        <ul>
-            <li>Envíe un correo a: <strong>sergioalejosz@hotmail.com</strong></li>
-            <li>Responderemos en un plazo máximo de 30 días</li>
-            <li>Para eliminación de datos, confirmaremos la acción antes de proceder</li>
-        </ul>
-
-        <h2>9. Cookies y Tecnologías de Seguimiento</h2>
-        <p>BIMS <strong>NO utiliza cookies</strong> ni tecnologías de seguimiento en navegadores web.</p>
-        <p>El software solo se comunica con nuestros servidores para validación de licencias.</p>
-
-        <h2>10. Menores de Edad</h2>
-        <p>Nuestro servicio no está dirigido a menores de 18 años. No recopilamos intencionalmente información de menores.</p>
-
-        <h2>11. Cambios en esta Política</h2>
-        <p>Podemos actualizar esta política de privacidad ocasionalmente. Los cambios significativos serán notificados por correo electrónico.</p>
-        <p>Fecha de última actualización aparece al inicio de este documento.</p>
-
-        <h2>12. Cumplimiento Legal</h2>
-        <p>Cumplimos con:</p>
-        <ul>
-            <li>GDPR (Reglamento General de Protección de Datos de la UE)</li>
-            <li>Ley de Protección de Datos Personales (Perú)</li>
-            <li>Regulaciones de privacidad aplicables en su jurisdicción</li>
-        </ul>
-
-        <h2>13. Transferencias Internacionales</h2>
-        <p>Sus datos pueden ser procesados en servidores ubicados fuera de su país (Firebase tiene servidores globales).</p>
-        <p>Estas transferencias cumplen con los estándares de protección de datos internacionales.</p>
-
-        <div class="contact">
-            <h2>Contacto</h2>
-            <p><strong>Empresa:</strong> SGAZ</p>
-            <p><strong>Email:</strong> sergioalejosz@hotmail.com</p>
-            <p><strong>Teléfono:</strong> +51 989 455 558</p>
-        </div>
-
-        <hr>
-        <p class="footer">
-            &copy; 2026 SGAZ. Todos los derechos reservados.
+    <div class="highlight-box">
+        <p>
+            Esta política describe qué datos recopila el plugin BIMS, cómo los usamos y qué derechos tiene
+            el usuario sobre ellos. BIMS recopila únicamente los datos mínimos indispensables para
+            el funcionamiento del sistema de licencias.
         </p>
     </div>
+
+    <h2>1. Información que Recopilamos</h2>
+    <p>BIMS recopila exclusivamente:</p>
+    <ul>
+        <li><strong>Correo electrónico:</strong> Para crear y gestionar su cuenta de usuario.</li>
+        <li><strong>ID de licencia:</strong> Para validar su licencia de uso del software.</li>
+        <li><strong>ID de hardware:</strong> Un identificador único generado a partir de las características
+            de su equipo (placa base, procesador) para controlar el número de activaciones de licencia.</li>
+        <li><strong>Fecha y hora de validaciones:</strong> Registro de cuándo se valida la licencia (para auditoría y soporte).</li>
+        <li><strong>Versión del software instalada:</strong> Para gestionar actualizaciones automáticas.</li>
+    </ul>
+    <p>No recopilamos datos del modelo BIM, archivos de proyecto Revit ni ningún contenido del trabajo del usuario.</p>
+
+    <h2>2. Cómo Recopilamos la Información</h2>
+    <ul>
+        <li>Directamente de usted al crear una cuenta (correo electrónico y contraseña).</li>
+        <li>Automáticamente cuando el plugin se conecta a nuestros servidores para validar la licencia al iniciar Revit.</li>
+        <li>A través de <strong>Firebase Authentication</strong> y <strong>Firebase Realtime Database</strong> (servicios de Google LLC).</li>
+    </ul>
+
+    <h2>3. Uso de la Información</h2>
+    <p>Utilizamos sus datos únicamente para:</p>
+    <ul>
+        <li>Validar y gestionar licencias de software.</li>
+        <li>Prevenir el uso no autorizado del plugin.</li>
+        <li>Distribuir actualizaciones automáticas de software.</li>
+        <li>Ofrecer soporte técnico cuando usted lo solicite.</li>
+        <li>Notificar cambios importantes en el servicio o la política de privacidad.</li>
+    </ul>
+
+    <h2>4. Compartir Información con Terceros</h2>
+    <p>Sus datos se almacenan en:</p>
+    <ul>
+        <li>
+            <strong>Firebase (Google LLC):</strong> Plataforma utilizada para autenticación de usuarios y
+            almacenamiento de datos de licencias. Firebase cumple con el GDPR y está certificado bajo
+            SOC 2 e ISO 27001.
+        </li>
+    </ul>
+    <p>
+        <strong>No vendemos, alquilamos ni compartimos</strong> sus datos con terceros para fines
+        comerciales o de marketing.
+    </p>
+    <p>
+        Más información sobre las prácticas de privacidad de Firebase:
+        <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">
+            firebase.google.com/support/privacy
+        </a>
+    </p>
+
+    <h2>5. Retención de Datos</h2>
+    <p>Conservamos sus datos mientras:</p>
+    <ul>
+        <li>Su licencia esté activa.</li>
+        <li>Durante los 90 días posteriores a la expiración de su licencia (para facilitar renovaciones).</li>
+    </ul>
+    <p>Puede solicitar la eliminación inmediata de sus datos en cualquier momento.</p>
+
+    <h2>6. Seguridad de los Datos</h2>
+    <p>Implementamos las siguientes medidas de seguridad:</p>
+    <ul>
+        <li>Conexiones cifradas mediante <strong>HTTPS/TLS</strong>.</li>
+        <li>Almacenamiento seguro en Firebase (certificado SOC 2, ISO 27001).</li>
+        <li>Contraseñas almacenadas con hash seguro (gestión por Firebase Authentication).</li>
+        <li>Validación de hardware para prevenir uso de licencias en dispositivos no autorizados.</li>
+    </ul>
+
+    <h2>7. Sus Derechos</h2>
+    <p>Usted tiene derecho a:</p>
+    <ul>
+        <li><strong>Acceder</strong> a los datos personales que almacenamos sobre usted.</li>
+        <li><strong>Rectificar</strong> datos incorrectos o desactualizados.</li>
+        <li><strong>Eliminar</strong> su cuenta y todos sus datos asociados.</li>
+        <li><strong>Revocar consentimiento</strong> y dejar de usar el servicio en cualquier momento.</li>
+        <li><strong>Portabilidad</strong> de sus datos en formato estructurado (JSON/CSV).</li>
+        <li><strong>Oponerse</strong> al procesamiento de sus datos para fines distintos a los declarados.</li>
+    </ul>
+
+    <h2>8. Cómo Ejercer sus Derechos</h2>
+    <p>Para cualquier solicitud relacionada con sus datos personales:</p>
+    <ul>
+        <li>Envíe un correo a: <strong>sergioalejosz@hotmail.com</strong></li>
+        <li>Indique en el asunto: <em>"Solicitud de Privacidad BIMS"</em></li>
+        <li>Responderemos en un plazo máximo de <strong>30 días hábiles</strong>.</li>
+        <li>Para eliminación de cuenta, solicitaremos confirmación antes de proceder.</li>
+    </ul>
+
+    <h2>9. Cookies y Seguimiento</h2>
+    <p>
+        BIMS es un plugin de escritorio. <strong>No utiliza cookies</strong> ni tecnologías de seguimiento
+        en navegadores web. La única comunicación de red del plugin es con los servidores de Firebase
+        para validación de licencias y descarga de actualizaciones.
+    </p>
+
+    <h2>10. Menores de Edad</h2>
+    <p>
+        Nuestro servicio está dirigido a profesionales de ingeniería y arquitectura.
+        No recopilamos intencionalmente datos de personas menores de 18 años.
+    </p>
+
+    <h2>11. Cambios en esta Política</h2>
+    <p>
+        Podemos actualizar esta política ocasionalmente. Los cambios significativos serán comunicados
+        por correo electrónico con al menos 15 días de anticipación. La fecha de última actualización
+        se indica al inicio de este documento.
+    </p>
+
+    <h2>12. Cumplimiento Legal</h2>
+    <p>Esta política cumple con:</p>
+    <ul>
+        <li><strong>GDPR</strong> — Reglamento General de Protección de Datos (Unión Europea)</li>
+        <li><strong>Ley N.° 29733</strong> — Ley de Protección de Datos Personales (Perú)</li>
+        <li>Regulaciones de privacidad aplicables en la jurisdicción del usuario</li>
+    </ul>
+
+    <h2>13. Transferencias Internacionales de Datos</h2>
+    <p>
+        Sus datos pueden ser procesados en servidores de Firebase ubicados fuera de su país de residencia.
+        Firebase cumple con los marcos de transferencia internacional de datos (SCCs de la UE) y aplica
+        estándares equivalentes de protección.
+    </p>
+
+    <div class="contact-box">
+        <h2>📬 Contacto</h2>
+        <p><strong>Empresa:</strong> SGAZ</p>
+        <p><strong>Responsable:</strong> Sergio Alejandro</p>
+        <p><strong>Email:</strong> sergioalejosz@hotmail.com</p>
+        <p><strong>Teléfono:</strong> +51 989 455 558</p>
+    </div>
+
+    <hr>
+    <p class="footer-note">&copy; 2026 SGAZ. Todos los derechos reservados.</p>
+
+</div>
+
 </body>
 </html>

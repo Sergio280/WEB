@@ -6,43 +6,51 @@
     <meta name="description" content="BIMS - Plugin profesional para Autodesk Revit con herramientas avanzadas de BIM para estructuras, encofrado, acero de refuerzo y más">
     <title>BIMS - Plugin Profesional para Autodesk Revit</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: #f5f5f5;
+            background: #f0f2f5;
         }
 
         /* Header */
         header {
-            background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);
+            background: linear-gradient(135deg, #0078D7 0%, #003f74 100%);
             color: white;
-            padding: 60px 20px;
+            padding: 70px 20px 50px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        header h1 {
-            font-size: 3em;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        .header-logo {
+            font-size: 3.5em;
+            font-weight: 900;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
 
-        header p {
-            font-size: 1.3em;
-            opacity: 0.95;
+        .header-sub {
+            font-size: 1.25em;
+            opacity: 0.9;
+            margin-bottom: 6px;
         }
 
-        /* Navigation */
+        .header-compat {
+            font-size: 0.95em;
+            opacity: 0.75;
+            margin-top: 14px;
+            background: rgba(255,255,255,0.12);
+            display: inline-block;
+            padding: 6px 22px;
+            border-radius: 20px;
+        }
+
+        /* Nav */
         nav {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -53,489 +61,630 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            padding: 15px 0;
-        }
-
-        nav li {
-            margin: 5px 15px;
+            padding: 12px 0;
+            gap: 4px;
         }
 
         nav a {
             color: #0078D7;
             text-decoration: none;
             font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            padding: 7px 16px;
+            border-radius: 5px;
+            font-size: 0.95em;
+            transition: all 0.2s;
         }
 
-        nav a:hover {
-            background: #0078D7;
-            color: white;
-        }
+        nav a:hover { background: #0078D7; color: white; }
 
-        /* Container */
+        /* Layout */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 48px 20px;
         }
 
-        /* Intro Section */
+        /* Intro */
         .intro {
             background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 44px;
             text-align: center;
+            margin-bottom: 40px;
         }
 
-        .intro h2 {
+        .intro h2 { color: #0078D7; font-size: 2em; margin-bottom: 16px; }
+        .intro p { font-size: 1.1em; color: #555; max-width: 780px; margin: 0 auto 14px; }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .badge {
+            background: #f0f6ff;
+            border: 1px solid #c4dcf7;
             color: #0078D7;
-            font-size: 2em;
-            margin-bottom: 20px;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
         }
 
-        .intro p {
-            font-size: 1.2em;
-            color: #555;
-            line-height: 1.8;
-        }
-
-        /* Feature Sections */
-        .feature-section {
+        /* Panel sections */
+        .panel-section {
             background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 32px;
+            overflow: hidden;
         }
 
-        .feature-section h2 {
-            color: #0078D7;
-            font-size: 2em;
-            margin-bottom: 25px;
-            border-bottom: 3px solid #0078D7;
-            padding-bottom: 10px;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 4px solid #0078D7;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .feature-card h3 {
-            color: #0078D7;
-            font-size: 1.3em;
-            margin-bottom: 12px;
+        .panel-header {
+            padding: 22px 36px;
             display: flex;
             align-items: center;
+            gap: 14px;
+            border-bottom: 2px solid #e8f0fc;
         }
 
-        .feature-card h3::before {
-            content: "✓";
-            display: inline-block;
-            width: 24px;
-            height: 24px;
+        .panel-header.blue  { background: linear-gradient(90deg, #e8f4ff, #f8fbff); border-left: 5px solid #0078D7; }
+        .panel-header.green { background: linear-gradient(90deg, #e8f6ee, #f8fdfb); border-left: 5px solid #1a8a4a; }
+        .panel-header.orange{ background: linear-gradient(90deg, #fff4e8, #fffdf8); border-left: 5px solid #d97700; }
+        .panel-header.purple{ background: linear-gradient(90deg, #f3eeff, #fdfbff); border-left: 5px solid #7b2ff7; }
+
+        .panel-icon { font-size: 2em; }
+
+        .panel-header h2 {
+            font-size: 1.6em;
+            margin: 0;
+        }
+
+        .panel-header.blue  h2 { color: #0078D7; }
+        .panel-header.green h2 { color: #1a8a4a; }
+        .panel-header.orange h2 { color: #d97700; }
+        .panel-header.purple h2 { color: #7b2ff7; }
+
+        .panel-header p { color: #666; margin: 2px 0 0; font-size: 0.95em; }
+
+        .panel-body { padding: 30px 36px; }
+
+        /* Card grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #f8f9fb;
+            border-radius: 8px;
+            padding: 22px;
+            border-top: 3px solid #0078D7;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover { transform: translateY(-4px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+
+        .card.green  { border-top-color: #1a8a4a; }
+        .card.orange { border-top-color: #d97700; }
+        .card.purple { border-top-color: #7b2ff7; }
+
+        .card h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: #222;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h3 .tag {
+            font-size: 0.72em;
             background: #0078D7;
             color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 24px;
-            margin-right: 10px;
-            font-weight: bold;
+            padding: 2px 9px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
-        .feature-card p {
-            color: #555;
-            line-height: 1.6;
-        }
+        .card h3 .tag.green  { background: #1a8a4a; }
+        .card h3 .tag.orange { background: #d97700; }
+        .card h3 .tag.purple { background: #7b2ff7; }
 
-        .feature-card ul {
+        .card p { color: #666; font-size: 0.92em; margin-bottom: 10px; }
+
+        .cmd-list {
             list-style: none;
-            margin-top: 12px;
+            margin: 0;
+            padding: 0;
         }
 
-        .feature-card li {
-            padding: 5px 0;
-            padding-left: 20px;
+        .cmd-list li {
+            padding: 5px 0 5px 16px;
             position: relative;
-            color: #555;
+            color: #444;
+            font-size: 0.9em;
+            border-bottom: 1px solid #eee;
         }
 
-        .feature-card li::before {
-            content: "•";
+        .cmd-list li:last-child { border-bottom: none; }
+
+        .cmd-list li::before {
+            content: "▸";
             position: absolute;
             left: 0;
             color: #0078D7;
-            font-weight: bold;
-            font-size: 1.2em;
+            font-size: 0.85em;
         }
 
-        /* Download Section */
+        .cmd-list li.green::before  { color: #1a8a4a; }
+        .cmd-list li.orange::before { color: #d97700; }
+        .cmd-list li.purple::before { color: #7b2ff7; }
+
+        strong.cmd { color: #111; font-weight: 600; }
+
+        /* Download */
         .download-section {
-            background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);
+            background: linear-gradient(135deg, #0078D7 0%, #003f74 100%);
             color: white;
-            padding: 50px 40px;
-            border-radius: 8px;
+            padding: 56px 40px;
+            border-radius: 10px;
             text-align: center;
             margin: 40px 0;
         }
 
-        .download-section h2 {
-            font-size: 2.2em;
-            margin-bottom: 20px;
-        }
-
-        .download-section p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            opacity: 0.95;
-        }
+        .download-section h2 { font-size: 2.2em; margin-bottom: 14px; }
+        .download-section p  { font-size: 1.1em; opacity: 0.92; margin-bottom: 30px; }
 
         .download-btn {
             display: inline-block;
             background: white;
             color: #0078D7;
-            padding: 15px 40px;
+            padding: 15px 44px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 700;
+            font-size: 1.05em;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
         }
 
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
+
+        .version-pills {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 28px;
         }
 
-        .version-info {
-            margin-top: 30px;
-            font-size: 0.95em;
-            opacity: 0.9;
+        .vpill {
+            background: rgba(255,255,255,0.15);
+            padding: 5px 16px;
+            border-radius: 14px;
+            font-size: 0.88em;
         }
+
+        /* Privacy teaser */
+        .privacy-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 36px 40px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .privacy-icon { font-size: 2.8em; flex-shrink: 0; }
+
+        .privacy-card h2 { color: #0078D7; font-size: 1.4em; margin-bottom: 8px; }
+        .privacy-card p  { color: #555; font-size: 0.97em; line-height: 1.7; }
+        .privacy-card a  { color: #0078D7; font-weight: 700; text-decoration: none; }
+        .privacy-card a:hover { text-decoration: underline; }
 
         /* Footer */
         footer {
-            background: #2c3e50;
+            background: #1c2a3a;
             color: white;
-            padding: 40px 20px;
-            margin-top: 60px;
+            padding: 44px 20px 24px;
         }
 
-        .footer-content {
+        .footer-grid {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
         }
 
-        .footer-section h3 {
-            color: #0078D7;
-            margin-bottom: 15px;
-        }
-
-        .footer-section p, .footer-section a {
-            color: #bbb;
+        .footer-col h3 { color: #5ab4ff; margin-bottom: 14px; font-size: 1em; }
+        .footer-col p, .footer-col a {
+            color: #9ab0c8;
             text-decoration: none;
             display: block;
-            margin: 8px 0;
+            margin: 6px 0;
+            font-size: 0.9em;
         }
 
-        .footer-section a:hover {
-            color: white;
-        }
+        .footer-col a:hover { color: white; }
 
         .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid #2e3f52;
+            padding-top: 20px;
             text-align: center;
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 1px solid #444;
-            color: #888;
+            color: #567;
+            font-size: 0.85em;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 2em;
-            }
-
-            header p {
-                font-size: 1.1em;
-            }
-
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-
-            nav ul {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .intro, .feature-section {
-                padding: 25px;
-            }
+            .header-logo { font-size: 2.4em; }
+            .panel-body, .panel-header { padding: 20px; }
+            .card-grid { grid-template-columns: 1fr; }
+            .intro { padding: 28px 20px; }
+            .privacy-card { flex-direction: column; text-align: center; }
+            .download-section { padding: 36px 20px; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🏗️ BIMS</h1>
-        <p>Plugin Profesional para Autodesk Revit</p>
-        <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.85;">Herramientas avanzadas de BIM para ingeniería y arquitectura</p>
-    </header>
 
-    <nav>
-        <ul>
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#funcionalidades">Funcionalidades</a></li>
-            <li><a href="#estructuras">Estructuras</a></li>
-            <li><a href="#descargar">Descargar</a></li>
-            <li><a href="privacy-policy.html">Política de Privacidad</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ul>
-    </nav>
+<header>
+    <div class="header-logo">BIMS</div>
+    <p class="header-sub">Plugin Profesional para Autodesk Revit</p>
+    <p style="opacity:0.8; font-size:0.95em;">Desarrollado por SGAZ — Herramientas avanzadas de BIM para ingeniería y arquitectura</p>
+    <div class="header-compat">Compatible con Revit 2022 · 2023 · 2024 · 2025 · 2026</div>
+</header>
 
-    <div class="container">
-        <!-- Intro Section -->
-        <section id="inicio" class="intro">
-            <h2>Potencia tu trabajo en Revit</h2>
-            <p>BIMS es un plugin profesional que extiende las capacidades de Autodesk Revit con herramientas especializadas para ingeniería estructural, encofrado, instalaciones sanitarias, gestión de parámetros y mucho más.</p>
-            <p style="margin-top: 20px;"><strong>Compatible con Revit 2022, 2023, 2024, 2025 y 2026</strong></p>
-        </section>
+<nav>
+    <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#general">General</a></li>
+        <li><a href="#estructuras">Estructuras</a></li>
+        <li><a href="#geometria">Geometría</a></li>
+        <li><a href="#refuerzo">Refuerzo</a></li>
+        <li><a href="#descargar">Descargar</a></li>
+        <li><a href="privacy-policy.html">Privacidad</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+    </ul>
+</nav>
 
-        <!-- General Features Section -->
-        <section id="funcionalidades" class="feature-section">
-            <h2>🎯 Herramientas Generales</h2>
+<div class="container">
 
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3>Gestión de Parámetros</h3>
-                    <p>Control total sobre parámetros de elementos</p>
-                    <ul>
-                        <li>Asignar rejillas cercanas automáticamente</li>
-                        <li>Transferir parámetros entre elementos</li>
-                        <li>Unir múltiples parámetros con separadores personalizados</li>
-                        <li>Transferir IDs de elementos</li>
-                        <li>Asignar marca de anfitrión</li>
-                        <li>Asignar Host ID automáticamente</li>
-                    </ul>
-                </div>
+    <!-- INTRO -->
+    <section id="inicio" class="intro">
+        <h2>Potencia tu flujo de trabajo en Revit</h2>
+        <p>
+            BIMS extiende Autodesk Revit con más de <strong>60 comandos especializados</strong> organizados en 4 paneles:
+            General, Estructuras, Geometría y Refuerzo. Diseñado para ingenieros y arquitectos que necesitan
+            automatizar tareas repetitivas y mejorar la calidad del modelo BIM.
+        </p>
+        <div class="badge-row">
+            <span class="badge">Revit 2025 &amp; 2026 — Soporte Completo</span>
+            <span class="badge">Windows 10 / 11 (64-bit)</span>
+            <span class="badge">Versión 1.0.5</span>
+            <span class="badge">.NET 8.0</span>
+        </div>
+    </section>
 
-                <div class="feature-card">
-                    <h3>Importación y Exportación</h3>
-                    <p>Manejo avanzado de archivos CAD</p>
-                    <ul>
-                        <li>Importar DWG con configuración inteligente</li>
-                        <li>Importar DWG independiente por capas</li>
-                        <li>Exportar planos a DWG con imágenes insertadas</li>
-                        <li>Exportar a Navisworks (NWC) optimizado</li>
-                        <li>Archivos completamente portátiles</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Herramientas Visuales</h3>
-                    <p>Mejora la visualización de tu modelo</p>
-                    <ul>
-                        <li>Resaltar selección (transparencia temporal)</li>
-                        <li>Igualar modificaciones gráficas en vista</li>
-                        <li>Igualar formato de tablas de planificación</li>
-                        <li>Copiar estructura, colores y estilos</li>
-                        <li>Seleccionar categorías importadas de CAD</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Análisis y Cálculo</h3>
-                    <p>Herramientas de análisis avanzadas</p>
-                    <ul>
-                        <li>Asignar ambiente a elementos automáticamente</li>
-                        <li>Calcular volúmenes de DirectShapes</li>
-                        <li>Calcular longitud de fajas</li>
-                        <li>Convertir sólidos a masas editables</li>
-                        <li>Convertir notas a mayúsculas en masa</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Geometría Avanzada</h3>
-                    <p>Manipulación inteligente de geometría</p>
-                    <ul>
-                        <li>Convertir a DirectShape</li>
-                        <li>Escalar sólidos con factor personalizado</li>
-                        <li>Recortar DirectShape por altura</li>
-                        <li>Recortar vía familia de corte</li>
-                        <li>Exportar múltiples elementos a familia</li>
-                    </ul>
-                </div>
+    <!-- ======================== PANEL 1: GENERAL ======================== -->
+    <section id="general" class="panel-section">
+        <div class="panel-header blue">
+            <div class="panel-icon">🎯</div>
+            <div>
+                <h2>Panel General</h2>
+                <p>Parámetros, análisis, importación/exportación y utilidades de visualización</p>
             </div>
-        </section>
+        </div>
+        <div class="panel-body">
+            <div class="card-grid">
 
-        <!-- Structures Section -->
-        <section id="estructuras" class="feature-section">
-            <h2>🏗️ Herramientas Estructurales</h2>
-
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <h3>Encofrado Automatizado</h3>
-                    <p>Sistema inteligente de encofrado completo</p>
-                    <ul>
-                        <li>Clasificación automática por tipo de elemento</li>
-                        <li>Extrusión siempre hacia afuera</li>
-                        <li>Recortes automáticos por elementos adyacentes</li>
-                        <li>Conversión directa a Wall/Floor nativos</li>
-                        <li>Preserva curvas y geometría compleja</li>
-                        <li>Soporte para columnas, vigas, muros, losas y escaleras</li>
+                <div class="card">
+                    <h3>Rejillas y Parámetros <span class="tag">Pulldown</span></h3>
+                    <p>Control total sobre los parámetros del modelo</p>
+                    <ul class="cmd-list">
+                        <li><strong class="cmd">Asignar Rejillas</strong> — Asigna rejillas cercanas a todos los elementos del proyecto automáticamente</li>
+                        <li><strong class="cmd">Transferir Parámetros</strong> — Transfiere valores entre parámetros de elementos seleccionados o de todo el modelo</li>
+                        <li><strong class="cmd">Unir Parámetros</strong> — Combina hasta 3 parámetros con separador configurable</li>
+                        <li><strong class="cmd">Transferir ID</strong> — Asigna el ID único de cada elemento al parámetro BIMS_ID</li>
+                        <li><strong class="cmd">Marca Anfitrión</strong> — Lee Host_ID y transfiere la marca del elemento anfitrión a Host_Name</li>
+                        <li><strong class="cmd">Asignar Host ID</strong> — Encuentra el elemento estructural con mayor cobertura y asigna su ID</li>
                     </ul>
                 </div>
 
-                <div class="feature-card">
-                    <h3>Acero de Refuerzo - Columnas</h3>
-                    <p>Diseño de refuerzo para columnas</p>
-                    <ul>
-                        <li>Cálculo automático de refuerzo longitudinal</li>
-                        <li>Estribos con configuración personalizada</li>
-                        <li>Soporte para secciones rectangulares y circulares</li>
-                        <li>Cumplimiento de normativas estructurales</li>
-                        <li>Vista previa antes de aplicar</li>
+                <div class="card">
+                    <h3>Análisis y Utilidades <span class="tag">Pulldown</span></h3>
+                    <p>Herramientas de análisis y conversión de geometría</p>
+                    <ul class="cmd-list">
+                        <li><strong class="cmd">Asignar Ambiente</strong> — Asigna nombre/número de habitación a muros y suelos que la delimitan</li>
+                        <li><strong class="cmd">Importar DWG</strong> — Convierte bloques DWG (SolidWorks) a DirectShapes en Revit</li>
+                        <li><strong class="cmd">Importar DWG Independiente</strong> — Crea DirectShapes no vinculados, imposibles de eliminar accidentalmente</li>
+                        <li><strong class="cmd">Exportar NWC</strong> — Convierte DirectShapes a categorías compatibles con Navisworks</li>
+                        <li><strong class="cmd">Calcular Volúmenes</strong> — Analiza y calcula volúmenes de todos los DirectShapes del modelo</li>
+                        <li><strong class="cmd">Notas a Mayúsculas</strong> — Convierte todas las notas de texto del proyecto a MAYÚSCULAS</li>
+                        <li><strong class="cmd">Sólido → Masa</strong> — Extrae geometría sólida y crea FreeFormElements editables</li>
+                        <li><strong class="cmd">Agregar CAD a Selección</strong> — Agrega elementos importados (DWG/CAD) a la selección activa</li>
                     </ul>
                 </div>
 
-                <div class="feature-card">
-                    <h3>Acero de Refuerzo - Vigas</h3>
-                    <p>Refuerzo inteligente para vigas</p>
-                    <ul>
-                        <li>Refuerzo superior e inferior automático</li>
-                        <li>Estribos con espaciamiento variable</li>
-                        <li>Zonas de confinamiento en apoyos</li>
-                        <li>Consideración de momentos y cortantes</li>
-                        <li>Barras de montaje incluidas</li>
+                <div class="card">
+                    <h3>Herramientas Visuales <span class="tag">Botones</span></h3>
+                    <p>Mejora la visualización y presentación del modelo</p>
+                    <ul class="cmd-list">
+                        <li><strong class="cmd">Resaltar Selección</strong> — Resalta elementos seleccionados en naranja y hace transparente el resto (toggle)</li>
+                        <li><strong class="cmd">Igualar Gráficos</strong> — Copia overrides gráficos (colores, patrones, grosores) entre elementos de una vista</li>
+                        <li><strong class="cmd">Igualar Formato Tablas</strong> — Copia estructura y formato visual entre tablas de planificación</li>
+                        <li><strong class="cmd">Exportar Planos a DWG</strong> — Exporta ViewSheets a DWG con imágenes insertadas directamente en el archivo</li>
                     </ul>
                 </div>
 
-                <div class="feature-card">
-                    <h3>Acero de Refuerzo - Muros</h3>
-                    <p>Refuerzo horizontal y vertical para muros</p>
-                    <ul>
-                        <li>Malla de refuerzo en ambas caras</li>
-                        <li>Refuerzo vertical y horizontal separado</li>
-                        <li>Conectores entre caras (ganchos)</li>
-                        <li>Refuerzo en bordes y esquinas</li>
-                        <li>Soporte para muros de contención</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Acero de Refuerzo - Losas y Cimientos</h3>
-                    <p>Refuerzo para elementos horizontales</p>
-                    <ul>
-                        <li>Malla superior e inferior con direccionalidad</li>
-                        <li>Refuerzo adicional en zonas críticas</li>
-                        <li>Soporte para losas nervadas</li>
-                        <li>Cimientos corridos y zapatas</li>
-                        <li>Cálculo de recubrimientos automático</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card">
-                    <h3>Instalaciones Sanitarias</h3>
-                    <p>Herramientas para diseño de IISS</p>
-                    <ul>
-                        <li>Asignar área de drenaje automáticamente</li>
-                        <li>Asignar cota de tapa a registros</li>
-                        <li>Asignar sector desde habitación</li>
-                        <li>Cálculo de pendientes de tuberías</li>
-                        <li>Reportes de instalaciones</li>
-                    </ul>
-                </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Download Section -->
-        <section id="descargar" class="download-section">
-            <h2>📥 Descarga BIMS</h2>
-            <p>Disponible en Autodesk App Store para Revit 2022 - 2026</p>
-            <a href="https://apps.autodesk.com" class="download-btn">Descargar desde Autodesk App Store</a>
-            <div class="version-info">
-                <p>Versión actual: 1.0</p>
-                <p>Compatibilidad: Windows 10/11 (64-bit)</p>
-                <p>Requiere: Autodesk Revit 2022 o superior</p>
+    <!-- ======================== PANEL 2: ESTRUCTURAS ======================== -->
+    <section id="estructuras" class="panel-section">
+        <div class="panel-header green">
+            <div class="panel-icon">🏗️</div>
+            <div>
+                <h2>Panel Estructuras</h2>
+                <p>Encofrado automatizado, acero de refuerzo e instalaciones sanitarias</p>
             </div>
-        </section>
+        </div>
+        <div class="panel-body">
+            <div class="card-grid">
 
-        <!-- Privacy Section -->
-        <section class="feature-section">
-            <h2>🔒 Privacidad y Seguridad</h2>
-            <p style="font-size: 1.1em; color: #555; line-height: 1.8;">
-                BIMS respeta tu privacidad. Solo recopilamos la información necesaria para validar licencias y
-                proporcionar actualizaciones. Todos los datos se almacenan de forma segura en Firebase (Google)
-                con cifrado HTTPS. No vendemos ni compartimos tus datos con terceros para fines de marketing.
+                <div class="card green">
+                    <h3>Encofrado Automatizado <span class="tag green">Botón</span></h3>
+                    <p>Sistema inteligente de encofrado que clasifica y genera elementos automáticamente</p>
+                    <ul class="cmd-list">
+                        <li class="green"><strong class="cmd">Columnas</strong> → Muros de encofrado</li>
+                        <li class="green"><strong class="cmd">Vigas</strong> → Muros laterales + Suelos inferiores</li>
+                        <li class="green"><strong class="cmd">Losas</strong> → Suelos de encofrado</li>
+                        <li class="green"><strong class="cmd">Escaleras</strong> → Muros verticales + Suelos inclinados</li>
+                        <li class="green">Recortes automáticos por elementos adyacentes</li>
+                        <li class="green">Conversión directa a Wall/Floor nativos de Revit</li>
+                        <li class="green">Preserva curvas y geometría compleja</li>
+                    </ul>
+                </div>
+
+                <div class="card green">
+                    <h3>Tarrajeo por Habitación <span class="tag green">Botón</span></h3>
+                    <p>Genera muros y suelos de tarrajeo desde las habitaciones del proyecto</p>
+                    <ul class="cmd-list">
+                        <li class="green">Selección múltiple de habitaciones</li>
+                        <li class="green">Detección automática de elementos límite (muros, columnas, etc.)</li>
+                        <li class="green">Generación de muros de tarrajeo hacia el interior</li>
+                        <li class="green">Generación de suelos (contrapiso) automáticos</li>
+                        <li class="green">Soporte para elementos de modelos enlazados (links)</li>
+                    </ul>
+                </div>
+
+                <div class="card green">
+                    <h3>Acero de Refuerzo <span class="tag green">Pulldown</span></h3>
+                    <p>Cálculo y colocación de armadura en elementos estructurales</p>
+                    <ul class="cmd-list">
+                        <li class="green"><strong class="cmd">Acero Columnas</strong> — Refuerzo longitudinal en columnas (secciones rectangulares y circulares)</li>
+                        <li class="green"><strong class="cmd">Estribos Columnas</strong> — Estribos con zonas de confinamiento según normativa</li>
+                        <li class="green"><strong class="cmd">Acero Vigas</strong> — Refuerzo superior/inferior + barras de montaje + estribos con espaciamiento variable</li>
+                        <li class="green"><strong class="cmd">Acero Muros</strong> — Malla en ambas caras + refuerzo vertical y horizontal + conectores (ganchos)</li>
+                        <li class="green"><strong class="cmd">Acero Losas</strong> — Malla superior/inferior con direccionalidad + refuerzo adicional en zonas críticas + zapatas y cimientos</li>
+                    </ul>
+                </div>
+
+                <div class="card green">
+                    <h3>Instalaciones Sanitarias (IISS) <span class="tag green">Pulldown</span></h3>
+                    <p>Herramientas especializadas para diseño de instalaciones sanitarias</p>
+                    <ul class="cmd-list">
+                        <li class="green"><strong class="cmd">Registros Sanitarios</strong> — Dimensiona automáticamente registros sanitarios</li>
+                        <li class="green"><strong class="cmd">Calcular Longitud</strong> — Calcula longitud total de tuberías seleccionadas</li>
+                        <li class="green"><strong class="cmd">Asignar Cota Tapa</strong> — Asigna coordenada Z máxima al parámetro COTA_TAPA</li>
+                        <li class="green"><strong class="cmd">Asignar Área Drenaje</strong> — Asigna área de OST_Areas al parámetro ÁREA_DRENAJE</li>
+                        <li class="green"><strong class="cmd">Área Acumulativa</strong> — Calcula áreas acumulativas siguiendo el flujo de drenaje</li>
+                        <li class="green"><strong class="cmd">Asignar Sector</strong> — Asigna nombre de habitación al parámetro SECTOR</li>
+                        <li class="green"><strong class="cmd">Numerar Aparatos</strong> — Numera aparatos conectados por altura (de menor a mayor)</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== PANEL 3: GEOMETRÍA ======================== -->
+    <section id="geometria" class="panel-section">
+        <div class="panel-header orange">
+            <div class="panel-icon">📐</div>
+            <div>
+                <h2>Panel Geometría</h2>
+                <p>Transformación, conversión y exportación de geometría del modelo</p>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="card-grid">
+
+                <div class="card orange">
+                    <h3>Transformaciones <span class="tag orange">Botones</span></h3>
+                    <p>Manipulación y conversión de geometría del modelo</p>
+                    <ul class="cmd-list">
+                        <li class="orange"><strong class="cmd">Escalar Sólido</strong> — Solicita factor de escala y crea un DirectShape con la geometría escalada</li>
+                        <li class="orange"><strong class="cmd">Convertir a DirectShape</strong> — Convierte elementos con sólidos a DirectShape, con opción de eliminar los originales</li>
+                        <li class="orange"><strong class="cmd">Exportar a Familia (.rfa)</strong> — Exporta múltiples elementos como sólidos editables (FreeFormElements) a un archivo de familia, con opción de cargarlo e instanciarlo en el proyecto</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== PANEL 4: REFUERZO ======================== -->
+    <section id="refuerzo" class="panel-section">
+        <div class="panel-header purple">
+            <div class="panel-icon">🔩</div>
+            <div>
+                <h2>Panel Refuerzo</h2>
+                <p>Sistema completo de numeración, etiquetado y documentación de barras de refuerzo (estilo SOFiSTiK)</p>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="card-grid">
+
+                <div class="card purple">
+                    <h3>Marcas <span class="tag purple">Pulldown</span></h3>
+                    <p>Gestión completa de la numeración de barras</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">Set Marks</strong> — Agrupa barras idénticas por forma/diámetro/longitud y asigna marcas secuenciales</li>
+                        <li class="purple"><strong class="cmd">Edit Mark</strong> — Selecciona todas las instancias de una marca para editarlas en conjunto</li>
+                        <li class="purple"><strong class="cmd">Renumber</strong> — Cambia el número de marca y lo aplica a todas las instancias</li>
+                        <li class="purple"><strong class="cmd">Match Rebar</strong> — Copia propiedades (diámetro, dimensiones, ganchos) entre barras de refuerzo</li>
+                        <li class="purple"><strong class="cmd">Assign</strong> — Asigna barras a un plano para modo "Marcas por plano"</li>
+                        <li class="purple"><strong class="cmd">Rebar Layers</strong> — Asigna nombre de capa (BIMS_Layer) a barras seleccionadas</li>
+                        <li class="purple"><strong class="cmd">Delete Mark</strong> — Limpia todos los parámetros BIMS de las instancias de una marca</li>
+                        <li class="purple"><strong class="cmd">Freeze Marks</strong> — Congela la numeración actual para que no cambie al re-ejecutar Set Marks</li>
+                        <li class="purple"><strong class="cmd">Reset Marks</strong> — Elimina todas las marcas asignadas y el estado de congelamiento</li>
+                    </ul>
+                </div>
+
+                <div class="card purple">
+                    <h3>Tags <span class="tag purple">Pulldown</span></h3>
+                    <p>Etiquetado automático de barras en vistas</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">Tag All</strong> — Coloca etiquetas en todas las barras de refuerzo visibles en la vista activa</li>
+                        <li class="purple"><strong class="cmd">Tag Missing</strong> — Coloca etiquetas solo en las barras sin tag en la vista actual</li>
+                        <li class="purple"><strong class="cmd">Shape Detail</strong> — Genera un boceto dimensionado de la forma en una vista Drafting (con letras A, B, C...)</li>
+                        <li class="purple"><strong class="cmd">Shape Images</strong> — Exporta PNG de cada forma con sus letras de dimensión</li>
+                        <li class="purple"><strong class="cmd">All Shape Details</strong> — Genera una vista Drafting con bocetos de todas las formas únicas del proyecto</li>
+                    </ul>
+                </div>
+
+                <div class="card purple">
+                    <h3>Planillas <span class="tag purple">Pulldown</span></h3>
+                    <p>Documentación y exportación de despiece de acero</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">Bar Bending Schedule (BBS)</strong> — Crea una ViewSchedule con planilla de despiece: marca, forma, diámetro, dimensiones A-L, longitud, cantidad y peso</li>
+                        <li class="purple"><strong class="cmd">Exportar BBS Excel</strong> — Exporta la planilla a archivo Excel (.xlsx) con formato profesional</li>
+                        <li class="purple"><strong class="cmd">Exportar BVBS</strong> — Exporta datos en formato estándar BVBS para máquinas de doblado automático industriales</li>
+                        <li class="purple"><strong class="cmd">Metrados</strong> — Genera resumen de peso y longitud de acero agrupado por diámetro</li>
+                    </ul>
+                </div>
+
+                <div class="card purple">
+                    <h3>Verificar <span class="tag purple">Pulldown</span></h3>
+                    <p>Control de calidad del modelo de refuerzo</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">Browse</strong> — Navegador de marcas con lista completa (forma, diámetro, cantidad, peso); doble click para seleccionar e iluminar instancias; búsqueda en tiempo real</li>
+                        <li class="purple"><strong class="cmd">Isolate</strong> — Selecciona barras por criterio: sin marca, sin tag en vista, sin shape code, o congeladas</li>
+                        <li class="purple"><strong class="cmd">Update</strong> — Refresca todos los parámetros calculados (dimensiones BIMS_A..L, shape codes, valores agregados) sin reasignar marcas</li>
+                    </ul>
+                </div>
+
+                <div class="card purple">
+                    <h3>Configuración <span class="tag purple">Botón</span></h3>
+                    <p>Personalización completa del sistema de refuerzo</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">Marcas</strong> — Prefijo, número inicial, partición (proyecto / sheet / host / nivel / miembro)</li>
+                        <li class="purple"><strong class="cmd">Imágenes</strong> — Configuración de exportación PNG de formas</li>
+                        <li class="purple"><strong class="cmd">Tags</strong> — Estilos y posición de etiquetas</li>
+                        <li class="purple"><strong class="cmd">Unidades</strong> — Longitud (mm, cm, m) y redondeo</li>
+                        <li class="purple"><strong class="cmd">Capas</strong> — Definición de capas de refuerzo</li>
+                        <li class="purple"><strong class="cmd">Revisión</strong> — Tracking de cambios y revisiones</li>
+                        <li class="purple"><strong class="cmd">Planillas</strong> — Opciones de separación por capas/elementos, plantillas Excel</li>
+                    </ul>
+                </div>
+
+                <div class="card purple">
+                    <h3>Parámetros Compartidos BIMS</h3>
+                    <p>Parámetros compartidos que el sistema escribe en cada barra de refuerzo</p>
+                    <ul class="cmd-list">
+                        <li class="purple"><strong class="cmd">BIMS_A … BIMS_L</strong> — Dimensiones de la barra</li>
+                        <li class="purple"><strong class="cmd">BIMS_Length</strong> — Longitud total desarrollada</li>
+                        <li class="purple"><strong class="cmd">BIMS_Diameter</strong> — Diámetro nominal</li>
+                        <li class="purple"><strong class="cmd">BIMS_ShapeCode</strong> — Código de forma (BS 8666 / DIN 1356)</li>
+                        <li class="purple"><strong class="cmd">BIMS_Member</strong> — Elemento estructural al que pertenece</li>
+                        <li class="purple"><strong class="cmd">BIMS_Layer</strong> — Capa de refuerzo</li>
+                        <li class="purple"><strong class="cmd">BIMS_Assignment</strong> — Asignación a plano</li>
+                        <li class="purple"><strong class="cmd">BIMS_Revision</strong> — Revisión</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- DOWNLOAD -->
+    <section id="descargar" class="download-section">
+        <h2>📥 Descarga BIMS</h2>
+        <p>Disponible en Autodesk App Store — Revit 2022 a 2026</p>
+        <a href="https://apps.autodesk.com" class="download-btn">Descargar desde Autodesk App Store</a>
+        <div class="version-pills">
+            <span class="vpill">Versión 1.0.5</span>
+            <span class="vpill">Windows 10 / 11 (64-bit)</span>
+            <span class="vpill">Revit 2025 &amp; 2026 — .NET 8.0</span>
+            <span class="vpill">Revit 2022–2024 — .NET 4.8</span>
+        </div>
+    </section>
+
+    <!-- PRIVACY TEASER -->
+    <div class="privacy-card">
+        <div class="privacy-icon">🔒</div>
+        <div>
+            <h2>Privacidad y Seguridad</h2>
+            <p>
+                BIMS solo recopila los datos estrictamente necesarios para validar licencias y entregar actualizaciones:
+                correo electrónico, ID de licencia e ID de hardware. Toda la información se almacena de forma segura
+                en Firebase (Google) con cifrado HTTPS. Nunca vendemos ni compartimos tus datos con terceros para fines de marketing.
             </p>
-            <p style="margin-top: 20px;">
-                <a href="privacy-policy.html" style="color: #0078D7; font-weight: bold; text-decoration: none;">
-                    → Lee nuestra Política de Privacidad completa
-                </a>
+            <p style="margin-top:10px;">
+                <a href="privacy-policy.html">→ Leer la Política de Privacidad completa</a>
             </p>
-        </section>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <footer id="contacto">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>BIMS</h3>
-                <p>Plugin profesional para Autodesk Revit</p>
-                <p>Desarrollado por SGAZ</p>
-            </div>
+</div><!-- /container -->
 
-            <div class="footer-section">
-                <h3>Enlaces</h3>
-                <a href="#inicio">Inicio</a>
-                <a href="#funcionalidades">Funcionalidades</a>
-                <a href="#estructuras">Estructuras</a>
-                <a href="privacy-policy.html">Política de Privacidad</a>
-            </div>
-
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <p>Email: sergioalejosz@hotmail.com</p>
-                <p>Teléfono: +51 989 455 558</p>
-                <p>Empresa: SGAZ</p>
-            </div>
-
-            <div class="footer-section">
-                <h3>Soporte</h3>
-                <p>Compatible con Revit 2022-2026</p>
-                <p>Windows 10/11 (64-bit)</p>
-                <p>Licencia comercial disponible</p>
-            </div>
+<!-- FOOTER -->
+<footer id="contacto">
+    <div class="footer-grid">
+        <div class="footer-col">
+            <h3>BIMS</h3>
+            <p>Plugin profesional para Autodesk Revit</p>
+            <p>Desarrollado por SGAZ</p>
+            <p>Versión 1.0.5</p>
         </div>
-
-        <div class="footer-bottom">
-            <p>&copy; 2026 SGAZ. Todos los derechos reservados.</p>
-            <p>Autodesk y Revit son marcas registradas de Autodesk, Inc.</p>
+        <div class="footer-col">
+            <h3>Módulos</h3>
+            <a href="#general">General</a>
+            <a href="#estructuras">Estructuras</a>
+            <a href="#geometria">Geometría</a>
+            <a href="#refuerzo">Refuerzo</a>
         </div>
-    </footer>
+        <div class="footer-col">
+            <h3>Legal</h3>
+            <a href="privacy-policy.html">Política de Privacidad</a>
+        </div>
+        <div class="footer-col">
+            <h3>Contacto</h3>
+            <p>Email: sergioalejosz@hotmail.com</p>
+            <p>Teléfono: +51 989 455 558</p>
+            <p>Empresa: SGAZ</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 SGAZ. Todos los derechos reservados.</p>
+        <p>Autodesk y Revit son marcas registradas de Autodesk, Inc.</p>
+    </div>
+</footer>
+
 </body>
 </html>
