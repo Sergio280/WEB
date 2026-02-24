@@ -942,9 +942,184 @@
             .payment-steps { flex-direction: column; }
             .pay-arrow { transform: rotate(90deg); }
         }
+
+        /* ── ANNOUNCE BAR ──────────────────────────────────────────────── */
+        .announce-bar {
+            background: linear-gradient(90deg, #5a1fd1, #0078D7);
+            color: white;
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 0.88em;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        .announce-bar a { color: #c4e4ff; text-decoration: none; margin-left: 6px; }
+        .announce-bar a:hover { text-decoration: underline; color: white; }
+
+        /* ── NAV HAMBURGER ─────────────────────────────────────────────── */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            margin-left: auto;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--blue);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        @media (max-width: 768px) {
+            .nav-hamburger { display: flex; }
+            nav ul {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                padding: 0 0 16px;
+                gap: 2px;
+            }
+            nav ul.open { display: flex; }
+        }
+
+        /* ── TESTIMONIALS ──────────────────────────────────────────────── */
+        .testimonials-section {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .testimonials-section h2 { font-size: 1.9em; color: var(--blue); margin-bottom: 8px; }
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .testimonial-card {
+            background: white;
+            border-radius: 14px;
+            padding: 28px 24px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.07);
+            text-align: left;
+            border-top: 3px solid var(--blue);
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+        .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
+        .testimonial-card:nth-child(2) { border-top-color: var(--purple); }
+        .testimonial-card:nth-child(3) { border-top-color: var(--green); }
+        .testimonial-stars { color: #f59e0b; font-size: 1em; margin-bottom: 12px; letter-spacing: 2px; }
+        .testimonial-text {
+            font-size: 0.93em;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-avatar {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), #00c6ff);
+            color: white;
+            font-weight: 800;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .testimonial-card:nth-child(2) .testimonial-avatar { background: linear-gradient(135deg, var(--purple), #c084fc); }
+        .testimonial-card:nth-child(3) .testimonial-avatar { background: linear-gradient(135deg, var(--green), #4ade80); }
+        .testimonial-name { font-weight: 700; color: #222; font-size: 0.9em; }
+        .testimonial-role { color: #888; font-size: 0.82em; margin-top: 2px; }
+
+        /* ── FAQ ───────────────────────────────────────────────────────── */
+        .faq-section {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            padding: 48px 40px;
+            margin-bottom: 40px;
+        }
+        .faq-section h2 { text-align: center; color: var(--blue); font-size: 1.9em; margin-bottom: 8px; }
+        .faq-list { margin-top: 36px; border-top: 1px solid #e8ecf2; }
+        .faq-item { border-bottom: 1px solid #e8ecf2; }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 4px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.98em;
+            color: #222;
+            gap: 12px;
+            user-select: none;
+        }
+        .faq-question:hover { color: var(--blue); }
+        .faq-chevron {
+            font-size: 1.1em;
+            color: var(--blue);
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-chevron { transform: rotate(180deg); }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            color: #555;
+            font-size: 0.93em;
+            line-height: 1.75;
+            padding: 0 4px;
+        }
+        .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 18px; }
+        @media (max-width: 768px) {
+            .faq-section { padding: 32px 20px; }
+        }
+
+        /* ── BACK TO TOP ───────────────────────────────────────────────── */
+        #back-to-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 46px;
+            height: 46px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.4em;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(0,120,215,0.45);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        #back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #back-to-top:hover { background: var(--blue-dk); transform: translateY(-2px); }
     </style>
 </head>
 <body>
+
+<!-- ══════════════════ ANNOUNCE BAR ══════════════════ -->
+<div class="announce-bar">
+    🎉 Nuevo: BIMS v1.0.5 — Compatible con Revit 2026 y .NET 8.0
+    <a href="#descargar">Descargar ahora →</a>
+</div>
 
 <!-- ══════════════════ HEADER ══════════════════ -->
 <header>
@@ -955,14 +1130,17 @@
         <div class="header-compat">Compatible con Revit 2022 · 2023 · 2024 · 2025 · 2026</div>
         <div class="header-cta">
             <a href="#precios">🚀 Prueba gratis 30 días</a>
-            <a href="#inicio" class="secondary">Ver funciones</a>
+            <a href="#efectividad" class="secondary">Ver funciones</a>
         </div>
     </div>
 </header>
 
 <!-- ══════════════════ NAV ══════════════════ -->
 <nav>
-    <ul>
+    <button class="nav-hamburger" id="navToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+    </button>
+    <ul id="navMenu">
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#efectividad">Efectividad</a></li>
         <li><a href="#general">General</a></li>
@@ -1134,6 +1312,51 @@
                     <div class="step-label">Export Excel / BVBS listo para obra</div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════ TESTIMONIOS ══════════════════ -->
+    <section class="testimonials-section reveal">
+        <h2>Lo que dicen los profesionales</h2>
+        <p class="section-sub">Ingenieros y arquitectos que ya usan BIMS en sus proyectos</p>
+        <div class="testimonials-grid">
+
+            <div class="testimonial-card reveal reveal-delay-1">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"El módulo de Refuerzo me ahorró horas de trabajo en planillas de despiece. Set Marks y BBS son increíblemente precisos. Lo uso en todos mis proyectos estructurales."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">CR</div>
+                    <div>
+                        <div class="testimonial-name">Carlos R.</div>
+                        <div class="testimonial-role">Ingeniero Estructural — Lima, Perú</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-2">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"El encofrado automatizado cambió la forma en que trabajamos. Lo que antes tomaba medio día ahora se hace en 20 minutos. Un antes y un después para nuestro equipo BIM."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">ML</div>
+                    <div>
+                        <div class="testimonial-name">María L.</div>
+                        <div class="testimonial-role">Arquitecta BIM — Bogotá, Colombia</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-3">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"La integración con modelos enlazados es muy sólida. Usamos Tarrajeo por Habitación con estructura vinculada y funciona perfecto. El trial gratuito es suficiente para convencerse."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">JP</div>
+                    <div>
+                        <div class="testimonial-name">Jorge P.</div>
+                        <div class="testimonial-role">Coordinador BIM — Santiago, Chile</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -1475,6 +1698,50 @@
         </div>
     </section>
 
+    <!-- ══════════════════ FAQ ══════════════════ -->
+    <section class="faq-section reveal">
+        <h2>Preguntas Frecuentes</h2>
+        <p class="section-sub">Todo lo que necesitas saber antes de empezar</p>
+        <div class="faq-list">
+
+            <div class="faq-item">
+                <div class="faq-question">¿Qué versiones de Revit son compatibles? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">BIMS es compatible con Revit 2022, 2023, 2024, 2025 y 2026. Las versiones 2025 y 2026 usan .NET 8.0; las versiones 2022–2024 usan .NET Framework 4.8. Ambas se instalan automáticamente desde el Autodesk App Store.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿Necesito tarjeta de crédito para el trial? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">No. El trial de 30 días se activa únicamente con tu dirección de correo electrónico. No se solicita ningún dato de pago hasta que decidas contratar un plan.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿Qué pasa cuando vence el período de prueba? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">Al vencer los 30 días, BIMS se desactiva automáticamente. Tus proyectos y datos en Revit no se ven afectados en absoluto. Para continuar, elige un plan y recibirás tu clave de activación por email.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿Puedo instalar BIMS en más de un equipo? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">El Plan Individual permite la instalación en 1 equipo. El Plan Profesional permite hasta 3 equipos para el mismo usuario. Para equipos más grandes, el Plan Empresa no tiene límite de seats — contacta ventas para un presupuesto.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿Cómo se instala y actualiza BIMS? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">BIMS se descarga e instala desde el Autodesk App Store con un solo clic. Las actualizaciones se notifican y gestionan automáticamente desde el mismo App Store, por lo que siempre tendrás la última versión disponible.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿BIMS funciona con modelos enlazados (Revit Links)? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y otros elementos de documentos enlazados con transformaciones correctas.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">¿Qué soporte incluye cada plan? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">El Plan Individual incluye soporte por email con respuesta en 48 h. El Plan Profesional incluye soporte prioritario (respuesta en 24 h) y acceso anticipado a funciones beta. El Plan Empresa incluye soporte dedicado, capacitación y personalización bajo pedido.</div>
+            </div>
+
+        </div>
+    </section>
+
     <!-- ══════════════════ DOWNLOAD ══════════════════ -->
     <section id="descargar" class="download-section reveal">
         <h2>📥 Descarga BIMS</h2>
@@ -1643,8 +1910,46 @@
         });
     });
 
+    // ── 5. FAQ accordion ─────────────────────────────────────────────
+    document.querySelectorAll('.faq-question').forEach(function (q) {
+        q.addEventListener('click', function () {
+            var item = q.parentElement;
+            var wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(function (i) { i.classList.remove('open'); });
+            if (!wasOpen) item.classList.add('open');
+        });
+    });
+
+    // ── 6. Scroll-to-top button ───────────────────────────────────────
+    var btt = document.getElementById('back-to-top');
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 400) btt.classList.add('visible');
+        else btt.classList.remove('visible');
+    });
+    btt.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // ── 7. Mobile nav toggle ─────────────────────────────────────────
+    var navToggle = document.getElementById('navToggle');
+    var navMenu   = document.getElementById('navMenu');
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', function () {
+            navToggle.classList.toggle('open');
+            navMenu.classList.toggle('open');
+        });
+        navMenu.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', function () {
+                navToggle.classList.remove('open');
+                navMenu.classList.remove('open');
+            });
+        });
+    }
+
 })();
 </script>
+
+<button id="back-to-top" title="Volver arriba">↑</button>
 
 </body>
 </html>
