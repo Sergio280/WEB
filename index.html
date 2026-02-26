@@ -990,55 +990,6 @@
             nav ul.open { display: flex; }
         }
 
-        /* ── TESTIMONIALS ──────────────────────────────────────────────── */
-        .testimonials-section {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-        .testimonials-section h2 { font-size: 1.9em; color: var(--blue); margin-bottom: 8px; }
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 32px;
-        }
-        .testimonial-card {
-            background: white;
-            border-radius: 14px;
-            padding: 28px 24px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.07);
-            text-align: left;
-            border-top: 3px solid var(--blue);
-            transition: transform 0.25s, box-shadow 0.25s;
-        }
-        .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(0,0,0,0.12); }
-        .testimonial-card:nth-child(2) { border-top-color: var(--purple); }
-        .testimonial-card:nth-child(3) { border-top-color: var(--green); }
-        .testimonial-stars { color: #f59e0b; font-size: 1em; margin-bottom: 12px; letter-spacing: 2px; }
-        .testimonial-text {
-            font-size: 0.93em;
-            color: #444;
-            line-height: 1.7;
-            margin-bottom: 18px;
-            font-style: italic;
-        }
-        .testimonial-author { display: flex; align-items: center; gap: 12px; }
-        .testimonial-avatar {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--blue), #00c6ff);
-            color: white;
-            font-weight: 800;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .testimonial-card:nth-child(2) .testimonial-avatar { background: linear-gradient(135deg, var(--purple), #c084fc); }
-        .testimonial-card:nth-child(3) .testimonial-avatar { background: linear-gradient(135deg, var(--green), #4ade80); }
-        .testimonial-name { font-weight: 700; color: #222; font-size: 0.9em; }
-        .testimonial-role { color: #888; font-size: 0.82em; margin-top: 2px; }
 
         /* ── FAQ ───────────────────────────────────────────────────────── */
         .faq-section {
@@ -2041,50 +1992,6 @@
         </div>
     </section>
 
-    <!-- ══════════════════ TESTIMONIOS ══════════════════ -->
-    <section class="testimonials-section reveal">
-        <h2>Testimonios de Ingenieros y Arquitectos</h2>
-        <p class="section-sub">Experiencias documentadas de profesionales que integran BIMS en sus proyectos de ingeniería estructural</p>
-        <div class="testimonials-grid">
-
-            <div class="testimonial-card reveal reveal-delay-1">
-                <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-text">"El módulo de Refuerzo me ahorró horas de trabajo en planillas de despiece. Set Marks y BBS son increíblemente precisos. Lo uso en todos mis proyectos estructurales."</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">CR</div>
-                    <div>
-                        <div class="testimonial-name">Carlos R.</div>
-                        <div class="testimonial-role">Ingeniero Estructural — Lima, Perú</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonial-card reveal reveal-delay-2">
-                <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-text">"El encofrado automatizado cambió la forma en que trabajamos. Lo que antes tomaba medio día ahora se hace en 20 minutos. Un antes y un después para nuestro equipo BIM."</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">ML</div>
-                    <div>
-                        <div class="testimonial-name">María L.</div>
-                        <div class="testimonial-role">Arquitecta BIM — Bogotá, Colombia</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="testimonial-card reveal reveal-delay-3">
-                <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-text">"La integración con modelos enlazados es muy sólida. Usamos Tarrajeo por Habitación con estructura vinculada y funciona perfecto. El trial gratuito es suficiente para convencerse."</p>
-                <div class="testimonial-author">
-                    <div class="testimonial-avatar">JP</div>
-                    <div>
-                        <div class="testimonial-name">Jorge P.</div>
-                        <div class="testimonial-role">Coordinador BIM — Santiago, Chile</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
 
     <!-- ════════════════ PANEL GENERAL ════════════════ -->
     <section id="general" class="panel-section reveal">
