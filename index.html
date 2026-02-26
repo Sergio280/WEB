@@ -1074,8 +1074,8 @@
         .utab:hover { border-color: var(--blue); color: var(--blue); background: #e8f4ff; }
         .utab.active { background: var(--blue); color: white; border-color: var(--blue); }
 
-        .upanel { display: none; animation: fadeInUp 0.4s ease both; }
-        .upanel.active { display: block; }
+        .upanel { display: none; }
+        .upanel.active { display: block; animation: fadeInUp 0.4s ease both; }
 
         /* Two-column layout */
         .use-case-layout {
@@ -2595,6 +2595,7 @@
             btn.classList.add('active');
             var target = document.getElementById('panel-' + panel);
             if (target) {
+                void target.offsetWidth; // force reflow so animation restarts
                 target.classList.add('active');
                 if (panel === 'bbs') { setTimeout(animateBBSTable, 50); }
             }
