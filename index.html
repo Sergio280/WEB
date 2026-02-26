@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="BIMS - Plugin profesional para Autodesk Revit. 60+ comandos para encofrado, acero de refuerzo, geometría y más. 30 días gratis.">
-    <title>BIMS — Plugin Profesional para Autodesk Revit</title>
+    <title>BIMS — Automatización BIM Profesional para Autodesk Revit</title>
     <style>
         /* ── RESET & BASE ─────────────────────────────────────────────── */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1085,6 +1085,305 @@
             .faq-section { padding: 32px 20px; }
         }
 
+        /* ── USE-CASES SECTION ─────────────────────────────────────────── */
+        .use-cases-section {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            padding: 48px 40px;
+            margin-bottom: 40px;
+        }
+        .use-cases-section h2 {
+            text-align: center;
+            color: var(--blue);
+            font-size: 1.9em;
+            margin-bottom: 8px;
+        }
+
+        /* Tabs */
+        .use-tabs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 32px 0 28px;
+        }
+        .utab {
+            background: #f0f4f8;
+            border: 2px solid #dce4ee;
+            color: #555;
+            padding: 10px 22px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88em;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .utab:hover { border-color: var(--blue); color: var(--blue); background: #e8f4ff; }
+        .utab.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+        .upanel { display: none; animation: fadeInUp 0.4s ease both; }
+        .upanel.active { display: block; }
+
+        /* Two-column layout */
+        .use-case-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .use-case-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Steps column */
+        .use-steps h3 {
+            font-size: 1.05em;
+            color: #1a2a3a;
+            margin-bottom: 22px;
+            font-weight: 700;
+            line-height: 1.5;
+            padding-bottom: 14px;
+            border-bottom: 2px solid #e8ecf2;
+        }
+        .use-step-item {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 18px;
+            align-items: flex-start;
+        }
+        .use-step-num {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--blue), #00c6ff);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-top: 1px;
+            letter-spacing: 0;
+        }
+        .use-step-content strong {
+            display: block;
+            font-size: 0.92em;
+            color: #1a2a3a;
+            margin-bottom: 4px;
+        }
+        .use-step-content p {
+            color: #555;
+            font-size: 0.84em;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .use-step-content code {
+            background: #f0f4ff;
+            color: var(--blue);
+            padding: 1px 7px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 700;
+            font-family: 'Consolas', 'Courier New', monospace;
+            border: 1px solid #c4dcf7;
+        }
+        .use-step-content .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #e8f6ee;
+            color: var(--green);
+            font-size: 0.78em;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-top: 7px;
+        }
+
+        /* Visual panel */
+        .use-visual {
+            background: #f4f7fb;
+            border-radius: 12px;
+            padding: 22px 20px;
+            border: 1px solid #e0e6ef;
+            min-height: 300px;
+        }
+        .visual-label {
+            font-size: 0.76em;
+            font-weight: 700;
+            color: #7a8fa6;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        /* BBS demo table */
+        .bbs-table-demo {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78em;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .bbs-table-demo thead th {
+            background: linear-gradient(90deg, #003f74, #0078D7);
+            color: white;
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 0.85em;
+            font-weight: 700;
+        }
+        .bbs-table-demo tbody tr {
+            border-bottom: 1px solid #dce4ee;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+        .bbs-table-demo tbody tr.row-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .bbs-table-demo td {
+            padding: 7px 10px;
+            color: #333;
+        }
+        .bbs-table-demo td:first-child { font-weight: 800; color: var(--purple); }
+        .bbs-table-demo tr:nth-child(even) td { background: rgba(0,120,215,0.04); }
+
+        /* Bar shape SVG */
+        .bar-shape-svg { display: block; margin: 0 auto 14px; max-width: 240px; }
+
+        /* SVG animation: draw path */
+        @keyframes drawPath {
+            to { stroke-dashoffset: 0; }
+        }
+        .svg-draw {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: drawPath 1.2s ease forwards 0.3s;
+        }
+        .svg-draw-2 {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: drawPath 1s ease forwards 0.8s;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .svg-rebar { animation: popIn 0.4s ease backwards; }
+
+        /* Column / formwork SVG wrapper */
+        .formwork-svg-wrap { display: block; margin: 0 auto; max-width: 280px; }
+
+        /* Formwork wall fade-in */
+        @keyframes fwAppear {
+            from { opacity: 0; transform: scale(0.9); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .fw-top    { animation: fwAppear 0.5s ease backwards 0.3s; }
+        .fw-bottom { animation: fwAppear 0.5s ease backwards 0.5s; }
+        .fw-left   { animation: fwAppear 0.5s ease backwards 0.7s; }
+        .fw-right  { animation: fwAppear 0.5s ease backwards 0.9s; }
+
+        /* Legend */
+        .legend-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78em;
+            color: #555;
+            font-weight: 600;
+        }
+        .legend-swatch { width: 15px; height: 15px; border-radius: 3px; flex-shrink: 0; }
+
+        /* Param mini-table */
+        .param-mini {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .param-mini th {
+            background: #1c2a3a;
+            color: #5ab4ff;
+            padding: 6px 10px;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .param-mini td {
+            padding: 5px 10px;
+            border-bottom: 1px solid #e8ecf2;
+            color: #333;
+        }
+        .param-mini td:first-child { color: var(--purple); font-weight: 700; }
+        .param-mini tr:nth-child(even) td { background: #f8f9fb; }
+
+        /* DWG flow */
+        .dwg-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 8px 0 16px;
+        }
+        .dwg-node {
+            background: white;
+            border: 2px solid #dce4ee;
+            border-radius: 10px;
+            padding: 12px 14px;
+            text-align: center;
+            font-size: 0.82em;
+            font-weight: 700;
+            color: #333;
+            min-width: 72px;
+            line-height: 1.4;
+            transition: all 0.2s;
+        }
+        .dwg-node:hover { border-color: var(--blue); transform: translateY(-2px); }
+        .dwg-node.bims-node {
+            border-color: var(--orange);
+            background: #fff9f0;
+            color: var(--orange);
+        }
+        .dwg-node.out-node {
+            border-color: var(--green);
+            background: #e8f6ee;
+            color: var(--green);
+        }
+        .dwg-node .node-icon { font-size: 1.6em; display: block; margin-bottom: 4px; }
+        .dwg-arrow { color: #b0bcc8; font-size: 1.3em; font-weight: 700; }
+
+        /* Technique note box */
+        .tech-note {
+            background: #fff9f0;
+            border: 1px solid #fde8c0;
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 0.82em;
+            color: #555;
+            margin-top: 14px;
+            line-height: 1.6;
+        }
+        .tech-note strong { color: var(--orange); }
+
+        @media (max-width: 768px) {
+            .use-cases-section { padding: 28px 18px; }
+            .utab { padding: 8px 14px; font-size: 0.82em; }
+        }
+
         /* ── BACK TO TOP ───────────────────────────────────────────────── */
         #back-to-top {
             position: fixed;
@@ -1125,12 +1424,12 @@
 <header>
     <div class="header-inner">
         <div class="header-logo">BIMS</div>
-        <p class="header-sub">Plugin Profesional para Autodesk Revit</p>
-        <p class="header-by">Desarrollado por SGAZ — Herramientas avanzadas de BIM para ingeniería y arquitectura</p>
+        <p class="header-sub">Automatización BIM Profesional para Autodesk Revit</p>
+        <p class="header-by">Desarrollado por SGAZ · Soluciones avanzadas de modelado estructural, refuerzo y encofrado para ingeniería y arquitectura</p>
         <div class="header-compat">Compatible con Revit 2022 · 2023 · 2024 · 2025 · 2026</div>
         <div class="header-cta">
-            <a href="#precios">🚀 Prueba gratis 30 días</a>
-            <a href="#efectividad" class="secondary">Ver funciones</a>
+            <a href="#precios">Iniciar evaluación gratuita — 30 días</a>
+            <a href="#casos" class="secondary">Ver casos de uso</a>
         </div>
     </div>
 </header>
@@ -1143,6 +1442,7 @@
     <ul id="navMenu">
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#efectividad">Efectividad</a></li>
+        <li><a href="#casos">Casos de Uso</a></li>
         <li><a href="#general">General</a></li>
         <li><a href="#estructuras">Estructuras</a></li>
         <li><a href="#geometria">Geometría</a></li>
@@ -1151,7 +1451,7 @@
         <li><a href="#descargar">Descargar</a></li>
         <li><a href="privacy-policy.html">Privacidad</a></li>
         <li><a href="#contacto">Contacto</a></li>
-        <li><a href="#precios" class="nav-cta">Gratis 30 días →</a></li>
+        <li><a href="#precios" class="nav-cta">Evaluación gratuita →</a></li>
     </ul>
 </nav>
 
@@ -1159,11 +1459,12 @@
 
     <!-- ── INTRO ── -->
     <section id="inicio" class="intro reveal">
-        <h2>Potencia tu flujo de trabajo en Revit</h2>
+        <h2>Automatización Profesional para Ingeniería BIM</h2>
         <p>
-            BIMS extiende Autodesk Revit con más de <strong>60 comandos especializados</strong> organizados en 4 paneles:
-            General, Estructuras, Geometría y Refuerzo. Diseñado para ingenieros y arquitectos que necesitan
-            automatizar tareas repetitivas, reducir errores y mejorar la calidad del modelo BIM.
+            BIMS extiende Autodesk Revit con más de <strong>60 comandos especializados</strong> organizados en cuatro paneles temáticos:
+            General, Estructuras, Geometría y Refuerzo. Diseñado para ingenieros estructurales, coordinadores BIM
+            y arquitectos que requieren automatizar procesos repetitivos, eliminar errores manuales y elevar la
+            calidad de la documentación de ingeniería.
         </p>
         <div class="badge-row">
             <span class="badge">✅ Revit 2025 &amp; 2026 — Soporte Completo</span>
@@ -1195,8 +1496,8 @@
 
     <!-- ══════════════════ EFECTIVIDAD ══════════════════ -->
     <section id="efectividad" class="efectividad-section reveal">
-        <h2>¿Por qué BIMS?</h2>
-        <p class="section-sub">Comparación real de tiempos — flujos de trabajo con y sin BIMS</p>
+        <h2>Eficiencia Cuantificada: BIMS vs. Procesos Manuales</h2>
+        <p class="section-sub">Comparación documentada de tiempos y tasas de error en flujos de trabajo estructurales reales</p>
 
         <div class="comparisons-grid">
 
@@ -1285,7 +1586,7 @@
 
         <!-- Workflow -->
         <div class="workflow-section">
-            <h3>Flujo de trabajo BIMS Refuerzo — del modelo a la planilla en minutos</h3>
+            <h3>Flujo de trabajo BIMS Refuerzo — del modelo estructural a la planilla de despiece</h3>
             <div class="workflow-steps">
                 <div class="workflow-step">
                     <div class="step-circle">🔩</div>
@@ -1315,10 +1616,435 @@
         </div>
     </section>
 
+    <!-- ══════════════════ CASOS DE USO PRÁCTICO ══════════════════ -->
+    <section id="casos" class="use-cases-section reveal">
+        <h2>Casos de Uso Práctico</h2>
+        <p class="section-sub">Flujos de trabajo documentados con resultados verificables para proyectos de ingeniería estructural</p>
+
+        <div class="use-tabs" role="tablist">
+            <button class="utab active" data-panel="bbs" role="tab">📋 Planilla de Refuerzo (BBS)</button>
+            <button class="utab" data-panel="encofrado" role="tab">🏗️ Encofrado Automatizado</button>
+            <button class="utab" data-panel="acero" role="tab">🔩 Acero en Columna</button>
+            <button class="utab" data-panel="dwg" role="tab">📐 Importación DWG → NWC</button>
+        </div>
+
+        <!-- ────────── Panel BBS ────────── -->
+        <div class="upanel active" id="panel-bbs">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Generación de Planilla de Despiece de Armadura (BBS) — Del modelo Revit al archivo Excel</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Modelar barras de refuerzo en Revit</strong>
+                            <p>El proyectista coloca elementos <code>Rebar</code> con el tipo de forma (<em>shape code</em>), diámetro nominal y parámetros de gancho correctamente definidos según el sistema de barras del proyecto.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Set Marks</code></strong>
+                            <p>BIMS agrupa las barras por geometría, diámetro y longitud mediante un algoritmo de <em>hash geométrico</em>. Asigna marcas secuenciales y escribe automáticamente los parámetros compartidos: <code>BIMS_A</code>…<code>BIMS_L</code>, <code>BIMS_ShapeCode</code>, <code>BIMS_Length</code>, <code>BIMS_HookStart</code>, <code>BIMS_HookEnd</code> y más.</p>
+                            <span class="time-badge">⏱ ~30 s para 500 barras</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Shape Images</code></strong>
+                            <p>Genera una imagen PNG por cada marca única con cotas nominales y longitudes de gancho sobreimpresas. Las imágenes se almacenan localmente para incrustarlas automáticamente en la planilla BBS.</p>
+                            <span class="time-badge">⏱ ~2 min para 80 marcas distintas</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Bar Bending Schedule (BBS)</code></strong>
+                            <p>Crea una <em>Schedule View</em> en Revit con las columnas: Marca · Tipo · Ø · Cantidad · Longitud total · Dimensiones (A, B, C…) · Ganchos (inicio/fin) · Imagen de forma.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">05</div>
+                        <div class="use-step-content">
+                            <strong>Exportar a Excel o BVBS</strong>
+                            <p><code>Exportar BBS Excel</code> produce un <code>.xlsx</code> con formato profesional, listo para entregar a obra y contratistas. <code>Exportar BVBS</code> genera el formato estándar para máquinas de doblado CNC automatizadas.</p>
+                            <span class="time-badge">⏱ Proceso completo: 45 min vs. 8 h en proceso manual</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Vista previa — Planilla BBS generada automáticamente por BIMS</span>
+
+                    <!-- Bar shape SVG with drawing animation -->
+                    <svg class="bar-shape-svg" viewBox="0 0 240 95" xmlns="http://www.w3.org/2000/svg" aria-label="Forma de barra con dimensiones A y B">
+                        <!-- Main bar (L-shape) drawing animation -->
+                        <polyline class="svg-draw" points="220,28 38,28 38,78" fill="none" stroke="#0078D7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <!-- Hook end left -->
+                        <line class="svg-draw-2" x1="38" y1="78" x2="18" y2="65" stroke="#7b2ff7" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Hook end right -->
+                        <line class="svg-draw-2" x1="220" y1="28" x2="220" y2="50" stroke="#7b2ff7" stroke-width="4" stroke-linecap="round"/>
+
+                        <!-- Dim A: horizontal -->
+                        <line x1="38" y1="16" x2="220" y2="16" stroke="#666" stroke-width="1" stroke-dasharray="4,2"/>
+                        <line x1="38" y1="12" x2="38" y2="20" stroke="#666" stroke-width="1.5"/>
+                        <line x1="220" y1="12" x2="220" y2="20" stroke="#666" stroke-width="1.5"/>
+                        <text x="129" y="12" font-size="10" fill="#0078D7" text-anchor="middle" font-family="Arial" font-weight="700">A = 1 380 mm</text>
+
+                        <!-- Dim B: vertical -->
+                        <line x1="26" y1="28" x2="26" y2="78" stroke="#666" stroke-width="1" stroke-dasharray="4,2"/>
+                        <line x1="22" y1="28" x2="30" y2="28" stroke="#666" stroke-width="1.5"/>
+                        <line x1="22" y1="78" x2="30" y2="78" stroke="#666" stroke-width="1.5"/>
+                        <text x="14" y="57" font-size="10" fill="#0078D7" text-anchor="middle" font-family="Arial" font-weight="700" transform="rotate(-90,14,57)">B = 480</text>
+
+                        <!-- Hook labels -->
+                        <text x="8" y="86" font-size="9" fill="#7b2ff7" font-family="Arial" font-weight="700">S=145</text>
+                        <text x="212" y="60" font-size="9" fill="#7b2ff7" font-family="Arial" font-weight="700">E=145</text>
+
+                        <!-- Shape code badge -->
+                        <rect x="180" y="2" width="56" height="14" rx="4" fill="#f3eeff"/>
+                        <text x="208" y="12" font-size="9" fill="#7b2ff7" text-anchor="middle" font-family="Arial" font-weight="700">SC-11 (BS8666)</text>
+                    </svg>
+
+                    <!-- BBS table preview -->
+                    <table class="bbs-table-demo" id="bbsDemoTable">
+                        <thead>
+                            <tr>
+                                <th>Marca</th>
+                                <th>Ø mm</th>
+                                <th>Ud.</th>
+                                <th>Long. mm</th>
+                                <th>Dimensiones</th>
+                                <th>Ganchos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td><td>16</td><td>12</td><td>3 020</td>
+                                <td>A=1380; B=480</td><td>S=145; E=145</td>
+                            </tr>
+                            <tr>
+                                <td>2</td><td>12</td><td>24</td><td>1 960</td>
+                                <td>A=960</td><td>—</td>
+                            </tr>
+                            <tr>
+                                <td>3</td><td>20</td><td>8</td><td>5 480</td>
+                                <td>A=2800; B=480; C=1480</td><td>S=200; E=200</td>
+                            </tr>
+                            <tr>
+                                <td>4</td><td>8</td><td>60</td><td>1 160</td>
+                                <td>A=340; B=340</td><td>S=80; E=80</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="legend-row">
+                        <div class="legend-item"><div class="legend-swatch" style="background:#0078D7;"></div>Geometría (Revit)</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#7b2ff7;"></div>Parámetros BIMS</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#1a8a4a;border-radius:50%;"></div>Exportable Excel/BVBS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Panel Encofrado ────────── -->
+        <div class="upanel" id="panel-encofrado">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Encofrado Automatizado — Columnas, Vigas, Losas y Escaleras en un solo comando</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Seleccionar elementos estructurales</strong>
+                            <p>Seleccione columnas (<code>Structural Column</code>), vigas (<code>Beam</code>), losas (<code>Floor</code>) o escaleras (<code>Stair</code>) en el modelo. BIMS identifica automáticamente la categoría de cada elemento seleccionado.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Encofrado</code></strong>
+                            <p>El algoritmo clasifica cada elemento y genera los componentes correspondientes:</p>
+                            <p style="margin-top:7px; line-height:1.9;"><strong>Columnas</strong> → Muros de encofrado perimetrales<br>
+                            <strong>Vigas</strong> → Muros laterales + Suelo de fondo<br>
+                            <strong>Losas</strong> → Suelo de encofrado horizontal<br>
+                            <strong>Escaleras</strong> → Muros verticales + Suelos inclinados</p>
+                            <span class="time-badge">⏱ ~20 min vs. 4 h en proceso manual</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Recortes automáticos por geometría adyacente</strong>
+                            <p>BIMS detecta la geometría de los elementos estructurales contiguos y aplica recortes (<em>Void Geometry</em>) para evitar solapos entre encofrados de vigas y columnas, preservando curvas y geometría compleja.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong>Resultado: elementos nativos de Revit</strong>
+                            <p>El encofrado generado son elementos <code>Wall</code> y <code>Floor</code> nativos, cuantificables y detallables directamente en Revit sin procesamiento adicional. El tipo de muro es configurable en el diálogo de Encofrado.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Sección transversal — Columna 500×500 con encofrado perimetral generado por BIMS</span>
+
+                    <svg class="formwork-svg-wrap" viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg" aria-label="Sección de columna con encofrado">
+                        <!-- Concrete column (structural) -->
+                        <rect x="50" y="50" width="140" height="120" rx="3" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="2"/>
+                        <text x="120" y="112" font-size="12" fill="#3a4a5e" text-anchor="middle" font-family="Arial" font-weight="700">COLUMNA</text>
+                        <text x="120" y="128" font-size="9" fill="#5a6a7e" text-anchor="middle" font-family="Arial">500 × 500 mm</text>
+                        <text x="120" y="142" font-size="9" fill="#5a6a7e" text-anchor="middle" font-family="Arial">H500 — Concreto fc=280</text>
+
+                        <!-- Formwork: Top wall -->
+                        <rect class="fw-top" x="30" y="28" width="180" height="22" rx="3"
+                              fill="rgba(217,119,0,0.25)" stroke="#d97700" stroke-width="2"/>
+                        <text x="120" y="42" font-size="8" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700">Muro Encofrado — Superior</text>
+
+                        <!-- Formwork: Bottom wall -->
+                        <rect class="fw-bottom" x="30" y="170" width="180" height="22" rx="3"
+                              fill="rgba(217,119,0,0.25)" stroke="#d97700" stroke-width="2"/>
+                        <text x="120" y="184" font-size="8" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700">Muro Encofrado — Inferior</text>
+
+                        <!-- Formwork: Left wall -->
+                        <rect class="fw-left" x="10" y="28" width="40" height="164" rx="3"
+                              fill="rgba(217,119,0,0.25)" stroke="#d97700" stroke-width="2"/>
+                        <text x="30" y="115" font-size="8" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700" transform="rotate(-90,30,115)">Enc. Lateral</text>
+
+                        <!-- Formwork: Right wall -->
+                        <rect class="fw-right" x="190" y="28" width="40" height="164" rx="3"
+                              fill="rgba(217,119,0,0.25)" stroke="#d97700" stroke-width="2"/>
+                        <text x="210" y="115" font-size="8" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700" transform="rotate(90,210,115)">Enc. Lateral</text>
+
+                        <!-- BIMS badge -->
+                        <rect x="50" y="196" width="140" height="14" rx="6" fill="#1a8a4a" fill-opacity="0.12" stroke="#1a8a4a" stroke-width="1"/>
+                        <text x="120" y="206" font-size="8" fill="#1a8a4a" text-anchor="middle" font-family="Arial" font-weight="700">✓ Generado automáticamente · Elementos Wall nativos</text>
+                    </svg>
+
+                    <div class="legend-row" style="margin-top:10px;">
+                        <div class="legend-item"><div class="legend-swatch" style="background:#c8d0dc; border:1px solid #5a6a7e;"></div>Hormigón estructural</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700; opacity:0.5;"></div>Muros de encofrado (Wall)</div>
+                    </div>
+
+                    <div class="tech-note">
+                        <strong>Nota técnica:</strong> Los muros de encofrado se crean como elementos <code>Wall</code> nativos de Revit con el tipo configurado en el diálogo. Los recortes se aplican mediante <em>Void Geometry</em> para garantizar compatibilidad plena con cuantificaciones y tablas de planificación.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Panel Acero Columnas ────────── -->
+        <div class="upanel" id="panel-acero">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Acero de Refuerzo en Columna Rectangular — Barras Longitudinales y Estribos con Zonas de Confinamiento</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Seleccionar columnas estructurales</strong>
+                            <p>Seleccione una o múltiples columnas de categoría <code>Structural Column</code>. BIMS lee automáticamente la sección transversal, la altura libre y el recubrimiento nominal configurado.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Configurar y ejecutar <code>Acero Columnas</code></strong>
+                            <p>Defina en el cuadro de diálogo: diámetro de barra longitudinal, número de barras por cara, recubrimiento de diseño y tipo de sección (rectangular o circular). BIMS coloca las barras con posicionamiento exacto respecto a la geometría de la columna.</p>
+                            <span class="time-badge">⏱ ~15 s por columna</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Estribos Columnas</code></strong>
+                            <p>BIMS calcula y genera las zonas de confinamiento según normativa sismorresistente: la longitud de confinamiento corresponde a max(h<sub>col</sub>, l<sub>libre</sub>/6, 500 mm). Los estribos se generan con ganchos a 135°.</p>
+                            <p style="margin-top:6px;"><strong>Zona confinada:</strong> Ø8 @100 mm &nbsp;|&nbsp; <strong>Zona central:</strong> Ø8 @200 mm</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong>Resultado integrado con el flujo BBS</strong>
+                            <p>Todas las barras generadas son elementos <code>Rebar</code> nativos de Revit. Se integran directamente con el flujo <em>Set Marks → Shape Images → BBS → Exportar Excel</em> para documentación completa sin trabajo manual adicional.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Sección transversal — Columna 500×500 · 8Ø16 longitudinal + estribos Ø8@100/200</span>
+
+                    <svg viewBox="0 0 230 235" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:280px;display:block;margin:0 auto;" aria-label="Sección transversal de columna con refuerzo">
+                        <!-- Concrete -->
+                        <rect x="15" y="15" width="200" height="200" rx="4" fill="#d8dde6" stroke="#5a6a7e" stroke-width="2.5"/>
+
+                        <!-- Cover dashed line -->
+                        <rect x="40" y="40" width="150" height="150" rx="2" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="5,3"/>
+                        <text x="48" y="36" font-size="8" fill="#aaa" font-family="Arial">recubrimiento 40 mm</text>
+
+                        <!-- Stirrup (estribo Ø8) -->
+                        <rect x="43" y="43" width="144" height="144" rx="2" fill="none" stroke="#d97700" stroke-width="3.5" class="svg-draw-2"/>
+                        <!-- Hook tail at top-left -->
+                        <line class="svg-draw-2" x1="43" y1="63" x2="28" y2="48" stroke="#d97700" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="28" cy="48" r="3" fill="#d97700" class="svg-draw-2"/>
+
+                        <!-- Longitudinal bars (8Ø16) - corners -->
+                        <circle class="svg-rebar" cx="55" cy="55" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.1s"/>
+                        <circle class="svg-rebar" cx="175" cy="55" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.2s"/>
+                        <circle class="svg-rebar" cx="55" cy="175" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.3s"/>
+                        <circle class="svg-rebar" cx="175" cy="175" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.4s"/>
+                        <!-- Intermediate bars -->
+                        <circle class="svg-rebar" cx="115" cy="55" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.5s"/>
+                        <circle class="svg-rebar" cx="115" cy="175" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.6s"/>
+                        <circle class="svg-rebar" cx="55" cy="115" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.7s"/>
+                        <circle class="svg-rebar" cx="175" cy="115" r="9" fill="#0078D7" stroke="white" stroke-width="1.5" style="animation-delay:0.8s"/>
+
+                        <!-- Diameter labels inside circles -->
+                        <text x="55" y="58" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="175" y="58" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="115" y="58" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="55" y="178" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="175" y="178" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="115" y="178" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="55" y="118" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+                        <text x="175" y="118" font-size="7" fill="white" text-anchor="middle" font-family="Arial" font-weight="700">16</text>
+
+                        <!-- Dimension line bottom -->
+                        <line x1="15" y1="222" x2="215" y2="222" stroke="#888" stroke-width="1"/>
+                        <line x1="15" y1="218" x2="15" y2="226" stroke="#888" stroke-width="1.5"/>
+                        <line x1="215" y1="218" x2="215" y2="226" stroke="#888" stroke-width="1.5"/>
+                        <text x="115" y="233" font-size="9" fill="#555" text-anchor="middle" font-family="Arial">500 mm</text>
+
+                        <!-- Stirrup label -->
+                        <text x="193" y="40" font-size="9" fill="#d97700" font-family="Arial" font-weight="700">Ø8</text>
+                        <text x="193" y="50" font-size="8" fill="#d97700" font-family="Arial">estribo</text>
+                    </svg>
+
+                    <div class="legend-row" style="margin-top:8px;">
+                        <div class="legend-item"><div class="legend-swatch" style="background:#0078D7;border-radius:50%;"></div>Barras longit. Ø16</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700;"></div>Estribo Ø8 c/135°</div>
+                    </div>
+
+                    <div style="margin-top:12px; background:#f0f6ff; border:1px solid #c4dcf7; border-radius:8px; padding:12px 14px;">
+                        <table class="param-mini">
+                            <thead><tr><th>Parámetro BIMS</th><th>Valor calculado</th></tr></thead>
+                            <tbody>
+                                <tr><td>BIMS_ShapeCode</td><td>11 (estribo rect.)</td></tr>
+                                <tr><td>BIMS_A / BIMS_B</td><td>414 / 414 mm</td></tr>
+                                <tr><td>BIMS_HookStart/End</td><td>80 mm (135°)</td></tr>
+                                <tr><td>BIMS_Length</td><td>1 812 mm total</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Panel DWG ────────── -->
+        <div class="upanel" id="panel-dwg">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Importación DWG (SolidWorks/AutoCAD) → DirectShape en Revit → Exportación NWC para Navisworks</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Recibir archivo DWG con geometría 3D</strong>
+                            <p>El proveedor o fabricante entrega un archivo <code>.dwg</code> con bloques 3D (equipos MEP, perfiles metálicos, prefabricados, maquinaria) exportados desde SolidWorks, Inventor u otro CAD mecánico.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Importar DWG</code></strong>
+                            <p>BIMS convierte cada bloque DWG en un <code>DirectShape</code> de Revit con la geometría sólida exacta. Los elementos conservan posición, escala y orientación del archivo original. Opción <code>Importar DWG Independiente</code> para DirectShapes no vinculados a un nivel.</p>
+                            <span class="time-badge">⏱ ~2 min para 50 bloques complejos</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Ejecutar <code>Exportar NWC</code></strong>
+                            <p>Reasigna los DirectShapes a categorías de Revit compatibles con Navisworks: <code>Duct</code>, <code>Pipe</code>, <code>MechanicalEquipment</code>, <code>StructuralFraming</code>, etc. El modelo queda listo para coordinación BIM en Navisworks Manage o Clash Detective.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong><code>Calcular Volúmenes</code> (opcional)</strong>
+                            <p>Analiza y escribe el volumen real de cada DirectShape en un parámetro de instancia, útil para cuantificación de materiales, estimación de peso y presupuestos de obra.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Flujo de conversión: DWG externo → Revit DirectShape → Navisworks NWC</span>
+
+                    <div class="dwg-flow">
+                        <div class="dwg-node">
+                            <span class="node-icon">📄</span>
+                            Archivo<br>.DWG
+                        </div>
+                        <div class="dwg-arrow">→</div>
+                        <div class="dwg-node bims-node">
+                            <span class="node-icon">⚙️</span>
+                            BIMS<br>Importar DWG
+                        </div>
+                        <div class="dwg-arrow">→</div>
+                        <div class="dwg-node">
+                            <span class="node-icon">🏢</span>
+                            Direct<br>Shape
+                        </div>
+                        <div class="dwg-arrow">→</div>
+                        <div class="dwg-node bims-node" style="border-color:var(--green);background:#e8f6ee;color:var(--green);">
+                            <span class="node-icon">⚙️</span>
+                            BIMS<br>Exportar NWC
+                        </div>
+                        <div class="dwg-arrow">→</div>
+                        <div class="dwg-node out-node">
+                            <span class="node-icon">🔍</span>
+                            Navisworks<br>.NWC
+                        </div>
+                    </div>
+
+                    <div style="background:#f4f7fb; border-radius:10px; padding:16px 18px; font-size:0.83em; color:#444; margin-top:4px;">
+                        <strong style="color:#333; display:block; margin-bottom:8px;">Casos de aplicación frecuentes:</strong>
+                        <ul style="padding-left:16px; line-height:2;">
+                            <li>Equipos de planta industrial (bombas, compresores, intercambiadores) desde SolidWorks</li>
+                            <li>Perfiles de estructura metálica de fabricantes (Hilti, AMSCO, etc.)</li>
+                            <li>Prefabricados de concreto con geometría compleja proporcionada por fabricante</li>
+                            <li>Instalaciones MEP sin familia Revit nativa disponible en el mercado</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-note" style="margin-top:10px;">
+                        <strong>Nota técnica:</strong> El comando <code>Sólido → Masa</code> del Panel General permite, adicionalmente, extraer geometría sólida de los DirectShapes como <em>FreeFormElements</em> editables, útil para modificaciones in-model posteriores.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- ══════════════════ TESTIMONIOS ══════════════════ -->
     <section class="testimonials-section reveal">
-        <h2>Lo que dicen los profesionales</h2>
-        <p class="section-sub">Ingenieros y arquitectos que ya usan BIMS en sus proyectos</p>
+        <h2>Testimonios de Ingenieros y Arquitectos</h2>
+        <p class="section-sub">Experiencias documentadas de profesionales que integran BIMS en sus proyectos de ingeniería estructural</p>
         <div class="testimonials-grid">
 
             <div class="testimonial-card reveal reveal-delay-1">
@@ -1585,14 +2311,14 @@
     <section id="precios" class="pricing-section reveal">
         <div class="section-header">
             <h2>Planes y Precios</h2>
-            <p>Empieza gratis. Paga solo cuando estés convencido.</p>
+            <p>Comience con una evaluación gratuita de 30 días. Sin tarjeta requerida. Seleccione un plan solo cuando confirme el valor para su equipo.</p>
         </div>
 
         <!-- Trial Banner -->
         <div class="trial-banner reveal">
             <div class="trial-banner-text">
-                <h3>🎁 30 días gratis — acceso completo</h3>
-                <p>Sin tarjeta de crédito. Sin compromisos. Accede a todos los comandos desde el primer día.</p>
+                <h3>Período de Evaluación: 30 días con acceso completo</h3>
+                <p>Sin tarjeta de crédito. Sin compromisos. Acceso irrestricto a todos los módulos desde el primer día de activación.</p>
                 <ul class="trial-checklist">
                     <li>Todos los paneles desbloqueados: General, Estructuras, Geometría, Refuerzo</li>
                     <li>Sin límite de proyectos ni elementos durante la prueba</li>
@@ -1788,6 +2514,7 @@
             <a href="#estructuras">Estructuras</a>
             <a href="#geometria">Geometría</a>
             <a href="#refuerzo">Refuerzo</a>
+            <a href="#casos">Casos de Uso</a>
         </div>
         <div class="footer-col">
             <h3>Precios</h3>
@@ -1930,7 +2657,44 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // ── 7. Mobile nav toggle ─────────────────────────────────────────
+    // ── 7. Use-case tab switching ─────────────────────────────────
+    function animateBBSTable() {
+        var rows = document.querySelectorAll('#bbsDemoTable tbody tr');
+        rows.forEach(function (row) { row.classList.remove('row-visible'); });
+        rows.forEach(function (row, i) {
+            setTimeout(function () { row.classList.add('row-visible'); }, i * 220 + 150);
+        });
+    }
+
+    // Trigger BBS animation when the section scrolls into view
+    var bbsTriggered = false;
+    var bbsObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting && !bbsTriggered) {
+                bbsTriggered = true;
+                animateBBSTable();
+                bbsObserver.disconnect();
+            }
+        });
+    }, { threshold: 0.2 });
+    var bbsSection = document.getElementById('casos');
+    if (bbsSection) bbsObserver.observe(bbsSection);
+
+    document.querySelectorAll('.utab').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var panel = btn.dataset.panel;
+            document.querySelectorAll('.utab').forEach(function (b) { b.classList.remove('active'); });
+            document.querySelectorAll('.upanel').forEach(function (p) { p.classList.remove('active'); });
+            btn.classList.add('active');
+            var target = document.getElementById('panel-' + panel);
+            if (target) {
+                target.classList.add('active');
+                if (panel === 'bbs') { setTimeout(animateBBSTable, 50); }
+            }
+        });
+    });
+
+    // ── 8. Mobile nav toggle ─────────────────────────────────────────
     var navToggle = document.getElementById('navToggle');
     var navMenu   = document.getElementById('navMenu');
     if (navToggle && navMenu) {
