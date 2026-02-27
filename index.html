@@ -1244,6 +1244,93 @@
         .fw-left   { animation: fwSlideLeft   0.42s ease-out backwards 0.94s; }
         .fw-right  { animation: fwSlideRight  0.42s ease-out backwards 1.26s; }
 
+        /* ── Normativas BIM — componentes transversales ──────────────────── */
+
+        /* Tags de estándar (LOD 400, ISO 19650, etc.) */
+        .bim-norm-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 8px 0 9px;
+        }
+        .bim-tag {
+            font-size: 0.67em;
+            font-weight: 700;
+            background: rgba(37,99,168,0.08);
+            color: #2563a8;
+            border: 1px solid rgba(37,99,168,0.22);
+            border-radius: 100px;
+            padding: 2px 9px;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }
+
+        /* Nota BIM en tarjetas de panel */
+        .bim-card-note {
+            font-size: 0.77em;
+            color: #4a5a6e;
+            line-height: 1.48;
+            padding: 7px 10px;
+            background: rgba(37,99,168,0.04);
+            border-radius: 6px;
+            border-left: 2px solid rgba(37,99,168,0.2);
+            margin-bottom: 10px;
+        }
+
+        /* Bloque "Aporte a las Normativas BIM" en casos prácticos */
+        .bim-compliance {
+            margin-top: 22px;
+            background: linear-gradient(135deg, rgba(37,99,168,0.05) 0%, rgba(26,138,74,0.05) 100%);
+            border-left: 3px solid #2563a8;
+            border-radius: 0 8px 8px 0;
+            padding: 13px 16px;
+        }
+        .bim-compliance-title {
+            font-weight: 700;
+            font-size: 0.76em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #2563a8;
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bim-compliance ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .bim-compliance li {
+            font-size: 0.84em;
+            color: #3a4a5e;
+            line-height: 1.48;
+            padding-left: 14px;
+            position: relative;
+        }
+        .bim-compliance li::before {
+            content: '▸';
+            color: #2563a8;
+            position: absolute;
+            left: 0;
+        }
+        .bim-compliance li strong { color: #1a3060; }
+
+        /* Callout BIM en sección intro */
+        .bim-std-intro {
+            margin-top: 14px;
+            font-size: 0.88em;
+            color: #4a5a6e;
+            line-height: 1.55;
+            padding: 10px 14px;
+            background: rgba(37,99,168,0.04);
+            border-radius: 8px;
+            border-left: 3px solid #2563a8;
+        }
+
         /* Legend */
         .legend-row {
             display: flex;
@@ -1719,6 +1806,9 @@
             <span class="badge">🖥️ Windows 10 / 11</span>
             <span class="badge">📦 Última versión disponible</span>
         </div>
+        <p class="bim-std-intro">
+            Cada módulo de BIMS está diseñado para elevar el <strong>LOD (Nivel de Detalle)</strong> del modelo estructural — de etapas conceptuales hasta nivel de fabricación —, satisfacer el <strong>LOIN (Nivel de Información Necesaria)</strong> definido en el BEP del proyecto y enriquecer el <strong>LOI</strong> (atributos no geométricos) del <strong>CDE</strong>. Los flujos de <strong>4D BIM</strong> (programación de obra) y <strong>5D BIM</strong> (presupuesto) se habilitan directamente desde el modelo, en conformidad con <strong>ISO 19650</strong> y las normativas técnicas locales de diseño estructural.
+        </p>
     </section>
 
     <!-- ── STATS STRIP ── -->
@@ -1923,6 +2013,16 @@
                             <span class="time-badge">⏱ Proceso completo: 45 min vs. 8 h en proceso manual</span>
                         </div>
                     </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>LOD 400 → 500:</strong> Cada barra queda numerada, dimensionada y con ganchos definidos — nivel de información suficiente para fabricación directa y control en obra.</li>
+                            <li><strong>LOIN (ISO 19650):</strong> La planilla entrega exactamente los atributos requeridos por el BEP: marca, diámetro, longitud, ganchos y cantidad, sin información redundante.</li>
+                            <li><strong>BS8666 / ACI 315:</strong> Los códigos de forma (Shape Code) y dimensiones siguen el estándar internacional de despiece de armadura, con trazabilidad completa por marca.</li>
+                            <li><strong>5D BIM:</strong> Los metrados automáticos de peso y longitud por diámetro son la base directa para el presupuesto estructural y el control de costos de acero.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="use-visual">
@@ -2041,6 +2141,16 @@
                             <p>El encofrado generado queda integrado en el modelo de Revit: cuantificable y detallable directamente, sin pasos adicionales. El tipo de encofrado es configurable antes de ejecutar el comando.</p>
                         </div>
                     </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>LOD 300 → 400:</strong> El encofrado pasa de representación conceptual a geometría de construcción detallada, validada y lista para cuantificación directa desde el modelo.</li>
+                            <li><strong>5D BIM:</strong> Las cantidades de encofrado (m² por tipo de elemento) se extraen directamente del modelo para presupuesto y control de costos, sin trabajo adicional ni doble entrada de datos.</li>
+                            <li><strong>4D BIM:</strong> Los elementos de encofrado, con cuantificación integrada, facilitan la programación de obra por etapas constructivas y el control de avance en obra.</li>
+                            <li><strong>LOG alto:</strong> Los recortes automáticos entre elementos contiguos garantizan precisión geométrica y eliminan solapamientos que distorsionarían los metrados del modelo.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="use-visual">
@@ -2148,6 +2258,16 @@
                             <strong>Resultado listo para la planilla de despiece</strong>
                             <p>Todas las barras generadas quedan integradas en el modelo y se vinculan directamente al flujo de documentación para generar la planilla de despiece y exportar a Excel sin trabajo adicional.</p>
                         </div>
+                    </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>LOD 400:</strong> Barras longitudinales y estribos con posicionamiento exacto, ganchos a 135° y zonas de confinamiento definidas — modelo de armadura listo para planilla de despiece y fabricación.</li>
+                            <li><strong>E.030 (Sismorresistente — NTP):</strong> Las zonas de confinamiento se generan automáticamente conforme a la norma peruana de diseño sismorresistente, asegurando el cumplimiento normativo desde el modelo.</li>
+                            <li><strong>E.060 (Concreto Armado — NTP):</strong> Recubrimientos, espaciados y geometría de estribos conforme a la norma peruana de concreto armado, eliminando errores de diseño manual.</li>
+                            <li><strong>LOIN (ISO 19650):</strong> El modelo generado provee directamente los datos para la planilla de despiece, cerrando el flujo de información LOD 400 → LOI exportable sin intervención adicional.</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -2257,6 +2377,16 @@
                             <p>Analiza y calcula el volumen real de cada elemento importado, útil para cuantificación de materiales, estimación de peso y presupuestos de obra.</p>
                         </div>
                     </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>Federación de modelos (ISO 19650-3):</strong> Integra disciplinas externas (estructura, MEP, especialidades) al modelo coordinado, habilitando la revisión multidisciplinaria desde una fuente única.</li>
+                            <li><strong>CDE (Common Data Environment):</strong> Convierte archivos externos en objetos nativos del CDE del proyecto, manteniendo trazabilidad y la fuente única de verdad exigida por ISO 19650.</li>
+                            <li><strong>Clash Detection:</strong> El modelo federado exportado a Navisworks permite detección de interferencias entre disciplinas, requisito central del proceso BIM de coordinación en proyectos complejos.</li>
+                            <li><strong>LOD 300 → 400:</strong> Elementos de proveedores pasan de geometría de referencia a objetos cuantificables dentro del modelo BIM, elevando el nivel de detalle para coordinación y presupuesto.</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="use-visual">
@@ -2323,6 +2453,13 @@
                 <div class="card">
                     <h3>Rejillas y Parámetros</h3>
                     <p>Control total sobre los datos del modelo</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOI</span>
+                        <span class="bim-tag">LOIN</span>
+                        <span class="bim-tag">ISO 19650</span>
+                        <span class="bim-tag">CDE</span>
+                    </div>
+                    <p class="bim-card-note">Asegura la integridad del LOI (información no geométrica) del modelo. IDs únicos, parámetros correctos y rejillas asignadas son condición indispensable para publicar elementos al CDE y satisfacer el LOIN definido en el BEP del proyecto.</p>
                     <ul class="cmd-list">
                         <li><strong class="cmd">Asignar Rejillas</strong> — Asigna rejillas cercanas a todos los elementos automáticamente</li>
                         <li><strong class="cmd">Transferir Parámetros</strong> — Copia valores de datos entre elementos seleccionados</li>
@@ -2336,6 +2473,13 @@
                 <div class="card">
                     <h3>Análisis y Utilidades</h3>
                     <p>Herramientas de análisis y conversión de geometría</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">Federación de modelos</span>
+                        <span class="bim-tag">CDE</span>
+                        <span class="bim-tag">Clash Detection</span>
+                        <span class="bim-tag">5D BIM</span>
+                    </div>
+                    <p class="bim-card-note">Habilita la federación de modelos multidisciplinarios (ISO 19650-3) al importar y convertir geometría externa. El exportador NWC prepara el CDE para coordinación BIM y detección de interferencias en Navisworks. El cálculo de volúmenes contribuye al 5D BIM.</p>
                     <ul class="cmd-list">
                         <li><strong class="cmd">Asignar Ambiente</strong> — Asigna nombre de habitación a muros y suelos</li>
                         <li><strong class="cmd">Importar DWG</strong> — Convierte archivos DWG externos en objetos nativos de Revit</li>
@@ -2351,6 +2495,12 @@
                 <div class="card">
                     <h3>Herramientas Visuales</h3>
                     <p>Mejora la visualización y presentación del modelo</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">Entregables BIM</span>
+                        <span class="bim-tag">ISO 19650</span>
+                        <span class="bim-tag">CDE</span>
+                    </div>
+                    <p class="bim-card-note">Garantiza la coherencia visual de los entregables para revisión en el CDE. Vistas con formato estandarizado y tablas consistentes reducen los ciclos de revisión y facilitan la aprobación de documentos según el BEP del proyecto.</p>
                     <ul class="cmd-list">
                         <li><strong class="cmd">Resaltar Selección</strong> — Resalta elementos en naranja y hace transparente el resto</li>
                         <li><strong class="cmd">Igualar Gráficos</strong> — Copia el estilo gráfico entre elementos de una vista</li>
@@ -2378,6 +2528,13 @@
                 <div class="card green">
                     <h3>Encofrado Automatizado</h3>
                     <p>Sistema inteligente que clasifica y genera elementos automáticamente</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 400</span>
+                        <span class="bim-tag">5D BIM</span>
+                        <span class="bim-tag">4D BIM</span>
+                        <span class="bim-tag">LOG alto</span>
+                    </div>
+                    <p class="bim-card-note">Eleva el encofrado a LOD 400 con geometría de construcción precisa y cuantificable. Las cantidades integradas en el modelo habilitan el 5D BIM (presupuesto de encofrado) y el 4D BIM (programación de obra por etapas constructivas).</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Columnas</strong> → Muros de encofrado</li>
                         <li class="green"><strong class="cmd">Vigas</strong> → Muros laterales + Suelos inferiores</li>
@@ -2392,6 +2549,12 @@
                 <div class="card green">
                     <h3>Tarrajeo por Habitación</h3>
                     <p>Genera muros y suelos de tarrajeo desde las habitaciones del proyecto</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 300→400</span>
+                        <span class="bim-tag">5D BIM</span>
+                        <span class="bim-tag">LOI</span>
+                    </div>
+                    <p class="bim-card-note">Agrega las capas de acabado al modelo con información cuantificable, incrementando el LOD de acabados interiores y enriqueciendo el LOI para presupuesto y control de materiales de obra (5D BIM).</p>
                     <ul class="cmd-list">
                         <li class="green">Selección múltiple de habitaciones</li>
                         <li class="green">Detección automática de elementos límite</li>
@@ -2404,6 +2567,13 @@
                 <div class="card green">
                     <h3>Acero de Refuerzo</h3>
                     <p>Cálculo y colocación de armadura en elementos estructurales</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 400</span>
+                        <span class="bim-tag">E.030</span>
+                        <span class="bim-tag">E.060</span>
+                        <span class="bim-tag">LOIN</span>
+                    </div>
+                    <p class="bim-card-note">Lleva el armado al LOD 400 conforme a normativas peruanas E.030 (sismorresistente) y E.060 (concreto armado). El modelo generado satisface el LOIN del elemento estructural y provee directamente los datos para la planilla de despiece.</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Acero Columnas</strong> — Refuerzo longitudinal (rectangular y circular)</li>
                         <li class="green"><strong class="cmd">Estribos Columnas</strong> — Zonas de confinamiento según normativa</li>
@@ -2416,6 +2586,13 @@
                 <div class="card green">
                     <h3>Instalaciones Sanitarias</h3>
                     <p>Herramientas especializadas para diseño sanitario</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 300→400</span>
+                        <span class="bim-tag">BIM MEP</span>
+                        <span class="bim-tag">CDE</span>
+                        <span class="bim-tag">5D BIM</span>
+                    </div>
+                    <p class="bim-card-note">Integra las especialidades sanitarias al modelo BIM con datos cuantificables, habilitando la coordinación MEP con las demás disciplinas en el CDE y la generación de metrados de instalaciones para presupuesto (5D BIM).</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Registros Sanitarios</strong> — Dimensiona automáticamente registros</li>
                         <li class="green"><strong class="cmd">Calcular Longitud</strong> — Calcula longitud total de tuberías</li>
@@ -2443,6 +2620,13 @@
                 <div class="card orange">
                     <h3>Transformaciones</h3>
                     <p>Manipulación y conversión de geometría del modelo</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">Interoperabilidad BIM</span>
+                        <span class="bim-tag">IFC</span>
+                        <span class="bim-tag">LOD 300→400</span>
+                        <span class="bim-tag">CDE</span>
+                    </div>
+                    <p class="bim-card-note">Habilita la interoperabilidad con software CAD especializado e integra geometría de proveedores al modelo BIM. Convierte objetos importados en elementos nativos del CDE, avanzando el LOD del elemento e incorporándolo al flujo de información del proyecto.</p>
                     <ul class="cmd-list">
                         <li class="orange"><strong class="cmd">Escalar Sólido</strong> — Escala la geometría de un elemento con factor configurable</li>
                         <li class="orange"><strong class="cmd">Convertir a Sólido</strong> — Convierte elementos en objetos sólidos simplificados (elimina originales de forma opcional)</li>
@@ -2468,6 +2652,13 @@
                 <div class="card purple">
                     <h3>Marcas</h3>
                     <p>Gestión completa de la numeración de barras</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 400</span>
+                        <span class="bim-tag">LOIN</span>
+                        <span class="bim-tag">BS8666</span>
+                        <span class="bim-tag">ISO 19650</span>
+                    </div>
+                    <p class="bim-card-note">La numeración sistemática de marcas es el primer requisito del LOIN para refuerzo según ISO 19650. Sin marcas únicas y trazables no existe LOI exportable ni planilla conforme al estándar BS8666 — condición mínima para publicar armadura al CDE.</p>
                     <ul class="cmd-list">
                         <li class="purple"><strong class="cmd">Set Marks</strong> — Agrupa barras por forma, diámetro y longitud, y asigna marcas secuenciales</li>
                         <li class="purple"><strong class="cmd">Edit Mark / Renumber</strong> — Edición y cambio de número de marca</li>
@@ -2480,6 +2671,13 @@
                 <div class="card purple">
                     <h3>Etiquetado</h3>
                     <p>Etiquetado automático de barras en vistas</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 400</span>
+                        <span class="bim-tag">LOG</span>
+                        <span class="bim-tag">Entregables BIM</span>
+                        <span class="bim-tag">ISO 19650</span>
+                    </div>
+                    <p class="bim-card-note">Produce los entregables gráficos del LOI de refuerzo: shape details y shape images con dimensiones son la base visual para revisiones en el CDE y aprobación de planos de armado conforme al BEP del proyecto.</p>
                     <ul class="cmd-list">
                         <li class="purple"><strong class="cmd">Tag All / Tag Missing</strong> — Etiqueta todas las barras o solo las que aún no tienen etiqueta</li>
                         <li class="purple"><strong class="cmd">Shape Detail</strong> — Boceto dimensionado de la barra con letras A, B, C...</li>
@@ -2491,6 +2689,13 @@
                 <div class="card purple">
                     <h3>Planillas</h3>
                     <p>Documentación y exportación de despiece de acero</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">LOD 500</span>
+                        <span class="bim-tag">LOIN</span>
+                        <span class="bim-tag">BS8666</span>
+                        <span class="bim-tag">5D BIM</span>
+                    </div>
+                    <p class="bim-card-note">La planilla BBS representa el LOD 500 del refuerzo — información completa para fabricación, control de calidad y trazabilidad en obra. El metrado de pesos por diámetro es la base directa del presupuesto 5D BIM de acero del proyecto.</p>
                     <ul class="cmd-list">
                         <li class="purple"><strong class="cmd">Planilla de Despiece (BBS)</strong> — Genera la planilla con: Marca · Tipo · Diámetro · Cantidad · Longitud · Dimensiones · Ganchos · Imagen</li>
                         <li class="purple"><strong class="cmd">Exportar BBS Excel</strong> — Archivo Excel con formato profesional listo para entregar</li>
@@ -2502,6 +2707,13 @@
                 <div class="card purple">
                     <h3>Verificar y Configurar</h3>
                     <p>Control de calidad y personalización</p>
+                    <div class="bim-norm-row">
+                        <span class="bim-tag">Control de calidad BIM</span>
+                        <span class="bim-tag">ISO 19650</span>
+                        <span class="bim-tag">BEP</span>
+                        <span class="bim-tag">CDE</span>
+                    </div>
+                    <p class="bim-card-note">Herramientas de QA/QC del modelo BIM: detecta barras sin información completa antes de publicar al CDE, asegurando que el LOIN de armadura esté satisfecho y que el modelo cumpla los estándares de calidad definidos en el BEP del proyecto.</p>
                     <ul class="cmd-list">
                         <li class="purple"><strong class="cmd">Browse</strong> — Navegador de marcas con búsqueda en tiempo real</li>
                         <li class="purple"><strong class="cmd">Isolate</strong> — Filtra y selecciona barras sin marca, sin etiqueta o incompletas</li>
