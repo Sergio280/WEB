@@ -3460,21 +3460,46 @@
         emailInput.classList.remove('error');
         emailError.classList.remove('show');
 
-        var plan    = MP_CONFIG.plans[currentPlan];
-        var data    = currentPaymentType === 'subscription'
-                      ? plan.subscription
-                      : plan[currentDuration];
-        var baseUrl = data.checkoutUrl;
+        /* ── Suscripción recurrente: redirige al link estático de MP ───── */
+        if (currentPaymentType === 'subscription') {
+            var plan    = MP_CONFIG.plans[currentPlan];
+            var subData = plan.subscription;
+            var subUrl  = subData.checkoutUrl + '?prefill_email=' + encodeURIComponent(email);
+            payBtn.textContent = 'Redirigiendo…';
+            payBtn.disabled    = true;
+            window.location.href = subUrl;
+            return;
+        }
 
-        /* Adjunta el email como parámetro para pre-rellenar el formulario MP */
-        var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
-        var url = baseUrl + separator + 'prefill_email=' + encodeURIComponent(email);
+        /* ── Pago único: crea preferencia en el backend ─────────────────── */
+        payBtn.textContent = 'Procesando…';
+        payBtn.disabled    = true;
 
-        /* Feedback visual antes de redirigir */
-        payBtn.textContent = 'Redirigiendo…';
-        payBtn.disabled = true;
-
-        window.location.href = url;
+        fetch('/api/create-preference', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({
+                email:    email,
+                plan:     currentPlan,
+                duration: currentDuration,
+            }),
+        })
+        .then(function (res) {
+            if (!res.ok) throw new Error('Error del servidor: ' + res.status);
+            return res.json();
+        })
+        .then(function (data) {
+            if (!data.init_point) throw new Error('Sin URL de checkout');
+            /* Redirigir al checkout de MP */
+            window.location.href = data.init_point;
+        })
+        .catch(function (err) {
+            console.error('[BIMS] Error al crear pago:', err);
+            payBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg> Pagar con Mercado Pago';
+            payBtn.disabled = false;
+            emailError.textContent = 'Error al conectar con el servidor. Intenta de nuevo.';
+            emailError.classList.add('show');
+        });
     }
 
     /* ── Event listeners ──────────────────────────────────────────────── */

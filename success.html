@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago exitoso — BIMS</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,.5);
+        }
+
+        .icon-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: pop .5s cubic-bezier(.175,.885,.32,1.275);
+        }
+
+        @keyframes pop {
+            from { transform: scale(0); opacity: 0; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #f1f5f9;
+        }
+
+        .sub {
+            font-size: .97rem;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .info-box {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: .9rem;
+        }
+
+        .info-row:not(:last-child) {
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .info-label { color: #64748b; }
+        .info-value { color: #e2e8f0; font-weight: 600; }
+
+        .steps {
+            background: #162032;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        .steps p {
+            font-size: .82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #009EE3;
+            margin-bottom: 10px;
+        }
+
+        .steps ol {
+            padding-left: 18px;
+            font-size: .9rem;
+            color: #94a3b8;
+            line-height: 1.8;
+        }
+
+        .steps ol li strong { color: #e2e8f0; }
+
+        .btn-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0078D7;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: .95rem;
+            transition: background .2s;
+        }
+
+        .btn-home:hover { background: #0063b1; }
+
+        .pending-notice {
+            display: none;
+            background: #f59e0b22;
+            border: 1px solid #f59e0b55;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: .88rem;
+            color: #fbbf24;
+            margin-bottom: 20px;
+        }
+
+        .error-notice {
+            display: none;
+            background: #ef444422;
+            border: 1px solid #ef444455;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: .88rem;
+            color: #f87171;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="card" id="mainCard">
+
+    <!-- Ícono de éxito -->
+    <div class="icon-wrap">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+             stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+    </div>
+
+    <h1>¡Pago recibido!</h1>
+    <p class="sub">
+        Tu licencia BIMS está siendo activada.<br>
+        En unos segundos recibirás un email de confirmación.
+    </p>
+
+    <!-- Aviso pago pendiente -->
+    <div class="pending-notice" id="pendingNotice">
+        ⏳ Tu pago está siendo procesado. Te notificaremos cuando sea confirmado.
+    </div>
+
+    <!-- Aviso error -->
+    <div class="error-notice" id="errorNotice">
+        ⚠️ Hubo un problema con el pago. Por favor contacta a soporte.
+    </div>
+
+    <!-- Detalle del pago (se llena por JS) -->
+    <div class="info-box" id="infoBox" style="display:none">
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value" id="detailEmail">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Plan</span>
+            <span class="info-value" id="detailPlan">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Duración</span>
+            <span class="info-value" id="detailDuration">—</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Estado</span>
+            <span class="info-value" style="color:#22c55e">✓ Aprobado</span>
+        </div>
+    </div>
+
+    <!-- Próximos pasos -->
+    <div class="steps">
+        <p>Próximos pasos</p>
+        <ol>
+            <li><strong>Revisa tu email</strong> — recibirás un enlace para crear tu contraseña BIMS</li>
+            <li><strong>Abre Revit</strong> con el plugin BIMS instalado</li>
+            <li><strong>Activa con tu email</strong> — la licencia ya estará disponible</li>
+        </ol>
+    </div>
+
+    <a href="/" class="btn-home">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Volver al inicio
+    </a>
+
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    var PLAN_LABELS     = { individual: 'Individual', profesional: 'Profesional' };
+    var DURATION_LABELS = { '1m': '1 mes', '3m': '3 meses', '6m': '6 meses', '12m': '1 año' };
+
+    var params = new URLSearchParams(window.location.search);
+
+    // MP redirige con: collection_status, external_reference, etc.
+    var status   = params.get('collection_status') || params.get('status') || 'approved';
+    var extRef   = params.get('external_reference') || '';
+
+    if (status === 'pending' || status === 'in_process') {
+        document.getElementById('pendingNotice').style.display = 'block';
+    } else if (status === 'failure' || status === 'rejected') {
+        document.getElementById('errorNotice').style.display = 'block';
+    }
+
+    // Mostrar detalle si tenemos external_reference
+    if (extRef) {
+        try {
+            var ref = JSON.parse(extRef);
+            if (ref.e) {
+                document.getElementById('detailEmail').textContent    = ref.e;
+                document.getElementById('detailPlan').textContent     = PLAN_LABELS[ref.p]     || ref.p     || '—';
+                document.getElementById('detailDuration').textContent = DURATION_LABELS[ref.d] || ref.d     || '—';
+                document.getElementById('infoBox').style.display      = 'block';
+            }
+        } catch (e) {}
+    }
+
+    // Redirigir a error si el pago falló
+    if (status === 'failure' || status === 'rejected') {
+        setTimeout(function () {
+            window.location.href = '/?pago=error';
+        }, 4000);
+    }
+})();
+</script>
+</body>
+</html>
