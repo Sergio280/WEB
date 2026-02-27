@@ -1587,7 +1587,7 @@
 
 <!-- ══════════════════ ANNOUNCE BAR ══════════════════ -->
 <div class="announce-bar">
-    🎉 Nuevo: BIMS v1.0.5 — Compatible con Revit 2026 y .NET 8.0
+    🎉 Nuevo: BIMS — Ahora compatible con Revit 2026
     <a href="#descargar">Descargar ahora →</a>
 </div>
 
@@ -1638,10 +1638,9 @@
             calidad de la documentación de ingeniería.
         </p>
         <div class="badge-row">
-            <span class="badge">✅ Revit 2025 &amp; 2026 — Soporte Completo</span>
-            <span class="badge">🖥️ Windows 10 / 11 (64-bit)</span>
-            <span class="badge">📦 Versión 1.0.5</span>
-            <span class="badge">⚡ .NET 8.0</span>
+            <span class="badge">✅ Revit 2022 – 2026 — Soporte Completo</span>
+            <span class="badge">🖥️ Windows 10 / 11</span>
+            <span class="badge">📦 Última versión disponible</span>
         </div>
     </section>
 
@@ -1803,21 +1802,21 @@
         <div class="upanel active" id="panel-bbs">
             <div class="use-case-layout">
                 <div class="use-steps">
-                    <h3>Generación de Planilla de Despiece de Armadura (BBS) — Del modelo Revit al archivo Excel</h3>
+                    <h3>Planilla de Despiece de Armadura — Del modelo Revit al archivo Excel</h3>
 
                     <div class="use-step-item">
                         <div class="use-step-num">01</div>
                         <div class="use-step-content">
                             <strong>Modelar barras de refuerzo en Revit</strong>
-                            <p>El proyectista coloca elementos <code>Rebar</code> con el tipo de forma (<em>shape code</em>), diámetro nominal y parámetros de gancho correctamente definidos según el sistema de barras del proyecto.</p>
+                            <p>El proyectista coloca las barras con la forma, el diámetro y los ganchos correctamente definidos según el sistema de refuerzo del proyecto.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">02</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Set Marks</code></strong>
-                            <p>BIMS agrupa las barras por geometría, diámetro y longitud mediante un algoritmo de <em>hash geométrico</em>. Asigna marcas secuenciales y escribe automáticamente los parámetros compartidos: <code>BIMS_A</code>…<code>BIMS_L</code>, <code>BIMS_ShapeCode</code>, <code>BIMS_Length</code>, <code>BIMS_HookStart</code>, <code>BIMS_HookEnd</code> y más.</p>
+                            <strong>Numeración automática de marcas</strong>
+                            <p>BIMS agrupa las barras por geometría, diámetro y longitud, y asigna marcas secuenciales de forma automática. Todo sin intervención manual.</p>
                             <span class="time-badge">⏱ ~30 s para 500 barras</span>
                         </div>
                     </div>
@@ -1825,8 +1824,8 @@
                     <div class="use-step-item">
                         <div class="use-step-num">03</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Shape Images</code></strong>
-                            <p>Genera una imagen PNG por cada marca única con cotas nominales y longitudes de gancho sobreimpresas. Las imágenes se almacenan localmente para incrustarlas automáticamente en la planilla BBS.</p>
+                            <strong>Generar imágenes de cada barra</strong>
+                            <p>BIMS genera automáticamente un boceto con las dimensiones y longitudes de gancho de cada marca, listo para insertar en la planilla.</p>
                             <span class="time-badge">⏱ ~2 min para 80 marcas distintas</span>
                         </div>
                     </div>
@@ -1834,16 +1833,16 @@
                     <div class="use-step-item">
                         <div class="use-step-num">04</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Bar Bending Schedule (BBS)</code></strong>
-                            <p>Crea una <em>Schedule View</em> en Revit con las columnas: Marca · Tipo · Ø · Cantidad · Longitud total · Dimensiones (A, B, C…) · Ganchos (inicio/fin) · Imagen de forma.</p>
+                            <strong>Crear la planilla de despiece</strong>
+                            <p>Genera la planilla con todas las columnas necesarias: Marca · Tipo · Diámetro · Cantidad · Longitud · Dimensiones · Ganchos · Imagen de forma.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">05</div>
                         <div class="use-step-content">
-                            <strong>Exportar a Excel o BVBS</strong>
-                            <p><code>Exportar BBS Excel</code> produce un <code>.xlsx</code> con formato profesional, listo para entregar a obra y contratistas. <code>Exportar BVBS</code> genera el formato estándar para máquinas de doblado CNC automatizadas.</p>
+                            <strong>Exportar a Excel o formato para dobladora</strong>
+                            <p>Exporta la planilla a Excel con formato profesional, lista para entregar a obra. También disponible en formato estándar para máquinas de doblado automático.</p>
                             <span class="time-badge">⏱ Proceso completo: 45 min vs. 8 h en proceso manual</span>
                         </div>
                     </div>
@@ -1916,8 +1915,8 @@
 
                     <div class="legend-row">
                         <div class="legend-item"><div class="legend-swatch" style="background:#0078D7;"></div>Geometría (Revit)</div>
-                        <div class="legend-item"><div class="legend-swatch" style="background:#7b2ff7;"></div>Parámetros BIMS</div>
-                        <div class="legend-item"><div class="legend-swatch" style="background:#1a8a4a;border-radius:50%;"></div>Exportable Excel/BVBS</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#7b2ff7;"></div>Datos calculados por BIMS</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#1a8a4a;border-radius:50%;"></div>Exportable a Excel</div>
                     </div>
                 </div>
             </div>
@@ -1933,15 +1932,15 @@
                         <div class="use-step-num">01</div>
                         <div class="use-step-content">
                             <strong>Seleccionar elementos estructurales</strong>
-                            <p>Seleccione columnas (<code>Structural Column</code>), vigas (<code>Beam</code>), losas (<code>Floor</code>) o escaleras (<code>Stair</code>) en el modelo. BIMS identifica automáticamente la categoría de cada elemento seleccionado.</p>
+                            <p>Seleccione columnas, vigas, losas o escaleras en el modelo. BIMS identifica automáticamente el tipo de cada elemento seleccionado.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">02</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Encofrado</code></strong>
-                            <p>El algoritmo clasifica cada elemento y genera los componentes correspondientes:</p>
+                            <strong>Generar encofrado con un clic</strong>
+                            <p>BIMS genera automáticamente los componentes de encofrado correspondientes a cada tipo:</p>
                             <p style="margin-top:7px; line-height:1.9;"><strong>Columnas</strong> → Muros de encofrado perimetrales<br>
                             <strong>Vigas</strong> → Muros laterales + Suelo de fondo<br>
                             <strong>Losas</strong> → Suelo de encofrado horizontal<br>
@@ -1953,16 +1952,16 @@
                     <div class="use-step-item">
                         <div class="use-step-num">03</div>
                         <div class="use-step-content">
-                            <strong>Recortes automáticos por geometría adyacente</strong>
-                            <p>BIMS detecta la geometría de los elementos estructurales contiguos y aplica recortes (<em>Void Geometry</em>) para evitar solapos entre encofrados de vigas y columnas, preservando curvas y geometría compleja.</p>
+                            <strong>Recortes automáticos entre elementos adyacentes</strong>
+                            <p>BIMS detecta los elementos estructurales contiguos y elimina automáticamente los solapos entre encofrados de vigas y columnas, preservando curvas y geometría compleja.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">04</div>
                         <div class="use-step-content">
-                            <strong>Resultado: elementos nativos de Revit</strong>
-                            <p>El encofrado generado son elementos <code>Wall</code> y <code>Floor</code> nativos, cuantificables y detallables directamente en Revit sin procesamiento adicional. El tipo de muro es configurable en el diálogo de Encofrado.</p>
+                            <strong>Resultado listo para cuantificar</strong>
+                            <p>El encofrado generado queda integrado en el modelo de Revit: cuantificable y detallable directamente, sin pasos adicionales. El tipo de encofrado es configurable antes de ejecutar el comando.</p>
                         </div>
                     </div>
                 </div>
@@ -1999,16 +1998,16 @@
 
                         <!-- BIMS badge -->
                         <rect x="50" y="196" width="140" height="14" rx="6" fill="#1a8a4a" fill-opacity="0.12" stroke="#1a8a4a" stroke-width="1"/>
-                        <text x="120" y="206" font-size="8" fill="#1a8a4a" text-anchor="middle" font-family="Arial" font-weight="700">✓ Generado automáticamente · Elementos Wall nativos</text>
+                        <text x="120" y="206" font-size="8" fill="#1a8a4a" text-anchor="middle" font-family="Arial" font-weight="700">✓ Generado automáticamente · Listo para cuantificar</text>
                     </svg>
 
                     <div class="legend-row" style="margin-top:10px;">
                         <div class="legend-item"><div class="legend-swatch" style="background:#c8d0dc; border:1px solid #5a6a7e;"></div>Hormigón estructural</div>
-                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700; opacity:0.5;"></div>Muros de encofrado (Wall)</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700; opacity:0.5;"></div>Muros de encofrado</div>
                     </div>
 
                     <div class="tech-note">
-                        <strong>Nota técnica:</strong> Los muros de encofrado se crean como elementos <code>Wall</code> nativos de Revit con el tipo configurado en el diálogo. Los recortes se aplican mediante <em>Void Geometry</em> para garantizar compatibilidad plena con cuantificaciones y tablas de planificación.
+                        Los encofrados generados son totalmente compatibles con las cuantificaciones y tablas de planificación de Revit, sin configuración adicional.
                     </div>
                 </div>
             </div>
@@ -2023,16 +2022,16 @@
                     <div class="use-step-item">
                         <div class="use-step-num">01</div>
                         <div class="use-step-content">
-                            <strong>Seleccionar columnas estructurales</strong>
-                            <p>Seleccione una o múltiples columnas de categoría <code>Structural Column</code>. BIMS lee automáticamente la sección transversal, la altura libre y el recubrimiento nominal configurado.</p>
+                            <strong>Seleccionar columnas</strong>
+                            <p>Seleccione una o múltiples columnas en el modelo. BIMS lee automáticamente la sección transversal, la altura libre y el recubrimiento configurado.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">02</div>
                         <div class="use-step-content">
-                            <strong>Configurar y ejecutar <code>Acero Columnas</code></strong>
-                            <p>Defina en el cuadro de diálogo: diámetro de barra longitudinal, número de barras por cara, recubrimiento de diseño y tipo de sección (rectangular o circular). BIMS coloca las barras con posicionamiento exacto respecto a la geometría de la columna.</p>
+                            <strong>Configurar y colocar refuerzo longitudinal</strong>
+                            <p>Defina en el cuadro de diálogo: diámetro de barra longitudinal, número de barras por cara, recubrimiento de diseño y tipo de sección (rectangular o circular). BIMS coloca las barras con posicionamiento exacto.</p>
                             <span class="time-badge">⏱ ~15 s por columna</span>
                         </div>
                     </div>
@@ -2040,8 +2039,8 @@
                     <div class="use-step-item">
                         <div class="use-step-num">03</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Estribos Columnas</code></strong>
-                            <p>BIMS calcula y genera las zonas de confinamiento según normativa sismorresistente: la longitud de confinamiento corresponde a max(h<sub>col</sub>, l<sub>libre</sub>/6, 500 mm). Los estribos se generan con ganchos a 135°.</p>
+                            <strong>Generar estribos con zonas de confinamiento</strong>
+                            <p>BIMS calcula y genera automáticamente las zonas de confinamiento según la normativa sismorresistente. Los estribos se generan con ganchos a 135°.</p>
                             <p style="margin-top:6px;"><strong>Zona confinada:</strong> Ø8 @100 mm &nbsp;|&nbsp; <strong>Zona central:</strong> Ø8 @200 mm</p>
                         </div>
                     </div>
@@ -2049,8 +2048,8 @@
                     <div class="use-step-item">
                         <div class="use-step-num">04</div>
                         <div class="use-step-content">
-                            <strong>Resultado integrado con el flujo BBS</strong>
-                            <p>Todas las barras generadas son elementos <code>Rebar</code> nativos de Revit. Se integran directamente con el flujo <em>Set Marks → Shape Images → BBS → Exportar Excel</em> para documentación completa sin trabajo manual adicional.</p>
+                            <strong>Resultado listo para la planilla de despiece</strong>
+                            <p>Todas las barras generadas quedan integradas en el modelo y se vinculan directamente al flujo de documentación para generar la planilla de despiece y exportar a Excel sin trabajo adicional.</p>
                         </div>
                     </div>
                 </div>
@@ -2111,12 +2110,11 @@
 
                     <div style="margin-top:12px; background:#f0f6ff; border:1px solid #c4dcf7; border-radius:8px; padding:12px 14px;">
                         <table class="param-mini">
-                            <thead><tr><th>Parámetro BIMS</th><th>Valor calculado</th></tr></thead>
+                            <thead><tr><th>Dato calculado</th><th>Valor</th></tr></thead>
                             <tbody>
-                                <tr><td>BIMS_ShapeCode</td><td>11 (estribo rect.)</td></tr>
-                                <tr><td>BIMS_A / BIMS_B</td><td>414 / 414 mm</td></tr>
-                                <tr><td>BIMS_HookStart/End</td><td>80 mm (135°)</td></tr>
-                                <tr><td>BIMS_Length</td><td>1 812 mm total</td></tr>
+                                <tr><td>Dimensión A / B</td><td>414 / 414 mm</td></tr>
+                                <tr><td>Gancho inicio / fin</td><td>80 mm (135°)</td></tr>
+                                <tr><td>Longitud total</td><td>1 812 mm</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -2128,21 +2126,21 @@
         <div class="upanel" id="panel-dwg">
             <div class="use-case-layout">
                 <div class="use-steps">
-                    <h3>Importación DWG (SolidWorks/AutoCAD) → DirectShape en Revit → Exportación NWC para Navisworks</h3>
+                    <h3>Importar archivos DWG al modelo Revit y exportar para coordinación en Navisworks</h3>
 
                     <div class="use-step-item">
                         <div class="use-step-num">01</div>
                         <div class="use-step-content">
                             <strong>Recibir archivo DWG con geometría 3D</strong>
-                            <p>El proveedor o fabricante entrega un archivo <code>.dwg</code> con bloques 3D (equipos MEP, perfiles metálicos, prefabricados, maquinaria) exportados desde SolidWorks, Inventor u otro CAD mecánico.</p>
+                            <p>El proveedor o fabricante entrega un archivo DWG con modelos 3D (equipos MEP, perfiles metálicos, prefabricados, maquinaria) desde SolidWorks, Inventor u otro software CAD.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">02</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Importar DWG</code></strong>
-                            <p>BIMS convierte cada bloque DWG en un <code>DirectShape</code> de Revit con la geometría sólida exacta. Los elementos conservan posición, escala y orientación del archivo original. Opción <code>Importar DWG Independiente</code> para DirectShapes no vinculados a un nivel.</p>
+                            <strong>Importar la geometría al modelo Revit</strong>
+                            <p>BIMS convierte los elementos del archivo DWG en objetos nativos de Revit, manteniendo posición, escala y orientación exactas. También disponible la opción de importación sin vínculo a un nivel específico.</p>
                             <span class="time-badge">⏱ ~2 min para 50 bloques complejos</span>
                         </div>
                     </div>
@@ -2150,47 +2148,47 @@
                     <div class="use-step-item">
                         <div class="use-step-num">03</div>
                         <div class="use-step-content">
-                            <strong>Ejecutar <code>Exportar NWC</code></strong>
-                            <p>Reasigna los DirectShapes a categorías de Revit compatibles con Navisworks: <code>Duct</code>, <code>Pipe</code>, <code>MechanicalEquipment</code>, <code>StructuralFraming</code>, etc. El modelo queda listo para coordinación BIM en Navisworks Manage o Clash Detective.</p>
+                            <strong>Preparar el modelo para Navisworks</strong>
+                            <p>BIMS clasifica los elementos importados según su disciplina (ductos, tuberías, equipos, estructura, etc.) para que el modelo quede listo para la coordinación BIM en Navisworks.</p>
                         </div>
                     </div>
 
                     <div class="use-step-item">
                         <div class="use-step-num">04</div>
                         <div class="use-step-content">
-                            <strong><code>Calcular Volúmenes</code> (opcional)</strong>
-                            <p>Analiza y escribe el volumen real de cada DirectShape en un parámetro de instancia, útil para cuantificación de materiales, estimación de peso y presupuestos de obra.</p>
+                            <strong>Calcular volúmenes (opcional)</strong>
+                            <p>Analiza y calcula el volumen real de cada elemento importado, útil para cuantificación de materiales, estimación de peso y presupuestos de obra.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="use-visual">
-                    <span class="visual-label">Flujo de conversión: DWG externo → Revit DirectShape → Navisworks NWC</span>
+                    <span class="visual-label">Flujo de conversión: Archivo DWG → BIMS → Revit → Navisworks</span>
 
                     <div class="dwg-flow">
                         <div class="dwg-node">
                             <span class="node-icon">📄</span>
-                            Archivo<br>.DWG
+                            Archivo<br>DWG
                         </div>
                         <div class="dwg-arrow">→</div>
                         <div class="dwg-node bims-node">
                             <span class="node-icon">⚙️</span>
-                            BIMS<br>Importar DWG
+                            BIMS<br>Importar
                         </div>
                         <div class="dwg-arrow">→</div>
                         <div class="dwg-node">
                             <span class="node-icon">🏢</span>
-                            Direct<br>Shape
+                            Modelo<br>Revit
                         </div>
                         <div class="dwg-arrow">→</div>
                         <div class="dwg-node bims-node" style="border-color:var(--green);background:#e8f6ee;color:var(--green);">
                             <span class="node-icon">⚙️</span>
-                            BIMS<br>Exportar NWC
+                            BIMS<br>Exportar
                         </div>
                         <div class="dwg-arrow">→</div>
                         <div class="dwg-node out-node">
                             <span class="node-icon">🔍</span>
-                            Navisworks<br>.NWC
+                            Navisworks<br>Coordinación
                         </div>
                     </div>
 
@@ -2205,7 +2203,7 @@
                     </div>
 
                     <div class="tech-note" style="margin-top:10px;">
-                        <strong>Nota técnica:</strong> El comando <code>Sólido → Masa</code> del Panel General permite, adicionalmente, extraer geometría sólida de los DirectShapes como <em>FreeFormElements</em> editables, útil para modificaciones in-model posteriores.
+                        El comando <strong>Sólido → Masa</strong> del Panel General permite además convertir los objetos importados en elementos editables dentro de Revit, facilitando ajustes posteriores en el modelo.
                     </div>
                 </div>
             </div>
@@ -2226,41 +2224,41 @@
             <div class="card-grid">
 
                 <div class="card">
-                    <h3>Rejillas y Parámetros <span class="tag">Pulldown</span></h3>
-                    <p>Control total sobre los parámetros del modelo</p>
+                    <h3>Rejillas y Parámetros</h3>
+                    <p>Control total sobre los datos del modelo</p>
                     <ul class="cmd-list">
                         <li><strong class="cmd">Asignar Rejillas</strong> — Asigna rejillas cercanas a todos los elementos automáticamente</li>
-                        <li><strong class="cmd">Transferir Parámetros</strong> — Transfiere valores entre parámetros de elementos seleccionados</li>
-                        <li><strong class="cmd">Unir Parámetros</strong> — Combina hasta 3 parámetros con separador configurable</li>
-                        <li><strong class="cmd">Transferir ID</strong> — Asigna el ID único de cada elemento a BIMS_ID</li>
-                        <li><strong class="cmd">Marca Anfitrión</strong> — Lee Host_ID y transfiere la marca del elemento anfitrión</li>
-                        <li><strong class="cmd">Asignar Host ID</strong> — Encuentra el elemento estructural con mayor cobertura</li>
+                        <li><strong class="cmd">Transferir Parámetros</strong> — Copia valores de datos entre elementos seleccionados</li>
+                        <li><strong class="cmd">Unir Parámetros</strong> — Combina hasta 3 campos de datos con separador configurable</li>
+                        <li><strong class="cmd">Transferir ID</strong> — Asigna un identificador único a cada elemento</li>
+                        <li><strong class="cmd">Marca Anfitrión</strong> — Transfiere la marca del elemento que contiene al seleccionado</li>
+                        <li><strong class="cmd">Asignar Host ID</strong> — Vincula cada elemento al elemento estructural que lo contiene</li>
                     </ul>
                 </div>
 
                 <div class="card">
-                    <h3>Análisis y Utilidades <span class="tag">Pulldown</span></h3>
+                    <h3>Análisis y Utilidades</h3>
                     <p>Herramientas de análisis y conversión de geometría</p>
                     <ul class="cmd-list">
                         <li><strong class="cmd">Asignar Ambiente</strong> — Asigna nombre de habitación a muros y suelos</li>
-                        <li><strong class="cmd">Importar DWG</strong> — Convierte bloques DWG (SolidWorks) a DirectShapes en Revit</li>
-                        <li><strong class="cmd">Importar DWG Independiente</strong> — Crea DirectShapes no vinculados</li>
-                        <li><strong class="cmd">Exportar NWC</strong> — Convierte DirectShapes a categorías compatibles con Navisworks</li>
-                        <li><strong class="cmd">Calcular Volúmenes</strong> — Analiza y calcula volúmenes de DirectShapes</li>
+                        <li><strong class="cmd">Importar DWG</strong> — Convierte archivos DWG externos en objetos nativos de Revit</li>
+                        <li><strong class="cmd">Importar DWG Independiente</strong> — Importa sin vincularlo a un nivel específico</li>
+                        <li><strong class="cmd">Exportar NWC</strong> — Prepara el modelo para coordinación en Navisworks</li>
+                        <li><strong class="cmd">Calcular Volúmenes</strong> — Calcula el volumen real de los elementos importados</li>
                         <li><strong class="cmd">Notas a Mayúsculas</strong> — Convierte todas las notas de texto a MAYÚSCULAS</li>
-                        <li><strong class="cmd">Sólido → Masa</strong> — Extrae geometría sólida como FreeFormElements editables</li>
-                        <li><strong class="cmd">Agregar CAD a Selección</strong> — Agrega elementos DWG/CAD a la selección activa</li>
+                        <li><strong class="cmd">Sólido → Masa</strong> — Convierte objetos importados en elementos editables dentro de Revit</li>
+                        <li><strong class="cmd">Agregar CAD a Selección</strong> — Agrega elementos CAD a la selección activa</li>
                     </ul>
                 </div>
 
                 <div class="card">
-                    <h3>Herramientas Visuales <span class="tag">Botones</span></h3>
+                    <h3>Herramientas Visuales</h3>
                     <p>Mejora la visualización y presentación del modelo</p>
                     <ul class="cmd-list">
-                        <li><strong class="cmd">Resaltar Selección</strong> — Resalta elementos en naranja y hace transparente el resto (toggle)</li>
-                        <li><strong class="cmd">Igualar Gráficos</strong> — Copia overrides gráficos entre elementos de una vista</li>
-                        <li><strong class="cmd">Igualar Formato Tablas</strong> — Copia estructura y formato visual entre tablas de planificación</li>
-                        <li><strong class="cmd">Exportar Planos a DWG</strong> — Exporta ViewSheets a DWG con imágenes insertadas</li>
+                        <li><strong class="cmd">Resaltar Selección</strong> — Resalta elementos en naranja y hace transparente el resto</li>
+                        <li><strong class="cmd">Igualar Gráficos</strong> — Copia el estilo gráfico entre elementos de una vista</li>
+                        <li><strong class="cmd">Igualar Formato Tablas</strong> — Copia la estructura y formato entre tablas de planificación</li>
+                        <li><strong class="cmd">Exportar Planos a DWG</strong> — Exporta láminas con imágenes insertadas a formato DWG</li>
                     </ul>
                 </div>
 
@@ -2281,33 +2279,33 @@
             <div class="card-grid">
 
                 <div class="card green">
-                    <h3>Encofrado Automatizado <span class="tag green">Botón</span></h3>
+                    <h3>Encofrado Automatizado</h3>
                     <p>Sistema inteligente que clasifica y genera elementos automáticamente</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Columnas</strong> → Muros de encofrado</li>
                         <li class="green"><strong class="cmd">Vigas</strong> → Muros laterales + Suelos inferiores</li>
                         <li class="green"><strong class="cmd">Losas</strong> → Suelos de encofrado</li>
                         <li class="green"><strong class="cmd">Escaleras</strong> → Muros verticales + Suelos inclinados</li>
-                        <li class="green">Recortes automáticos por elementos adyacentes</li>
-                        <li class="green">Conversión directa a Wall/Floor nativos de Revit</li>
+                        <li class="green">Recortes automáticos entre elementos adyacentes</li>
+                        <li class="green">Integrado con cuantificaciones y tablas de Revit</li>
                         <li class="green">Preserva curvas y geometría compleja</li>
                     </ul>
                 </div>
 
                 <div class="card green">
-                    <h3>Tarrajeo por Habitación <span class="tag green">Botón</span></h3>
+                    <h3>Tarrajeo por Habitación</h3>
                     <p>Genera muros y suelos de tarrajeo desde las habitaciones del proyecto</p>
                     <ul class="cmd-list">
                         <li class="green">Selección múltiple de habitaciones</li>
                         <li class="green">Detección automática de elementos límite</li>
                         <li class="green">Generación de muros de tarrajeo hacia el interior</li>
                         <li class="green">Generación de suelos (contrapiso) automáticos</li>
-                        <li class="green">Soporte para modelos enlazados (links)</li>
+                        <li class="green">Compatible con modelos vinculados</li>
                     </ul>
                 </div>
 
                 <div class="card green">
-                    <h3>Acero de Refuerzo <span class="tag green">Pulldown</span></h3>
+                    <h3>Acero de Refuerzo</h3>
                     <p>Cálculo y colocación de armadura en elementos estructurales</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Acero Columnas</strong> — Refuerzo longitudinal (rectangular y circular)</li>
@@ -2319,7 +2317,7 @@
                 </div>
 
                 <div class="card green">
-                    <h3>Instalaciones Sanitarias (IISS) <span class="tag green">Pulldown</span></h3>
+                    <h3>Instalaciones Sanitarias</h3>
                     <p>Herramientas especializadas para diseño sanitario</p>
                     <ul class="cmd-list">
                         <li class="green"><strong class="cmd">Registros Sanitarios</strong> — Dimensiona automáticamente registros</li>
@@ -2346,12 +2344,12 @@
         <div class="panel-body">
             <div class="card-grid">
                 <div class="card orange">
-                    <h3>Transformaciones <span class="tag orange">Botones</span></h3>
+                    <h3>Transformaciones</h3>
                     <p>Manipulación y conversión de geometría del modelo</p>
                     <ul class="cmd-list">
-                        <li class="orange"><strong class="cmd">Escalar Sólido</strong> — Factor de escala → DirectShape escalada</li>
-                        <li class="orange"><strong class="cmd">Convertir a DirectShape</strong> — Convierte elementos a DirectShape (elimina originales opcional)</li>
-                        <li class="orange"><strong class="cmd">Exportar a Familia (.rfa)</strong> — Exporta múltiples elementos como sólidos editables a familia Revit</li>
+                        <li class="orange"><strong class="cmd">Escalar Sólido</strong> — Escala la geometría de un elemento con factor configurable</li>
+                        <li class="orange"><strong class="cmd">Convertir a Sólido</strong> — Convierte elementos en objetos sólidos simplificados (elimina originales de forma opcional)</li>
+                        <li class="orange"><strong class="cmd">Exportar a Familia</strong> — Exporta múltiples elementos como familia editable de Revit</li>
                     </ul>
                 </div>
             </div>
@@ -2364,69 +2362,54 @@
             <div class="panel-icon">🔩</div>
             <div>
                 <h2>Panel Refuerzo</h2>
-                <p>Sistema completo de numeración, etiquetado y documentación de barras (estilo SOFiSTiK)</p>
+                <p>Sistema completo de numeración, etiquetado y documentación de barras de refuerzo</p>
             </div>
         </div>
         <div class="panel-body">
             <div class="card-grid">
 
                 <div class="card purple">
-                    <h3>Marcas <span class="tag purple">Pulldown</span></h3>
+                    <h3>Marcas</h3>
                     <p>Gestión completa de la numeración de barras</p>
                     <ul class="cmd-list">
-                        <li class="purple"><strong class="cmd">Set Marks</strong> — Agrupa por forma/diámetro/longitud y asigna marcas secuenciales</li>
+                        <li class="purple"><strong class="cmd">Set Marks</strong> — Agrupa barras por forma, diámetro y longitud, y asigna marcas secuenciales</li>
                         <li class="purple"><strong class="cmd">Edit Mark / Renumber</strong> — Edición y cambio de número de marca</li>
-                        <li class="purple"><strong class="cmd">Match Rebar</strong> — Copia propiedades entre barras de refuerzo</li>
-                        <li class="purple"><strong class="cmd">Rebar Layers</strong> — Asigna nombre de capa (BIMS_Layer)</li>
-                        <li class="purple"><strong class="cmd">Freeze / Reset Marks</strong> — Congela o limpia numeración</li>
+                        <li class="purple"><strong class="cmd">Match Rebar</strong> — Copia propiedades de una barra a otras seleccionadas</li>
+                        <li class="purple"><strong class="cmd">Rebar Layers</strong> — Asigna nombre de capa al refuerzo</li>
+                        <li class="purple"><strong class="cmd">Freeze / Reset Marks</strong> — Congela o reinicia la numeración</li>
                     </ul>
                 </div>
 
                 <div class="card purple">
-                    <h3>Tags <span class="tag purple">Pulldown</span></h3>
+                    <h3>Etiquetado</h3>
                     <p>Etiquetado automático de barras en vistas</p>
                     <ul class="cmd-list">
-                        <li class="purple"><strong class="cmd">Tag All / Tag Missing</strong> — Etiquetas en todas las barras o solo sin tag</li>
-                        <li class="purple"><strong class="cmd">Shape Detail</strong> — Boceto dimensionado en vista Drafting (letras A, B, C...)</li>
-                        <li class="purple"><strong class="cmd">Shape Images</strong> — PNG por cada marca con dims y ganchos (sin letra en gancho)</li>
-                        <li class="purple"><strong class="cmd">All Shape Details</strong> — Vista Drafting con todas las formas únicas del proyecto</li>
+                        <li class="purple"><strong class="cmd">Tag All / Tag Missing</strong> — Etiqueta todas las barras o solo las que aún no tienen etiqueta</li>
+                        <li class="purple"><strong class="cmd">Shape Detail</strong> — Boceto dimensionado de la barra con letras A, B, C...</li>
+                        <li class="purple"><strong class="cmd">Shape Images</strong> — Imagen de cada marca con dimensiones y ganchos</li>
+                        <li class="purple"><strong class="cmd">All Shape Details</strong> — Vista con todas las formas únicas del proyecto</li>
                     </ul>
                 </div>
 
                 <div class="card purple">
-                    <h3>Planillas <span class="tag purple">Pulldown</span></h3>
+                    <h3>Planillas</h3>
                     <p>Documentación y exportación de despiece de acero</p>
                     <ul class="cmd-list">
-                        <li class="purple"><strong class="cmd">Bar Bending Schedule (BBS)</strong> — Planilla Revit: Marca | Tipo | Ø | Cantidad | Longitud | Dimensiones | Ganchos | Imagen</li>
-                        <li class="purple"><strong class="cmd">Exportar BBS Excel</strong> — Archivo .xlsx con formato profesional</li>
-                        <li class="purple"><strong class="cmd">Exportar BVBS</strong> — Formato estándar para máquinas de doblado automático</li>
+                        <li class="purple"><strong class="cmd">Planilla de Despiece (BBS)</strong> — Genera la planilla con: Marca · Tipo · Diámetro · Cantidad · Longitud · Dimensiones · Ganchos · Imagen</li>
+                        <li class="purple"><strong class="cmd">Exportar BBS Excel</strong> — Archivo Excel con formato profesional listo para entregar</li>
+                        <li class="purple"><strong class="cmd">Exportar para Dobladora</strong> — Formato estándar para máquinas de doblado automático</li>
                         <li class="purple"><strong class="cmd">Metrados</strong> — Resumen de peso y longitud por diámetro</li>
                     </ul>
                 </div>
 
                 <div class="card purple">
-                    <h3>Verificar + Config <span class="tag purple">Pulldown</span></h3>
+                    <h3>Verificar y Configurar</h3>
                     <p>Control de calidad y personalización</p>
                     <ul class="cmd-list">
                         <li class="purple"><strong class="cmd">Browse</strong> — Navegador de marcas con búsqueda en tiempo real</li>
-                        <li class="purple"><strong class="cmd">Isolate</strong> — Selecciona barras por criterio (sin marca, sin tag, sin shape code)</li>
-                        <li class="purple"><strong class="cmd">Update</strong> — Refresca todos los parámetros BIMS sin reasignar marcas</li>
-                        <li class="purple"><strong class="cmd">Config Refuerzo</strong> — 7 tabs: Marcas, Imágenes, Tags, Unidades, Capas, Revisión, Planillas</li>
-                    </ul>
-                </div>
-
-                <div class="card purple">
-                    <h3>Parámetros Compartidos BIMS</h3>
-                    <p>Escritos automáticamente por Set Marks en cada barra</p>
-                    <ul class="cmd-list">
-                        <li class="purple"><strong class="cmd">BIMS_A … BIMS_L</strong> — Dimensiones de la barra (redondeadas)</li>
-                        <li class="purple"><strong class="cmd">BIMS_DimensionsText</strong> — Texto pre-formateado: "A= 1380; B= 480; C= 1160"</li>
-                        <li class="purple"><strong class="cmd">BIMS_HookStart / End</strong> — Longitud de gancho inicio/fin</li>
-                        <li class="purple"><strong class="cmd">BIMS_HookLengthsText</strong> — Texto pre-formateado: "S= 145; E= 145"</li>
-                        <li class="purple"><strong class="cmd">BIMS_Length / Diameter</strong> — Longitud total y diámetro nominal</li>
-                        <li class="purple"><strong class="cmd">BIMS_ShapeCode</strong> — Código de forma (BS 8666 / DIN 1356)</li>
-                        <li class="purple"><strong class="cmd">BIMS_Member / Layer</strong> — Elemento estructural y capa de refuerzo</li>
-                        <li class="purple"><strong class="cmd">BIMS_Assignment / Revision</strong> — Plano asignado y revisión</li>
+                        <li class="purple"><strong class="cmd">Isolate</strong> — Filtra y selecciona barras sin marca, sin etiqueta o incompletas</li>
+                        <li class="purple"><strong class="cmd">Update</strong> — Actualiza todos los datos calculados sin reasignar marcas</li>
+                        <li class="purple"><strong class="cmd">Config Refuerzo</strong> — Panel de configuración completo: Marcas, Imágenes, Etiquetas, Unidades, Capas, Revisión, Planillas</li>
                     </ul>
                 </div>
 
@@ -2580,7 +2563,7 @@
 
             <div class="faq-item">
                 <div class="faq-question">¿Qué versiones de Revit son compatibles? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">BIMS es compatible con Revit 2022, 2023, 2024, 2025 y 2026. Las versiones 2025 y 2026 usan .NET 8.0; las versiones 2022–2024 usan .NET Framework 4.8. Ambas se instalan automáticamente desde el Autodesk App Store.</div>
+                <div class="faq-answer">BIMS es compatible con Revit 2022, 2023, 2024, 2025 y 2026. La instalación es automática desde el Autodesk App Store y no requiere ninguna configuración manual.</div>
             </div>
 
             <div class="faq-item">
@@ -2600,17 +2583,17 @@
 
             <div class="faq-item">
                 <div class="faq-question">¿Cómo se instala y actualiza BIMS? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">BIMS se descarga e instala desde el Autodesk App Store con un solo clic. Las actualizaciones se notifican y gestionan automáticamente desde el mismo App Store, por lo que siempre tendrás la última versión disponible.</div>
+                <div class="faq-answer">BIMS se descarga e instala desde el Autodesk App Store con un solo clic. Las actualizaciones se notifican y aplican automáticamente, por lo que siempre tendrás la versión más reciente sin hacer nada extra.</div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question">¿BIMS funciona con modelos enlazados (Revit Links)? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y otros elementos de documentos enlazados con transformaciones correctas.</div>
+                <div class="faq-question">¿BIMS funciona con modelos vinculados? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.</div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question">¿Qué soporte incluye cada plan? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">El Plan Individual incluye soporte por email con respuesta en 48 h. El Plan Profesional incluye soporte prioritario (respuesta en 24 h) y acceso anticipado a funciones beta. El Plan Empresa incluye soporte dedicado, capacitación y personalización bajo pedido.</div>
+                <div class="faq-answer">El Plan Individual incluye soporte por email con respuesta en 48 h. El Plan Profesional incluye soporte prioritario (respuesta en 24 h) y acceso anticipado a nuevas funciones. El Plan Empresa incluye soporte dedicado, capacitación y personalización bajo pedido.</div>
             </div>
 
         </div>
@@ -2622,10 +2605,9 @@
         <p>Disponible en Autodesk App Store — Revit 2022 a 2026 — 30 días gratis</p>
         <a href="https://apps.autodesk.com" class="download-btn" target="_blank">Descargar desde Autodesk App Store</a>
         <div class="version-pills">
-            <span class="vpill">Versión 1.0.5</span>
-            <span class="vpill">Windows 10 / 11 (64-bit)</span>
-            <span class="vpill">Revit 2025 &amp; 2026 — .NET 8.0</span>
-            <span class="vpill">Revit 2022–2024 — .NET 4.8</span>
+            <span class="vpill">Windows 10 / 11</span>
+            <span class="vpill">Revit 2025 &amp; 2026</span>
+            <span class="vpill">Revit 2022–2024</span>
         </div>
     </section>
 
@@ -2635,9 +2617,9 @@
         <div>
             <h2>Privacidad y Seguridad</h2>
             <p>
-                BIMS solo recopila los datos estrictamente necesarios para validar licencias y entregar actualizaciones:
-                correo electrónico, ID de licencia e ID de hardware. Toda la información se almacena de forma segura
-                en Firebase (Google) con cifrado HTTPS. Nunca vendemos ni compartimos tus datos con terceros para fines de marketing.
+                BIMS solo recopila los datos estrictamente necesarios para activar tu licencia y entregar actualizaciones.
+                Toda la información se almacena de forma segura en servidores de Google Cloud.
+                Nunca vendemos ni compartimos tus datos con terceros para fines de marketing.
             </p>
             <p style="margin-top:10px;">
                 <a href="privacy-policy.html">→ Leer la Política de Privacidad completa</a>
@@ -2726,7 +2708,7 @@
 
         <div class="mp-trust">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Protegido por <strong>Mercado Pago</strong> · Cifrado SSL
+            Pago procesado de forma segura por <strong>Mercado Pago</strong>
         </div>
     </div>
 </div>
