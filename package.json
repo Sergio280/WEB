@@ -1,0 +1,11 @@
+{
+  "name": "bims-payments",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend de pagos BIMS — MercadoPago + Firebase",
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "mercadopago": "^2.4.3",
+    "firebase-admin": "^12.0.0"
+  }
+}
