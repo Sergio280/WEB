@@ -1515,6 +1515,56 @@
             background: rgba(255,255,255,0.15);
         }
 
+        /* Toggle principal: Pago único vs Suscripción mensual */
+        .mp-payment-type-toggle {
+            display: flex;
+            background: #f0f2f5;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 16px;
+            gap: 4px;
+        }
+        .mp-payment-type-toggle button {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 9px 8px;
+            border-radius: 7px;
+            font-size: 0.82em;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+            transition: background 0.16s, color 0.16s, box-shadow 0.16s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .mp-payment-type-toggle button.active {
+            background: white;
+            color: var(--blue);
+            box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+        }
+
+        /* Sección de duración (oculta cuando se activa suscripción) */
+        .mp-duration-section { transition: opacity 0.18s; }
+        .mp-duration-section.hidden { display: none; }
+
+        /* Info box de suscripción */
+        .mp-sub-info {
+            display: none;
+            background: #f0f7ff;
+            border: 1px solid rgba(0,113,206,0.2);
+            border-radius: 9px;
+            padding: 11px 14px;
+            margin-bottom: 14px;
+            font-size: 0.82em;
+            color: #3260a0;
+            line-height: 1.5;
+        }
+        .mp-sub-info.show { display: block; }
+        .mp-sub-info strong { color: var(--blue); }
+
         .mp-email-group { margin-bottom: 16px; }
         .mp-email-group label {
             display: block;
@@ -2727,13 +2777,33 @@
         <div class="mp-modal-plan-badge" id="mpPlanBadge">Plan Individual</div>
         <h3 id="mpModalTitle">Activar licencia BIMS</h3>
 
-        <!-- Selector de duración (pago único) -->
-        <p class="mp-duration-label">Duración de la licencia</p>
-        <div class="mp-duration-grid" id="mpDurationGrid">
-            <button class="active" data-dur="1m" id="mpDur1m">1 mes</button>
-            <button data-dur="3m" id="mpDur3m">3 meses <span class="save-tag">−11%</span></button>
-            <button data-dur="6m" id="mpDur6m">6 meses <span class="save-tag">−17%</span></button>
-            <button data-dur="12m" id="mpDur12m">1 año <span class="save-tag">−17%</span></button>
+        <!-- Toggle principal: Pago único / Suscripción -->
+        <div class="mp-payment-type-toggle" id="mpPayTypeToggle">
+            <button class="active" data-type="onetime" id="mpTypeOnetime">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Pago único
+            </button>
+            <button data-type="subscription" id="mpTypeSubscription">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Suscripción
+            </button>
+        </div>
+
+        <!-- Sección exclusiva de Pago único: selector de duración -->
+        <div class="mp-duration-section" id="mpDurationSection">
+            <p class="mp-duration-label">Duración de la licencia</p>
+            <div class="mp-duration-grid" id="mpDurationGrid">
+                <button class="active" data-dur="1m" id="mpDur1m">1 mes</button>
+                <button data-dur="3m" id="mpDur3m">3 meses <span class="save-tag">−11%</span></button>
+                <button data-dur="6m" id="mpDur6m">6 meses <span class="save-tag">−17%</span></button>
+                <button data-dur="12m" id="mpDur12m">1 año <span class="save-tag">−17%</span></button>
+            </div>
+        </div>
+
+        <!-- Info box exclusiva de Suscripción -->
+        <div class="mp-sub-info" id="mpSubInfo">
+            <strong>Suscripción mensual recurrente</strong><br>
+            Se renueva automáticamente cada mes. Cancela cuando quieras desde tu cuenta de Mercado Pago, sin penalización.
         </div>
 
         <div class="mp-modal-price">
@@ -2948,19 +3018,21 @@
     /* ─────────────────────────────────────────────────────────────────────
      * CONFIGURACIÓN — Reemplaza estos valores con los de tu cuenta MP
      *
-     * Modelo: PAGO ÚNICO con licencias temporales (sin recurrencia)
+     * Dos modalidades de pago:
      *
-     * 1. Crea un enlace de pago por cada opción en:
-     *    https://www.mercadopago.com.pe/herramientas-para-vender/link-de-pago
+     * A) PAGO ÚNICO con licencias temporales (1m · 3m · 6m · 12m)
+     *    → Crea un enlace de pago por cada opción en:
+     *      https://www.mercadopago.com.pe/herramientas-para-vender/link-de-pago
+     *    → Configura cada enlace como pago único (no suscripción).
+     *      Título sugerido: "BIMS Individual — Licencia 3 meses"
      *
-     * 2. Configura cada enlace como pago único (no suscripción).
-     *    El título del pago debe indicar el período, p. ej.:
-     *    "BIMS Individual — Licencia 3 meses"
+     * B) SUSCRIPCIÓN MENSUAL recurrente
+     *    → Crea el plan de suscripción en:
+     *      https://www.mercadopago.com.pe/subscription-plans
+     *    → Usa el enlace de suscripción generado (mpago.la/...).
      *
-     * 3. Tu Public Key la encuentras en:
+     * C) Tu Public Key la encuentras en:
      *    https://www.mercadopago.com.pe/developers/panel/credentials
-     *
-     * Duraciones disponibles: 1m · 3m · 6m · 12m
      * ───────────────────────────────────────────────────────────────────── */
     var MP_CONFIG = {
         publicKey: 'TU_PUBLIC_KEY_MP',  // ← Reemplazar con tu Public Key
@@ -2970,7 +3042,7 @@
                 name: 'Individual',
                 badge: 'Plan Individual',
                 featured: false,
-                /* ── Precios por duración (pago único) ── */
+                /* ── Pago único: 4 duraciones ── */
                 '1m': {
                     price: 15,
                     period: 'pago único · licencia 1 mes',
@@ -2995,6 +3067,14 @@
                     savingsNote: 'Equivale a $12.4/mes — ahorras 17% vs mensual',
                     checkoutUrl: 'https://mpago.la/REEMPLAZAR_IND_1ANO'
                 },
+                /* ── Suscripción mensual recurrente ── */
+                subscription: {
+                    price: 15,
+                    period: 'por mes · suscripción recurrente',
+                    savingsNote: '',
+                    /* ↓ URL del plan de suscripción creado en MP Subscriptions */
+                    checkoutUrl: 'https://mpago.la/REEMPLAZAR_IND_SUSCRIPCION'
+                },
                 features: [
                     'Todos los paneles BIMS',
                     '1 equipo / 1 usuario',
@@ -3006,7 +3086,7 @@
                 name: 'Profesional',
                 badge: 'Plan Profesional',
                 featured: true,
-                /* ── Precios por duración (pago único) ── */
+                /* ── Pago único: 4 duraciones ── */
                 '1m': {
                     price: 25,
                     period: 'pago único · licencia 1 mes',
@@ -3031,6 +3111,14 @@
                     savingsNote: 'Equivale a $20.8/mes — ahorras 17% vs mensual',
                     checkoutUrl: 'https://mpago.la/REEMPLAZAR_PRO_1ANO'
                 },
+                /* ── Suscripción mensual recurrente ── */
+                subscription: {
+                    price: 25,
+                    period: 'por mes · suscripción recurrente',
+                    savingsNote: '',
+                    /* ↓ URL del plan de suscripción creado en MP Subscriptions */
+                    checkoutUrl: 'https://mpago.la/REEMPLAZAR_PRO_SUSCRIPCION'
+                },
                 features: [
                     'Todos los paneles BIMS',
                     'Hasta 3 equipos / 1 usuario',
@@ -3043,8 +3131,9 @@
     };
 
     /* ── Estado del modal ─────────────────────────────────────────────── */
-    var currentPlan     = 'individual';
-    var currentDuration = '1m';   // '1m' | '3m' | '6m' | '12m'
+    var currentPlan        = 'individual';
+    var currentDuration    = '1m';        // '1m' | '3m' | '6m' | '12m'
+    var currentPaymentType = 'onetime';   // 'onetime' | 'subscription'
 
     /* ── Referencias al DOM ───────────────────────────────────────────── */
     var overlay      = document.getElementById('mpModalOverlay');
@@ -3057,24 +3146,29 @@
     var emailInput   = document.getElementById('mpEmailInput');
     var emailError   = document.getElementById('mpEmailError');
     var payBtn       = document.getElementById('mpPayBtn');
+    var durSection   = document.getElementById('mpDurationSection');
+    var subInfo      = document.getElementById('mpSubInfo');
     var durBtns      = document.querySelectorAll('#mpDurationGrid button');
+    var payTypeBtns  = document.querySelectorAll('#mpPayTypeToggle button');
 
     /* ── Renderizar contenido del modal ───────────────────────────────── */
     function renderModal() {
         var plan = MP_CONFIG.plans[currentPlan];
-        var dur  = plan[currentDuration];
+        var data = currentPaymentType === 'subscription'
+                   ? plan.subscription
+                   : plan[currentDuration];
 
         planBadge.textContent = plan.badge;
         planBadge.className   = 'mp-modal-plan-badge' + (plan.featured ? ' featured' : '');
 
-        priceEl.textContent  = dur.price;
-        periodEl.textContent = dur.period;
+        priceEl.textContent  = data.price;
+        periodEl.textContent = data.period;
 
-        if (dur.savingsNote) {
-            savingsNote.textContent    = dur.savingsNote;
-            savingsNote.style.display  = 'block';
+        if (data.savingsNote) {
+            savingsNote.textContent   = data.savingsNote;
+            savingsNote.style.display = 'block';
         } else {
-            savingsNote.style.display  = 'none';
+            savingsNote.style.display = 'none';
         }
 
         featuresList.innerHTML = '';
@@ -3085,7 +3179,23 @@
         });
     }
 
-    /* ── Seleccionar duración ─────────────────────────────────────────── */
+    /* ── Seleccionar tipo de pago ─────────────────────────────────────── */
+    function selectPaymentType(type) {
+        currentPaymentType = type;
+        payTypeBtns.forEach(function (b) {
+            b.classList.toggle('active', b.dataset.type === type);
+        });
+        if (type === 'subscription') {
+            durSection.classList.add('hidden');
+            subInfo.classList.add('show');
+        } else {
+            durSection.classList.remove('hidden');
+            subInfo.classList.remove('show');
+        }
+        renderModal();
+    }
+
+    /* ── Seleccionar duración (solo en modo pago único) ───────────────── */
     function selectDuration(dur) {
         currentDuration = dur;
         durBtns.forEach(function (b) {
@@ -3097,7 +3207,10 @@
     /* ── Abrir modal ──────────────────────────────────────────────────── */
     function openModal(planKey) {
         currentPlan = planKey || 'individual';
-        selectDuration('1m');   // siempre inicia en 1 mes
+
+        /* Resetear al estado inicial: pago único, 1 mes */
+        selectPaymentType('onetime');
+        selectDuration('1m');
 
         emailInput.value = '';
         emailInput.classList.remove('error');
@@ -3136,8 +3249,10 @@
         emailError.classList.remove('show');
 
         var plan    = MP_CONFIG.plans[currentPlan];
-        var dur     = plan[currentDuration];
-        var baseUrl = dur.checkoutUrl;
+        var data    = currentPaymentType === 'subscription'
+                      ? plan.subscription
+                      : plan[currentDuration];
+        var baseUrl = data.checkoutUrl;
 
         /* Adjunta el email como parámetro para pre-rellenar el formulario MP */
         var separator = baseUrl.indexOf('?') === -1 ? '?' : '&';
@@ -3168,6 +3283,13 @@
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') closeModal();
+    });
+
+    /* Toggle tipo de pago (Pago único / Suscripción) */
+    payTypeBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            selectPaymentType(btn.dataset.type);
+        });
     });
 
     /* Selector de duración (4 botones) */
