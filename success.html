@@ -46,6 +46,8 @@
             to   { transform: scale(1); opacity: 1; }
         }
 
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         h1 {
             font-size: 1.6rem;
             font-weight: 700;
@@ -196,13 +198,25 @@
         </div>
     </div>
 
+    <!-- Descarga automática -->
+    <div class="steps" id="downloadBox">
+        <p>Descarga del instalador</p>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div id="dlSpinner" style="width:18px;height:18px;border:2.5px solid #334155;border-top-color:#009EE3;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;"></div>
+            <span id="dlStatus" style="font-size:.9rem;color:#94a3b8;">Preparando descarga del instalador BIMS…</span>
+        </div>
+        <a href="#" id="dlManual" style="display:none;font-size:.85rem;color:#009EE3;text-decoration:none;">
+            ↓ Clic aquí si la descarga no inicia automáticamente
+        </a>
+    </div>
+
     <!-- Próximos pasos -->
     <div class="steps">
         <p>Próximos pasos</p>
         <ol>
+            <li><strong>Instala el archivo .msi / .exe</strong> descargado</li>
             <li><strong>Revisa tu email</strong> — recibirás un enlace para crear tu contraseña BIMS</li>
-            <li><strong>Abre Revit</strong> con el plugin BIMS instalado</li>
-            <li><strong>Activa con tu email</strong> — la licencia ya estará disponible</li>
+            <li><strong>Abre Revit</strong> y activa con tu email — la licencia ya estará disponible</li>
         </ol>
     </div>
 
@@ -221,35 +235,72 @@
 (function () {
     'use strict';
 
+    // ── URL del instalador BIMS ───────────────────────────────────────────────
+    // Reemplaza con la URL directa de descarga de tu instalador
+    // (puede ser un link de Google Drive, Dropbox, tu propio servidor, etc.)
+    var INSTALLER_URL = 'https://TU_URL_DE_DESCARGA/BIMS-Setup.exe';
+
     var PLAN_LABELS     = { individual: 'Individual', profesional: 'Profesional' };
     var DURATION_LABELS = { '1m': '1 mes', '3m': '3 meses', '6m': '6 meses', '12m': '1 año' };
 
     var params = new URLSearchParams(window.location.search);
+    var status = params.get('collection_status') || params.get('status') || 'approved';
+    var extRef = params.get('external_reference') || '';
 
-    // MP redirige con: collection_status, external_reference, etc.
-    var status   = params.get('collection_status') || params.get('status') || 'approved';
-    var extRef   = params.get('external_reference') || '';
-
+    // ── Avisos de estado de pago ──────────────────────────────────────────────
     if (status === 'pending' || status === 'in_process') {
         document.getElementById('pendingNotice').style.display = 'block';
     } else if (status === 'failure' || status === 'rejected') {
         document.getElementById('errorNotice').style.display = 'block';
     }
 
-    // Mostrar detalle si tenemos external_reference
+    // ── Detalle del pago ──────────────────────────────────────────────────────
     if (extRef) {
         try {
             var ref = JSON.parse(extRef);
             if (ref.e) {
                 document.getElementById('detailEmail').textContent    = ref.e;
-                document.getElementById('detailPlan').textContent     = PLAN_LABELS[ref.p]     || ref.p     || '—';
-                document.getElementById('detailDuration').textContent = DURATION_LABELS[ref.d] || ref.d     || '—';
+                document.getElementById('detailPlan').textContent     = PLAN_LABELS[ref.p]     || ref.p || '—';
+                document.getElementById('detailDuration').textContent = DURATION_LABELS[ref.d] || (ref.t === 'subscription' ? 'Mensual recurrente' : ref.d) || '—';
                 document.getElementById('infoBox').style.display      = 'block';
             }
         } catch (e) {}
     }
 
-    // Redirigir a error si el pago falló
+    // ── Descarga automática del instalador ────────────────────────────────────
+    var dlSpinner = document.getElementById('dlSpinner');
+    var dlStatus  = document.getElementById('dlStatus');
+    var dlManual  = document.getElementById('dlManual');
+
+    if (status === 'approved' || status === 'authorized') {
+        // Pequeño delay para que el usuario vea la página primero
+        setTimeout(function () {
+            // Disparar descarga invisible
+            var link    = document.createElement('a');
+            link.href   = INSTALLER_URL;
+            link.download = 'BIMS-Setup.exe';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Actualizar UI
+            dlSpinner.style.display = 'none';
+            dlStatus.textContent    = '✓ Descarga iniciada — revisa tu carpeta de descargas';
+            dlStatus.style.color    = '#22c55e';
+
+            // Mostrar link manual por si el navegador bloquea la descarga
+            dlManual.href           = INSTALLER_URL;
+            dlManual.style.display  = 'block';
+
+        }, 1500);
+    } else {
+        // Pago pendiente o fallido: no descargar
+        dlSpinner.style.display = 'none';
+        dlStatus.textContent    = 'La descarga estará disponible cuando el pago sea confirmado.';
+        dlManual.style.display  = 'none';
+    }
+
+    // ── Redirigir a error si el pago falló ────────────────────────────────────
     if (status === 'failure' || status === 'rejected') {
         setTimeout(function () {
             window.location.href = '/?pago=error';
