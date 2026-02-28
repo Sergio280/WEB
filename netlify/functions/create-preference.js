@@ -82,7 +82,12 @@ exports.handler = async function (event) {
         };
 
     } catch (err) {
-        console.error('[create-preference] Error MP:', err?.message || err);
-        return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: 'No se pudo crear la preferencia de pago' }) };
+        const msg = err?.message || String(err);
+        console.error('[create-preference] Error MP:', msg);
+        return {
+            statusCode: 500,
+            headers: { ...CORS, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ error: msg }),
+        };
     }
 };
