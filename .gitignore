@@ -1,0 +1,10 @@
+# Secrets — NUNCA subir a git
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+
+# Visual Studio
+.vs/
