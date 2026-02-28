@@ -2867,6 +2867,15 @@
 
         </div>
 
+        <!-- ── Botón de prueba ── -->
+        <div id="test-pay-box" style="margin:24px auto 0;max-width:400px;text-align:center;border:2px dashed #f59e0b;border-radius:12px;padding:16px 20px;background:#fffbeb;">
+            <p style="margin:0 0 6px;font-size:.8rem;font-weight:700;color:#b45309;letter-spacing:.05em;">🧪 MODO PRUEBA</p>
+            <p style="margin:0 0 12px;font-size:.85rem;color:#92400e;">Cobro de S/ 2.00 para verificar la integración</p>
+            <input id="test-email" type="email" placeholder="Tu email" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #fcd34d;border-radius:8px;margin-bottom:10px;font-size:.9rem;">
+            <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 2 (prueba)</button>
+            <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
+        </div>
+
         <!-- Mercado Pago trust badge -->
         <div class="mp-badge-strip reveal">
             <div class="mp-badge-item">
@@ -3590,6 +3599,45 @@
             renderModal(); /* Restaura el texto del botón */
             emailError.textContent = 'Error al conectar con el servidor. Intenta de nuevo.';
             emailError.classList.add('show');
+        });
+    }
+
+    /* ── Botón de prueba S/2 ──────────────────────────────────────────── */
+    var testBtn   = document.getElementById('test-pay-btn');
+    var testEmail = document.getElementById('test-email');
+    var testError = document.getElementById('test-error');
+
+    if (testBtn) {
+        testBtn.addEventListener('click', function () {
+            var email = (testEmail.value || '').trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                testError.textContent = 'Ingresa un email válido.';
+                testError.style.display = 'block';
+                return;
+            }
+            testError.style.display = 'none';
+            testBtn.disabled = true;
+            testBtn.textContent = 'Procesando…';
+
+            fetch('/api/create-preference', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ email: email, plan: 'test', duration: 'test' }),
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.init_point) {
+                    window.location.href = data.init_point;
+                } else {
+                    throw new Error(data.error || 'Sin URL de checkout');
+                }
+            })
+            .catch(function (err) {
+                testError.textContent = err.message;
+                testError.style.display = 'block';
+                testBtn.disabled = false;
+                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+            });
         });
     }
 
