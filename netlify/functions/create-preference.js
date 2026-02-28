@@ -13,6 +13,9 @@ const CATALOG = {
         '6m':  { title: 'BIMS Profesional – 6 meses', price: 125, months: 6  },
         '12m': { title: 'BIMS Profesional – 1 año',   price: 249, months: 12 },
     },
+    test: {
+        'test': { title: 'BIMS TEST – 2 soles', price: 2, months: 1, currency: 'PEN' },
+    },
 };
 
 const CORS = {
@@ -57,7 +60,7 @@ exports.handler = async function (event) {
                     title:       item.title,
                     unit_price:  item.price,
                     quantity:    1,
-                    currency_id: process.env.MP_CURRENCY || 'USD',
+                    currency_id: item.currency || process.env.MP_CURRENCY || 'USD',
                 }],
                 payer:              { email },
                 external_reference: extRef,
