@@ -2,19 +2,19 @@ const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 const CATALOG = {
     individual: {
-        '1m':  { title: 'BIMS Individual – 1 mes',    price: 15,  months: 1  },
-        '3m':  { title: 'BIMS Individual – 3 meses',  price: 40,  months: 3  },
-        '6m':  { title: 'BIMS Individual – 6 meses',  price: 75,  months: 6  },
-        '12m': { title: 'BIMS Individual – 1 año',    price: 149, months: 12 },
+        '1m':  { title: 'BIMS Individual – 1 mes',    price: 60,  months: 1  },
+        '3m':  { title: 'BIMS Individual – 3 meses',  price: 160, months: 3  },
+        '6m':  { title: 'BIMS Individual – 6 meses',  price: 300, months: 6  },
+        '12m': { title: 'BIMS Individual – 1 año',    price: 596, months: 12 },
     },
     profesional: {
-        '1m':  { title: 'BIMS Profesional – 1 mes',   price: 25,  months: 1  },
-        '3m':  { title: 'BIMS Profesional – 3 meses', price: 67,  months: 3  },
-        '6m':  { title: 'BIMS Profesional – 6 meses', price: 125, months: 6  },
-        '12m': { title: 'BIMS Profesional – 1 año',   price: 249, months: 12 },
+        '1m':  { title: 'BIMS Profesional – 1 mes',   price: 100, months: 1  },
+        '3m':  { title: 'BIMS Profesional – 3 meses', price: 268, months: 3  },
+        '6m':  { title: 'BIMS Profesional – 6 meses', price: 500, months: 6  },
+        '12m': { title: 'BIMS Profesional – 1 año',   price: 996, months: 12 },
     },
     test: {
-        'test': { title: 'BIMS TEST – 2 soles', price: 2, months: 1, currency: 'PEN' },
+        'test': { title: 'BIMS TEST – 2 soles', price: 2, months: 1 },
     },
 };
 
@@ -60,7 +60,7 @@ exports.handler = async function (event) {
                     title:       item.title,
                     unit_price:  item.price,
                     quantity:    1,
-                    currency_id: item.currency || process.env.MP_CURRENCY || 'USD',
+                    currency_id: 'PEN',
                 }],
                 payer:              { email },
                 external_reference: extRef,
