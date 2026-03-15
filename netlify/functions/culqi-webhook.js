@@ -192,17 +192,28 @@ async function activateLicense(email, info) {
         });
     }
 
-    if (isNewUser) await sendActivationEmail(email);
+    // Enviar email si es usuario nuevo O si es su primer pago (sin historial previo)
+    const shouldSendEmail = isNewUser || !currentExp;
+    if (shouldSendEmail) await sendActivationEmail(email);
 
     console.log(`✅ Licencia activada: ${email} | ${info.licenseType} | vence: ${newExpDate}`);
 }
 
 // ── Email de activación ───────────────────────────────────────────────────────
 async function sendActivationEmail(email) {
-    const apiKey = process.env.FIREBASE_API_KEY;
-    if (!apiKey) return;
-
     try {
+        // 1. Generar link con Admin SDK (más confiable que la API pública)
+        const link = await auth.generatePasswordResetLink(email, {
+            url: (process.env.SITE_URL || 'https://bimsapp.netlify.app') + '/success.html',
+        });
+
+        // 2. Enviar el email via Identity Toolkit usando el link generado
+        const apiKey = process.env.FIREBASE_API_KEY;
+        if (!apiKey) {
+            console.warn('[culqi-webhook] FIREBASE_API_KEY no configurado — link generado pero email no enviado:', link);
+            return;
+        }
+
         const res = await fetch(
             `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
             {
@@ -211,8 +222,13 @@ async function sendActivationEmail(email) {
                 body:    JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
             }
         );
-        if (res.ok) console.log(`[culqi-webhook] Email enviado a: ${email}`);
-        else        console.warn('[culqi-webhook] Error email:', (await res.json())?.error?.message);
+
+        const resData = await res.json();
+        if (res.ok) {
+            console.log(`[culqi-webhook] Email de activación enviado a: ${email}`);
+        } else {
+            console.warn(`[culqi-webhook] Error al enviar email a ${email}:`, resData?.error?.message);
+        }
     } catch (err) {
         console.warn('[culqi-webhook] sendActivationEmail error:', err?.message);
     }
