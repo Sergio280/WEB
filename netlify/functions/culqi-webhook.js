@@ -57,12 +57,16 @@ exports.handler = async function (event) {
 
             // ── Suscripción activada / renovada ───────────────────────────────
             case 'subscription.active':
+            case 'subscription.succeeded':
             case 'subscription.renewal':
+            case 'subscription.renewal.succeeded':
                 await handleSubscription(object);
                 break;
 
             // ── Suscripción cancelada ─────────────────────────────────────────
             case 'subscription.cancel':
+            case 'subscription.canceled':
+            case 'subscription.cancellation.succeeded':
                 await handleCancellation(object);
                 break;
 
