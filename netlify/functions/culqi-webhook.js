@@ -60,6 +60,8 @@ exports.handler = async function (event) {
             case 'subscription.succeeded':
             case 'subscription.renewal':
             case 'subscription.renewal.succeeded':
+            case 'subscription.update':
+            case 'subscription.update.succeeded':
                 await handleSubscription(object);
                 break;
 
