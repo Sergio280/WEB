@@ -42,32 +42,25 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const type   = body.type || '';
-    const object = body.data || {};
+    // Culqi envía el objeto directamente como body (sin envelope type/data)
+    const objectType = body.object || '';
+    const status     = body.status || '';
 
-    console.log(`[culqi-webhook] Evento: ${type}`);
+    console.log(`[culqi-webhook] Recibido: object=${objectType} id=${body.id} status=${status}`);
 
     try {
-        switch (type) {
-            // ── Cobro único aprobado ──────────────────────────────────────────
-            case 'charge.creation.succeeded':
-            case 'charge.capture.succeeded':
-                await handleCharge(object);
-                break;
+        if (objectType === 'charge') {
+            await handleCharge(body);
 
-            // ── Suscripción activada / renovada ───────────────────────────────
-            case 'subscription.creation.succeeded':
-            case 'subscription.update.succeeded':
-                await handleSubscription(object);
-                break;
+        } else if (objectType === 'subscription') {
+            if (status === 'canceled') {
+                await handleCancellation(body);
+            } else {
+                await handleSubscription(body);
+            }
 
-            // ── Suscripción cancelada ─────────────────────────────────────────
-            case 'subscription.cancel.succeeded':
-                await handleCancellation(object);
-                break;
-
-            default:
-                console.log(`[culqi-webhook] Evento ignorado: ${type}`);
+        } else {
+            console.log(`[culqi-webhook] Objeto ignorado: ${objectType}`);
         }
     } catch (err) {
         console.error('[culqi-webhook] Error procesando evento:', err?.message || err);
