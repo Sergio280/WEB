@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro de Reclamaciones — BIMS</title>
+    <meta name="description" content="Libro de Reclamaciones virtual de BIMS, conforme a la Ley N.° 29571 y lineamientos INDECOPI.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue:    #1a6fe0;
+            --blue-dk: #0d4baa;
+            --red:     #dc2626;
+            --green:   #16865e;
+            --bg:      #edf0f7;
+            --text:    #141926;
+            --muted:   #5a6a88;
+            --border:  rgba(18,50,130,.09);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(145deg, #0d3f96 0%, #1a6fe0 35%, #0a3580 65%, #07214f 100%);
+            color: white;
+            padding: 52px 20px 44px;
+            text-align: center;
+        }
+
+        .header-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,.7);
+            text-decoration: none;
+            font-size: .88em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: color .2s;
+        }
+        .header-back:hover { color: white; }
+
+        .indecopi-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: .78em;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2em;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+
+        header p { margin-top: 8px; opacity: .8; font-size: .95em; }
+
+        /* Container */
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        /* Info box */
+        .info-box {
+            background: #f0f6ff;
+            border: 1px solid #c8deff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 28px;
+            font-size: .9em;
+            color: #1e3a6e;
+            line-height: 1.65;
+        }
+
+        .info-box strong { display: block; margin-bottom: 4px; font-size: 1em; }
+
+        /* Form card */
+        .form-card {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,20,80,.06), 0 8px 24px rgba(0,20,80,.06);
+            padding: 40px 44px;
+        }
+
+        @media (max-width: 600px) {
+            .form-card { padding: 28px 20px; }
+        }
+
+        /* Form elements */
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: .78em;
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eef3ff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-row.full { grid-template-columns: 1fr; }
+
+        @media (max-width: 560px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: .83em;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: .02em;
+        }
+
+        label span.req { color: var(--red); margin-left: 2px; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #d0d8e8;
+            border-radius: 9px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: .9em;
+            color: var(--text);
+            background: white;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(26,111,224,.12);
+        }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* Radio tipo */
+        .tipo-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tipo-option {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .tipo-option input[type="radio"] { display: none; }
+
+        .tipo-option label {
+            display: block;
+            padding: 12px 16px;
+            border: 1.5px solid #d0d8e8;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-size: .88em;
+            font-weight: 600;
+            color: var(--muted);
+            transition: all .2s;
+            letter-spacing: 0;
+        }
+
+        .tipo-option label .tipo-icon { display: block; font-size: 1.5em; margin-bottom: 4px; }
+        .tipo-option label .tipo-desc { display: block; font-size: .75em; font-weight: 400; margin-top: 2px; opacity: .8; }
+
+        .tipo-option input[type="radio"]:checked + label {
+            border-color: var(--blue);
+            background: #f0f6ff;
+            color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(26,111,224,.10);
+        }
+
+        /* Submit */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+            color: white;
+            border: none;
+            border-radius: 11px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(26,111,224,.3);
+            transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(26,111,224,.42);
+        }
+
+        /* Success state */
+        .success-msg {
+            display: none;
+            background: #f0fdf6;
+            border: 1.5px solid #86efac;
+            border-radius: 14px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .success-msg .success-icon { font-size: 2.5em; margin-bottom: 12px; }
+        .success-msg h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3em;
+            color: #15803d;
+            margin-bottom: 8px;
+        }
+        .success-msg p { color: #166534; font-size: .92em; }
+        .success-msg .code {
+            display: inline-block;
+            background: white;
+            border: 1px solid #86efac;
+            border-radius: 6px;
+            padding: 4px 14px;
+            font-family: monospace;
+            font-size: 1.1em;
+            letter-spacing: .1em;
+            color: #15803d;
+            margin: 10px 0;
+        }
+
+        /* Legal note */
+        .legal-note {
+            font-size: .78em;
+            color: var(--muted);
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(150deg, #0d1628 0%, #111d34 60%, #080f1e 100%);
+            color: rgba(255,255,255,.45);
+            text-align: center;
+            padding: 28px 20px;
+            font-size: .83em;
+        }
+        footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/" class="header-back">← Volver a BIMS</a>
+    <div class="indecopi-badge">📋 Conforme a Ley N.° 29571 — INDECOPI</div>
+    <h1>Libro de Reclamaciones</h1>
+    <p>BIMS · SGAZ · Lima, Perú</p>
+</header>
+
+<div class="container">
+
+    <div class="info-box">
+        <strong>ℹ️ Información importante</strong>
+        La empresa resolverá el reclamo en un plazo máximo de <strong>30 días calendario</strong> contados desde la fecha de registro, conforme al Código de Protección y Defensa del Consumidor (Ley N.° 29571). Recibirás confirmación a tu correo electrónico.
+    </div>
+
+    <div class="form-card">
+        <form id="reclamacionForm" name="libro-reclamaciones" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="libro-reclamaciones">
+            <input type="hidden" name="numero_reclamo" id="numeroReclamo">
+            <p style="display:none;"><input name="bot-field"></p>
+
+            <!-- Sección 1: Datos del consumidor -->
+            <div class="form-section">
+                <div class="form-section-title">1. Datos del consumidor</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombres">Nombres y apellidos <span class="req">*</span></label>
+                        <input type="text" id="nombres" name="nombres" required placeholder="Ej. Juan Pérez García">
+                    </div>
+                    <div class="form-group">
+                        <label for="dni">DNI / CE <span class="req">*</span></label>
+                        <input type="text" id="dni" name="dni" required placeholder="12345678" maxlength="12">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Correo electrónico <span class="req">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono / Celular</label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="+51 999 999 999">
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="domicilio">Domicilio (opcional)</label>
+                        <input type="text" id="domicilio" name="domicilio" placeholder="Calle, distrito, ciudad">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Bien o servicio contratado -->
+            <div class="form-section">
+                <div class="form-section-title">2. Identificación del bien o servicio</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="producto">Producto / plan contratado <span class="req">*</span></label>
+                        <select id="producto" name="producto" required>
+                            <option value="">Seleccionar…</option>
+                            <option>BIMS Individual – 1 mes (S/ 60)</option>
+                            <option>BIMS Individual – 3 meses (S/ 160)</option>
+                            <option>BIMS Individual – 6 meses (S/ 300)</option>
+                            <option>BIMS Individual – 12 meses (S/ 596)</option>
+                            <option>BIMS Profesional – 1 mes (S/ 100)</option>
+                            <option>BIMS Profesional – 3 meses (S/ 268)</option>
+                            <option>BIMS Profesional – 6 meses (S/ 500)</option>
+                            <option>BIMS Profesional – 12 meses (S/ 996)</option>
+                            <option>BIMS – Período de prueba gratuita</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto">Monto pagado (S/)</label>
+                        <input type="text" id="monto" name="monto" placeholder="Ej. 60.00">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_compra">Fecha de compra</label>
+                        <input type="date" id="fecha_compra" name="fecha_compra">
+                    </div>
+                    <div class="form-group">
+                        <label for="num_operacion">N.° de operación / transacción</label>
+                        <input type="text" id="num_operacion" name="num_operacion" placeholder="Ej. 150434998268">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 3: Tipo de solicitud -->
+            <div class="form-section">
+                <div class="form-section-title">3. Tipo de solicitud <span class="req">*</span></div>
+
+                <div class="tipo-group">
+                    <div class="tipo-option">
+                        <input type="radio" id="tipo_reclamo" name="tipo" value="Reclamo" required>
+                        <label for="tipo_reclamo">
+                            <span class="tipo-icon">⚠️</span>
+                            Reclamo
+                            <span class="tipo-desc">Disconformidad con el producto o servicio</span>
+                        </label>
+                    </div>
+                    <div class="tipo-option">
+                        <input type="radio" id="tipo_queja" name="tipo" value="Queja">
+                        <label for="tipo_queja">
+                            <span class="tipo-icon">💬</span>
+                            Queja
+                            <span class="tipo-desc">Malestar por atención o trato recibido</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top:14px;font-size:.83em;">
+                    <strong>Diferencia:</strong> El <em>reclamo</em> se refiere al producto o servicio (no funciona, no se entregó, etc.). La <em>queja</em> se refiere a la atención recibida o al proceso de compra.
+                </div>
+            </div>
+
+            <!-- Sección 4: Detalle -->
+            <div class="form-section">
+                <div class="form-section-title">4. Detalle del reclamo o queja</div>
+
+                <div class="form-row full" style="margin-bottom:16px;">
+                    <div class="form-group">
+                        <label for="descripcion">Descripción del problema <span class="req">*</span></label>
+                        <textarea id="descripcion" name="descripcion" required placeholder="Describa con detalle qué ocurrió, cuándo y cómo afectó el uso del servicio…" rows="5"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="pedido">¿Qué solución solicita? <span class="req">*</span></label>
+                        <textarea id="pedido" name="pedido" required placeholder="Ej. Solicito reembolso, activación de licencia, soporte técnico, etc." rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">📋 Registrar reclamación</button>
+
+            <p class="legal-note">
+                Al enviar este formulario, usted declara que la información proporcionada es verídica.<br>
+                SGAZ responderá dentro de los 30 días calendario siguientes al registro.<br>
+                Este libro de reclamaciones cumple con los lineamientos de INDECOPI (Ley N.° 29571).
+            </p>
+        </form>
+
+        <div class="success-msg" id="successMsg">
+            <div class="success-icon">✅</div>
+            <h3>Reclamación registrada</h3>
+            <p>Número de registro:</p>
+            <div class="code" id="codigoReclamo">—</div>
+            <p>Hemos enviado la confirmación a tu correo. SGAZ responderá en un plazo máximo de <strong>30 días calendario</strong>.</p>
+            <p style="margin-top:12px;"><a href="/" style="color:var(--blue);font-weight:600;">← Volver a BIMS</a></p>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 SGAZ · <a href="/">BIMS</a> · <a href="/terminos.html">Términos y Condiciones</a> · <a href="/privacy-policy.html">Privacidad</a></p>
+</footer>
+
+<script>
+    /* Generar número de reclamo único */
+    function genCodigo() {
+        var d = new Date();
+        var pad = function(n){ return n < 10 ? '0'+n : n; };
+        return 'REC-' + d.getFullYear() +
+               pad(d.getMonth()+1) +
+               pad(d.getDate()) + '-' +
+               Math.floor(1000 + Math.random() * 9000);
+    }
+
+    var codigo = genCodigo();
+    document.getElementById('numeroReclamo').value = codigo;
+
+    /* Netlify form submission */
+    var form = document.getElementById('reclamacionForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var data = new FormData(form);
+
+        fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data).toString()
+        })
+        .then(function() {
+            form.style.display = 'none';
+            var msg = document.getElementById('successMsg');
+            document.getElementById('codigoReclamo').textContent = codigo;
+            msg.style.display = 'block';
+            msg.scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(function() {
+            alert('Error al enviar. Por favor intente nuevamente o contáctenos a alejoszapatasergio@gmail.com');
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones — BIMS</title>
+    <meta name="description" content="Términos y condiciones de uso, política de devoluciones y reembolsos de BIMS.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue:    #1a6fe0;
+            --blue-dk: #0d4baa;
+            --bg:      #edf0f7;
+            --text:    #141926;
+            --muted:   #5a6a88;
+            --border:  rgba(18,50,130,.09);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(145deg, #0d3f96 0%, #1a6fe0 35%, #0a3580 65%, #07214f 100%);
+            color: white;
+            padding: 52px 20px 44px;
+            text-align: center;
+        }
+
+        .header-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,.7);
+            text-decoration: none;
+            font-size: .88em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: color .2s;
+        }
+        .header-back:hover { color: white; }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2em;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+
+        header p {
+            margin-top: 8px;
+            opacity: .8;
+            font-size: .95em;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 48px 20px 80px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,20,80,.06), 0 8px 24px rgba(0,20,80,.06);
+            padding: 40px 44px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 28px 22px; }
+        }
+
+        /* Typography */
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef3ff;
+            letter-spacing: -.01em;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--text);
+            margin: 20px 0 8px;
+        }
+
+        p { color: #3a4a62; margin-bottom: 12px; font-size: .95em; }
+        p:last-child { margin-bottom: 0; }
+
+        ul {
+            list-style: none;
+            margin: 10px 0 14px;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: #3a4a62;
+            font-size: .95em;
+        }
+
+        ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .update-date {
+            text-align: center;
+            font-size: .82em;
+            color: var(--muted);
+            margin-bottom: 28px;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background: #f0f6ff;
+            border: 1px solid #c8deff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            font-size: .93em;
+            color: #1e3a6e;
+        }
+
+        .warning-box {
+            background: #fff8f0;
+            border: 1px solid #ffd4a0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            font-size: .93em;
+            color: #7a3a00;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(150deg, #0d1628 0%, #111d34 60%, #080f1e 100%);
+            color: rgba(255,255,255,.45);
+            text-align: center;
+            padding: 28px 20px;
+            font-size: .83em;
+        }
+
+        footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/" class="header-back">← Volver a BIMS</a>
+    <h1>Términos y Condiciones</h1>
+    <p>Condiciones de uso, licenciamiento y política de devoluciones</p>
+</header>
+
+<div class="container">
+    <p class="update-date">Última actualización: marzo 2026</p>
+
+    <!-- 1. Generalidades -->
+    <div class="card">
+        <h2>1. Aceptación de los términos</h2>
+        <p>Al descargar, instalar o utilizar el plugin BIMS ("el Software"), usted acepta quedar vinculado por estos Términos y Condiciones. Si no está de acuerdo con alguno de estos términos, no utilice el Software.</p>
+        <p>BIMS es un plugin para Autodesk Revit desarrollado y comercializado por <strong>SGAZ</strong>, con RUC y datos de contacto disponibles en la sección de contacto de este sitio.</p>
+    </div>
+
+    <!-- 2. Licencia -->
+    <div class="card">
+        <h2>2. Licencia de uso</h2>
+        <p>SGAZ otorga al usuario una licencia personal, no exclusiva, no transferible y revocable para usar el Software bajo las siguientes condiciones:</p>
+        <ul>
+            <li><strong>Plan Individual:</strong> uso en 1 (un) equipo por usuario registrado.</li>
+            <li><strong>Plan Profesional:</strong> uso en hasta 3 (tres) equipos por usuario registrado.</li>
+            <li><strong>Plan Empresa:</strong> cantidad de equipos según contrato acordado con SGAZ.</li>
+        </ul>
+        <div class="highlight-box">
+            La licencia es personal e intransferible. Está prohibido compartir, revender, sublicenciar o ceder el acceso a terceros.
+        </div>
+        <h3>Restricciones</h3>
+        <ul>
+            <li>No descompilar, realizar ingeniería inversa ni modificar el Software.</li>
+            <li>No eliminar avisos de propiedad intelectual del Software.</li>
+            <li>No usar el Software para actividades ilegales o que violen derechos de terceros.</li>
+        </ul>
+    </div>
+
+    <!-- 3. Planes y pagos -->
+    <div class="card">
+        <h2>3. Planes, precios y pagos</h2>
+        <h3>Período de prueba</h3>
+        <p>BIMS ofrece un período de evaluación gratuita de <strong>30 días</strong> a partir de la primera activación, sin requerir datos de pago. Al vencer el período de prueba, el Software se desactiva hasta que se adquiera un plan.</p>
+
+        <h3>Planes de pago único</h3>
+        <p>El usuario puede adquirir una licencia por períodos de 1, 3, 6 o 12 meses mediante un pago único no recurrente. La licencia vence al término del período contratado.</p>
+
+        <h3>Planes de suscripción</h3>
+        <p>En la modalidad de suscripción, el cobro se realiza mensualmente de forma automática. El usuario puede cancelar en cualquier momento sin penalización; la licencia permanecerá activa hasta el final del período ya pagado.</p>
+
+        <h3>Precios vigentes</h3>
+        <ul>
+            <li>Plan Individual 1 mes: S/ 60</li>
+            <li>Plan Individual 3 meses: S/ 160</li>
+            <li>Plan Individual 6 meses: S/ 300</li>
+            <li>Plan Individual 12 meses: S/ 596</li>
+            <li>Plan Profesional 1 mes: S/ 100</li>
+            <li>Plan Profesional 3 meses: S/ 268</li>
+            <li>Plan Profesional 6 meses: S/ 500</li>
+            <li>Plan Profesional 12 meses: S/ 996</li>
+        </ul>
+        <p>Todos los precios incluyen IGV. SGAZ se reserva el derecho de modificar precios con un aviso previo mínimo de 30 días.</p>
+    </div>
+
+    <!-- 4. Devoluciones -->
+    <div class="card">
+        <h2>4. Política de devoluciones y reembolsos</h2>
+
+        <h3>Derecho de retracto</h3>
+        <p>De conformidad con el Código de Protección y Defensa del Consumidor (Ley N.° 29571), el usuario tiene derecho a solicitar el reembolso total dentro de los <strong>7 días calendario</strong> siguientes a la fecha de pago, siempre que:</p>
+        <ul>
+            <li>El Software presente fallas técnicas graves que impidan su uso normal y SGAZ no haya podido resolverlas en un plazo razonable.</li>
+            <li>El Software no haya sido activado ni utilizado en ningún equipo.</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>No aplica reembolso</strong> cuando el Software ha sido descargado, activado y utilizado durante el período de prueba gratuita de 30 días antes de la compra, dado que el usuario tuvo oportunidad de evaluar el producto sin costo.
+        </div>
+
+        <h3>Procedimiento de solicitud</h3>
+        <ul>
+            <li>Enviar un correo a <strong>alejoszapatasergio@gmail.com</strong> con asunto "SOLICITUD DE REEMBOLSO".</li>
+            <li>Indicar: nombre completo, email de registro, número de operación y motivo.</li>
+            <li>SGAZ responderá en un plazo máximo de 5 días hábiles.</li>
+            <li>El reembolso aprobado se procesará en un plazo de 7 a 15 días hábiles según el medio de pago utilizado.</li>
+        </ul>
+    </div>
+
+    <!-- 5. Actualizaciones -->
+    <div class="card">
+        <h2>5. Actualizaciones y soporte</h2>
+        <p>Las actualizaciones del Software se publican en esta página web y están disponibles para todos los usuarios con licencia activa sin costo adicional.</p>
+        <p>El soporte técnico se brinda según el plan contratado:</p>
+        <ul>
+            <li><strong>Plan Individual:</strong> soporte por email con respuesta en 48 horas hábiles.</li>
+            <li><strong>Plan Profesional:</strong> soporte prioritario con respuesta en 24 horas hábiles.</li>
+            <li><strong>Plan Empresa:</strong> soporte dedicado, capacitación y personalización según contrato.</li>
+        </ul>
+    </div>
+
+    <!-- 6. Propiedad intelectual -->
+    <div class="card">
+        <h2>6. Propiedad intelectual</h2>
+        <p>El Software, su código fuente, diseño, documentación y todos los elementos asociados son propiedad exclusiva de SGAZ y están protegidos por las leyes de propiedad intelectual del Perú y tratados internacionales.</p>
+        <p>Autodesk y Revit son marcas registradas de Autodesk, Inc. SGAZ no tiene afiliación oficial con Autodesk.</p>
+    </div>
+
+    <!-- 7. Limitación de responsabilidad -->
+    <div class="card">
+        <h2>7. Limitación de responsabilidad</h2>
+        <p>El Software se proporciona "tal como está". SGAZ no garantiza que el Software sea ininterrumpido o libre de errores. En ningún caso SGAZ será responsable por daños indirectos, incidentales o consecuentes derivados del uso del Software.</p>
+        <p>La responsabilidad total de SGAZ frente al usuario no excederá el monto pagado por la licencia vigente.</p>
+    </div>
+
+    <!-- 8. Jurisdicción -->
+    <div class="card">
+        <h2>8. Ley aplicable y jurisdicción</h2>
+        <p>Estos Términos se rigen por las leyes de la República del Perú. Cualquier controversia será sometida a los tribunales competentes de Lima, Perú, o resuelta mediante el sistema de INDECOPI si así lo solicita el usuario.</p>
+        <p>Para reclamos y quejas puede utilizar nuestro <a href="/libro-reclamaciones.html" style="color:var(--blue);font-weight:600;">Libro de Reclamaciones</a>.</p>
+    </div>
+
+    <!-- 9. Contacto -->
+    <div class="card">
+        <h2>9. Contacto</h2>
+        <ul>
+            <li><strong>Empresa:</strong> SGAZ</li>
+            <li><strong>Email:</strong> alejoszapatasergio@gmail.com</li>
+            <li><strong>Teléfono:</strong> +51 989 455 558</li>
+            <li><strong>Atención:</strong> Lunes a viernes, 9:00 a.m. – 6:00 p.m. (hora Lima)</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 SGAZ · <a href="/">BIMS</a> · <a href="/privacy-policy.html">Privacidad</a> · <a href="/libro-reclamaciones.html">Libro de Reclamaciones</a></p>
+</footer>
+
+</body>
+</html>
