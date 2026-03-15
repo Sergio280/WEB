@@ -1,6 +1,12 @@
 [build]
   functions = "netlify/functions"
 
+[[headers]]
+  for = "/*.exe"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Disposition = "attachment"
+
 # ── Culqi (activo) ────────────────────────────────────────────────────────────
 [[redirects]]
   from   = "/api/culqi-charge"
