@@ -42,8 +42,8 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const type   = body.type   || '';
-    const object = body.data   || {};
+    const type   = body.type              || '';
+    const object = body.data?.object || body.data || {};
 
     console.log(`[culqi-webhook] Evento: ${type}`);
 
