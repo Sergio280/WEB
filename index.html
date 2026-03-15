@@ -3541,24 +3541,24 @@
             <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
         </div>
 
-        <!-- Mercado Pago trust badge -->
+        <!-- Culqi trust badge -->
         <div class="mp-badge-strip reveal">
             <div class="mp-badge-item">
                 <span class="mp-icon">🔒</span>
                 <span>Pago seguro con</span>
-                <span class="mp-logo-text">mercado<span>pago</span></span>
+                <strong style="color:#ff4f00;">Culqi</strong>
             </div>
             <div class="mp-badge-item">
                 <span class="mp-icon">💳</span>
                 <span>Tarjeta de crédito / débito</span>
             </div>
             <div class="mp-badge-item">
-                <span class="mp-icon">🏦</span>
-                <span>Transferencia bancaria</span>
+                <span class="mp-icon">🛡️</span>
+                <span>Cifrado SSL 256-bit</span>
             </div>
             <div class="mp-badge-item">
                 <span class="mp-icon">📱</span>
-                <span>Yape / Plin</span>
+                <span>Visa / Mastercard / Amex</span>
             </div>
         </div>
 
@@ -3774,7 +3774,7 @@
 
         <div class="mp-trust">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#009EE3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Pago seguro procesado por <strong>Mercado Pago</strong>
+            Pago seguro procesado por <strong>Culqi</strong>
         </div>
 
         <!-- Tarjetas aceptadas -->
@@ -3989,11 +3989,10 @@
      * C) Tu Public Key la encuentras en:
      *    https://www.mercadopago.com.pe/developers/panel/credentials
      * ───────────────────────────────────────────────────────────────────── */
-    /* ── Culqi public key (reemplazar con la tuya de producción) ── */
     var CULQI_PUBLIC_KEY = 'pk_test_5WhtkrNldUED2FD9';
 
-    var MP_CONFIG = {
-        publicKey: CULQI_PUBLIC_KEY, // compatibilidad con renderModal
+    var CULQI_CONFIG = {
+        publicKey: CULQI_PUBLIC_KEY,
 
         plans: {
             individual: {
@@ -4115,7 +4114,7 @@
 
     /* ── Renderizar contenido del modal ───────────────────────────────── */
     function renderModal() {
-        var plan  = MP_CONFIG.plans[currentPlan];
+        var plan  = CULQI_CONFIG.plans[currentPlan];
         var data  = currentPaymentType === 'subscription'
                     ? plan.subscription
                     : plan[currentDuration];
@@ -4239,7 +4238,7 @@
         emailInput.classList.remove('error');
         emailError.classList.remove('show');
 
-        var plan = MP_CONFIG.plans[currentPlan];
+        var plan = CULQI_CONFIG.plans[currentPlan];
         var isSub = currentPaymentType === 'subscription';
         var item  = isSub ? plan.subscription : plan[currentDuration];
         /* Culqi usa centavos: S/60 = 6000 */
@@ -4267,8 +4266,11 @@
         var ctx = window._culqiContext || {};
 
         if (Culqi.error) {
-            /* El usuario cerró el modal o hubo un error */
             console.warn('[Culqi] Error/cancelado:', Culqi.error);
+            if (ctx.isTest && testBtn) {
+                testBtn.disabled = false;
+                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+            }
             return;
         }
 
@@ -4278,12 +4280,16 @@
         var email    = ctx.email;
         var isSub    = ctx.isSub;
 
-        /* Cerrar overlay de Culqi */
         Culqi.close();
 
-        /* Feedback visual */
-        payBtn.textContent = isSub ? 'Activando…' : 'Procesando…';
-        payBtn.disabled    = true;
+        /* Feedback visual según origen (modal o botón de prueba) */
+        if (ctx.isTest) {
+            testBtn.disabled    = true;
+            testBtn.textContent = 'Procesando…';
+        } else {
+            payBtn.textContent = isSub ? 'Activando…' : 'Procesando…';
+            payBtn.disabled    = true;
+        }
 
         var endpoint = isSub ? '/api/culqi-subscription' : '/api/culqi-charge';
         var body     = isSub
@@ -4305,14 +4311,21 @@
         })
         .catch(function (err) {
             console.error('[BIMS] Error de pago:', err);
-            payBtn.disabled = false;
-            renderModal();
-            emailError.textContent = err.message || 'Error al procesar el pago. Intenta de nuevo.';
-            emailError.classList.add('show');
+            if (ctx.isTest) {
+                testBtn.disabled    = false;
+                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+                testError.textContent = err.message || 'Error al procesar el pago.';
+                testError.style.display = 'block';
+            } else {
+                payBtn.disabled = false;
+                renderModal();
+                emailError.textContent = err.message || 'Error al procesar el pago. Intenta de nuevo.';
+                emailError.classList.add('show');
+            }
         });
     };
 
-    /* ── Botón de prueba S/2 ──────────────────────────────────────────── */
+    /* ── Botón de prueba S/2 (Culqi) ─────────────────────────────────── */
     var testBtn   = document.getElementById('test-pay-btn');
     var testEmail = document.getElementById('test-email');
     var testError = document.getElementById('test-error');
@@ -4326,28 +4339,18 @@
                 return;
             }
             testError.style.display = 'none';
-            testBtn.disabled = true;
-            testBtn.textContent = 'Procesando…';
 
-            fetch('/api/create-preference', {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ email: email, plan: 'test', duration: 'test' }),
-            })
-            .then(function (res) { return res.json(); })
-            .then(function (data) {
-                if (data.init_point) {
-                    window.location.href = data.init_point;
-                } else {
-                    throw new Error(data.error || 'Sin URL de checkout');
-                }
-            })
-            .catch(function (err) {
-                testError.textContent = err.message;
-                testError.style.display = 'block';
-                testBtn.disabled = false;
-                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+            /* Contexto para el callback window.culqi */
+            window._culqiContext = { email: email, plan: 'test', isSub: false, duration: 'test', isTest: true };
+
+            Culqi.publicKey = CULQI_PUBLIC_KEY;
+            Culqi.settings({
+                title:       'BIMS — Prueba',
+                currency:    'PEN',
+                description: 'Cobro de prueba S/2',
+                amount:      200,
             });
+            Culqi.open({ email: email });
         });
     }
 
