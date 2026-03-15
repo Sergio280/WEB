@@ -1,6 +1,23 @@
 [build]
   functions = "netlify/functions"
 
+# ── Culqi (activo) ────────────────────────────────────────────────────────────
+[[redirects]]
+  from   = "/api/culqi-charge"
+  to     = "/.netlify/functions/culqi-charge"
+  status = 200
+
+[[redirects]]
+  from   = "/api/culqi-subscription"
+  to     = "/.netlify/functions/culqi-subscription"
+  status = 200
+
+[[redirects]]
+  from   = "/api/culqi-webhook"
+  to     = "/.netlify/functions/culqi-webhook"
+  status = 200
+
+# ── Mercado Pago (legacy — mantener hasta migración completa) ─────────────────
 [[redirects]]
   from   = "/api/create-preference"
   to     = "/.netlify/functions/create-preference"

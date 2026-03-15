@@ -3788,8 +3788,8 @@
     </div>
 </div>
 
-<!-- Mercado Pago SDK -->
-<script src="https://sdk.mercadopago.com/js/v2"></script>
+<!-- Culqi.js -->
+<script src="https://checkout.culqi.com/js/v4"></script>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
 <script>
@@ -3989,8 +3989,11 @@
      * C) Tu Public Key la encuentras en:
      *    https://www.mercadopago.com.pe/developers/panel/credentials
      * ───────────────────────────────────────────────────────────────────── */
+    /* ── Culqi public key (reemplazar con la tuya de producción) ── */
+    var CULQI_PUBLIC_KEY = 'pk_live_TU_PUBLIC_KEY_CULQI';
+
     var MP_CONFIG = {
-        publicKey: 'APP_USR-677863ea-b9ab-4121-9260-f97d0ec6f2d7',  // ← Reemplazar con tu Public Key
+        publicKey: CULQI_PUBLIC_KEY, // compatibilidad con renderModal
 
         plans: {
             individual: {
@@ -4222,7 +4225,7 @@
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
     }
 
-    /* ── Ir al checkout de Mercado Pago ───────────────────────────────── */
+    /* ── Abrir Culqi Checkout ─────────────────────────────────────────── */
     function goToCheckout() {
         var email = emailInput.value.trim();
 
@@ -4236,37 +4239,78 @@
         emailInput.classList.remove('error');
         emailError.classList.remove('show');
 
-        var isSub    = currentPaymentType === 'subscription';
-        var endpoint = isSub ? '/api/create-subscription' : '/api/create-preference';
-        var body     = isSub
-            ? { email: email, plan: currentPlan }
-            : { email: email, plan: currentPlan, duration: currentDuration };
+        var plan = MP_CONFIG.plans[currentPlan];
+        var isSub = currentPaymentType === 'subscription';
+        var item  = isSub ? plan.subscription : plan[currentDuration];
+        /* Culqi usa centavos: S/60 = 6000 */
+        var amountCentavos = isSub
+            ? (plan.price * 100)
+            : (item.price * 100);
+
+        /* Inicializar Culqi con la public key */
+        Culqi.publicKey = CULQI_PUBLIC_KEY;
+        Culqi.settings({
+            title:       'BIMS — ' + plan.name,
+            currency:    'PEN',
+            description: isSub ? 'Suscripción mensual' : item.period,
+            amount:      amountCentavos,
+        });
+
+        /* Guardar contexto para el callback culqi() */
+        window._culqiContext = { email: email, plan: currentPlan, isSub: isSub, duration: currentDuration };
+
+        Culqi.open({ email: email });
+    }
+
+    /* ── Callback global de Culqi (se llama cuando el usuario paga) ────── */
+    window.culqi = function () {
+        var ctx = window._culqiContext || {};
+
+        if (Culqi.error) {
+            /* El usuario cerró el modal o hubo un error */
+            console.warn('[Culqi] Error/cancelado:', Culqi.error);
+            return;
+        }
+
+        if (!Culqi.token) return;
+
+        var token_id = Culqi.token.id;
+        var email    = ctx.email;
+        var isSub    = ctx.isSub;
+
+        /* Cerrar overlay de Culqi */
+        Culqi.close();
 
         /* Feedback visual */
         payBtn.textContent = isSub ? 'Activando…' : 'Procesando…';
         payBtn.disabled    = true;
+
+        var endpoint = isSub ? '/api/culqi-subscription' : '/api/culqi-charge';
+        var body     = isSub
+            ? { token_id: token_id, email: email, plan: ctx.plan }
+            : { token_id: token_id, email: email, plan: ctx.plan, duration: ctx.duration };
 
         fetch(endpoint, {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(body),
         })
-        .then(function (res) {
-            if (!res.ok) throw new Error('Error del servidor: ' + res.status);
-            return res.json();
-        })
+        .then(function (res) { return res.json(); })
         .then(function (data) {
-            if (!data.init_point) throw new Error('Sin URL de checkout');
-            window.location.href = data.init_point;
+            if (data.success) {
+                window.location.href = '/success.html';
+            } else {
+                throw new Error(data.error || 'Pago rechazado');
+            }
         })
         .catch(function (err) {
-            console.error('[BIMS] Error al crear pago:', err);
+            console.error('[BIMS] Error de pago:', err);
             payBtn.disabled = false;
-            renderModal(); /* Restaura el texto del botón */
-            emailError.textContent = 'Error al conectar con el servidor. Intenta de nuevo.';
+            renderModal();
+            emailError.textContent = err.message || 'Error al procesar el pago. Intenta de nuevo.';
             emailError.classList.add('show');
         });
-    }
+    };
 
     /* ── Botón de prueba S/2 ──────────────────────────────────────────── */
     var testBtn   = document.getElementById('test-pay-btn');
@@ -4355,10 +4399,7 @@
         emailError.classList.remove('show');
     });
 
-    /* ── Inicializar SDK de Mercado Pago (opcional para futura integración) */
-    if (typeof MercadoPago !== 'undefined' && MP_CONFIG.publicKey !== 'TU_PUBLIC_KEY_MP') {
-        new MercadoPago(MP_CONFIG.publicKey, { locale: 'es-PE' });
-    }
+    /* ── Culqi ya se inicializa en goToCheckout() con la public key ── */
 
 })();
 </script>
