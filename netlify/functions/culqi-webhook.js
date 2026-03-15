@@ -42,12 +42,13 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const type   = body.type || '';
-    const object = body.data || {};
+    const type = body.type || '';
+    let object = body.data || {};
+    if (typeof object === 'string') {
+        try { object = JSON.parse(object); } catch { object = {}; }
+    }
 
-    console.log(`[culqi-webhook] Evento: ${type} | id: ${body.id}`);
-    console.log(`[culqi-webhook] body.data keys: ${Object.keys(object).join(',') || 'VACÍO'}`);
-    console.log(`[culqi-webhook] body keys: ${Object.keys(body).join(',')}`);
+    console.log(`[culqi-webhook] Evento: ${type} | charge_id: ${object.id} | email: ${object.email}`);
 
     try {
         switch (type) {
