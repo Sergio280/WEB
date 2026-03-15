@@ -1,75 +1,629 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Firebase Setup</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIMS · Firebase Setup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #07080c;
+            --bg2:       #0d0f18;
+            --surface:   rgba(255,255,255,0.04);
+            --border:    rgba(255,255,255,0.07);
+            --border-hi: rgba(255,130,20,0.45);
+            --fire:      #FF6D00;
+            --ember:     #FFA040;
+            --spark:     #FFD180;
+            --text:      #e8eaf0;
+            --muted:     #687080;
+            --success:   #4ADE80;
+            --error:     #F87171;
+            --info:      #60A5FA;
+            --radius:    14px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Sora', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Animated background grid ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,109,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,109,0,0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(255,109,0,0.09) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 52px;
+            animation: fadeDown 0.6s ease both;
+        }
+
+        .logo-ring {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #FF6D00, #FF3D00);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 0 1px rgba(255,109,0,0.4), 0 8px 32px rgba(255,109,0,0.25);
+            flex-shrink: 0;
+        }
+
+        .logo-ring svg { width: 26px; height: 26px; fill: #fff; }
+
+        .header-text { flex: 1; }
+
+        .header-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(90deg, #fff 0%, var(--ember) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .header-sub {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .header-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255,109,0,0.12);
+            border: 1px solid rgba(255,109,0,0.3);
+            color: var(--ember);
+            letter-spacing: 0.08em;
+        }
+
+        /* ── Section label ── */
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── User cards ── */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+            margin-bottom: 36px;
+        }
+
+        .user-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+            opacity: 0;
+            transform: translateY(18px);
+            animation: cardIn 0.5s ease forwards;
+        }
+
+        .user-card:nth-child(1) { animation-delay: 0.15s; }
+        .user-card:nth-child(2) { animation-delay: 0.27s; }
+        .user-card:nth-child(3) { animation-delay: 0.39s; }
+
+        .user-card:hover {
+            border-color: var(--border-hi);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(255,109,0,0.1);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .card-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 1rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .avatar-admin  { background: rgba(255,109,0,0.2); color: var(--fire); border: 1px solid rgba(255,109,0,0.3); }
+        .avatar-user   { background: rgba(96,165,250,0.15); color: var(--info); border: 1px solid rgba(96,165,250,0.25); }
+
+        .card-badges { display: flex; flex-direction: column; gap: 5px; align-items: flex-end; }
+
+        .badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.62rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .badge-enterprise { background: rgba(255,209,128,0.15); color: var(--spark); border: 1px solid rgba(255,209,128,0.25); }
+        .badge-pro        { background: rgba(96,165,250,0.15);  color: var(--info);  border: 1px solid rgba(96,165,250,0.25); }
+        .badge-trial      { background: rgba(156,163,175,0.15); color: #9CA3AF;      border: 1px solid rgba(156,163,175,0.2); }
+        .badge-admin      { background: rgba(255,109,0,0.15);   color: var(--ember); border: 1px solid rgba(255,109,0,0.25); }
+        .badge-user       { background: rgba(74,222,128,0.12);  color: var(--success); border: 1px solid rgba(74,222,128,0.2); }
+
+        .card-email {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text);
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .card-meta svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+        /* ── Main action button ── */
+        .action-area {
+            margin-bottom: 36px;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.5s ease forwards;
+        }
+
+        .btn-main {
+            position: relative;
+            width: 100%;
+            padding: 18px 32px;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            color: #fff;
+            background: linear-gradient(135deg, #FF6D00 0%, #E53900 100%);
+            box-shadow: 0 4px 20px rgba(255,109,0,0.35), 0 1px 0 rgba(255,255,255,0.1) inset;
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-main:hover::before { left: 160%; }
+        .btn-main:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,109,0,0.5), 0 1px 0 rgba(255,255,255,0.15) inset; }
+        .btn-main:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(255,109,0,0.3); }
+
+        .btn-main:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* Spinner inside button */
+        .btn-spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        .is-loading .btn-label { display: none; }
+        .is-loading .btn-icon  { display: none; }
+        .is-loading .btn-spinner { display: block; }
+
+        /* Progress bar */
+        .progress-wrap {
+            height: 3px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 12px;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .progress-wrap.visible { opacity: 1; }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--fire), var(--ember));
+            border-radius: 2px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 8px var(--fire);
+        }
+
+        /* ── Log panel ── */
+        .log-panel {
+            opacity: 0;
+            animation: fadeUp 0.5s 0.62s ease forwards;
+        }
+
+        #results {
+            background: rgba(7,8,12,0.8);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            min-height: 100px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            line-height: 1.85;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .log-empty {
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-empty::before {
+            content: '>';
+            color: var(--fire);
+            opacity: 0.5;
+        }
+
+        .log-line {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            animation: logIn 0.3s ease both;
+        }
+
+        .log-line:last-child { border-bottom: none; }
+
+        .log-ts {
+            color: var(--muted);
+            flex-shrink: 0;
+            font-size: 0.68rem;
+        }
+
+        .log-icon { flex-shrink: 0; font-size: 0.85rem; }
+        .log-msg  { flex: 1; }
+
+        .log-success { color: var(--success); }
+        .log-error   { color: var(--error); }
+        .log-info    { color: var(--info); }
+        .log-done    { color: var(--spark); font-weight: 600; }
+
+        .log-uid {
+            color: var(--muted);
+            font-size: 0.68rem;
+        }
+
+        /* ── Footer ── */
+        footer {
+            margin-top: 52px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.08em;
+            opacity: 0;
+            animation: fadeUp 0.5s 0.75s ease forwards;
+        }
+
+        footer span { color: var(--fire); }
+
+        /* ── Keyframes ── */
+        @keyframes fadeDown  { from { opacity:0; transform: translateY(-16px); } to { opacity:1; transform: none; } }
+        @keyframes fadeUp    { from { opacity:0; transform: translateY(16px);  } to { opacity:1; transform: none; } }
+        @keyframes cardIn    { from { opacity:0; transform: translateY(18px);  } to { opacity:1; transform: none; } }
+        @keyframes logIn     { from { opacity:0; transform: translateX(-8px);  } to { opacity:1; transform: none; } }
+        @keyframes spin      { to   { transform: rotate(360deg); } }
+
+        /* ── Scrollbar ── */
+        #results::-webkit-scrollbar { width: 4px; }
+        #results::-webkit-scrollbar-track { background: transparent; }
+        #results::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
+
+        /* ── Responsive ── */
+        @media (max-width: 520px) {
+            .page-wrap { padding: 32px 16px 60px; }
+            .header-title { font-size: 1.3rem; }
+            .users-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <h1>Firebase User Setup</h1>
-    <button onclick="createUsersAndLicenses()">Crear Usuarios y Licencias</button>
-    <div id="results"></div>
 
-    <script>
-        // TU CONFIGURACIÓN DE FIREBASE (Imagen 1)
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY_AQUI",
-            authDomain: "bims-8d507.firebaseapp.com",
-            databaseURL: "https://bims-8d507-default-rtdb.firebaseio.com",
-            projectId: "bims-8d507",
-            storageBucket: "bims-8d507.appspot.com",
-            messagingSenderId: "TU_SENDER_ID",
-            appId: "TU_APP_ID"
-        };
+<div class="page-wrap">
 
-        firebase.initializeApp(firebaseConfig);
+    <!-- Header -->
+    <header>
+        <div class="logo-ring">
+            <!-- Firebase flame icon -->
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.62 11.558l-3.203 2.98-2.972-5.995-1.437 5.95L8 11.088l4.972 17.932L20.22 29l.536-1.978 3.481-15.304-4.618-.16zm-1.002 2.138l2.322.08-1.85 8.11L8.948 13.21l2.52 2.443 2.185-9.04 2.97 5.995.048.088zm-8.614-2.447l5.24 10.532-5.24-10.532zm10.05 10.97l-4.785 2.227 4.785-2.227z"/>
+            </svg>
+        </div>
+        <div class="header-text">
+            <div class="header-title">BIMS Admin</div>
+            <div class="header-sub">Firebase User Setup</div>
+        </div>
+        <div class="header-badge">v10.7.1</div>
+    </header>
 
-        const users = [
-            { email: "admin@empresa.com", password: "Admin123!Secure", role: "Admin", licenseType: "enterprise", maxDevices: 3 },
-            { email: "user1@empresa.com", password: "User123!Secure", role: "User", licenseType: "pro", maxDevices: 2 },
-            { email: "user2@empresa.com", password: "User456!Secure", role: "User", licenseType: "trial", maxDevices: 1 }
-        ];
+    <!-- Users preview -->
+    <div class="section-label">Usuarios a registrar</div>
+    <div class="users-grid">
 
-        async function createUsersAndLicenses() {
-            const results = document.getElementById('results');
-            results.innerHTML = '<p>Creando usuarios...</p>';
+        <div class="user-card">
+            <div class="card-top">
+                <div class="card-avatar avatar-admin">A</div>
+                <div class="card-badges">
+                    <span class="badge badge-admin">Admin</span>
+                    <span class="badge badge-enterprise">Enterprise</span>
+                </div>
+            </div>
+            <div class="card-email">admin@empresa.com</div>
+            <div class="card-meta">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3A1.5 1.5 0 013 1.5h10A1.5 1.5 0 0114.5 3v2a.5.5 0 01-1 0V3a.5.5 0 00-.5-.5H3A.5.5 0 002.5 3v10a.5.5 0 00.5.5h10a.5.5 0 00.5-.5v-2a.5.5 0 011 0v2A1.5 1.5 0 0113 14.5H3A1.5 1.5 0 011.5 13V3z"/><path d="M8 10.5a.5.5 0 01-.5-.5V6a.5.5 0 011 0v4a.5.5 0 01-.5.5z"/><circle cx="8" cy="4.5" r=".5"/></svg>
+                3 dispositivos máx.
+            </div>
+        </div>
 
-            for (const user of users) {
-                try {
-                    // Crear usuario en Authentication
-                    const userCredential = await firebase.auth().createUserWithEmailAndPassword(
-                        user.email, 
-                        user.password
-                    );
-                    
-                    const uid = userCredential.user.uid;
+        <div class="user-card">
+            <div class="card-top">
+                <div class="card-avatar avatar-user">U</div>
+                <div class="card-badges">
+                    <span class="badge badge-user">User</span>
+                    <span class="badge badge-pro">Pro</span>
+                </div>
+            </div>
+            <div class="card-email">user1@empresa.com</div>
+            <div class="card-meta">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3A1.5 1.5 0 013 1.5h10A1.5 1.5 0 0114.5 3v2a.5.5 0 01-1 0V3a.5.5 0 00-.5-.5H3A.5.5 0 002.5 3v10a.5.5 0 00.5.5h10a.5.5 0 00.5-.5v-2a.5.5 0 011 0v2A1.5 1.5 0 0113 14.5H3A1.5 1.5 0 011.5 13V3z"/><path d="M8 10.5a.5.5 0 01-.5-.5V6a.5.5 0 011 0v4a.5.5 0 01-.5.5z"/><circle cx="8" cy="4.5" r=".5"/></svg>
+                2 dispositivos máx.
+            </div>
+        </div>
 
-                    // Crear licencia en Realtime Database
-                    await firebase.database().ref('licenses/' + uid).set({
-                        email: user.email,
-                        active: true,
-                        role: user.role,
-                        licenseType: user.licenseType,
-                        expirationDate: "2025-12-31",
-                        maxDevices: user.maxDevices,
-                        devices: {},
-                        createdAt: new Date().toISOString(),
-                        lastLogin: null
-                    });
+        <div class="user-card">
+            <div class="card-top">
+                <div class="card-avatar avatar-user">U</div>
+                <div class="card-badges">
+                    <span class="badge badge-user">User</span>
+                    <span class="badge badge-trial">Trial</span>
+                </div>
+            </div>
+            <div class="card-email">user2@empresa.com</div>
+            <div class="card-meta">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3A1.5 1.5 0 013 1.5h10A1.5 1.5 0 0114.5 3v2a.5.5 0 01-1 0V3a.5.5 0 00-.5-.5H3A.5.5 0 002.5 3v10a.5.5 0 00.5.5h10a.5.5 0 00.5-.5v-2a.5.5 0 011 0v2A1.5 1.5 0 0113 14.5H3A1.5 1.5 0 011.5 13V3z"/><path d="M8 10.5a.5.5 0 01-.5-.5V6a.5.5 0 011 0v4a.5.5 0 01-.5.5z"/><circle cx="8" cy="4.5" r=".5"/></svg>
+                1 dispositivo máx.
+            </div>
+        </div>
 
-                    results.innerHTML += `<p>✅ Usuario creado: ${user.email} (UID: ${uid})</p>`;
-                    
-                    // Cerrar sesión para crear el siguiente usuario
-                    await firebase.auth().signOut();
-                    
-                } catch (error) {
-                    results.innerHTML += `<p>❌ Error con ${user.email}: ${error.message}</p>`;
-                }
-            }
-            
-            results.innerHTML += '<p><strong>✅ PROCESO COMPLETADO</strong></p>';
+    </div>
+
+    <!-- Action -->
+    <div class="action-area">
+        <div class="section-label">Ejecutar proceso</div>
+        <button class="btn-main" id="mainBtn" onclick="createUsersAndLicenses()">
+            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+            </svg>
+            <span class="btn-label">Crear Usuarios y Licencias</span>
+            <div class="btn-spinner"></div>
+        </button>
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <!-- Log output -->
+    <div class="log-panel">
+        <div class="section-label">Log de ejecución</div>
+        <div id="results">
+            <span class="log-empty">Esperando ejecución...</span>
+        </div>
+    </div>
+
+    <footer>BIMS · Firebase Realtime Database &amp; Auth · <span>bims-8d507</span></footer>
+</div>
+
+<script>
+    // TU CONFIGURACIÓN DE FIREBASE (Imagen 1)
+    const firebaseConfig = {
+        apiKey: "TU_API_KEY_AQUI",
+        authDomain: "bims-8d507.firebaseapp.com",
+        databaseURL: "https://bims-8d507-default-rtdb.firebaseio.com",
+        projectId: "bims-8d507",
+        storageBucket: "bims-8d507.appspot.com",
+        messagingSenderId: "TU_SENDER_ID",
+        appId: "TU_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const users = [
+        { email: "admin@empresa.com", password: "Admin123!Secure", role: "Admin", licenseType: "enterprise", maxDevices: 3 },
+        { email: "user1@empresa.com", password: "User123!Secure", role: "User", licenseType: "pro", maxDevices: 2 },
+        { email: "user2@empresa.com", password: "User456!Secure", role: "User", licenseType: "trial", maxDevices: 1 }
+    ];
+
+    // ── UI helpers ──────────────────────────────────────
+    function getTs() {
+        return new Date().toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function appendLog(msg, type = 'info', uid = null) {
+        const container = document.getElementById('results');
+        const iconMap = { success: '✅', error: '❌', info: '◎', done: '🏁' };
+        const icon = iconMap[type] || '◎';
+
+        const line = document.createElement('div');
+        line.className = `log-line log-${type}`;
+        line.innerHTML = `
+            <span class="log-ts">${getTs()}</span>
+            <span class="log-icon">${icon}</span>
+            <span class="log-msg">${msg}${uid ? ` <span class="log-uid">[uid: ${uid.slice(0,8)}…]</span>` : ''}</span>
+        `;
+        container.appendChild(line);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function setProgress(pct) {
+        const wrap = document.getElementById('progressWrap');
+        const bar  = document.getElementById('progressBar');
+        wrap.classList.add('visible');
+        bar.style.width = pct + '%';
+        if (pct >= 100) {
+            setTimeout(() => { wrap.classList.remove('visible'); bar.style.width = '0%'; }, 1200);
         }
-    </script>
+    }
+
+    // ── Main function (original logic, untouched) ────────
+    async function createUsersAndLicenses() {
+        const btn = document.getElementById('mainBtn');
+        const resultsDiv = document.getElementById('results');
+
+        btn.classList.add('is-loading');
+        btn.disabled = true;
+
+        resultsDiv.innerHTML = '';
+        appendLog('Iniciando proceso de creación de usuarios…', 'info');
+        setProgress(5);
+
+        const total = users.length;
+
+        for (let i = 0; i < total; i++) {
+            const user = users[i];
+            try {
+                // Crear usuario en Authentication
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    user.email,
+                    user.password
+                );
+
+                const uid = userCredential.user.uid;
+
+                // Crear licencia en Realtime Database
+                await firebase.database().ref('licenses/' + uid).set({
+                    email: user.email,
+                    active: true,
+                    role: user.role,
+                    licenseType: user.licenseType,
+                    expirationDate: "2025-12-31",
+                    maxDevices: user.maxDevices,
+                    devices: {},
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null
+                });
+
+                appendLog(`Usuario creado: <strong>${user.email}</strong>`, 'success', uid);
+
+                // Cerrar sesión para crear el siguiente usuario
+                await firebase.auth().signOut();
+
+            } catch (error) {
+                appendLog(`Error con <strong>${user.email}</strong>: ${error.message}`, 'error');
+            }
+
+            setProgress(Math.round(((i + 1) / total) * 95));
+        }
+
+        setProgress(100);
+        appendLog('PROCESO COMPLETADO', 'done');
+
+        btn.classList.remove('is-loading');
+        btn.disabled = false;
+    }
+</script>
 </body>
 </html>
