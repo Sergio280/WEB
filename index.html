@@ -1802,6 +1802,451 @@
             .mp-modal-price { font-size: 2em; }
         }
     </style>
+
+    <!-- ── Google Fonts ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+    /* ══════════════════════════════════════════════════════════
+       BIMS — Design Upgrade Layer
+       Overrides base styles without touching HTML or JS
+    ══════════════════════════════════════════════════════════ */
+
+    :root {
+        --blue:    #1a6fe0;
+        --blue-dk: #0d4baa;
+        --green:   #16865e;
+        --orange:  #cc6b00;
+        --purple:  #6b20e8;
+        --bg:      #edf0f7;
+        --text:    #141926;
+
+        --shadow-card:  0 1px 4px rgba(0,20,80,.06), 0 8px 24px rgba(0,20,80,.07);
+        --shadow-hover: 0 4px 16px rgba(0,20,80,.10), 0 20px 48px rgba(0,20,80,.10);
+        --border-card:  rgba(18,50,130,.07);
+    }
+
+    /* ── Base typography ── */
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: var(--bg);
+    }
+
+    h1, h2, h3, .header-logo, .stat-number,
+    .price-name, .price-amount, .panel-header h2,
+    .efectividad-section h2, .use-cases-section h2,
+    .download-section h2, .intro h2 {
+        font-family: 'Outfit', sans-serif;
+        letter-spacing: -0.02em;
+    }
+
+    /* ── Subtle mesh background ── */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 60% 50% at 15% 15%, rgba(26,111,224,.05) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 40% at 85% 85%, rgba(107,32,232,.04) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* ─────────────────────────── HEADER ─────────────────────────── */
+    header {
+        background: linear-gradient(145deg, #0d3f96 0%, #1a6fe0 35%, #0a3580 65%, #07214f 100%);
+        background-size: 200% 200%;
+        padding: 96px 20px 76px;
+    }
+
+    .header-logo {
+        font-size: 5em;
+        font-weight: 900;
+        letter-spacing: 14px;
+        background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,.72) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        filter: drop-shadow(0 6px 28px rgba(0,0,0,.35));
+    }
+
+    .header-sub {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.35em;
+        font-weight: 500;
+    }
+
+    .header-compat {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        background: rgba(255,255,255,.11);
+        border: 1px solid rgba(255,255,255,.22);
+        font-weight: 600;
+    }
+
+    .header-cta a {
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: .01em;
+        padding: 15px 44px;
+        box-shadow: 0 8px 28px rgba(0,0,0,.28);
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+    }
+
+    .header-cta a:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 16px 44px rgba(0,0,0,.38);
+    }
+
+    .header-cta a.secondary {
+        border-radius: 12px;
+        backdrop-filter: blur(8px);
+    }
+
+    /* ─────────────────────────── NAV ─────────────────────────── */
+    nav {
+        background: rgba(255,255,255,.92);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border-bottom: 1px solid rgba(18,50,130,.07);
+        box-shadow: 0 1px 0 rgba(18,50,130,.04), 0 4px 20px rgba(0,0,0,.06);
+    }
+
+    nav a {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 600;
+        font-size: .88em;
+        color: #1e3560;
+        border-radius: 8px;
+        transition: background .2s, color .2s;
+    }
+
+    nav a:hover {
+        background: #eef4ff;
+        color: var(--blue);
+        transform: none;
+    }
+
+    nav a.nav-cta {
+        background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+        border-radius: 9px;
+        box-shadow: 0 2px 12px rgba(26,111,224,.3);
+    }
+
+    nav a.nav-cta:hover {
+        background: linear-gradient(135deg, #2c80f0, var(--blue-dk));
+        box-shadow: 0 4px 18px rgba(26,111,224,.42);
+        transform: translateY(-1px);
+    }
+
+    /* ─────────────────────────── INTRO ─────────────────────────── */
+    .intro {
+        border-radius: 20px;
+        background: linear-gradient(155deg, #fff 55%, #f2f7ff 100%);
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        padding: 52px;
+    }
+
+    .intro h2 { font-size: 2.1em; }
+
+    .badge {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    /* ─────────────────────────── STATS ─────────────────────────── */
+    .stat-card {
+        border-radius: 18px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        background: white;
+        padding: 36px 20px;
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .stat-number {
+        font-size: 3.2em;
+        letter-spacing: -.03em;
+    }
+
+    .stat-label {
+        font-weight: 600;
+        color: #5a6a88;
+    }
+
+    /* ─────────────────────────── SECTIONS ─────────────────────────── */
+    .efectividad-section,
+    .use-cases-section {
+        border-radius: 20px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+    }
+
+    .efectividad-section h2,
+    .use-cases-section h2 {
+        font-size: 2em;
+    }
+
+    .section-sub { color: #6a7a96; }
+
+    .comparison-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        transition: transform .25s, box-shadow .25s;
+    }
+
+    .comparison-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    /* ─────────────────────────── COMMAND CARDS ─────────────────────────── */
+    .panel-section {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+    }
+
+    .panel-header {
+        padding: 28px 32px;
+    }
+
+    .panel-header.blue   { background: linear-gradient(100deg, #e4f0ff, #f4f9ff); border-left: 5px solid var(--blue); }
+    .panel-header.green  { background: linear-gradient(100deg, #e2f5ee, #f4fdf8); border-left: 5px solid var(--green); }
+    .panel-header.orange { background: linear-gradient(100deg, #fff2e0, #fffdf5); border-left: 5px solid var(--orange); }
+    .panel-header.purple { background: linear-gradient(100deg, #f0e8ff, #fbf7ff); border-left: 5px solid var(--purple); }
+
+    .panel-header h2 {
+        font-size: 1.65em;
+        font-weight: 700;
+    }
+
+    .card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s, border-color .28s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--blue), #5ac8fa);
+        opacity: 0;
+        transition: opacity .3s;
+    }
+
+    .card:hover::after { opacity: 1; }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(26,111,224,.14);
+    }
+
+    /* ─────────────────────────── PRICING ─────────────────────────── */
+    .trial-banner {
+        border-radius: 18px !important;
+    }
+
+    .price-cards {
+        gap: 24px;
+    }
+
+    .price-card {
+        border-radius: 18px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        background: white;
+        transition: transform .3s, box-shadow .3s;
+    }
+
+    .price-card:hover:not(.featured) {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .price-card.featured {
+        border-color: rgba(107,32,232,.25) !important;
+        background: linear-gradient(155deg, #fff 0%, #f9f5ff 100%);
+        box-shadow:
+            0 0 0 1px rgba(107,32,232,.12),
+            0 8px 40px rgba(107,32,232,.18),
+            0 28px 72px rgba(107,32,232,.10) !important;
+    }
+
+    .price-card.featured:hover {
+        transform: scale(1.03) translateY(-8px);
+    }
+
+    .price-name {
+        font-size: 1.25em;
+        font-weight: 700;
+    }
+
+    .price-amount {
+        font-size: 3em;
+        letter-spacing: -.03em;
+    }
+
+    .price-btn {
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        transition: all .28s cubic-bezier(.34,1.56,.64,1) !important;
+    }
+
+    .price-btn:hover {
+        transform: translateY(-2px) !important;
+    }
+
+    /* ─────────────────────────── FAQ ─────────────────────────── */
+    .faq-item {
+        background: white;
+        border-radius: 14px !important;
+        border: 1px solid var(--border-card) !important;
+        margin-bottom: 10px;
+        overflow: hidden;
+        transition: box-shadow .2s;
+    }
+
+    .faq-item:hover { box-shadow: var(--shadow-hover); }
+
+    .faq-question {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 600;
+    }
+
+    /* ─────────────────────────── DOWNLOAD ─────────────────────────── */
+    .download-section {
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .download-section h2 {
+        font-size: 2.4em;
+        letter-spacing: -.03em;
+    }
+
+    .download-btn {
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s !important;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-4px) scale(1.02) !important;
+        box-shadow: 0 14px 40px rgba(0,0,0,.35) !important;
+    }
+
+    /* ─────────────────────────── FOOTER ─────────────────────────── */
+    footer {
+        background: linear-gradient(150deg, #0d1628 0%, #111d34 60%, #080f1e 100%) !important;
+        border-top: 1px solid rgba(255,255,255,.05) !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    footer::before {
+        content: '';
+        position: absolute;
+        top: -120px; left: 50%;
+        transform: translateX(-50%);
+        width: 900px; height: 400px;
+        background: radial-gradient(ellipse, rgba(26,111,224,.07) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    footer h3 {
+        font-family: 'Outfit', sans-serif;
+        font-size: .75em;
+        font-weight: 700;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.4) !important;
+        margin-bottom: 16px;
+    }
+
+    .footer-col p,
+    .footer-col a {
+        color: rgba(255,255,255,.55) !important;
+        font-size: .9em;
+        transition: color .2s, transform .2s;
+    }
+
+    .footer-col a { display: inline-block; }
+    .footer-col a:hover {
+        color: rgba(255,255,255,.9) !important;
+        transform: translateX(3px);
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,.06) !important;
+        color: rgba(255,255,255,.3) !important;
+    }
+
+    .footer-bottom p { color: rgba(255,255,255,.3) !important; }
+
+    /* ─────────────────────────── BACK TO TOP ─────────────────────────── */
+    #back-to-top {
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, var(--blue), var(--blue-dk)) !important;
+        border: none !important;
+        box-shadow: 0 4px 18px rgba(26,111,224,.4) !important;
+        font-size: 1.1em !important;
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s !important;
+    }
+
+    #back-to-top:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 10px 28px rgba(26,111,224,.55) !important;
+    }
+
+    /* ─────────────────────────── MODAL ─────────────────────────── */
+    .mp-overlay {
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    .mp-modal {
+        border-radius: 24px !important;
+        border: 1px solid var(--border-card) !important;
+        box-shadow: 0 32px 96px rgba(0,0,0,.24) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+
+    .mp-modal-price {
+        font-family: 'Outfit', sans-serif !important;
+        letter-spacing: -.04em !important;
+    }
+
+    /* ─────────────────────────── SCROLLBAR ─────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #edf0f7; }
+    ::-webkit-scrollbar-thumb { background: rgba(26,111,224,.22); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(26,111,224,.42); }
+
+    ::selection { background: rgba(26,111,224,.18); }
+
+    </style>
 </head>
 <body>
 
@@ -3031,7 +3476,6 @@
         <div class="footer-col">
             <h3>Legal</h3>
             <a href="privacy-policy.html">Política de Privacidad</a>
-            <a href="PAGE.html" style="opacity:0.4;font-size:0.78em;">Admin</a>
         </div>
         <div class="footer-col">
             <h3>Contacto</h3>
