@@ -50,25 +50,19 @@ exports.handler = async function (event) {
     try {
         switch (type) {
             // ── Cobro único aprobado ──────────────────────────────────────────
-            case 'charge.succeeded':
-            case 'charge.capture':
+            case 'charge.creation.succeeded':
+            case 'charge.capture.succeeded':
                 await handleCharge(object);
                 break;
 
             // ── Suscripción activada / renovada ───────────────────────────────
-            case 'subscription.active':
-            case 'subscription.succeeded':
-            case 'subscription.renewal':
-            case 'subscription.renewal.succeeded':
-            case 'subscription.update':
+            case 'subscription.creation.succeeded':
             case 'subscription.update.succeeded':
                 await handleSubscription(object);
                 break;
 
             // ── Suscripción cancelada ─────────────────────────────────────────
-            case 'subscription.cancel':
-            case 'subscription.canceled':
-            case 'subscription.cancellation.succeeded':
+            case 'subscription.cancel.succeeded':
                 await handleCancellation(object);
                 break;
 
