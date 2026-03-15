@@ -2238,6 +2238,152 @@
         letter-spacing: -.04em !important;
     }
 
+    /* ─────────────────────────── CATALOG ─────────────────────────── */
+    .catalog-label {
+        font-family: 'JetBrains Mono', 'Outfit', monospace;
+        font-size: .72em;
+        font-weight: 700;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        color: var(--muted, #6a7a96);
+        margin: 0 0 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .catalog-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-card);
+    }
+
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 44px;
+    }
+
+    .catalog-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--border-card);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+        transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .catalog-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .catalog-img {
+        height: 90px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+
+    .catalog-img.blue   { background: linear-gradient(135deg, #1a6fe0, #0d4baa); }
+    .catalog-img.purple { background: linear-gradient(135deg, #7b2ff7, #5010cc); }
+
+    .catalog-img svg { width: 48px; height: 48px; }
+
+    .catalog-body {
+        padding: 16px 18px 18px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .catalog-plan-badge {
+        display: inline-block;
+        font-size: .68em;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        letter-spacing: .04em;
+        width: fit-content;
+    }
+
+    .blue-badge   { background: #e8f0ff; color: var(--blue); border: 1px solid #c4d8ff; }
+    .purple-badge { background: #f3eaff; color: #6b20e8;     border: 1px solid #d4b8ff; }
+
+    .catalog-name {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: .92em;
+        color: var(--text);
+        margin-bottom: 6px;
+        line-height: 1.3;
+    }
+
+    .catalog-desc {
+        font-size: .78em;
+        color: #5a6a88;
+        line-height: 1.55;
+        flex: 1;
+        margin-bottom: 12px;
+    }
+
+    .catalog-price {
+        font-size: 1.1em;
+        color: var(--text);
+        margin-bottom: 12px;
+        letter-spacing: -.01em;
+    }
+
+    .catalog-price strong {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.4em;
+        font-weight: 800;
+        color: var(--blue);
+    }
+
+    .catalog-btn {
+        width: 100%;
+        padding: 9px;
+        border: none;
+        border-radius: 9px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: .85em;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--blue), var(--blue-dk));
+        color: white;
+        box-shadow: 0 2px 10px rgba(26,111,224,.25);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+    .catalog-btn.purple-btn {
+        background: linear-gradient(135deg, #7b2ff7, #5010cc);
+        box-shadow: 0 2px 10px rgba(107,31,232,.25);
+    }
+
+    .catalog-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(26,111,224,.38);
+    }
+
+    .catalog-btn.purple-btn:hover {
+        box-shadow: 0 6px 18px rgba(107,31,232,.38);
+    }
+
+    @media (max-width: 600px) {
+        .catalog-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+        .catalog-img  { height: 70px; }
+        .catalog-img svg { width: 36px; height: 36px; }
+    }
+
+    @media (max-width: 400px) {
+        .catalog-grid { grid-template-columns: 1fr; }
+    }
+
     /* ─────────────────────────── SCROLLBAR ─────────────────────────── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #edf0f7; }
@@ -3254,8 +3400,117 @@
             </div>
         </div>
 
-        <!-- Price Cards -->
-        <div class="price-cards">
+        <!-- ── Catálogo de licencias (mínimo 5 productos visibles) ── -->
+        <div class="catalog-label">Licencias disponibles</div>
+        <div class="catalog-grid">
+
+            <div class="catalog-card reveal reveal-delay-1">
+                <div class="catalog-img blue">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M16 24h16M24 16v16" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge blue-badge">Individual</div>
+                    <div class="catalog-name">BIMS Individual — 1 mes</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo por 30 días.</div>
+                    <div class="catalog-price">S/ <strong>60</strong></div>
+                    <button class="catalog-btn mp-trigger" data-plan="individual">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-2">
+                <div class="catalog-img blue">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M15 24h18M24 15v18" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="24" r="6" stroke="white" stroke-width="2"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge blue-badge">Individual</div>
+                    <div class="catalog-name">BIMS Individual — 3 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo por 90 días. Ahorra 11% vs mensual.</div>
+                    <div class="catalog-price">S/ <strong>160</strong></div>
+                    <button class="catalog-btn mp-trigger" data-plan="individual">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-3">
+                <div class="catalog-img blue">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M14 28l6-6 4 4 8-10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge blue-badge">Individual</div>
+                    <div class="catalog-name">BIMS Individual — 6 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo por 180 días. Ahorra 17% vs mensual.</div>
+                    <div class="catalog-price">S/ <strong>300</strong></div>
+                    <button class="catalog-btn mp-trigger" data-plan="individual">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-4">
+                <div class="catalog-img blue">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M24 14v4m0 12v4m-10-10h4m12 0h4" stroke="white" stroke-width="2.5" stroke-linecap="round"/><circle cx="24" cy="24" r="5" stroke="white" stroke-width="2"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge blue-badge">Individual</div>
+                    <div class="catalog-name">BIMS Individual — 12 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo por 1 año completo. Mejor precio.</div>
+                    <div class="catalog-price">S/ <strong>596</strong></div>
+                    <button class="catalog-btn mp-trigger" data-plan="individual">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-1">
+                <div class="catalog-img purple">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><circle cx="19" cy="22" r="4" stroke="white" stroke-width="2"/><circle cx="29" cy="22" r="4" stroke="white" stroke-width="2"/><path d="M12 34c0-4 3-6 7-6m10 0c4 0 7 2 7 6" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge purple-badge">⭐ Profesional</div>
+                    <div class="catalog-name">BIMS Profesional — 1 mes</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Licencia para hasta 3 equipos. Soporte prioritario 24 h y acceso anticipado a funciones beta.</div>
+                    <div class="catalog-price">S/ <strong>100</strong></div>
+                    <button class="catalog-btn mp-trigger purple-btn" data-plan="profesional">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-2">
+                <div class="catalog-img purple">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M16 30l4-8 4 6 3-4 5 6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge purple-badge">⭐ Profesional</div>
+                    <div class="catalog-name">BIMS Profesional — 3 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Hasta 3 equipos. Soporte prioritario. 90 días. Ahorra 11% vs mensual.</div>
+                    <div class="catalog-price">S/ <strong>268</strong></div>
+                    <button class="catalog-btn mp-trigger purple-btn" data-plan="profesional">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-3">
+                <div class="catalog-img purple">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M14 24h6l3-6 4 12 3-6h4" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge purple-badge">⭐ Profesional</div>
+                    <div class="catalog-name">BIMS Profesional — 6 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Hasta 3 equipos. Soporte prioritario. 180 días. Ahorra 17% vs mensual.</div>
+                    <div class="catalog-price">S/ <strong>500</strong></div>
+                    <button class="catalog-btn mp-trigger purple-btn" data-plan="profesional">Comprar</button>
+                </div>
+            </div>
+
+            <div class="catalog-card reveal reveal-delay-4">
+                <div class="catalog-img purple">
+                    <svg viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,.18)"/><path d="M24 14l2.5 7.5H34l-6.5 4.5 2.5 7.5L24 29l-6 4.5 2.5-7.5L14 21.5h7.5z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="rgba(255,255,255,.15)"/></svg>
+                </div>
+                <div class="catalog-body">
+                    <div class="catalog-plan-badge purple-badge">⭐ Profesional</div>
+                    <div class="catalog-name">BIMS Profesional — 12 meses</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Hasta 3 equipos. Soporte prioritario. 1 año completo. Mejor precio por mes.</div>
+                    <div class="catalog-price">S/ <strong>996</strong></div>
+                    <button class="catalog-btn mp-trigger purple-btn" data-plan="profesional">Comprar</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Price Cards --><parameter name="new_string">        <!-- Price Cards -->
 
             <!-- Individual -->
             <div class="price-card reveal reveal-delay-1">
