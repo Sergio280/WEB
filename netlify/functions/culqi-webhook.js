@@ -31,10 +31,10 @@ const DURATION_MONTHS = {
 exports.handler = async function (event) {
     if (event.httpMethod !== 'POST') return { statusCode: 200, body: '' };
 
-    // Verificar firma Culqi
-    if (process.env.CULQI_WEBHOOK_SECRET) {
-        if (!verifySignature(event, process.env.CULQI_WEBHOOK_SECRET)) {
-            console.warn('[culqi-webhook] Firma inválida — descartado');
+    // Verificar hash Culqi (Código Hash del RSA Key)
+    if (process.env.CULQI_WEBHOOK_HASH) {
+        if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
+            console.warn('[culqi-webhook] Hash inválido — descartado');
             return { statusCode: 200, body: '' };
         }
     }
@@ -218,19 +218,25 @@ async function sendActivationEmail(email) {
     }
 }
 
-// ── Verificar firma Culqi ─────────────────────────────────────────────────────
-function verifySignature(event, secret) {
+// ── Verificar hash Culqi (Código Hash del RSA Key en headers) ─────────────────
+function verifyHash(event, expectedHash) {
     try {
-        const signature = event.headers['x-culqi-signature'] || '';
-        if (!signature) return true; // si no viene firma, aceptar (desarrollo)
+        // Culqi envía el Código Hash en uno de estos headers
+        const received = event.headers['x-culqi-rsa-id']
+                      || event.headers['x-culqi-hash']
+                      || event.headers['x-hash']
+                      || '';
 
-        const payload  = event.body || '';
-        const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-        const received = Buffer.from(signature, 'hex');
-        const expected2 = Buffer.from(expected, 'hex');
+        if (!received) {
+            // En desarrollo puede no venir — aceptar pero loguear
+            console.warn('[culqi-webhook] Sin header de hash — aceptado sin verificar');
+            return true;
+        }
 
-        if (received.length !== expected2.length) return false;
-        return crypto.timingSafeEqual(received, expected2);
+        return crypto.timingSafeEqual(
+            Buffer.from(received.trim()),
+            Buffer.from(expectedHash.trim())
+        );
     } catch {
         return false;
     }
