@@ -46,6 +46,8 @@ exports.handler = async function (event) {
     const object = body.data || {};
 
     console.log(`[culqi-webhook] Evento: ${type} | id: ${body.id}`);
+    console.log(`[culqi-webhook] body.data keys: ${Object.keys(object).join(',') || 'VACÍO'}`);
+    console.log(`[culqi-webhook] body keys: ${Object.keys(body).join(',')}`);
 
     try {
         switch (type) {
