@@ -98,7 +98,7 @@
 
         /* ── HEADER ───────────────────────────────────────────────────── */
         header {
-            background: linear-gradient(135deg, #0078D7, #003f74, #1a3a6b, #0078D7);
+            background: linear-gradient(135deg, #0f4d9e, #071e40, #0a2852, #0f4d9e);
             background-size: 300% 300%;
             animation: gradientShift 8s ease infinite;
             color: white;
@@ -380,7 +380,7 @@
         }
 
         .anim-bar.bar-before { background: linear-gradient(90deg, #c0c8d8, #8fa0b8); }
-        .anim-bar.bar-after  { background: linear-gradient(90deg, #0078D7, #00c6ff); }
+        .anim-bar.bar-after  { background: linear-gradient(90deg, #0f4d9e, #1a6ac8); }
         .anim-bar.bar-after-green  { background: linear-gradient(90deg, #1a8a4a, #4ade80); }
         .anim-bar.bar-after-orange { background: linear-gradient(90deg, #d97700, #fbbf24); }
 
@@ -388,7 +388,7 @@
 
         .saving-badge {
             display: inline-block;
-            background: linear-gradient(135deg, #0078D7, #00c6ff);
+            background: linear-gradient(135deg, #0f4d9e, #1a6ac8);
             color: white;
             padding: 4px 14px;
             border-radius: 14px;
@@ -582,7 +582,7 @@
 
         /* Trial banner */
         .trial-banner {
-            background: linear-gradient(135deg, #0078D7, #00c6ff);
+            background: linear-gradient(135deg, #0f4d9e, #071e40);
             border-radius: 14px;
             padding: 32px 36px;
             color: white;
@@ -945,7 +945,7 @@
 
         /* ── ANNOUNCE BAR ──────────────────────────────────────────────── */
         .announce-bar {
-            background: linear-gradient(90deg, #5a1fd1, #0078D7);
+            background: linear-gradient(90deg, #071e40, #0f4d9e);
             color: white;
             text-align: center;
             padding: 10px 20px;
@@ -1903,17 +1903,18 @@
     ══════════════════════════════════════════════════════════ */
 
     :root {
-        --blue:    #1a6fe0;
-        --blue-dk: #0d4baa;
-        --green:   #16865e;
-        --orange:  #cc6b00;
-        --purple:  #6b20e8;
-        --bg:      #edf0f7;
-        --text:    #141926;
+        --blue:    #0f4d9e;   /* azul corporativo oscuro */
+        --blue-dk: #071e40;   /* navy profundo */
+        --blue-mid:#1a6ac8;   /* azul medio para gradientes */
+        --green:   #14784f;
+        --orange:  #bb5e00;
+        --purple:  #5c18d6;
+        --bg:      #e8ecf4;
+        --text:    #111826;
 
-        --shadow-card:  0 1px 4px rgba(0,20,80,.06), 0 8px 24px rgba(0,20,80,.07);
-        --shadow-hover: 0 4px 16px rgba(0,20,80,.10), 0 20px 48px rgba(0,20,80,.10);
-        --border-card:  rgba(18,50,130,.07);
+        --shadow-card:  0 1px 4px rgba(0,16,64,.07), 0 8px 24px rgba(0,16,64,.09);
+        --shadow-hover: 0 4px 16px rgba(0,16,64,.13), 0 20px 48px rgba(0,16,64,.11);
+        --border-card:  rgba(10,40,110,.09);
     }
 
     /* ── Base typography ── */
@@ -2478,7 +2479,125 @@
     ::-webkit-scrollbar-thumb { background: rgba(26,111,224,.22); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(26,111,224,.42); }
 
-    ::selection { background: rgba(26,111,224,.18); }
+    ::selection { background: rgba(15,77,158,.18); }
+
+    /* ─── Azules oscuros: sobrescribir gradientes que usan var(--blue) con #00c6ff ─── */
+    .step-circle {
+        background: linear-gradient(135deg, #0f4d9e, #1a6ac8) !important;
+        box-shadow: 0 4px 14px rgba(15,77,158,0.38) !important;
+    }
+    .download-section {
+        background: linear-gradient(135deg, #0f4d9e 0%, #071e40 100%) !important;
+    }
+    .header-cta a:not(.secondary) {
+        color: #0f4d9e !important;
+    }
+    nav a.nav-cta {
+        background: #0f4d9e !important;
+    }
+    nav a.nav-cta:hover { background: #071e40 !important; }
+    #back-to-top {
+        background: #0f4d9e !important;
+        box-shadow: 0 4px 18px rgba(15,77,158,0.45) !important;
+    }
+    #back-to-top:hover { background: #071e40 !important; }
+
+    /* ─── Centrado formal y consistente ─── */
+    .efectividad-section,
+    .use-cases-section,
+    .faq-section,
+    .intro {
+        text-align: center;
+    }
+    .efectividad-section .section-sub,
+    .use-cases-section .section-sub,
+    .intro p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    /* Los pasos y layouts internos deben quedar alineados a izquierda */
+    .use-case-layout,
+    .use-steps,
+    .use-step-item,
+    .bim-compliance,
+    .faq-list,
+    .faq-answer {
+        text-align: left;
+    }
+
+    /* ─── Chart cards: centrado, borde izquierdo formal ─── */
+    .chart-card {
+        border-left: 4px solid var(--blue);
+        background: #f5f7fc;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-radius: 0 12px 12px 0;
+    }
+    .chart-card-title {
+        color: var(--blue);
+        font-weight: 800;
+        font-size: 0.92em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .radar-card {
+        border-top: 4px solid var(--blue);
+        background: #f5f7fc;
+    }
+    .radar-card .chart-card-title {
+        color: var(--blue);
+        font-weight: 800;
+        font-size: 0.92em;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    /* ─── Shape gallery tiles: más formales ─── */
+    .shape-tile {
+        background: #f8faff;
+        border: 1.5px solid #ccd6ee;
+    }
+    .shape-tile:hover {
+        border-color: var(--blue);
+        background: #eef3ff;
+    }
+    .shape-tile-code {
+        color: var(--blue);
+        background: #e4eeff;
+        font-size: 0.68em;
+    }
+
+    /* ─── Donut wrap formal ─── */
+    .donut-wrap {
+        background: #f5f7fc;
+        border: 1.5px solid #ccd6ee;
+        border-top: 4px solid var(--blue);
+        border-radius: 0 0 10px 10px;
+    }
+
+    /* ─── Section headers centrados ─── */
+    .efectividad-section h2,
+    .use-cases-section h2,
+    .faq-section h2,
+    .intro h2 {
+        text-align: center;
+    }
+
+    /* ─── Workflow steps más formales ─── */
+    .workflow-section {
+        border-top: 2px solid rgba(15,77,158,0.15);
+    }
+    .workflow-section h3 {
+        color: var(--blue);
+        font-weight: 700;
+        font-size: 0.95em;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* ─── Scrollbar oscura ─── */
+    ::-webkit-scrollbar-thumb { background: rgba(15,77,158,.30); }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(15,77,158,.55); }
 
     </style>
     <!-- Chart.js 4.4 -->
@@ -2898,67 +3017,88 @@
                 </div>
 
                 <div class="use-visual">
-                    <span class="visual-label">Sección transversal — Columna 500×500 con encofrado perimetral generado por BIMS</span>
+                    <span class="visual-label">Sección transversal — Columna 500×500 · Encofrado exacto por cara (sin solapamientos)</span>
 
-                    <svg class="formwork-svg-wrap" viewBox="0 0 240 218" xmlns="http://www.w3.org/2000/svg" aria-label="Sección de columna con encofrado">
+                    <svg class="formwork-svg-wrap" viewBox="0 0 260 240" xmlns="http://www.w3.org/2000/svg" aria-label="Sección de columna con encofrado exacto por cara">
 
                         <!--
-                          Layout (sin solapamientos):
-                          Columna:        x=50–190  y=52–172  (140×120)
-                          Panel superior: x=32–208  y=32–52   (176×20) — ancho total, empuja desde arriba
-                          Panel inferior: x=32–208  y=172–192 (176×20) — ancho total, empuja desde abajo
-                          Panel izq.:     x=32–52   y=52–172  (20×120) — encaja entre superior e inferior
-                          Panel der.:     x=188–208 y=52–172  (20×120) — encaja entre superior e inferior
+                          BIMS genera 4 muros independientes, uno por cara.
+                          Cada panel cubre exactamente su cara y NO se extiende a las esquinas.
+                          Resultado: área exacta, sin sobre-metrados, cuantificación directa.
+
+                          Columna:  x=60–190  y=55–175  (130×120)
+                          Top:      x=60–190  y=35–55   (130× 20) — misma anchura que la cara superior
+                          Bottom:   x=60–190  y=175–195 (130× 20) — misma anchura que la cara inferior
+                          Left:     x=40–60   y=55–175  ( 20×120) — misma altura que la cara lateral
+                          Right:    x=190–210 y=55–175  ( 20×120) — misma altura que la cara lateral
+                          ↑ Las esquinas quedan libres — área total = 2×(130×20) + 2×(20×120)
                         -->
 
-                        <!-- Columna estructural -->
-                        <rect x="50" y="52" width="140" height="120" rx="3" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="2"/>
-                        <text x="120" y="108" font-size="11" fill="#3a4a5e" text-anchor="middle" font-family="Arial" font-weight="700">COLUMNA</text>
-                        <text x="120" y="122" font-size="9"  fill="#5a6a7e" text-anchor="middle" font-family="Arial">500 × 500 mm</text>
-                        <text x="120" y="136" font-size="8"  fill="#5a6a7e" text-anchor="middle" font-family="Arial">H500 — Concreto fc=280</text>
+                        <!-- ─ Zona esquinas (vacío, sin encofrado) ─ -->
+                        <!-- Visualización de esquinas abiertas -->
+                        <rect x="40" y="35" width="20" height="20" rx="2" fill="#e8edf5" stroke="#b0bac8" stroke-width="1" stroke-dasharray="3,2"/>
+                        <rect x="190" y="35" width="20" height="20" rx="2" fill="#e8edf5" stroke="#b0bac8" stroke-width="1" stroke-dasharray="3,2"/>
+                        <rect x="40" y="175" width="20" height="20" rx="2" fill="#e8edf5" stroke="#b0bac8" stroke-width="1" stroke-dasharray="3,2"/>
+                        <rect x="190" y="175" width="20" height="20" rx="2" fill="#e8edf5" stroke="#b0bac8" stroke-width="1" stroke-dasharray="3,2"/>
+                        <!-- Etiqueta esquina libre -->
+                        <text x="50" y="30" font-size="6" fill="#b0bac8" text-anchor="middle" font-family="Arial">libre</text>
+                        <text x="200" y="30" font-size="6" fill="#b0bac8" text-anchor="middle" font-family="Arial">libre</text>
 
-                        <!-- Panel superior: cubre el ancho total; se desliza desde arriba -->
+                        <!-- ─ Columna estructural ─ -->
+                        <rect x="60" y="55" width="130" height="120" rx="3" fill="#c8d0dc" stroke="#4e5e72" stroke-width="2"/>
+                        <text x="125" y="112" font-size="11" fill="#2e3a4e" text-anchor="middle" font-family="Arial" font-weight="700">COLUMNA</text>
+                        <text x="125" y="126" font-size="9"  fill="#4e5e72" text-anchor="middle" font-family="Arial">500 × 500 mm</text>
+                        <text x="125" y="140" font-size="7.5" fill="#6a7a8e" text-anchor="middle" font-family="Arial">fc = 280 kg/cm²</text>
+
+                        <!-- ─ Panel superior: sólo la cara superior — ancho = ancho columna ─ -->
                         <g class="fw-top">
-                            <rect x="32" y="32" width="176" height="20" rx="3"
-                                  fill="rgba(217,119,0,0.22)" stroke="#d97700" stroke-width="2"/>
-                            <text x="120" y="45" font-size="7.5" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700">Encofrado Superior</text>
+                            <rect x="60" y="35" width="130" height="20" rx="2"
+                                  fill="rgba(217,119,0,0.20)" stroke="#d97700" stroke-width="2"/>
+                            <text x="125" y="48" font-size="7" fill="#b36200" text-anchor="middle" font-family="Arial" font-weight="700">Cara Superior  130×20 cm</text>
                         </g>
 
-                        <!-- Panel inferior: cubre el ancho total; se desliza desde abajo -->
+                        <!-- ─ Panel inferior: sólo la cara inferior — ancho = ancho columna ─ -->
                         <g class="fw-bottom">
-                            <rect x="32" y="172" width="176" height="20" rx="3"
-                                  fill="rgba(217,119,0,0.22)" stroke="#d97700" stroke-width="2"/>
-                            <text x="120" y="185" font-size="7.5" fill="#d97700" text-anchor="middle" font-family="Arial" font-weight="700">Encofrado Inferior</text>
+                            <rect x="60" y="175" width="130" height="20" rx="2"
+                                  fill="rgba(217,119,0,0.20)" stroke="#d97700" stroke-width="2"/>
+                            <text x="125" y="188" font-size="7" fill="#b36200" text-anchor="middle" font-family="Arial" font-weight="700">Cara Inferior  130×20 cm</text>
                         </g>
 
-                        <!-- Panel lateral izquierdo: encaja ENTRE superior e inferior (y=52–172) -->
+                        <!-- ─ Panel lateral izquierdo: sólo la cara lateral — alto = alto columna ─ -->
                         <g class="fw-left">
-                            <rect x="32" y="52" width="18" height="120" rx="3"
-                                  fill="rgba(217,119,0,0.22)" stroke="#d97700" stroke-width="2"/>
-                            <text x="41" y="112" font-size="7.5" fill="#d97700" text-anchor="middle"
-                                  font-family="Arial" font-weight="700" transform="rotate(-90 41 112)">Lateral</text>
+                            <rect x="40" y="55" width="20" height="120" rx="2"
+                                  fill="rgba(217,119,0,0.20)" stroke="#d97700" stroke-width="2"/>
+                            <text x="50" y="115" font-size="7" fill="#b36200" text-anchor="middle"
+                                  font-family="Arial" font-weight="700" transform="rotate(-90 50 115)">Cara Lateral  20×120</text>
                         </g>
 
-                        <!-- Panel lateral derecho: encaja ENTRE superior e inferior (y=52–172) -->
+                        <!-- ─ Panel lateral derecho: sólo la cara lateral — alto = alto columna ─ -->
                         <g class="fw-right">
-                            <rect x="190" y="52" width="18" height="120" rx="3"
-                                  fill="rgba(217,119,0,0.22)" stroke="#d97700" stroke-width="2"/>
-                            <text x="199" y="112" font-size="7.5" fill="#d97700" text-anchor="middle"
-                                  font-family="Arial" font-weight="700" transform="rotate(90 199 112)">Lateral</text>
+                            <rect x="190" y="55" width="20" height="120" rx="2"
+                                  fill="rgba(217,119,0,0.20)" stroke="#d97700" stroke-width="2"/>
+                            <text x="200" y="115" font-size="7" fill="#b36200" text-anchor="middle"
+                                  font-family="Arial" font-weight="700" transform="rotate(90 200 115)">Cara Lateral  20×120</text>
                         </g>
 
-                        <!-- Badge -->
-                        <rect x="50" y="200" width="140" height="14" rx="6" fill="#1a8a4a" fill-opacity="0.12" stroke="#1a8a4a" stroke-width="1"/>
-                        <text x="120" y="210" font-size="7.5" fill="#1a8a4a" text-anchor="middle" font-family="Arial" font-weight="700">✓ Generado automáticamente · Listo para cuantificar</text>
+                        <!-- ─ Cotas horizontales (cara superior = ancho columna exacto) ─ -->
+                        <line x1="60" y1="22" x2="190" y2="22" stroke="#5a6a7e" stroke-width="1"/>
+                        <line x1="60" y1="18" x2="60" y2="26" stroke="#5a6a7e" stroke-width="1.5"/>
+                        <line x1="190" y1="18" x2="190" y2="26" stroke="#5a6a7e" stroke-width="1.5"/>
+                        <text x="125" y="18" font-size="8" fill="#0f4d9e" text-anchor="middle" font-family="Arial" font-weight="700">500 mm (cara exacta)</text>
+
+                        <!-- ─ Badge verde ─ -->
+                        <rect x="55" y="206" width="150" height="16" rx="7" fill="rgba(20,120,79,0.12)" stroke="#14784f" stroke-width="1"/>
+                        <text x="130" y="217" font-size="7.5" fill="#14784f" text-anchor="middle" font-family="Arial" font-weight="700">✓ Área exacta · Sin solapamientos · Sin sobre-metrados</text>
                     </svg>
 
                     <div class="legend-row" style="margin-top:10px;">
-                        <div class="legend-item"><div class="legend-swatch" style="background:#c8d0dc; border:1px solid #5a6a7e;"></div>Hormigón estructural</div>
-                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700; opacity:0.5;"></div>Muros de encofrado</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#c8d0dc; border:1px solid #4e5e72;"></div>Concreto estructural</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#d97700; opacity:0.55;"></div>Panel de encofrado (1 cara)</div>
+                        <div class="legend-item"><div class="legend-swatch" style="background:#e8edf5; border:1px dashed #b0bac8;"></div>Esquina libre (sin encofrado)</div>
                     </div>
 
                     <div class="tech-note">
-                        Los encofrados generados son totalmente compatibles con las cuantificaciones y tablas de planificación de Revit, sin configuración adicional.
+                        <strong>Cada panel cubre exactamente una cara</strong> de la columna — mismo ancho/alto que la cara estructural. Las esquinas quedan sin encofrado, lo que refleja fielmente el área real y elimina sobre-metrados en las cuantificaciones de Revit.
                     </div>
                 </div>
             </div>
@@ -4516,12 +4656,12 @@
         if (chartsInited) return;
         chartsInited = true;
 
-        /* ── Paleta coherente con el sitio ── */
-        var C_BLUE   = 'rgba(0,120,215,0.82)';
-        var C_GRAY   = 'rgba(143,160,184,0.72)';
-        var C_GREEN  = 'rgba(26,138,74,0.82)';
-        var C_ORANGE = 'rgba(217,119,0,0.82)';
-        var C_PURPLE = 'rgba(123,47,247,0.82)';
+        /* ── Paleta coherente con el sitio (azules oscuros) ── */
+        var C_BLUE   = 'rgba(15,77,158,0.85)';
+        var C_GRAY   = 'rgba(120,140,170,0.70)';
+        var C_GREEN  = 'rgba(20,120,79,0.85)';
+        var C_ORANGE = 'rgba(187,94,0,0.85)';
+        var C_PURPLE = 'rgba(92,24,214,0.85)';
 
         /* ── 1. Tiempo de ejecución (barras horizontales) ─────────── */
         var ctxTime = document.getElementById('chartTime');
