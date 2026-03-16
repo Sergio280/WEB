@@ -3779,7 +3779,7 @@
             <p style="margin:0 0 6px;font-size:.8rem;font-weight:700;color:#b45309;letter-spacing:.05em;">🧪 MODO PRUEBA</p>
             <p style="margin:0 0 12px;font-size:.85rem;color:#92400e;">Cobro de S/ 2.00 para verificar la integración</p>
             <input id="test-email" type="email" placeholder="Tu email" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #fcd34d;border-radius:8px;margin-bottom:10px;font-size:.9rem;">
-            <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 2 (prueba)</button>
+            <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 5 (prueba)</button>
             <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
         </div>
 
@@ -4231,7 +4231,7 @@
      * C) Tu Public Key la encuentras en:
      *    https://www.mercadopago.com.pe/developers/panel/credentials
      * ───────────────────────────────────────────────────────────────────── */
-    var CULQI_PUBLIC_KEY = 'pk_test_5WhtkrNldUED2FD9';
+    var CULQI_PUBLIC_KEY = 'pk_live_aenMPO2MOHaDprCT';
 
     var CULQI_CONFIG = {
         publicKey: CULQI_PUBLIC_KEY,
@@ -4484,9 +4484,7 @@
         var isSub = currentPaymentType === 'subscription';
         var item  = isSub ? plan.subscription : plan[currentDuration];
         /* Culqi usa centavos: S/60 = 6000 */
-        var amountCentavos = isSub
-            ? (plan.price * 100)
-            : (item.price * 100);
+        var amountCentavos = item.price * 100;
 
         /* Inicializar Culqi con la public key */
         Culqi.publicKey = CULQI_PUBLIC_KEY;
@@ -4511,7 +4509,7 @@
             console.warn('[Culqi] Error/cancelado:', Culqi.error);
             if (ctx.isTest && testBtn) {
                 testBtn.disabled = false;
-                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+                testBtn.textContent = 'Pagar S/ 5 (prueba)';
             }
             return;
         }
@@ -4555,7 +4553,7 @@
             console.error('[BIMS] Error de pago:', err);
             if (ctx.isTest) {
                 testBtn.disabled    = false;
-                testBtn.textContent = 'Pagar S/ 2 (prueba)';
+                testBtn.textContent = 'Pagar S/ 5 (prueba)';
                 testError.textContent = err.message || 'Error al procesar el pago.';
                 testError.style.display = 'block';
             } else {
@@ -4589,8 +4587,8 @@
             Culqi.settings({
                 title:       'BIMS — Prueba',
                 currency:    'PEN',
-                description: 'Cobro de prueba S/2',
-                amount:      200,
+                description: 'Cobro de prueba S/5',
+                amount:      500,
             });
             Culqi.open({ email: email });
         });

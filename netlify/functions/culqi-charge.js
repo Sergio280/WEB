@@ -18,7 +18,7 @@ const CATALOG = {
         '12m': { title: 'BIMS Profesional – 1 año',   amount: 99600, months: 12 },
     },
     test: {
-        'test': { title: 'BIMS TEST – S/2', amount: 200, months: 1 },
+        'test': { title: 'BIMS TEST – S/5', amount: 500, months: 1 },
     },
 };
 
