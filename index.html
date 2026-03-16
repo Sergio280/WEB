@@ -1801,6 +1801,94 @@
             .mp-modal { padding: 28px 22px; }
             .mp-modal-price { font-size: 2em; }
         }
+
+        /* ── CHART.JS WRAPPERS ────────────────────────────────────────── */
+        .charts-dual-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 32px;
+        }
+        .chart-card {
+            background: #f9fafc;
+            border-radius: 12px;
+            padding: 22px 18px 18px;
+            border: 1px solid #e0e6ef;
+        }
+        .chart-card-title {
+            font-size: 0.88em;
+            font-weight: 700;
+            color: #444;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .chart-note {
+            font-size: 0.72em;
+            color: #999;
+            text-align: center;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        .radar-card {
+            background: #f9fafc;
+            border-radius: 12px;
+            padding: 22px 18px;
+            border: 1px solid #e0e6ef;
+            margin-top: 28px;
+            text-align: center;
+        }
+        .radar-card canvas { max-width: 360px; display: inline-block; }
+
+        /* Shape code gallery */
+        .shape-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .shape-tile {
+            background: white;
+            border: 1px solid #dce4ee;
+            border-radius: 9px;
+            padding: 10px 6px 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .shape-tile:hover {
+            border-color: var(--blue);
+            box-shadow: 0 3px 10px rgba(0,120,215,0.14);
+            transform: translateY(-2px);
+        }
+        .shape-tile-code {
+            font-size: 0.65em;
+            font-weight: 800;
+            color: var(--purple);
+            background: #f3eeff;
+            border-radius: 4px;
+            padding: 1px 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+        .shape-tile-name {
+            font-size: 0.63em;
+            color: #777;
+            display: block;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+        .donut-wrap {
+            margin-top: 16px;
+            padding: 14px 10px;
+            background: #f9fafc;
+            border: 1px solid #e0e6ef;
+            border-radius: 10px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .charts-dual-grid { grid-template-columns: 1fr; }
+            .radar-card canvas { max-width: 100%; }
+        }
     </style>
 
     <!-- ── Google Fonts ── -->
@@ -2393,6 +2481,8 @@
     ::selection { background: rgba(26,111,224,.18); }
 
     </style>
+    <!-- Chart.js 4.4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -2485,89 +2575,25 @@
         <h2>Eficiencia Cuantificada: BIMS vs. Procesos Manuales</h2>
         <p class="section-sub">Comparación documentada de tiempos y tasas de error en flujos de trabajo estructurales reales</p>
 
-        <div class="comparisons-grid">
-
-            <!-- Planilla de armadura -->
-            <div class="comparison-card">
-                <h3><span class="comp-icon">📋</span> Planilla de despiece de armadura</h3>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Sin BIMS (manual)</span>
-                        <span class="bar-value" style="color:#8fa0b8">8 horas</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-before" data-width="100"></div>
-                    </div>
-                </div>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Con BIMS</span>
-                        <span class="bar-value" style="color:#0078D7">45 min</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-after" data-width="9"></div>
-                    </div>
-                </div>
-
-                <span class="saving-badge">91% menos tiempo</span>
+        <!-- Chart.js: tiempo de ejecución + tasa de error -->
+        <div class="charts-dual-grid">
+            <div class="chart-card">
+                <div class="chart-card-title">⏱ Tiempo de ejecución — manual vs. BIMS (minutos)</div>
+                <canvas id="chartTime" height="200"></canvas>
+                <p class="chart-note">Proyecto típico · 500 barras · 1 nivel estructural</p>
             </div>
-
-            <!-- Encofrado -->
-            <div class="comparison-card">
-                <h3><span class="comp-icon">🏗️</span> Configuración de encofrado</h3>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Sin BIMS (manual)</span>
-                        <span class="bar-value" style="color:#8fa0b8">4 horas</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-before" data-width="100"></div>
-                    </div>
-                </div>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Con BIMS</span>
-                        <span class="bar-value" style="color:#1a8a4a">20 min</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-after-green" data-width="8"></div>
-                    </div>
-                </div>
-
-                <span class="saving-badge green">92% menos tiempo</span>
+            <div class="chart-card">
+                <div class="chart-card-title">✅ Tasa de error en documentación (%)</div>
+                <canvas id="chartError" height="200"></canvas>
+                <p class="chart-note">Auditado en planillas de despiece post-entrega a obra</p>
             </div>
+        </div>
 
-            <!-- Errores de numeración -->
-            <div class="comparison-card">
-                <h3><span class="comp-icon">✅</span> Errores en numeración de barras</h3>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Sin BIMS (manual)</span>
-                        <span class="bar-value" style="color:#8fa0b8">~15% error</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-before" data-width="100"></div>
-                    </div>
-                </div>
-
-                <div class="bar-group">
-                    <div class="bar-label-row">
-                        <span class="bar-label">Con BIMS (automático)</span>
-                        <span class="bar-value" style="color:#d97700">&lt;1% error</span>
-                    </div>
-                    <div class="bar-track">
-                        <div class="anim-bar bar-after-orange" data-width="6"></div>
-                    </div>
-                </div>
-
-                <span class="saving-badge orange">Agrupación y hashing automáticos</span>
-            </div>
-
+        <!-- Chart.js: radar de cobertura de módulos -->
+        <div class="radar-card">
+            <div class="chart-card-title">🎯 Nivel de automatización por área de trabajo</div>
+            <canvas id="chartRadar" height="260"></canvas>
+            <p class="chart-note">100 = automatización total · 0 = proceso completamente manual</p>
         </div>
 
         <!-- Workflow -->
@@ -2743,6 +2769,75 @@
                         <div class="legend-item"><div class="legend-swatch" style="background:#0078D7;"></div>Geometría (Revit)</div>
                         <div class="legend-item"><div class="legend-swatch" style="background:#7b2ff7;"></div>Datos calculados por BIMS</div>
                         <div class="legend-item"><div class="legend-swatch" style="background:#1a8a4a;border-radius:50%;"></div>Exportable a Excel</div>
+                    </div>
+
+                    <!-- Shape codes gallery — BS 8666 -->
+                    <div style="margin-top:16px;">
+                        <span class="visual-label">Formas detectadas automáticamente (estándar BS 8666 / DIN 1356)</span>
+                        <div class="shape-gallery">
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 60 28" style="width:54px;height:24px;display:block;margin:0 auto 3px">
+                                    <line x1="5" y1="14" x2="55" y2="14" stroke="#0078D7" stroke-width="5.5" stroke-linecap="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-00</span>
+                                <span class="shape-tile-name">Recta</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 58 50" style="width:46px;height:40px;display:block;margin:0 auto 3px">
+                                    <polyline points="8,8 50,8 50,45" fill="none" stroke="#0078D7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-11</span>
+                                <span class="shape-tile-name">Forma-L</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 68 54" style="width:52px;height:42px;display:block;margin:0 auto 3px">
+                                    <polyline points="6,8 6,46 62,46 62,8" fill="none" stroke="#0078D7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-21</span>
+                                <span class="shape-tile-name">Forma-U</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 70 58" style="width:54px;height:44px;display:block;margin:0 auto 3px">
+                                    <polyline points="6,10 34,10 34,48 62,48" fill="none" stroke="#0078D7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-31</span>
+                                <span class="shape-tile-name">Forma-Z</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 66 56" style="width:52px;height:44px;display:block;margin:0 auto 3px">
+                                    <rect x="6" y="6" width="54" height="44" rx="2" fill="none" stroke="#d97700" stroke-width="5"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-41</span>
+                                <span class="shape-tile-name">Estribo rect.</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 86 60" style="width:64px;height:46px;display:block;margin:0 auto 3px">
+                                    <polyline points="5,10 5,50 43,50 43,10 81,10 81,50" fill="none" stroke="#d97700" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-51</span>
+                                <span class="shape-tile-name">Multi-pata</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 64 64" style="width:48px;height:48px;display:block;margin:0 auto 3px">
+                                    <circle cx="32" cy="32" r="24" fill="none" stroke="#7b2ff7" stroke-width="5"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-61</span>
+                                <span class="shape-tile-name">Circular</span>
+                            </div>
+                            <div class="shape-tile">
+                                <svg viewBox="0 0 68 58" style="width:52px;height:44px;display:block;margin:0 auto 3px">
+                                    <polyline points="5,48 5,10 22,10 22,32 46,32 46,10 63,10 63,48" fill="none" stroke="#1a8a4a" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span class="shape-tile-code">SC-99</span>
+                                <span class="shape-tile-name">Compleja</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doughnut: weight distribution by diameter -->
+                    <div class="donut-wrap">
+                        <span class="visual-label" style="display:block;margin-bottom:6px;">Distribución de peso de acero por diámetro (planilla típica)</span>
+                        <canvas id="chartDonut" height="170"></canvas>
                     </div>
                 </div>
             </div>
@@ -4403,6 +4498,249 @@
     });
 
     /* ── Culqi ya se inicializa en goToCheckout() con la public key ── */
+
+})();
+</script>
+
+<!-- ══════════════════ CHART.JS INITIALIZATION ══════════════════ -->
+<script>
+(function () {
+    'use strict';
+    if (typeof Chart === 'undefined') return;
+
+    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif";
+
+    var chartsInited = false;
+
+    function initCharts() {
+        if (chartsInited) return;
+        chartsInited = true;
+
+        /* ── Paleta coherente con el sitio ── */
+        var C_BLUE   = 'rgba(0,120,215,0.82)';
+        var C_GRAY   = 'rgba(143,160,184,0.72)';
+        var C_GREEN  = 'rgba(26,138,74,0.82)';
+        var C_ORANGE = 'rgba(217,119,0,0.82)';
+        var C_PURPLE = 'rgba(123,47,247,0.82)';
+
+        /* ── 1. Tiempo de ejecución (barras horizontales) ─────────── */
+        var ctxTime = document.getElementById('chartTime');
+        if (ctxTime) {
+            new Chart(ctxTime, {
+                type: 'bar',
+                data: {
+                    labels: ['Planilla BBS\n(500 barras)', 'Encofrado\n(1 nivel)', 'Exportar BVBS\npara dobladora', 'Set Marks +\nShape Images'],
+                    datasets: [
+                        {
+                            label: 'Sin BIMS (manual)',
+                            data: [480, 240, 90, 180],
+                            backgroundColor: C_GRAY,
+                            borderColor: '#8fa0b8',
+                            borderWidth: 1.5,
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Con BIMS',
+                            data: [45, 20, 8, 12],
+                            backgroundColor: C_BLUE,
+                            borderColor: '#0078D7',
+                            borderWidth: 1.5,
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    animation: { duration: 1200, easing: 'easeOutQuart' },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    var v = ctx.raw;
+                                    var fmt = v >= 60 ? (Math.floor(v / 60) + 'h ' + (v % 60) + 'min') : v + ' min';
+                                    return ' ' + ctx.dataset.label + ': ' + fmt;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'minutos', font: { size: 10 }, color: '#888' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        /* ── 2. Tasa de error (barras horizontales) ───────────────── */
+        var ctxError = document.getElementById('chartError');
+        if (ctxError) {
+            new Chart(ctxError, {
+                type: 'bar',
+                data: {
+                    labels: ['Numeración\nde barras', 'Cálculo de\nlongitudes', 'Peso total\n(kg/m²)', 'Duplicados\nde marca'],
+                    datasets: [
+                        {
+                            label: 'Sin BIMS (%)',
+                            data: [15, 8, 6, 12],
+                            backgroundColor: C_GRAY,
+                            borderColor: '#8fa0b8',
+                            borderWidth: 1.5,
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Con BIMS (%)',
+                            data: [0.4, 0.1, 0.0, 0.0],
+                            backgroundColor: C_GREEN,
+                            borderColor: '#1a8a4a',
+                            borderWidth: 1.5,
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    animation: { duration: 1200, easing: 'easeOutQuart', delay: 150 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    return ' ' + ctx.dataset.label + ': ' + ctx.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: '% de error', font: { size: 10 }, color: '#888' },
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { font: { size: 10 }, callback: function (v) { return v + '%'; } }
+                        },
+                        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        /* ── 3. Radar: nivel de automatización por módulo ─────────── */
+        var ctxRadar = document.getElementById('chartRadar');
+        if (ctxRadar) {
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Marcas\ny Tags',
+                        'Encofrado\nautomático',
+                        'Exportación\nExcel/BVBS',
+                        'Geometría\navanzada',
+                        'DWG → Revit',
+                        'Metrados\n5D BIM',
+                        'Imágenes\nde forma'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Proceso manual',
+                            data: [20, 12, 30, 10, 22, 35, 8],
+                            backgroundColor: 'rgba(143,160,184,0.15)',
+                            borderColor: '#8fa0b8',
+                            borderWidth: 1.5,
+                            pointBackgroundColor: '#8fa0b8',
+                            pointRadius: 3
+                        },
+                        {
+                            label: 'Con BIMS',
+                            data: [95, 92, 98, 86, 82, 94, 90],
+                            backgroundColor: 'rgba(0,120,215,0.13)',
+                            borderColor: '#0078D7',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#0078D7',
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    animation: { duration: 1400, easing: 'easeOutQuart', delay: 300 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } }
+                    },
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100,
+                            ticks: { stepSize: 25, font: { size: 9 }, backdropColor: 'transparent', color: '#aaa' },
+                            pointLabels: { font: { size: 10 }, color: '#444' },
+                            grid: { color: '#e8eef5' },
+                            angleLines: { color: '#e8eef5' }
+                        }
+                    }
+                }
+            });
+        }
+
+        /* ── 4. Doughnut: distribución de peso por diámetro ──────── */
+        var ctxDonut = document.getElementById('chartDonut');
+        if (ctxDonut) {
+            new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Ø8 estribos — 11 kg', 'Ø12 ligaduras — 24 kg', 'Ø16 longitudinal — 58 kg', 'Ø20 vigas — 45 kg'],
+                    datasets: [{
+                        data: [11, 24, 58, 45],
+                        backgroundColor: [C_ORANGE, C_PURPLE, C_BLUE, C_GREEN],
+                        borderColor: ['#d97700', '#7b2ff7', '#0078D7', '#1a8a4a'],
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '60%',
+                    animation: { duration: 1200, delay: 200 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 }, padding: 10 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function (ctx) {
+                                    var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                                    return ' ' + ctx.label + ' (' + Math.round(ctx.raw / total * 100) + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    /* Dispara los charts cuando efectividad entra en viewport */
+    var efSec = document.getElementById('efectividad');
+    if (efSec) {
+        var obs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { initCharts(); obs.disconnect(); }
+            });
+        }, { threshold: 0.1 });
+        obs.observe(efSec);
+    }
+
+    /* También cuando el panel BBS es visible (donut chart) */
+    var bbsPanel = document.getElementById('panel-bbs');
+    if (bbsPanel) {
+        var obs2 = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { initCharts(); obs2.disconnect(); }
+            });
+        }, { threshold: 0.1 });
+        obs2.observe(bbsPanel);
+    }
 
 })();
 </script>
