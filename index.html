@@ -1837,7 +1837,12 @@
             margin-top: 28px;
             text-align: center;
         }
-        .radar-card canvas { max-width: 360px; display: inline-block; }
+        .radar-card canvas { display: block; width: 100% !important; height: auto !important; }
+        .radar-canvas-wrap {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
 
         /* Shape code gallery */
         .shape-gallery {
@@ -1887,7 +1892,7 @@
         }
         @media (max-width: 768px) {
             .charts-dual-grid { grid-template-columns: 1fr; }
-            .radar-card canvas { max-width: 100%; }
+            .radar-canvas-wrap { max-width: 100%; }
         }
     </style>
 
@@ -2711,7 +2716,9 @@
         <!-- Chart.js: radar de cobertura de módulos -->
         <div class="radar-card">
             <div class="chart-card-title">🎯 Nivel de automatización por área de trabajo</div>
-            <canvas id="chartRadar" height="260"></canvas>
+            <div class="radar-canvas-wrap">
+                <canvas id="chartRadar"></canvas>
+            </div>
             <p class="chart-note">100 = automatización total · 0 = proceso completamente manual</p>
         </div>
 
@@ -4772,17 +4779,18 @@
         /* ── 3. Radar: nivel de automatización por módulo ─────────── */
         var ctxRadar = document.getElementById('chartRadar');
         if (ctxRadar) {
+            var isMobile = window.innerWidth < 600;
             new Chart(ctxRadar, {
                 type: 'radar',
                 data: {
                     labels: [
-                        'Marcas\ny Tags',
-                        'Encofrado\nautomático',
-                        'Exportación\nExcel/BVBS',
-                        'Geometría\navanzada',
-                        'DWG → Revit',
-                        'Metrados\n5D BIM',
-                        'Imágenes\nde forma'
+                        'Marcas',
+                        'Encofrado',
+                        'Excel/BVBS',
+                        'Geometría',
+                        'DWG→Revit',
+                        'Metrados',
+                        'Imágenes'
                     ],
                     datasets: [
                         {
@@ -4792,33 +4800,47 @@
                             borderColor: '#8fa0b8',
                             borderWidth: 1.5,
                             pointBackgroundColor: '#8fa0b8',
-                            pointRadius: 3
+                            pointRadius: isMobile ? 2 : 3
                         },
                         {
                             label: 'Con BIMS',
                             data: [95, 92, 98, 86, 82, 94, 90],
-                            backgroundColor: 'rgba(0,120,215,0.13)',
-                            borderColor: '#0078D7',
+                            backgroundColor: 'rgba(15,77,158,0.13)',
+                            borderColor: '#0f4d9e',
                             borderWidth: 2,
-                            pointBackgroundColor: '#0078D7',
-                            pointRadius: 4
+                            pointBackgroundColor: '#0f4d9e',
+                            pointRadius: isMobile ? 3 : 4
                         }
                     ]
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: isMobile ? 1 : 1.3,
                     animation: { duration: 1400, easing: 'easeOutQuart', delay: 300 },
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } }
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: isMobile ? 10 : 11 }, padding: 12 }
+                        }
                     },
                     scales: {
                         r: {
                             min: 0,
                             max: 100,
-                            ticks: { stepSize: 25, font: { size: 9 }, backdropColor: 'transparent', color: '#aaa' },
-                            pointLabels: { font: { size: 10 }, color: '#444' },
-                            grid: { color: '#e8eef5' },
-                            angleLines: { color: '#e8eef5' }
+                            ticks: {
+                                stepSize: 25,
+                                font: { size: isMobile ? 7 : 9 },
+                                backdropColor: 'transparent',
+                                color: '#bbb'
+                            },
+                            pointLabels: {
+                                font: { size: isMobile ? 9 : 11 },
+                                color: '#333',
+                                padding: isMobile ? 4 : 8
+                            },
+                            grid: { color: '#e0e6f0' },
+                            angleLines: { color: '#e0e6f0' }
                         }
                     }
                 }
