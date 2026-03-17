@@ -90,12 +90,29 @@ exports.handler = async function (event) {
 
         // Enviar email para que el usuario establezca su contraseña
         const apiKey = process.env.FIREBASE_API_KEY;
+        let emailSent = false;
         if (apiKey) {
-            await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`, {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
-            });
+            try {
+                const emailRes = await fetch(
+                    `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
+                    {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body:    JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
+                    }
+                );
+                const emailData = await emailRes.json();
+                if (emailData.email) {
+                    emailSent = true;
+                    console.log(`[admin-create-license] Email de bienvenida enviado a: ${email}`);
+                } else {
+                    console.warn(`[admin-create-license] Firebase no envió email:`, JSON.stringify(emailData));
+                }
+            } catch (emailErr) {
+                console.warn(`[admin-create-license] Error al enviar email:`, emailErr.message);
+            }
+        } else {
+            console.warn('[admin-create-license] FIREBASE_API_KEY no configurada — email no enviado');
         }
 
         console.log(`[admin-create-license] Licencia creada: ${email} | ${licenseType} | vence: ${expirationDate}`);
@@ -103,7 +120,7 @@ exports.handler = async function (event) {
         return {
             statusCode: 200,
             headers: CORS,
-            body: JSON.stringify({ success: true, uid, isNewUser }),
+            body: JSON.stringify({ success: true, uid, isNewUser, emailSent }),
         };
 
     } catch (err) {
