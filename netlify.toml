@@ -23,6 +23,11 @@
   to     = "/.netlify/functions/culqi-webhook"
   status = 200
 
+[[redirects]]
+  from   = "/api/admin-create-license"
+  to     = "/.netlify/functions/admin-create-license"
+  status = 200
+
 # ── Mercado Pago (legacy — mantener hasta migración completa) ─────────────────
 [[redirects]]
   from   = "/api/create-preference"
