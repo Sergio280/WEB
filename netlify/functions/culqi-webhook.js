@@ -125,6 +125,7 @@ async function handleCancellation(sub) {
     try {
         const uid = (await auth.getUserByEmail(email)).uid;
         await db.ref(`users/${uid}/subscription/status`).set('canceled');
+        await db.ref(`users/${uid}/isActive`).set(false);
         console.log(`[culqi-webhook] Suscripción cancelada: ${email}`);
     } catch (err) {
         console.warn('[culqi-webhook] No se pudo cancelar:', err?.message);
@@ -163,13 +164,14 @@ async function activateLicense(email, info) {
     const newExpDate = baseDate.toISOString();
 
     const updates = {
-        Email:          email,
-        IsActive:       true,
-        LicenseType:    info.licenseType,
-        ExpirationDate: newExpDate,
-        MaxDevices:     info.maxDevices,
-        UpdatedAt:      now.toISOString(),
-        ...(isNewUser && { CreatedAt: now.toISOString(), ValidationCount: 0, activations: {} }),
+        email:          email,
+        isActive:       true,
+        licenseType:    info.licenseType,
+        expirationDate: newExpDate,
+        maxDevices:     info.maxDevices,
+        maxActivations: info.maxDevices,
+        updatedAt:      now.toISOString(),
+        ...(isNewUser && { createdAt: now.toISOString(), validationCount: 0, activations: {} }),
     };
 
     await db.ref(`users/${uid}`).update(updates);
