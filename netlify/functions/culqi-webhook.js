@@ -180,6 +180,7 @@ async function activateLicense(email, info) {
     const newExpDate = baseDate.toISOString();
 
     const updates = {
+        userId:         uid,
         email:          email,
         isActive:       true,
         licenseType:    info.licenseType,

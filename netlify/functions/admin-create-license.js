@@ -75,6 +75,7 @@ exports.handler = async function (event) {
 
         const now = new Date();
         const updates = {
+            userId:         uid,
             email,
             isActive:       true,
             licenseType:    licenseType || 'Monthly',
