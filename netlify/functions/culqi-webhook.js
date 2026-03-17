@@ -146,7 +146,9 @@ async function activateLicense(email, info) {
 
     try {
         uid = (await auth.getUserByEmail(email)).uid;
-    } catch {
+        console.log(`[culqi-webhook] Usuario existente: ${email} | uid: ${uid}`);
+    } catch (authErr) {
+        console.log(`[culqi-webhook] Usuario no encontrado (${authErr.code}), creando: ${email}`);
         const newUser = await auth.createUser({
             email,
             password:      crypto.randomBytes(14).toString('base64url'),
@@ -155,11 +157,17 @@ async function activateLicense(email, info) {
         });
         uid = newUser.uid;
         isNewUser = true;
-        console.log(`[culqi-webhook] Usuario creado: ${email}`);
+        console.log(`[culqi-webhook] Usuario creado: ${email} | uid: ${uid}`);
     }
 
+    if (!uid) {
+        console.error(`[culqi-webhook] uid vacío para ${email} — abortando`);
+        return;
+    }
+
+    console.log(`[culqi-webhook] Escribiendo licencia en: users/${uid}`);
     const now        = new Date();
-    const expSnap    = await db.ref(`users/${uid}/ExpirationDate`).once('value');
+    const expSnap    = await db.ref(`users/${uid}/expirationDate`).once('value');
     const currentExp = expSnap.val();
     let   baseDate   = new Date();
 
