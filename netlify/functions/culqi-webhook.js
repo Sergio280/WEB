@@ -42,33 +42,41 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const type = body.type || '';
-    let object = body.data || {};
+    // Culqi v2 puede enviar el objeto directamente (sin wrapper type/data)
+    // o con wrapper { type, data }
+    const type   = body.type || '';
+    let   object = body.data || {};
     if (typeof object === 'string') {
         try { object = JSON.parse(object); } catch { object = {}; }
     }
 
-    console.log(`[culqi-webhook] Evento: ${type} | charge_id: ${object.id} | email: ${object.email}`);
+    // Si no hay wrapper, el body ES el objeto (charge o subscription)
+    const isDirectObject = !type && body.object;
+    const objectType     = isDirectObject ? body.object : null;
+    if (isDirectObject) object = body;
+
+    console.log(`[culqi-webhook] Evento: "${type}" | object: "${objectType}" | id: ${object.id} | email: ${object.email}`);
 
     try {
-        switch (type) {
-            case 'charge.creation.succeeded':
-            case 'charge.capture.succeeded':
-                await handleCharge(object);
-                break;
+        // Cobros (wrapper o directo)
+        const isCharge = type === 'charge.creation.succeeded'
+                      || type === 'charge.capture.succeeded'
+                      || objectType === 'charge';
 
-            case 'subscription.creation.succeeded':
-            case 'subscription.update.succeeded':
-                await handleSubscription(object);
-                break;
+        // Suscripciones activas/renovadas
+        const isSub = type === 'subscription.creation.succeeded'
+                   || type === 'subscription.update.succeeded'
+                   || (objectType === 'subscription' && object.status !== 'canceled');
 
-            case 'subscription.cancel.succeeded':
-                await handleCancellation(object);
-                break;
+        // Cancelación
+        const isCancel = type === 'subscription.cancel.succeeded'
+                      || (objectType === 'subscription' && object.status === 'canceled');
 
-            default:
-                console.log(`[culqi-webhook] Evento ignorado: ${type}`);
-        }
+        if (isCharge)       await handleCharge(object);
+        else if (isCancel)  await handleCancellation(object);
+        else if (isSub)     await handleSubscription(object);
+        else                console.log(`[culqi-webhook] Evento no manejado: type="${type}" object="${objectType}"`);
+
     } catch (err) {
         console.error('[culqi-webhook] Error procesando evento:', err?.message || err);
     }
