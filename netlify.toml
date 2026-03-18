@@ -7,6 +7,18 @@
     Content-Type = "application/octet-stream"
     Content-Disposition = "attachment"
 
+[[headers]]
+  for = "/update/*.exe"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Disposition = "attachment"
+
+[[headers]]
+  for = "/update/*.zip"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Disposition = "attachment"
+
 # ── Culqi (activo) ────────────────────────────────────────────────────────────
 [[redirects]]
   from   = "/api/culqi-charge"

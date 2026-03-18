@@ -1,0 +1,7 @@
+{
+  "version": "1.0.5",
+  "releaseNotes": "Versión inicial publicada.",
+  "isMandatory": false,
+  "releaseDate": "2026-03-17",
+  "downloadUrl": "https://bimsapp.netlify.app/update/BIMS-update.zip"
+}
