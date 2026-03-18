@@ -1,0 +1,41 @@
+name: Publicar actualización en Firebase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'update/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Leer version.json
+        id: version
+        run: |
+          VERSION=$(jq -r '.version' update/version.json)
+          NOTES=$(jq -r '.releaseNotes' update/version.json)
+          MANDATORY=$(jq -r '.isMandatory' update/version.json)
+          DATE=$(jq -r '.releaseDate' update/version.json)
+          DOWNLOAD_URL=$(jq -r '.downloadUrl' update/version.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "notes=$NOTES" >> $GITHUB_OUTPUT
+          echo "mandatory=$MANDATORY" >> $GITHUB_OUTPUT
+          echo "date=$DATE" >> $GITHUB_OUTPUT
+          echo "downloadUrl=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
+
+      - name: Actualizar Firebase updates/latest
+        run: |
+          curl -s -X PUT \
+            "https://bims-8d507-default-rtdb.firebaseio.com/updates/latest.json?auth=${{ secrets.FIREBASE_DB_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "version":     "${{ steps.version.outputs.version }}",
+              "releaseNotes":"${{ steps.version.outputs.notes }}",
+              "isMandatory": ${{ steps.version.outputs.mandatory }},
+              "releaseDate": "${{ steps.version.outputs.date }}",
+              "downloadUrl": "${{ steps.version.outputs.downloadUrl }}"
+            }'
+          echo "✅ Firebase actualizado: v${{ steps.version.outputs.version }}"
