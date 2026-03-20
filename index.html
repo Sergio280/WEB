@@ -1472,9 +1472,11 @@
         .mp-modal {
             background: white;
             border-radius: 18px;
-            padding: 36px 40px;
+            padding: 28px 32px;
             max-width: 440px;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             box-shadow: 0 24px 60px rgba(0,0,0,0.28);
             position: relative;
             animation: scaleIn 0.22s ease;
@@ -1515,7 +1517,7 @@
         }
 
         .mp-modal-price {
-            font-size: 2.4em;
+            font-size: 2em;
             font-weight: 800;
             color: var(--blue);
             line-height: 1.1;
@@ -1802,7 +1804,7 @@
         .mp-ci.yape   { color: #6b21a8; }
 
         @media (max-width: 480px) {
-            .mp-modal { padding: 28px 22px; }
+            .mp-modal { padding: 20px 16px; max-height: 92vh; }
             .mp-modal-price { font-size: 2em; }
         }
 
