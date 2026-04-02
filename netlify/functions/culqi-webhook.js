@@ -165,19 +165,57 @@ async function activateLicense(email, info) {
         return;
     }
 
-    console.log(`[culqi-webhook] Escribiendo licencia en: users/${uid}`);
-    const now        = new Date();
-    const expSnap    = await db.ref(`users/${uid}/expirationDate`).once('value');
-    const currentExp = expSnap.val();
-    let   baseDate   = new Date();
+    const now = new Date();
 
-    if (currentExp) {
+    // ── Fix: Deduplicación de webhooks ────────────────────────────────────────
+    // Cobro único: chargeId es globalmente único en Culqi — si ya existe en
+    // payments, el webhook es un reintento y se ignora para evitar extender
+    // la licencia múltiples veces.
+    if (info.chargeId) {
+        const dup = await db.ref(`users/${uid}/payments/${info.chargeId}`).once('value');
+        if (dup.val()) {
+            console.log(`[culqi-webhook] Cobro ${info.chargeId} ya procesado — ignorado (duplicado)`);
+            return;
+        }
+    }
+
+    // Suscripción: si el mismo subscriptionId fue procesado hace < 5 minutos,
+    // es un reintento de Culqi — ignorar.
+    if (info.subscriptionId) {
+        const subSnap = await db.ref(`users/${uid}/subscription`).once('value');
+        const subData = subSnap.val();
+        if (subData?.subscriptionId === info.subscriptionId && subData?.lastWebhookAt) {
+            const diffMs = now - new Date(subData.lastWebhookAt);
+            if (diffMs < 5 * 60 * 1000) {
+                console.log(`[culqi-webhook] Subscription ${info.subscriptionId} ya procesada hace ${Math.round(diffMs / 1000)}s — ignorado (duplicado)`);
+                return;
+            }
+        }
+    }
+
+    // ── Fix: Calcular expiración sin acumular días de Trial gratuito ──────────
+    // Si el usuario tiene un Trial de BIMS en Firebase, la suscripción paga
+    // arranca desde HOY (no desde el vencimiento del trial), evitando que
+    // el usuario acumule ~60 días gratis (30 trial + 30 primer mes Culqi).
+    // Las renovaciones de licencias pagas sí extienden desde la fecha actual.
+    const expSnap     = await db.ref(`users/${uid}/expirationDate`).once('value');
+    const currentExp  = expSnap.val();
+    const licTypeSnap = await db.ref(`users/${uid}/licenseType`).once('value');
+    const existingLicType = licTypeSnap.val();
+
+    let baseDate = new Date();
+
+    // Extender desde vencimiento actual SOLO si la licencia existente es paga
+    if (currentExp && existingLicType !== 'Trial') {
         const existing = new Date(currentExp);
         if (existing > now) baseDate = existing;
     }
 
     baseDate.setMonth(baseDate.getMonth() + info.months);
     const newExpDate = baseDate.toISOString();
+
+    console.log(`[culqi-webhook] Escribiendo licencia en: users/${uid}`);
+    console.log(`[culqi-webhook] Tipo previo: ${existingLicType || 'ninguno'} | Base: ${baseDate.toISOString()} | Nuevo venc.: ${newExpDate}`);
 
     const updates = {
         userId:         uid,
@@ -207,6 +245,7 @@ async function activateLicense(email, info) {
             plan:           info.plan,
             status:         'active',
             lastRenewal:    now.toISOString(),
+            lastWebhookAt:  now.toISOString(), // timestamp para deduplicación
             nextBilling:    newExpDate,
         });
     }
