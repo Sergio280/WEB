@@ -1,6 +1,16 @@
 [build]
   functions = "netlify/functions"
 
+# ── Headers de seguridad globales ─────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# ── Descarga de ejecutables ────────────────────────────────────────────────────
 [[headers]]
   for = "/*.exe"
   [headers.values]
@@ -19,7 +29,7 @@
     Content-Type = "application/octet-stream"
     Content-Disposition = "attachment"
 
-# ── Culqi (activo) ────────────────────────────────────────────────────────────
+# ── Rutas API (Culqi) ─────────────────────────────────────────────────────────
 [[redirects]]
   from   = "/api/culqi-charge"
   to     = "/.netlify/functions/culqi-charge"
@@ -38,15 +48,4 @@
 [[redirects]]
   from   = "/api/admin-create-license"
   to     = "/.netlify/functions/admin-create-license"
-  status = 200
-
-# ── Mercado Pago (legacy — mantener hasta migración completa) ─────────────────
-[[redirects]]
-  from   = "/api/create-preference"
-  to     = "/.netlify/functions/create-preference"
-  status = 200
-
-[[redirects]]
-  from   = "/api/webhook"
-  to     = "/.netlify/functions/webhook"
   status = 200

@@ -31,12 +31,14 @@ const DURATION_MONTHS = {
 exports.handler = async function (event) {
     if (event.httpMethod !== 'POST') return { statusCode: 200, body: '' };
 
-    // Verificar hash Culqi (Código Hash del RSA Key)
-    if (process.env.CULQI_WEBHOOK_HASH) {
-        if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
-            console.warn('[culqi-webhook] Hash inválido — descartado');
-            return { statusCode: 200, body: '' };
-        }
+    // Verificar hash Culqi (obligatorio — configurar CULQI_WEBHOOK_HASH en Netlify)
+    if (!process.env.CULQI_WEBHOOK_HASH) {
+        console.error('[culqi-webhook] CULQI_WEBHOOK_HASH no configurado — rechazando todas las peticiones');
+        return { statusCode: 200, body: '' };
+    }
+    if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
+        console.warn('[culqi-webhook] Hash inválido — descartado');
+        return { statusCode: 200, body: '' };
     }
 
     let body;

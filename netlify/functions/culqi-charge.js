@@ -25,7 +25,7 @@ const CATALOG = {
 const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
 
 const CORS = {
-    'Access-Control-Allow-Origin':  '*',
+    'Access-Control-Allow-Origin':  process.env.SITE_URL || '',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 };

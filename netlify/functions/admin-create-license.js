@@ -22,7 +22,7 @@ const db   = admin.database();
 const auth = admin.auth();
 
 const CORS = {
-    'Access-Control-Allow-Origin':  '*',
+    'Access-Control-Allow-Origin':  process.env.SITE_URL || '',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 };
@@ -41,7 +41,9 @@ exports.handler = async function (event) {
 
     try {
         const decoded = await auth.verifyIdToken(adminToken);
-        const adminEmails = (process.env.ADMIN_EMAILS || 'alejoszapatasergio@gmail.com').split(',').map(e => e.trim());
+        if (!process.env.ADMIN_EMAILS)
+            return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: 'ADMIN_EMAILS no configurado' }) };
+        const adminEmails = process.env.ADMIN_EMAILS.split(',').map(e => e.trim());
         if (!adminEmails.includes(decoded.email)) {
             return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: 'No autorizado' }) };
         }
