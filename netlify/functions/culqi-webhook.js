@@ -8,13 +8,14 @@ const admin  = require('firebase-admin');
 
 // ── Firebase Admin (singleton) ────────────────────────────────────────────────
 if (!admin.apps.length) {
+    const projectId = process.env.FIREBASE_PROJECT_ID;
     admin.initializeApp({
         credential: admin.credential.cert({
-            projectId:   process.env.FIREBASE_PROJECT_ID,
-            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            projectId,
+            clientEmail: `firebase-adminsdk-fbsvc@${projectId}.iam.gserviceaccount.com`,
             privateKey:  (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
         }),
-        databaseURL: process.env.FIREBASE_DATABASE_URL,
+        databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`,
     });
 }
 
@@ -261,7 +262,8 @@ async function activateLicense(email, info) {
 
 // ── Email de activación ───────────────────────────────────────────────────────
 async function sendActivationEmail(email) {
-    const apiKey = process.env.FIREBASE_API_KEY;
+    // FIREBASE_API_KEY es la misma clave pública usada en el frontend
+    const apiKey = process.env.FIREBASE_API_KEY || 'AIzaSyASlVvR9ub9krxDJcVfqnBw88_qLhIMKwM';
     if (!apiKey) {
         console.warn('[culqi-webhook] FIREBASE_API_KEY no configurado');
         return;
