@@ -1907,26 +1907,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <!-- ── Anime.js v4 ── -->
-    <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
-
-    <!-- ── ES Module Shims (polyfill importmap en browsers antiguos) ── -->
-    <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
-
-    <!-- ── Material Web 2.0 — componentes seleccionados ── -->
-    <script type="importmap">
-    {
-      "imports": {
-        "@material/web/": "https://esm.run/@material/web/"
-      }
-    }
-    </script>
-    <script type="module">
-      import '@material/web/button/filled-button.js';
-      import '@material/web/button/outlined-button.js';
-      import '@material/web/chips/assist-chip.js';
-      import '@material/web/progress/linear-progress.js';
-    </script>
+    <!-- ── Anime.js v4 (defer — no bloquea render) ── -->
+    <script defer src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
 
     <style>
     /* ══════════════════════════════════════════════════════════
@@ -3071,8 +3053,315 @@
     ::selection { background: rgba(37,99,235,.2) !important; }
     </style>
 
-    <!-- Chart.js 4.4 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- ══ STYLE 5: Creative Identity Layer ══ -->
+    <style>
+
+    /* ── Hero native CTAs (replace md-filled-button / md-outlined-button) ── */
+    .btn-hero-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        background: #2563eb;
+        color: #fff !important;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: .01em;
+        border-radius: 12px;
+        text-decoration: none !important;
+        box-shadow: 0 4px 20px rgba(37,99,235,.45), 0 1px 4px rgba(37,99,235,.25);
+        transition: transform .2s, box-shadow .2s, background .2s;
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-hero-primary::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 60%);
+        pointer-events: none;
+    }
+    .btn-hero-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(37,99,235,.55), 0 2px 8px rgba(37,99,235,.3);
+    }
+    .btn-hero-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 26px;
+        background: rgba(255,255,255,.07);
+        color: rgba(255,255,255,.92) !important;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: .01em;
+        border-radius: 12px;
+        text-decoration: none !important;
+        border: 1px solid rgba(255,255,255,.22);
+        backdrop-filter: blur(8px);
+        transition: transform .2s, background .2s, border-color .2s;
+    }
+    .btn-hero-secondary:hover {
+        background: rgba(255,255,255,.14);
+        border-color: rgba(255,255,255,.4);
+        transform: translateY(-2px);
+    }
+
+    /* ── Compat chips (replace md-assist-chip) ── */
+    .compat-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 13px;
+        background: rgba(255,255,255,.09);
+        color: rgba(255,255,255,.88);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .03em;
+        border-radius: 100px;
+        border: 1px solid rgba(255,255,255,.2);
+        backdrop-filter: blur(6px);
+        transition: background .2s, border-color .2s;
+    }
+    .compat-chip:hover {
+        background: rgba(37,99,235,.25);
+        border-color: rgba(37,99,235,.5);
+    }
+    .header-compat-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 28px;
+    }
+
+    /* ── Hero layout — asymmetric left-anchored ── */
+    .header-inner {
+        max-width: 900px !important;
+        margin: 0 auto !important;
+        padding: 72px 32px 80px !important;
+        text-align: left !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+    }
+    .header-logo {
+        font-size: 1.6rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -.02em !important;
+        margin-bottom: 20px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .header-sub {
+        font-size: clamp(2rem, 5vw, 3.2rem) !important;
+        font-weight: 800 !important;
+        letter-spacing: -.03em !important;
+        line-height: 1.15 !important;
+        max-width: 760px !important;
+        margin: 0 0 16px !important;
+        color: #fff !important;
+    }
+    .header-by {
+        font-size: 1.05rem !important;
+        line-height: 1.7 !important;
+        color: rgba(255,255,255,.62) !important;
+        max-width: 600px !important;
+        margin: 0 0 32px !important;
+    }
+    .header-compat-chips {
+        justify-content: flex-start !important;
+        margin-bottom: 32px !important;
+    }
+    .header-cta {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        justify-content: flex-start !important;
+    }
+
+    /* ── Hero vertical rule accent ── */
+    header .header-inner::before {
+        content: '';
+        display: block;
+        width: 3px;
+        height: 48px;
+        background: linear-gradient(to bottom, #2563eb, #7c3aed);
+        border-radius: 2px;
+        margin-bottom: 24px;
+    }
+
+    /* ── Stats strip — dark ticker style ── */
+    .stats-strip {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        background: #07111f !important;
+        border-radius: 0 !important;
+        border-top: 1px solid rgba(255,255,255,.06) !important;
+        border-bottom: 1px solid rgba(255,255,255,.06) !important;
+        margin: 0 calc(-50vw + 50%) !important;
+        padding: 0 !important;
+        gap: 0 !important;
+    }
+    .stat-card {
+        border-radius: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        border-right: 1px solid rgba(255,255,255,.06) !important;
+        padding: 36px 28px !important;
+        text-align: left !important;
+        box-shadow: none !important;
+    }
+    .stat-card:last-child { border-right: none !important; }
+    .stat-number {
+        font-size: 3rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -.04em !important;
+        color: #fff !important;
+        line-height: 1 !important;
+        font-family: 'Outfit', sans-serif !important;
+        background: linear-gradient(135deg, #60a5fa, #2563eb) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+    .stat-label {
+        font-size: .82rem !important;
+        color: rgba(255,255,255,.45) !important;
+        font-weight: 500 !important;
+        letter-spacing: .04em !important;
+        text-transform: uppercase !important;
+        margin-top: 8px !important;
+    }
+
+    /* ── Section headlines — editorial left-aligned ── */
+    .section-title, section > h2:first-child, .panel-section h2 {
+        font-size: clamp(1.8rem, 4vw, 2.8rem) !important;
+        font-weight: 800 !important;
+        letter-spacing: -.03em !important;
+        line-height: 1.15 !important;
+        text-align: left !important;
+        margin-bottom: 8px !important;
+        color: #07111f !important;
+    }
+    section > h2:first-child::after {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        border-radius: 2px;
+        margin-top: 14px;
+    }
+
+    /* ── Intro section — two-column on desktop ── */
+    section#inicio {
+        display: grid !important;
+        grid-template-columns: 1fr 340px !important;
+        grid-template-rows: auto auto 1fr !important;
+        gap: 0 56px !important;
+        align-items: start !important;
+    }
+    section#inicio h2 { grid-column: 1 / -1 !important; }
+    section#inicio > p:first-of-type { grid-column: 1; }
+    section#inicio .badge-row { grid-column: 2; grid-row: 2 / 5; align-self: start; flex-direction: column; }
+    section#inicio .bim-std-intro { grid-column: 1; }
+
+    /* ── Bento grid for feature panels ── */
+    .cmd-panel-grid, .feature-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+        gap: 16px !important;
+    }
+
+    /* ── Comparison section — split layout ── */
+    .compare-section, #efectividad {
+        background: #f8fafc !important;
+        border-radius: 24px !important;
+        padding: 48px !important;
+        margin: 40px 0 !important;
+        border: 1px solid rgba(15,23,42,.06) !important;
+    }
+
+    /* ── Pricing cards — premium dark with gradient border ── */
+    .catalog-card {
+        position: relative !important;
+        border-radius: 20px !important;
+        overflow: visible !important;
+    }
+    .catalog-card::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 21px;
+        background: linear-gradient(135deg, rgba(37,99,235,.2), rgba(124,58,237,.15), rgba(15,23,42,.04));
+        z-index: -1;
+        pointer-events: none;
+    }
+    .catalog-card.featured {
+        background: linear-gradient(145deg, #07111f 0%, #0d1a2e 100%) !important;
+    }
+    .catalog-card.featured::before {
+        background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+    }
+
+    /* ── FAQ — numbered editorial style ── */
+    .faq-item {
+        border-left: 3px solid transparent !important;
+        transition: border-color .3s !important;
+        padding-left: 20px !important;
+    }
+    .faq-item.open {
+        border-left-color: #2563eb !important;
+    }
+
+    /* ── Announce bar — refined ── */
+    .announce-bar {
+        background: linear-gradient(90deg, #07111f 0%, #0d1a2e 50%, #07111f 100%) !important;
+        border-bottom: 1px solid rgba(37,99,235,.3) !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: .82rem !important;
+        letter-spacing: .01em !important;
+        padding: 10px 24px !important;
+    }
+    .announce-bar a {
+        color: #60a5fa !important;
+        font-weight: 700 !important;
+        border-bottom: 1px solid rgba(96,165,250,.4) !important;
+        text-decoration: none !important;
+        transition: border-color .2s !important;
+    }
+    .announce-bar a:hover { border-color: #60a5fa !important; }
+
+    /* ── Nav CTA pill ── */
+    .nav-cta {
+        background: #2563eb !important;
+        color: #fff !important;
+        padding: 7px 16px !important;
+        border-radius: 8px !important;
+        font-weight: 700 !important;
+        font-size: .82rem !important;
+        letter-spacing: .02em !important;
+    }
+    .nav-cta:hover { background: #1d4ed8 !important; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+        .stats-strip { grid-template-columns: repeat(2, 1fr) !important; margin: 0 !important; }
+        .stat-card:nth-child(2) { border-right: none !important; }
+        .stat-card:nth-child(3) { border-top: 1px solid rgba(255,255,255,.06) !important; }
+        section#inicio { grid-template-columns: 1fr !important; }
+        section#inicio .badge-row { grid-column: 1 !important; grid-row: auto !important; flex-direction: row !important; }
+        .header-inner { padding: 48px 20px 56px !important; }
+        .header-sub { font-size: 2rem !important; }
+        .compare-section, #efectividad { padding: 28px !important; }
+    }
+
+    </style>
+
 </head>
 <body>
 
@@ -3089,17 +3378,13 @@
         <p class="header-sub">Automatización BIM Profesional para Autodesk Revit</p>
         <p class="header-by">Soluciones avanzadas de modelado estructural, refuerzo y encofrado para ingeniería y arquitectura</p>
         <div class="header-compat-chips">
-            <md-assist-chip label="Revit 2024"></md-assist-chip>
-            <md-assist-chip label="Revit 2025"></md-assist-chip>
-            <md-assist-chip label="Revit 2026"></md-assist-chip>
+            <span class="compat-chip">Revit 2024</span>
+            <span class="compat-chip">Revit 2025</span>
+            <span class="compat-chip">Revit 2026</span>
         </div>
         <div class="header-cta">
-            <md-filled-button onclick="document.getElementById('precios').scrollIntoView({behavior:'smooth'})">
-                Iniciar evaluación gratuita — 30 días
-            </md-filled-button>
-            <md-outlined-button onclick="document.getElementById('casos').scrollIntoView({behavior:'smooth'})">
-                Ver casos de uso
-            </md-outlined-button>
+            <a href="#precios" class="btn-hero-primary">Iniciar evaluación gratuita — 30 días</a>
+            <a href="#casos" class="btn-hero-secondary">Ver casos de uso</a>
         </div>
     </div>
 </header>
@@ -5318,16 +5603,15 @@
 <script>
 (function () {
     'use strict';
-    if (typeof Chart === 'undefined') return;
-
-    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-    Chart.defaults.color = '#6b7280';
 
     var chartsInited = false;
 
-    function initCharts() {
-        if (chartsInited) return;
+    window.initCharts = function() {
+        if (chartsInited || typeof Chart === 'undefined') return;
         chartsInited = true;
+
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.color = '#6b7280';
 
         /* ── Paleta 2025 — coherente con nuevo diseño ── */
         var C_BLUE   = 'rgba(37,99,235,0.82)';
@@ -5606,7 +5890,7 @@
     if (efSec) {
         var obs = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
-                if (e.isIntersecting) { initCharts(); obs.disconnect(); }
+                if (e.isIntersecting) { window.initCharts(); obs.disconnect(); }
             });
         }, { threshold: 0.1 });
         obs.observe(efSec);
@@ -5617,7 +5901,7 @@
     if (bbsPanel) {
         var obs2 = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
-                if (e.isIntersecting) { initCharts(); obs2.disconnect(); }
+                if (e.isIntersecting) { window.initCharts(); obs2.disconnect(); }
             });
         }, { threshold: 0.1 });
         obs2.observe(bbsPanel);
@@ -5625,6 +5909,9 @@
 
 })();
 </script>
+
+<!-- Chart.js — defer para no bloquear render -->
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onload="initCharts()"></script>
 
 </body>
 </html>
