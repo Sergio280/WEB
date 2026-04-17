@@ -2748,6 +2748,329 @@
     }
     </style>
 
+    <!-- ══════════════════════════════════════════════════════════
+         BIMS — Premium Redesign 2025
+         Dark-light hybrid · Engineering aesthetic
+    ══════════════════════════════════════════════════════════ -->
+    <style>
+    /* ── Tokens ── */
+    :root {
+        --c-bg:        #f3f6fb;
+        --c-surface:   #ffffff;
+        --c-border:    rgba(15,23,42,.07);
+        --c-border-2:  rgba(15,23,42,.13);
+        --c-dark:      #07111f;
+        --c-dark-2:    #0d1a2e;
+        --c-dark-3:    #0f2040;
+        --c-blue:      #2563eb;
+        --c-blue-lt:   #3b82f6;
+        --c-cyan:      #06b6d4;
+        --c-green:     #10b981;
+        --c-amber:     #f59e0b;
+        --c-violet:    #7c3aed;
+        --c-text:      #0f172a;
+        --c-text-2:    #374151;
+        --c-text-3:    #6b7280;
+        --c-inv:       #f1f5f9;
+        --c-inv-2:     rgba(241,245,249,.7);
+        --c-inv-3:     rgba(148,163,184,.75);
+        --r-sm:  8px;  --r-md: 12px; --r-lg: 16px;
+        --r-xl: 20px;  --r-2xl: 24px; --r-pill: 100px;
+        --s-sm: 0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
+        --s-md: 0 4px 16px rgba(0,0,0,.08), 0 12px 32px rgba(0,0,0,.06);
+        --s-lg: 0 8px 24px rgba(0,0,0,.10), 0 24px 56px rgba(0,0,0,.08);
+        --s-blue: 0 4px 20px rgba(37,99,235,.20), 0 16px 40px rgba(37,99,235,.10);
+    }
+
+    /* ── Body ── */
+    body { background: var(--c-bg) !important; color: var(--c-text) !important; }
+
+    /* ── Page grain ── */
+    body::after {
+        content: '' !important;
+        position: fixed !important; inset: 0 !important;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E") !important;
+        opacity: .015 !important; pointer-events: none !important;
+        z-index: 9998 !important; mix-blend-mode: overlay !important;
+    }
+
+    /* ── Announce bar ── */
+    .announce-bar {
+        background: var(--c-dark) !important;
+        font-size: .82em !important; font-weight: 500 !important;
+        letter-spacing: .01em !important; padding: 9px 24px !important;
+        border-bottom: 1px solid rgba(59,130,246,.18) !important;
+    }
+    .announce-bar a {
+        color: #93c5fd !important; font-weight: 600 !important;
+        border-bottom: 1px solid rgba(147,197,253,.35) !important;
+        text-decoration: none !important; padding-bottom: 1px !important;
+    }
+    .announce-bar a:hover { color: #fff !important; border-color: #fff !important; text-decoration: none !important; }
+
+    /* ── Hero ── */
+    header {
+        background:
+            radial-gradient(ellipse 110% 90% at 18% 50%, rgba(37,99,235,.55) 0%, transparent 52%),
+            radial-gradient(ellipse 80% 100% at 82% 60%, rgba(124,58,237,.32) 0%, transparent 52%),
+            radial-gradient(ellipse 55% 65% at 50% 5%,  rgba(6,182,212,.22)  0%, transparent 58%),
+            #07111f !important;
+        padding: 100px 20px 80px !important;
+        position: relative !important; overflow: hidden !important;
+    }
+    /* Dot grid overlay */
+    header::before {
+        content: '' !important; position: absolute !important; inset: 0 !important;
+        background-image: radial-gradient(circle, rgba(255,255,255,.13) 1px, transparent 1px) !important;
+        background-size: 30px 30px !important;
+        mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 25%, transparent 100%) !important;
+        -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 25%, transparent 100%) !important;
+        pointer-events: none !important; z-index: 0 !important; animation: none !important;
+    }
+    /* Grain on hero */
+    header::after {
+        content: '' !important; position: absolute !important; inset: 0 !important;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E") !important;
+        background-size: 128px 128px !important; opacity: .04 !important;
+        pointer-events: none !important; z-index: 0 !important; mix-blend-mode: overlay !important;
+    }
+    .header-inner { position: relative !important; z-index: 1 !important; }
+
+    /* Wordmark */
+    .header-logo {
+        font-size: 4.5em !important; font-weight: 900 !important; letter-spacing: 10px !important;
+        background: linear-gradient(135deg, #fff 20%, rgba(147,197,253,.85) 65%, rgba(196,181,253,.7) 100%) !important;
+        -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        filter: drop-shadow(0 4px 24px rgba(59,130,246,.42)) !important;
+        margin-bottom: 6px !important;
+    }
+    .header-sub {
+        font-size: 1.18em !important; font-weight: 500 !important;
+        color: rgba(241,245,249,.88) !important; max-width: 620px !important;
+        margin: 0 auto 8px !important; line-height: 1.55 !important;
+    }
+    .header-by { font-size: .87em !important; color: rgba(148,163,184,.78) !important; max-width: 560px !important; margin: 0 auto 20px !important; }
+    .header-compat-chips { margin-bottom: 28px !important; }
+    .header-cta { display: flex !important; gap: 14px !important; justify-content: center !important; flex-wrap: wrap !important; align-items: center !important; }
+
+    /* ── Nav — dark glass ── */
+    nav {
+        background: rgba(7,17,31,.93) !important;
+        backdrop-filter: saturate(180%) blur(20px) !important;
+        -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
+        border-bottom: 1px solid rgba(255,255,255,.055) !important;
+        box-shadow: none !important;
+    }
+    nav > a { color: white !important; }
+    nav ul li a { color: rgba(241,245,249,.65) !important; font-size: .84em !important; font-weight: 500 !important; padding: 8px 14px !important; border-radius: 6px !important; transition: color .15s, background .15s !important; }
+    nav ul li a:hover { color: #fff !important; background: rgba(255,255,255,.07) !important; }
+    .nav-cta {
+        background: var(--c-blue) !important; color: white !important;
+        border-radius: 8px !important; padding: 8px 18px !important;
+        box-shadow: 0 2px 12px rgba(37,99,235,.35) !important; font-weight: 700 !important;
+    }
+    .nav-cta:hover { background: var(--c-blue-lt) !important; box-shadow: 0 4px 20px rgba(37,99,235,.5) !important; transform: translateY(-1px) !important; color: white !important; }
+
+    /* ── Intro section ── */
+    .intro {
+        background: var(--c-surface) !important; border: 1px solid var(--c-border) !important;
+        border-radius: var(--r-2xl) !important; box-shadow: var(--s-sm) !important; padding: 52px !important;
+    }
+    .intro h2 { font-size: 2em !important; font-weight: 800 !important; color: var(--c-text) !important; letter-spacing: -.03em !important; line-height: 1.2 !important; }
+    .intro p { color: var(--c-text-2) !important; line-height: 1.75 !important; }
+    .badge { background: #eff6ff !important; color: var(--c-blue) !important; border: 1px solid rgba(37,99,235,.14) !important; border-radius: var(--r-pill) !important; font-size: .79em !important; font-weight: 600 !important; padding: 5px 14px !important; }
+
+    /* ── Stats strip — dark bento ── */
+    .stats-strip { gap: 16px !important; margin-bottom: 24px !important; }
+    .stat-card {
+        border-radius: var(--r-2xl) !important;
+        padding: 38px 24px !important;
+        border: 1px solid rgba(255,255,255,.06) !important;
+        box-shadow: 0 4px 24px rgba(0,0,0,.22) !important;
+        transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s !important;
+        position: relative !important; overflow: hidden !important;
+    }
+    /* Dark tinted backgrounds per card */
+    .stat-card:nth-child(1) { background: linear-gradient(155deg,#0d1a2e 0%,#0f1f40 100%) !important; border-top: 1px solid rgba(59,130,246,.35) !important; }
+    .stat-card:nth-child(2) { background: linear-gradient(155deg,#0d1a2e 0%,#0d2219 100%) !important; border-top: 1px solid rgba(16,185,129,.35) !important; }
+    .stat-card:nth-child(3) { background: linear-gradient(155deg,#0d1a2e 0%,#221a08 100%) !important; border-top: 1px solid rgba(245,158,11,.35) !important; }
+    .stat-card:nth-child(4) { background: linear-gradient(155deg,#0d1a2e 0%,#16082e 100%) !important; border-top: 1px solid rgba(124,58,237,.35) !important; }
+    .stat-card:hover { transform: translateY(-6px) scale(1.02) !important; box-shadow: 0 16px 48px rgba(0,0,0,.32), 0 4px 20px rgba(37,99,235,.18) !important; border-color: rgba(59,130,246,.22) !important; }
+    /* Number colors on dark */
+    .stat-card:nth-child(1) .stat-number { color: #93c5fd !important; }
+    .stat-card:nth-child(2) .stat-number { color: #6ee7b7 !important; }
+    .stat-card:nth-child(3) .stat-number { color: #fcd34d !important; }
+    .stat-card:nth-child(4) .stat-number { color: #c4b5fd !important; }
+    .stat-number { font-size: 3.4em !important; font-weight: 900 !important; letter-spacing: -.04em !important; line-height: 1 !important; margin-bottom: 8px !important; }
+    .stat-label { color: rgba(148,163,184,.82) !important; font-size: .81em !important; font-weight: 500 !important; letter-spacing: .01em !important; }
+    /* Override spotlight for dark cards */
+    .stat-card { background-image: radial-gradient(circle 180px at var(--spotlight-x,50%) var(--spotlight-y,50%), rgba(255,255,255,.04) 0%, transparent 70%) !important; }
+
+    /* ── Section headings ── */
+    .efectividad-section h2, .use-cases-section h2, .faq-section h2 { font-size: 2.1em !important; font-weight: 800 !important; color: var(--c-text) !important; letter-spacing: -.03em !important; line-height: 1.15 !important; }
+    .section-sub { color: var(--c-text-3) !important; font-size: .95em !important; }
+
+    /* ── Light sections ── */
+    .efectividad-section, .use-cases-section {
+        background: var(--c-surface) !important; border: 1px solid var(--c-border) !important;
+        border-radius: var(--r-2xl) !important; box-shadow: var(--s-sm) !important;
+    }
+
+    /* ── Comparison cards ── */
+    .comparison-card { background: #f8fafc !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-xl) !important; }
+
+    /* ── Chart cards ── */
+    .chart-card { background: #f8fafc !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-xl) !important; border-left: 3px solid var(--c-blue) !important; }
+    .chart-card-title { font-weight: 700 !important; color: var(--c-text-2) !important; font-size: .88em !important; }
+    .radar-card { background: #f8fafc !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-xl) !important; border-top: 3px solid var(--c-blue) !important; }
+
+    /* ── Workflow steps ── */
+    .workflow-section { border-top: 1px solid var(--c-border) !important; }
+    .step-circle { background: linear-gradient(135deg, var(--c-blue), #1d4ed8) !important; box-shadow: 0 4px 16px rgba(37,99,235,.35) !important; font-size: 1.3em !important; }
+    .workflow-step .step-content h4 { font-weight: 700 !important; color: var(--c-text) !important; font-size: .95em !important; }
+
+    /* ── Panel sections ── */
+    .panel-section { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-2xl) !important; box-shadow: var(--s-sm) !important; }
+    .panel-header { padding: 28px 32px !important; border-bottom: 1px solid var(--c-border) !important; }
+    .panel-header.blue   { background: linear-gradient(110deg,#dbeafe 0%,#eff6ff 60%,#f0f9ff 100%) !important; border-left: 4px solid var(--c-blue) !important; }
+    .panel-header.green  { background: linear-gradient(110deg,#d1fae5 0%,#ecfdf5 60%,#f0fdf4 100%) !important; border-left: 4px solid var(--c-green) !important; }
+    .panel-header.orange { background: linear-gradient(110deg,#fde68a 0%,#fef3c7 60%,#fffbeb 100%) !important; border-left: 4px solid var(--c-amber) !important; }
+    .panel-header.purple { background: linear-gradient(110deg,#ede9fe 0%,#f5f3ff 60%,#faf5ff 100%) !important; border-left: 4px solid var(--c-violet) !important; }
+    .panel-header h2 { font-size: 1.55em !important; font-weight: 800 !important; letter-spacing: -.03em !important; }
+    .panel-header.blue   h2 { color: #1d4ed8 !important; }
+    .panel-header.green  h2 { color: #047857 !important; }
+    .panel-header.orange h2 { color: #b45309 !important; }
+    .panel-header.purple h2 { color: #6d28d9 !important; }
+    .panel-header p { color: var(--c-text-3) !important; font-size: .93em !important; }
+
+    /* ── Command cards ── */
+    .card {
+        background: #f8fafc !important; border: 1px solid var(--c-border) !important;
+        border-radius: var(--r-lg) !important; border-top: 2px solid transparent !important;
+        box-shadow: none !important;
+        transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, border-color .25s, background .25s !important;
+    }
+    .card:hover { background: var(--c-surface) !important; border-color: rgba(37,99,235,.18) !important; border-top-color: var(--c-blue) !important; transform: translateY(-4px) !important; box-shadow: var(--s-md) !important; }
+    .card h3 { font-size: .95em !important; font-weight: 700 !important; color: var(--c-text) !important; }
+    .cmd-list li { font-size: .85em !important; color: var(--c-text-2) !important; border-bottom-color: rgba(15,23,42,.05) !important; }
+
+    /* ── Pricing section — full dark ── */
+    .pricing-section {
+        background: var(--c-dark) !important; border-radius: var(--r-2xl) !important;
+        border: 1px solid rgba(255,255,255,.055) !important;
+        padding: 48px !important; position: relative !important; overflow: hidden !important;
+        box-shadow: 0 8px 48px rgba(0,0,0,.25) !important;
+    }
+    .pricing-section::before {
+        content: '' !important; position: absolute !important; inset: 0 !important;
+        background-image: linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px) !important;
+        background-size: 40px 40px !important; pointer-events: none !important; z-index: 0 !important;
+    }
+    .pricing-section > * { position: relative !important; z-index: 1 !important; }
+    .pricing-section h2 { color: #fff !important; font-size: 2.2em !important; font-weight: 800 !important; letter-spacing: -.03em !important; }
+    .pricing-section .section-sub, .pricing-section p { color: var(--c-inv-3) !important; }
+    .catalog-label { color: rgba(148,163,184,.55) !important; }
+    .catalog-label::after { background: rgba(255,255,255,.07) !important; }
+
+    /* Catalog cards on dark */
+    .catalog-card {
+        background: rgba(255,255,255,.04) !important; border: 1px solid rgba(255,255,255,.08) !important;
+        border-radius: var(--r-xl) !important; backdrop-filter: blur(12px) !important;
+        transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s, border-color .28s !important;
+    }
+    .catalog-card:hover { background: rgba(255,255,255,.075) !important; border-color: rgba(59,130,246,.28) !important; transform: translateY(-6px) !important; box-shadow: 0 20px 60px rgba(0,0,0,.3), var(--s-blue) !important; }
+    /* Spotlight on dark catalog cards */
+    .catalog-card { background-image: radial-gradient(circle 200px at var(--spotlight-x,50%) var(--spotlight-y,50%), rgba(255,255,255,.04) 0%, transparent 70%) !important; }
+    .catalog-name { color: rgba(241,245,249,.95) !important; font-weight: 700 !important; }
+    .catalog-desc { color: rgba(148,163,184,.8) !important; }
+    .catalog-price { color: rgba(241,245,249,.9) !important; }
+    .catalog-price strong { color: #93c5fd !important; font-weight: 900 !important; }
+    .catalog-plan-badge.blue   { background: rgba(37,99,235,.2) !important; color: #93c5fd !important; border: 1px solid rgba(59,130,246,.3) !important; }
+    .catalog-plan-badge.purple { background: rgba(124,58,237,.2) !important; color: #c4b5fd !important; border: 1px solid rgba(124,58,237,.3) !important; }
+    .catalog-img.blue   { background: linear-gradient(135deg,#1d4ed8 0%,#3b82f6 100%) !important; }
+    .catalog-img.purple { background: linear-gradient(135deg,#6d28d9 0%,#7c3aed 100%) !important; }
+    .catalog-btn { background: var(--c-blue) !important; border-radius: var(--r-md) !important; font-weight: 700 !important; letter-spacing: .01em !important; box-shadow: 0 2px 10px rgba(37,99,235,.28) !important; transition: transform .2s, box-shadow .2s, background .2s !important; }
+    .catalog-btn:hover { background: #1d4ed8 !important; transform: translateY(-2px) !important; box-shadow: 0 6px 20px rgba(37,99,235,.42) !important; }
+    .catalog-btn.purple { background: var(--c-violet) !important; box-shadow: 0 2px 10px rgba(124,58,237,.28) !important; }
+    .catalog-btn.purple:hover { background: #6d28d9 !important; box-shadow: 0 6px 20px rgba(124,58,237,.42) !important; }
+
+    /* Trial banner */
+    .trial-banner { background: linear-gradient(135deg,rgba(37,99,235,.18) 0%,rgba(124,58,237,.14) 100%) !important; border: 1px solid rgba(59,130,246,.22) !important; border-radius: var(--r-xl) !important; }
+    .trial-banner h3 { color: #fff !important; }
+    .trial-banner p { color: var(--c-inv-3) !important; }
+
+    /* Price cards on dark */
+    .price-card { background: rgba(255,255,255,.05) !important; border: 1px solid rgba(255,255,255,.09) !important; border-radius: var(--r-2xl) !important; backdrop-filter: blur(16px) !important; transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s !important; }
+    .price-card:hover { border-color: rgba(59,130,246,.28) !important; transform: translateY(-6px) !important; box-shadow: 0 20px 60px rgba(0,0,0,.28), 0 4px 20px rgba(37,99,235,.18) !important; }
+    .price-card.featured { background: rgba(255,255,255,.08) !important; border-color: rgba(124,58,237,.38) !important; box-shadow: 0 0 0 1px rgba(124,58,237,.18), 0 8px 40px rgba(124,58,237,.22), 0 28px 72px rgba(0,0,0,.24) !important; }
+    .price-card.featured:hover { border-color: rgba(124,58,237,.55) !important; box-shadow: 0 0 0 1px rgba(124,58,237,.28), 0 16px 60px rgba(124,58,237,.32), 0 36px 80px rgba(0,0,0,.28) !important; }
+    .price-name { color: rgba(241,245,249,.95) !important; }
+    .price-amount { color: #fff !important; }
+    .price-sub, .price-period { color: var(--c-inv-3) !important; }
+    .price-features li { color: rgba(241,245,249,.78) !important; border-bottom-color: rgba(255,255,255,.05) !important; }
+    .plan-badge { background: rgba(37,99,235,.2) !important; color: #93c5fd !important; border: 1px solid rgba(59,130,246,.28) !important; }
+    .plan-badge.purple { background: rgba(124,58,237,.2) !important; color: #c4b5fd !important; border: 1px solid rgba(124,58,237,.28) !important; }
+    .pricing-table { background: rgba(255,255,255,.03) !important; border: 1px solid rgba(255,255,255,.07) !important; border-radius: var(--r-xl) !important; }
+    .pricing-table th { color: rgba(241,245,249,.7) !important; background: rgba(255,255,255,.04) !important; }
+    .pricing-table td { color: rgba(241,245,249,.75) !important; border-bottom-color: rgba(255,255,255,.05) !important; }
+    .pricing-table tr:hover td { background: rgba(255,255,255,.03) !important; }
+
+    /* ── FAQ ── */
+    .faq-section { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-2xl) !important; box-shadow: var(--s-sm) !important; padding: 52px !important; }
+    .faq-item { background: #f8fafc !important; border-radius: var(--r-lg) !important; border: 1px solid var(--c-border) !important; margin-bottom: 10px !important; transition: border-color .2s, box-shadow .2s, background .2s !important; }
+    .faq-item:hover { background: var(--c-surface) !important; box-shadow: var(--s-md) !important; border-color: rgba(37,99,235,.14) !important; }
+    .faq-question { font-weight: 700 !important; font-size: .95em !important; color: var(--c-text) !important; padding: 18px 20px !important; }
+    .faq-question:hover { color: var(--c-blue) !important; }
+    .faq-answer { color: var(--c-text-2) !important; font-size: .91em !important; padding-left: 20px !important; padding-right: 20px !important; line-height: 1.78 !important; }
+    .faq-chevron { color: var(--c-blue) !important; }
+    .faq-list { border-top: none !important; }
+
+    /* ── Download section ── */
+    .download-section { background: linear-gradient(135deg,#07111f 0%,#0a1628 100%) !important; border: 1px solid rgba(255,255,255,.055) !important; border-radius: var(--r-2xl) !important; overflow: hidden !important; }
+
+    /* ── Use case tabs ── */
+    .utab { background: #f1f5f9 !important; border: 1px solid rgba(15,23,42,.1) !important; border-radius: var(--r-sm) !important; color: var(--c-text-2) !important; font-weight: 600 !important; font-size: .84em !important; transition: all .2s !important; }
+    .utab:hover { background: var(--c-surface) !important; border-color: rgba(37,99,235,.22) !important; color: var(--c-blue) !important; }
+    .utab.active { background: var(--c-blue) !important; border-color: var(--c-blue) !important; color: #fff !important; box-shadow: 0 2px 12px rgba(37,99,235,.3) !important; }
+
+    /* ── BBS table ── */
+    #bbsDemoTable thead th { background: var(--c-dark) !important; color: rgba(148,163,184,.9) !important; font-size: .77em !important; letter-spacing: .08em !important; text-transform: uppercase !important; }
+    #bbsDemoTable tbody tr:nth-child(even) { background: #f8fafc !important; }
+
+    /* ── Footer ── */
+    footer { background: linear-gradient(150deg,#07111f 0%,#0a1628 60%,#060e1c 100%) !important; }
+    footer h3 { letter-spacing: .16em !important; }
+    footer a, .footer-link { transition: color .2s, transform .2s !important; }
+    footer a:hover { color: rgba(255,255,255,.9) !important; transform: translateX(3px) !important; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.055) !important; color: rgba(255,255,255,.28) !important; }
+
+    /* ── Back to top ── */
+    #back-to-top { background: var(--c-blue) !important; border-radius: var(--r-md) !important; box-shadow: 0 4px 16px rgba(37,99,235,.4) !important; border: none !important; }
+    #back-to-top:hover { background: #1d4ed8 !important; box-shadow: 0 8px 24px rgba(37,99,235,.55) !important; }
+
+    /* ── Modal overlay ── */
+    .mp-modal-overlay { backdrop-filter: blur(10px) !important; background: rgba(7,17,31,.72) !important; }
+    .mp-modal { border-radius: 20px !important; border: 1px solid rgba(15,23,42,.1) !important; box-shadow: 0 32px 96px rgba(0,0,0,.22), 0 8px 32px rgba(0,0,0,.1) !important; }
+
+    /* ── Shape tiles & param-mini ── */
+    .shape-tile { background: #f1f5f9 !important; border: 1px solid var(--c-border) !important; }
+
+    /* ── Donut wrap ── */
+    .donut-wrap { background: #f8fafc !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-xl) !important; border-top: 3px solid var(--c-violet) !important; }
+
+    /* ── Save tags on pricing cards ── */
+    .save-tag { background: rgba(16,185,129,.15) !important; color: #059669 !important; border: 1px solid rgba(16,185,129,.25) !important; border-radius: var(--r-pill) !important; font-size: .7em !important; font-weight: 700 !important; padding: 1px 7px !important; }
+
+    /* ── Comparison bars ── */
+    .bar-after  { background: linear-gradient(90deg, var(--c-blue), var(--c-blue-lt)) !important; }
+    .bar-after-green  { background: linear-gradient(90deg, var(--c-green), #34d399) !important; }
+    .bar-after-orange { background: linear-gradient(90deg, var(--c-amber), #fbbf24) !important; }
+
+    /* ── Selection ── */
+    ::selection { background: rgba(37,99,235,.2) !important; }
+    </style>
+
     <!-- Chart.js 4.4 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
