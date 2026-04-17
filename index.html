@@ -1905,7 +1905,28 @@
     <!-- ── Google Fonts ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- ── Anime.js v4 ── -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+
+    <!-- ── ES Module Shims (polyfill importmap en browsers antiguos) ── -->
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+
+    <!-- ── Material Web 2.0 — componentes seleccionados ── -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@material/web/": "https://esm.run/@material/web/"
+      }
+    }
+    </script>
+    <script type="module">
+      import '@material/web/button/filled-button.js';
+      import '@material/web/button/outlined-button.js';
+      import '@material/web/chips/assist-chip.js';
+      import '@material/web/progress/linear-progress.js';
+    </script>
 
     <style>
     /* ══════════════════════════════════════════════════════════
@@ -2611,6 +2632,122 @@
     ::-webkit-scrollbar-thumb:hover { background: rgba(15,77,158,.55); }
 
     </style>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BIMS — Material Web 2.0 tokens + Anime.js helpers
+    ══════════════════════════════════════════════════════════ -->
+    <style>
+    /* ── Material Web token mapping ── */
+    :root {
+        --md-sys-color-primary:             #1d6fce;
+        --md-sys-color-on-primary:          #ffffff;
+        --md-sys-color-primary-container:   #e8f1fd;
+        --md-ref-typeface-brand:            'Outfit', sans-serif;
+        --md-ref-typeface-plain:            'Plus Jakarta Sans', sans-serif;
+        --md-filled-button-container-color: #1d6fce;
+        --md-filled-button-container-shape: 10px;
+        --md-filled-button-label-text-color: #ffffff;
+        --md-outlined-button-outline-color:  #1d6fce;
+        --md-outlined-button-label-text-color: rgba(255,255,255,0.92);
+        --md-outlined-button-container-shape: 10px;
+        --md-assist-chip-container-color:   rgba(255,255,255,0.12);
+        --md-assist-chip-label-text-color:  rgba(255,255,255,0.88);
+        --md-assist-chip-outline-color:     rgba(255,255,255,0.22);
+    }
+
+    /* ── md-filled-button en el hero ── */
+    .header-cta md-filled-button {
+        --md-filled-button-container-height: 48px;
+        --md-filled-button-label-text-size: 1rem;
+        --md-filled-button-label-text-weight: 700;
+        cursor: pointer;
+    }
+    .header-cta md-outlined-button {
+        --md-outlined-button-container-height: 48px;
+        --md-outlined-button-label-text-size: 1rem;
+        --md-outlined-button-label-text-weight: 600;
+        cursor: pointer;
+    }
+    .header-compat-chips {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    /* ── DM Mono para código ── */
+    .param-mini, .shape-tile-code, code, pre {
+        font-family: 'DM Mono', 'Consolas', monospace;
+    }
+
+    /* ── Card spotlight hover ── */
+    .stat-card, .catalog-card {
+        --spotlight-x: 50%;
+        --spotlight-y: 50%;
+        background-image: radial-gradient(
+            circle 160px at var(--spotlight-x) var(--spotlight-y),
+            rgba(29,111,206,0.05) 0%, transparent 70%
+        );
+    }
+
+    /* ── Anime.js reveal: estado inicial (sin transform para dejar que Anime lo maneje) ── */
+    .reveal {
+        opacity: 0;
+    }
+    .reveal.visible {
+        opacity: 1;
+    }
+
+    /* ── Stat cards tinte de color por posición ── */
+    .stat-card:nth-child(1) { background: linear-gradient(155deg,#fff 60%,#eef6ff 100%); border-top: 4px solid #1d6fce; border-bottom: none !important; }
+    .stat-card:nth-child(2) { background: linear-gradient(155deg,#fff 60%,#eafaf1 100%); border-top: 4px solid #16a34a; border-bottom: none !important; }
+    .stat-card:nth-child(3) { background: linear-gradient(155deg,#fff 60%,#fffbeb 100%); border-top: 4px solid #d97706; border-bottom: none !important; }
+    .stat-card:nth-child(4) { background: linear-gradient(155deg,#fff 60%,#f3eeff 100%); border-top: 4px solid #7c3aed; border-bottom: none !important; }
+
+    /* ── FAQ border sweep en hover/open ── */
+    .faq-item { border-left: 3px solid transparent !important; transition: border-color 0.25s; }
+    .faq-item:hover, .faq-item.open { border-left-color: #1d6fce !important; }
+    .faq-item.open .faq-answer {
+        background: linear-gradient(180deg,#f0f7ff 0%,transparent 100%);
+        border-radius: 0 0 12px 12px;
+    }
+
+    /* ── Announce bar shimmer ── */
+    .announce-bar { position: relative; overflow: hidden; }
+    .announce-bar::after {
+        content: '';
+        position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+        background: linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent);
+        animation: shimmerBar 4s ease-in-out infinite;
+        pointer-events: none;
+    }
+    @keyframes shimmerBar {
+        0%   { left: -100%; }
+        60%, 100% { left: 150%; }
+    }
+
+    /* ── Footer bottom glow divider ── */
+    .footer-bottom { position: relative; }
+    .footer-bottom::before {
+        content: '';
+        position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+        width: 120px; height: 1px;
+        background: linear-gradient(90deg,transparent,rgba(59,142,232,0.5),transparent);
+    }
+
+    /* ── md-linear-progress en barras de comparación ── */
+    .md-progress-bar {
+        --md-linear-progress-track-color: rgba(29,111,206,0.12);
+        --md-linear-progress-active-indicator-color: #1d6fce;
+        height: 8px;
+        border-radius: 4px;
+        width: 100%;
+        display: block;
+        margin-top: 6px;
+    }
+    </style>
+
     <!-- Chart.js 4.4 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -2628,10 +2765,18 @@
         <div class="header-logo"><img src="/icono/favicon-32.png" alt="BIMS" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;border-radius:6px;">BIMS</div>
         <p class="header-sub">Automatización BIM Profesional para Autodesk Revit</p>
         <p class="header-by">Soluciones avanzadas de modelado estructural, refuerzo y encofrado para ingeniería y arquitectura</p>
-        <div class="header-compat">Compatible con Revit 2024 · 2025 · 2026</div>
+        <div class="header-compat-chips">
+            <md-assist-chip label="Revit 2024"></md-assist-chip>
+            <md-assist-chip label="Revit 2025"></md-assist-chip>
+            <md-assist-chip label="Revit 2026"></md-assist-chip>
+        </div>
         <div class="header-cta">
-            <a href="#precios">Iniciar evaluación gratuita — 30 días</a>
-            <a href="#casos" class="secondary">Ver casos de uso</a>
+            <md-filled-button onclick="document.getElementById('precios').scrollIntoView({behavior:'smooth'})">
+                Iniciar evaluación gratuita — 30 días
+            </md-filled-button>
+            <md-outlined-button onclick="document.getElementById('casos').scrollIntoView({behavior:'smooth'})">
+                Ver casos de uso
+            </md-outlined-button>
         </div>
     </div>
 </header>
@@ -2665,7 +2810,7 @@
 <div class="container">
 
     <!-- ── INTRO ── -->
-    <section id="inicio" class="intro reveal">
+    <section id="inicio" class="intro reveal" data-anime-reveal="badges">
         <h2>Automatización Profesional para Ingeniería BIM</h2>
         <p>
             BIMS extiende Autodesk Revit con más de <strong>60 comandos especializados</strong> organizados en cuatro paneles temáticos:
@@ -2684,7 +2829,7 @@
     </section>
 
     <!-- ── STATS STRIP ── -->
-    <div class="stats-strip">
+    <div class="stats-strip" data-anime-reveal="stats">
         <div class="stat-card reveal reveal-delay-1">
             <div class="stat-number" data-target="60" data-suffix="+">0</div>
             <div class="stat-label">Comandos especializados</div>
@@ -2704,12 +2849,12 @@
     </div>
 
     <!-- ══════════════════ EFECTIVIDAD ══════════════════ -->
-    <section id="efectividad" class="efectividad-section reveal">
+    <section id="efectividad" class="efectividad-section reveal" data-anime-reveal="section">
         <h2>Eficiencia Cuantificada: BIMS vs. Procesos Manuales</h2>
         <p class="section-sub">Comparación documentada de tiempos y tasas de error en flujos de trabajo estructurales reales</p>
 
         <!-- Chart.js: tiempo de ejecución + tasa de error -->
-        <div class="charts-dual-grid">
+        <div class="charts-dual-grid" data-anime-reveal="charts">
             <div class="chart-card">
                 <div class="chart-card-title">⏱ Tiempo de ejecución — manual vs. BIMS (minutos)</div>
                 <canvas id="chartTime" height="200"></canvas>
@@ -2732,7 +2877,7 @@
         </div>
 
         <!-- Workflow -->
-        <div class="workflow-section">
+        <div class="workflow-section" data-anime-reveal="workflow">
             <h3>Flujo de trabajo BIMS Refuerzo — del modelo estructural a la planilla de despiece</h3>
             <div class="workflow-steps">
                 <div class="workflow-step">
@@ -2764,7 +2909,7 @@
     </section>
 
     <!-- ══════════════════ CASOS DE USO PRÁCTICO ══════════════════ -->
-    <section id="casos" class="use-cases-section reveal">
+    <section id="casos" class="use-cases-section reveal" data-anime-reveal="section">
         <h2>Casos de Uso Práctico</h2>
         <p class="section-sub">Flujos de trabajo documentados con resultados verificables para proyectos de ingeniería estructural</p>
 
@@ -3339,7 +3484,7 @@
 
 
     <!-- ════════════════ PANEL GENERAL ════════════════ -->
-    <section id="general" class="panel-section reveal">
+    <section id="general" class="panel-section reveal" data-anime-reveal="panel">
         <div class="panel-header blue">
             <div class="panel-icon">🎯</div>
             <div>
@@ -3414,7 +3559,7 @@
     </section>
 
     <!-- ════════════════ PANEL ESTRUCTURAS ════════════════ -->
-    <section id="estructuras" class="panel-section reveal">
+    <section id="estructuras" class="panel-section reveal" data-anime-reveal="panel">
         <div class="panel-header green">
             <div class="panel-icon">🏗️</div>
             <div>
@@ -3507,7 +3652,7 @@
     </section>
 
     <!-- ════════════════ PANEL GEOMETRÍA ════════════════ -->
-    <section id="geometria" class="panel-section reveal">
+    <section id="geometria" class="panel-section reveal" data-anime-reveal="panel">
         <div class="panel-header orange">
             <div class="panel-icon">📐</div>
             <div>
@@ -3538,7 +3683,7 @@
     </section>
 
     <!-- ════════════════ PANEL REFUERZO ════════════════ -->
-    <section id="refuerzo" class="panel-section reveal">
+    <section id="refuerzo" class="panel-section reveal" data-anime-reveal="panel">
         <div class="panel-header purple">
             <div class="panel-icon">🔩</div>
             <div>
@@ -3627,7 +3772,7 @@
     </section>
 
     <!-- ══════════════════ PRECIOS ══════════════════ -->
-    <section id="precios" class="pricing-section reveal">
+    <section id="precios" class="pricing-section reveal" data-anime-reveal="pricing">
         <div class="section-header">
             <h2>Planes y Precios</h2>
             <p>Comience con una evaluación gratuita de 30 días. Sin tarjeta requerida. Seleccione un plan solo cuando confirme el valor para su equipo.</p>
@@ -3847,7 +3992,7 @@
     </section>
 
     <!-- ══════════════════ FAQ ══════════════════ -->
-    <section class="faq-section reveal">
+    <section class="faq-section reveal" data-anime-reveal="faq">
         <h2>Preguntas Frecuentes</h2>
         <p class="section-sub">Todo lo que necesitas saber antes de empezar</p>
         <div class="faq-list">
@@ -4040,133 +4185,255 @@
 <!-- Culqi.js -->
 <script src="https://checkout.culqi.com/js/v4"></script>
 
-<!-- ══════════════════ SCRIPTS ══════════════════ -->
+<!-- ══════════════════ SCRIPTS — Anime.js v4 ══════════════════ -->
 <script>
 (function () {
     'use strict';
 
-    // ── 1. Intersection Observer: scroll reveal + trigger animations ──────
-    const io = new IntersectionObserver(function (entries) {
+    // ── Anime.js v4 destructuring desde el global UMD ──────────────────
+    var _anime     = (typeof anime !== 'undefined') ? anime : null;
+    var _animate   = _anime ? _anime.animate   : null;
+    var _timeline  = _anime ? _anime.createTimeline : null;
+    var _stagger   = _anime ? _anime.stagger   : null;
+
+    function anim(targets, props) {
+        if (_animate) _animate(targets, props);
+    }
+
+    // ── Chart.js font override ──────────────────────────────────────────
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // A. ANIMACIONES DE CARGA — ejecutan inmediatamente
+    // ════════════════════════════════════════════════════════════════════
+
+    // A1. Announce bar — slide desde arriba
+    anim('.announce-bar', {
+        opacity:    [0, 1],
+        translateY: [-80, 0],
+        duration:   600,
+        easing:     'outExpo'
+    });
+
+    // A2. Hero — timeline en cascada
+    if (_timeline) {
+        var heroTl = _timeline({ defaults: { easing: 'outExpo' } });
+        heroTl
+            .add('.header-logo',   { opacity: [0, 1], translateY: [-30, 0], duration: 700 })
+            .add('.header-sub',    { opacity: [0, 1], translateY: [20, 0],  duration: 600 }, 200)
+            .add('.header-by',     { opacity: [0, 1], translateY: [16, 0],  duration: 500 }, 380)
+            .add('.header-compat-chips', { opacity: [0, 1], scale: [0.85, 1], duration: 500 }, 530)
+            .add('.header-cta',    { opacity: [0, 1], translateY: [20, 0],  duration: 500 }, 680);
+    }
+
+    // A3. Nav links — stagger sutil al cargar
+    anim('nav ul li', {
+        opacity:    [0, 1],
+        translateY: [-8, 0],
+        delay:      _stagger ? _stagger(40, { start: 350 }) : 0,
+        duration:   400,
+        easing:     'outCubic'
+    });
+
+    // ════════════════════════════════════════════════════════════════════
+    // B. FUNCIONES DE REVEAL POR TIPO
+    // ════════════════════════════════════════════════════════════════════
+
+    function revealSection(el) {
+        anim(el, { opacity: [0, 1], translateY: [32, 0], duration: 700, easing: 'outCubic' });
+    }
+
+    function revealBadges(el) {
+        anim(el, { opacity: [0, 1], translateY: [24, 0], duration: 600, easing: 'outCubic' });
+        anim(el.querySelectorAll('.badge-row .badge'), {
+            opacity:    [0, 1],
+            translateY: [14, 0],
+            delay:      _stagger ? _stagger(80) : 0,
+            duration:   420,
+            easing:     'outCubic'
+        });
+    }
+
+    function revealStatCards() {
+        anim('.stat-card', {
+            opacity:    [0, 1],
+            translateY: [40, 0],
+            scale:      [0.92, 1],
+            delay:      _stagger ? _stagger(110) : 0,
+            duration:   650,
+            easing:     'outBack(1.2)'
+        });
+    }
+
+    function animateCounter(el) {
+        if (el.dataset.animated) return;
+        el.dataset.animated = '1';
+        var target = parseInt(el.dataset.target, 10);
+        var suffix = el.dataset.suffix || '';
+        if (_animate) {
+            var obj = { value: 0 };
+            _animate(obj, {
+                value:    target,
+                duration: 2000,
+                easing:   'outExpo',
+                onUpdate: function () {
+                    el.textContent = Math.round(obj.value) + suffix;
+                }
+            });
+        } else {
+            el.textContent = target + suffix;
+        }
+    }
+
+    function revealBars(container) {
+        var bars = Array.from(container.querySelectorAll('.anim-bar[data-width]'));
+        bars.forEach(function (bar, i) {
+            var targetW = bar.dataset.width + '%';
+            if (_animate) {
+                _animate(bar, {
+                    width:    ['0%', targetW],
+                    delay:    i * 130 + 200,
+                    duration: 900,
+                    easing:   'outCubic'
+                });
+            } else {
+                bar.style.width = targetW;
+            }
+        });
+    }
+
+    function revealWorkflow() {
+        anim('.workflow-step', {
+            opacity:    [0, 1],
+            translateX: [-30, 0],
+            delay:      _stagger ? _stagger(140) : 0,
+            duration:   600,
+            easing:     'outCubic'
+        });
+    }
+
+    function revealCharts(el) {
+        anim(el.querySelectorAll('.chart-card, .radar-card'), {
+            opacity:  [0, 1],
+            scale:    [0.95, 1],
+            delay:    _stagger ? _stagger(150) : 0,
+            duration: 600,
+            easing:   'outCubic'
+        });
+    }
+
+    function revealPanelCards(el) {
+        anim(el, { opacity: [0, 1], translateY: [24, 0], duration: 600, easing: 'outCubic' });
+        var cards = el.querySelectorAll('.catalog-card, .cmd-card, .card, .panel-card');
+        if (cards.length) {
+            anim(cards, {
+                opacity:    [0, 1],
+                translateY: [28, 0],
+                delay:      _stagger ? _stagger(70) : 0,
+                duration:   500,
+                easing:     'outCubic'
+            });
+        }
+    }
+
+    function revealPricing(el) {
+        anim(el, { opacity: [0, 1], translateY: [24, 0], duration: 600, easing: 'outCubic' });
+        anim(el.querySelectorAll('.catalog-card, .price-card'), {
+            opacity:    [0, 1],
+            translateY: [36, 0],
+            scale:      [0.94, 1],
+            delay:      _stagger ? _stagger(90) : 0,
+            duration:   600,
+            easing:     'outBack(1.1)'
+        });
+    }
+
+    function revealFAQ(el) {
+        anim(el, { opacity: [0, 1], translateY: [24, 0], duration: 600, easing: 'outCubic' });
+        anim(el.querySelectorAll('.faq-item'), {
+            opacity:    [0, 1],
+            translateY: [20, 0],
+            delay:      _stagger ? _stagger(60) : 0,
+            duration:   450,
+            easing:     'outCubic'
+        });
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    // C. INTERSECTION OBSERVER — scroll reveals con Anime.js
+    // ════════════════════════════════════════════════════════════════════
+
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
+            var el   = entry.target;
+            var type = el.dataset.animeReveal;
 
-            var el = entry.target;
-
-            // Reveal fade-in
             el.classList.add('visible');
 
-            // Counter animation on stat numbers inside this element
-            el.querySelectorAll('.stat-number[data-target]').forEach(animateCounter);
-
-            // Bar animations inside this element
-            el.querySelectorAll('.anim-bar[data-width]').forEach(function (bar) {
-                // Small staggered delay per bar index
-                var delay = bar.closest('.comparison-card') ?
-                    Array.from(bar.closest('.comparisons-grid').querySelectorAll('.anim-bar'))
-                        .indexOf(bar) * 120 : 0;
-                setTimeout(function () {
-                    bar.style.width = bar.dataset.width + '%';
-                }, delay + 200);
-            });
+            if (type === 'stats') {
+                revealStatCards();
+                el.querySelectorAll('.stat-number[data-target]').forEach(animateCounter);
+            } else if (type === 'workflow') {
+                revealWorkflow();
+            } else if (type === 'panel') {
+                revealPanelCards(el);
+            } else if (type === 'pricing') {
+                revealPricing(el);
+            } else if (type === 'faq') {
+                revealFAQ(el);
+            } else if (type === 'charts') {
+                revealCharts(el);
+            } else if (type === 'badges') {
+                revealBadges(el);
+            } else if (type === 'bars') {
+                revealBars(el);
+            } else if (type === 'section') {
+                revealSection(el);
+                el.querySelectorAll('.anim-bar[data-width]').forEach(function (bar) {
+                    var targetW = bar.dataset.width + '%';
+                    if (_animate) {
+                        var idx = Array.from(el.querySelectorAll('.anim-bar')).indexOf(bar);
+                        _animate(bar, { width: ['0%', targetW], delay: idx * 130 + 200, duration: 900, easing: 'outCubic' });
+                    } else {
+                        bar.style.width = targetW;
+                    }
+                });
+            } else {
+                revealSection(el);
+            }
 
             io.unobserve(el);
         });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.12 });
 
     document.querySelectorAll('.reveal').forEach(function (el) {
         io.observe(el);
     });
 
-    // Also observe the stats strip children individually
-    document.querySelectorAll('.stat-card').forEach(function (el) {
-        io.observe(el);
-    });
+    // ════════════════════════════════════════════════════════════════════
+    // D. BBS TABLE — Anime.js stagger (reemplaza setTimeout)
+    // ════════════════════════════════════════════════════════════════════
 
-    // ── 2. Counter animation ──────────────────────────────────────────────
-    function animateCounter(el) {
-        if (el.dataset.animated) return;
-        el.dataset.animated = '1';
-
-        var target   = parseInt(el.dataset.target, 10);
-        var suffix   = el.dataset.suffix || '';
-        var duration = 1800;
-        var steps    = 60;
-        var stepTime = duration / steps;
-        var current  = 0;
-        var increment = target / steps;
-
-        var timer = setInterval(function () {
-            current += increment;
-            if (current >= target) {
-                current = target;
-                clearInterval(timer);
-            }
-            el.textContent = Math.round(current) + suffix;
-        }, stepTime);
-    }
-
-    // ── 3. Sticky nav active link highlight ──────────────────────────────
-    var sections = document.querySelectorAll('section[id], div[id]');
-    var navLinks = document.querySelectorAll('nav a[href^="#"]');
-
-    var navObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-                var id = entry.target.id;
-                navLinks.forEach(function (link) {
-                    link.style.background = '';
-                    link.style.color = '';
-                    if (link.getAttribute('href') === '#' + id) {
-                        link.style.background = '#0078D7';
-                        link.style.color = 'white';
-                    }
-                });
-            }
-        });
-    }, { threshold: 0.4 });
-
-    sections.forEach(function (s) { navObserver.observe(s); });
-
-    // ── 4. Smooth CTA button hover pulse reset ───────────────────────────
-    document.querySelectorAll('.header-cta a:not(.secondary)').forEach(function (btn) {
-        btn.addEventListener('mouseenter', function () {
-            btn.style.animationPlayState = 'paused';
-        });
-        btn.addEventListener('mouseleave', function () {
-            btn.style.animationPlayState = 'running';
-        });
-    });
-
-    // ── 5. FAQ accordion ─────────────────────────────────────────────
-    document.querySelectorAll('.faq-question').forEach(function (q) {
-        q.addEventListener('click', function () {
-            var item = q.parentElement;
-            var wasOpen = item.classList.contains('open');
-            document.querySelectorAll('.faq-item.open').forEach(function (i) { i.classList.remove('open'); });
-            if (!wasOpen) item.classList.add('open');
-        });
-    });
-
-    // ── 6. Scroll-to-top button ───────────────────────────────────────
-    var btt = document.getElementById('back-to-top');
-    window.addEventListener('scroll', function () {
-        if (window.scrollY > 400) btt.classList.add('visible');
-        else btt.classList.remove('visible');
-    });
-    btt.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    // ── 7. Use-case tab switching ─────────────────────────────────
     function animateBBSTable() {
         var rows = document.querySelectorAll('#bbsDemoTable tbody tr');
-        rows.forEach(function (row) { row.classList.remove('row-visible'); });
-        rows.forEach(function (row, i) {
-            setTimeout(function () { row.classList.add('row-visible'); }, i * 220 + 150);
-        });
+        if (!rows.length) return;
+        if (_animate) {
+            rows.forEach(function (r) { r.style.opacity = '0'; });
+            _animate(rows, {
+                opacity:    [0, 1],
+                translateX: [-14, 0],
+                delay:      _stagger ? _stagger(130) : 0,
+                duration:   380,
+                easing:     'outCubic'
+            });
+        } else {
+            rows.forEach(function (r) { r.classList.add('row-visible'); });
+        }
     }
 
-    // Trigger BBS animation when the section scrolls into view
     var bbsTriggered = false;
     var bbsObserver = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
@@ -4180,6 +4447,50 @@
     var bbsSection = document.getElementById('casos');
     if (bbsSection) bbsObserver.observe(bbsSection);
 
+    // ════════════════════════════════════════════════════════════════════
+    // E. INTERACCIONES UI
+    // ════════════════════════════════════════════════════════════════════
+
+    // E1. Nav active highlight
+    var sections = document.querySelectorAll('section[id], div[id]');
+    var navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+    var navObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                var id = entry.target.id;
+                navLinks.forEach(function (link) {
+                    link.style.background = '';
+                    link.style.color = '';
+                    if (link.getAttribute('href') === '#' + id) {
+                        link.style.background = 'rgba(0,120,215,0.15)';
+                        link.style.color = '#0078D7';
+                    }
+                });
+            }
+        });
+    }, { threshold: 0.4 });
+    sections.forEach(function (s) { navObserver.observe(s); });
+
+    // E2. FAQ accordion con Anime.js en la chevron
+    document.querySelectorAll('.faq-question').forEach(function (q) {
+        q.addEventListener('click', function () {
+            var item = q.parentElement;
+            var wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(function (i) {
+                i.classList.remove('open');
+                var chev = i.querySelector('.faq-chevron');
+                if (chev && _animate) _animate(chev, { rotate: [180, 0], duration: 280, easing: 'outCubic' });
+            });
+            if (!wasOpen) {
+                item.classList.add('open');
+                var chev = item.querySelector('.faq-chevron');
+                if (chev && _animate) _animate(chev, { rotate: [0, 180], duration: 300, easing: 'outCubic' });
+            }
+        });
+    });
+
+    // E3. Use-case tabs — Anime.js fade+slide del panel
     document.querySelectorAll('.utab').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var panel = btn.dataset.panel;
@@ -4188,14 +4499,51 @@
             btn.classList.add('active');
             var target = document.getElementById('panel-' + panel);
             if (target) {
-                void target.offsetWidth; // force reflow so animation restarts
+                void target.offsetWidth;
                 target.classList.add('active');
-                if (panel === 'bbs') { setTimeout(animateBBSTable, 50); }
+                if (_animate) {
+                    _animate(target, { opacity: [0, 1], translateY: [12, 0], duration: 350, easing: 'outCubic' });
+                }
+                if (panel === 'bbs') { setTimeout(animateBBSTable, 60); }
             }
         });
     });
 
-    // ── 8. Mobile nav toggle ─────────────────────────────────────────
+    // E4. Back-to-top con Anime.js
+    var btt = document.getElementById('back-to-top');
+    var bttVisible = false;
+    window.addEventListener('scroll', function () {
+        var shouldShow = window.scrollY > 400;
+        if (shouldShow && !bttVisible) {
+            bttVisible = true;
+            btt.classList.add('visible');
+            anim(btt, { scale: [0, 1], opacity: [0, 1], duration: 300, easing: 'outBack(1.5)' });
+        } else if (!shouldShow && bttVisible) {
+            bttVisible = false;
+            if (_animate) {
+                _animate(btt, {
+                    scale: [1, 0], opacity: [1, 0], duration: 200, easing: 'inCubic',
+                    onComplete: function () { btt.classList.remove('visible'); }
+                });
+            } else {
+                btt.classList.remove('visible');
+            }
+        }
+    });
+    btt.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // E5. Card spotlight hover
+    document.querySelectorAll('.stat-card, .catalog-card').forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var rect = card.getBoundingClientRect();
+            card.style.setProperty('--spotlight-x', (e.clientX - rect.left) + 'px');
+            card.style.setProperty('--spotlight-y', (e.clientY - rect.top) + 'px');
+        });
+    });
+
+    // E6. Mobile nav toggle
     var navToggle = document.getElementById('navToggle');
     var navMenu   = document.getElementById('navMenu');
     if (navToggle && navMenu) {
