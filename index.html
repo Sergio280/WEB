@@ -3152,20 +3152,20 @@
     </section>
 
     <!-- ── STATS STRIP ── -->
-    <div class="stats-strip" data-anime-reveal="stats">
-        <div class="stat-card reveal reveal-delay-1">
+    <div class="stats-strip reveal" data-anime-reveal="stats">
+        <div class="stat-card">
             <div class="stat-number" data-target="60" data-suffix="+">0</div>
             <div class="stat-label">Comandos especializados</div>
         </div>
-        <div class="stat-card reveal reveal-delay-2">
+        <div class="stat-card">
             <div class="stat-number" data-target="5">0</div>
             <div class="stat-label">Versiones de Revit</div>
         </div>
-        <div class="stat-card reveal reveal-delay-3">
+        <div class="stat-card">
             <div class="stat-number" data-target="80" data-suffix="%">0</div>
             <div class="stat-label">Menos tiempo en planillas</div>
         </div>
-        <div class="stat-card reveal reveal-delay-4">
+        <div class="stat-card">
             <div class="stat-number" data-target="4">0</div>
             <div class="stat-label">Paneles de trabajo</div>
         </div>
@@ -3177,7 +3177,7 @@
         <p class="section-sub">Comparación documentada de tiempos y tasas de error en flujos de trabajo estructurales reales</p>
 
         <!-- Chart.js: tiempo de ejecución + tasa de error -->
-        <div class="charts-dual-grid" data-anime-reveal="charts">
+        <div class="charts-dual-grid reveal" data-anime-reveal="charts">
             <div class="chart-card">
                 <div class="chart-card-title">⏱ Tiempo de ejecución — manual vs. BIMS (minutos)</div>
                 <canvas id="chartTime" height="200"></canvas>
@@ -3200,7 +3200,7 @@
         </div>
 
         <!-- Workflow -->
-        <div class="workflow-section" data-anime-reveal="workflow">
+        <div class="workflow-section reveal" data-anime-reveal="workflow">
             <h3>Flujo de trabajo BIMS Refuerzo — del modelo estructural a la planilla de despiece</h3>
             <div class="workflow-steps">
                 <div class="workflow-step">
@@ -5320,7 +5320,8 @@
     'use strict';
     if (typeof Chart === 'undefined') return;
 
-    Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif";
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.color = '#6b7280';
 
     var chartsInited = false;
 
@@ -5328,16 +5329,27 @@
         if (chartsInited) return;
         chartsInited = true;
 
-        /* ── Paleta coherente con el sitio (azules oscuros) ── */
-        var C_BLUE   = 'rgba(15,77,158,0.85)';
-        var C_GRAY   = 'rgba(120,140,170,0.70)';
-        var C_GREEN  = 'rgba(20,120,79,0.85)';
-        var C_ORANGE = 'rgba(187,94,0,0.85)';
-        var C_PURPLE = 'rgba(92,24,214,0.85)';
+        /* ── Paleta 2025 — coherente con nuevo diseño ── */
+        var C_BLUE   = 'rgba(37,99,235,0.82)';
+        var C_GRAY   = 'rgba(100,116,139,0.55)';
+        var C_GREEN  = 'rgba(16,185,129,0.82)';
+        var C_ORANGE = 'rgba(245,158,11,0.82)';
+        var C_PURPLE = 'rgba(124,58,237,0.82)';
+
+        /* ── Anime.js helpers ── */
+        var _anime   = (typeof anime !== 'undefined') ? anime : null;
+        var _animate = _anime ? _anime.animate : null;
+
+        /* ── Función para animar entrada de tarjetas de gráfico ── */
+        function animateChartCard(el, delay) {
+            if (!_animate || !el) return;
+            _animate(el, { opacity: [0, 1], translateY: [28, 0], scale: [0.96, 1], duration: 600, delay: delay || 0, easing: 'outCubic' });
+        }
 
         /* ── 1. Tiempo de ejecución (barras horizontales) ─────────── */
         var ctxTime = document.getElementById('chartTime');
         if (ctxTime) {
+            animateChartCard(ctxTime.closest('.chart-card'), 0);
             new Chart(ctxTime, {
                 type: 'bar',
                 data: {
@@ -5347,43 +5359,53 @@
                             label: 'Sin BIMS (manual)',
                             data: [480, 240, 90, 180],
                             backgroundColor: C_GRAY,
-                            borderColor: '#8fa0b8',
-                            borderWidth: 1.5,
-                            borderRadius: 5
+                            borderColor: 'rgba(100,116,139,0.4)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
                         },
                         {
                             label: 'Con BIMS',
                             data: [45, 20, 8, 12],
                             backgroundColor: C_BLUE,
-                            borderColor: '#0078D7',
-                            borderWidth: 1.5,
-                            borderRadius: 5
+                            borderColor: 'rgba(37,99,235,0.5)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
                         }
                     ]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
-                    animation: { duration: 1200, easing: 'easeOutQuart' },
+                    animation: { duration: 1000, easing: 'easeOutCubic', delay: function(ctx) { return ctx.dataIndex * 80; } },
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } },
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11, family: "'Plus Jakarta Sans'" }, padding: 16, usePointStyle: true, pointStyle: 'rectRounded' } },
                         tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.92)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
                             callbacks: {
                                 label: function (ctx) {
                                     var v = ctx.raw;
                                     var fmt = v >= 60 ? (Math.floor(v / 60) + 'h ' + (v % 60) + 'min') : v + ' min';
-                                    return ' ' + ctx.dataset.label + ': ' + fmt;
+                                    return '  ' + ctx.dataset.label + ': ' + fmt;
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            title: { display: true, text: 'minutos', font: { size: 10 }, color: '#888' },
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { size: 10 } }
+                            title: { display: true, text: 'minutos', font: { size: 10 }, color: '#9ca3af' },
+                            grid: { color: 'rgba(15,23,42,0.05)', drawBorder: false },
+                            ticks: { font: { size: 10 }, color: '#9ca3af' },
+                            border: { display: false }
                         },
-                        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        y: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#6b7280' }, border: { display: false } }
                     }
                 }
             });
@@ -5392,6 +5414,7 @@
         /* ── 2. Tasa de error (barras horizontales) ───────────────── */
         var ctxError = document.getElementById('chartError');
         if (ctxError) {
+            animateChartCard(ctxError.closest('.chart-card'), 120);
             new Chart(ctxError, {
                 type: 'bar',
                 data: {
@@ -5401,41 +5424,51 @@
                             label: 'Sin BIMS (%)',
                             data: [15, 8, 6, 12],
                             backgroundColor: C_GRAY,
-                            borderColor: '#8fa0b8',
-                            borderWidth: 1.5,
-                            borderRadius: 5
+                            borderColor: 'rgba(100,116,139,0.4)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
                         },
                         {
                             label: 'Con BIMS (%)',
                             data: [0.4, 0.1, 0.0, 0.0],
                             backgroundColor: C_GREEN,
-                            borderColor: '#1a8a4a',
-                            borderWidth: 1.5,
-                            borderRadius: 5
+                            borderColor: 'rgba(16,185,129,0.5)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false
                         }
                     ]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
-                    animation: { duration: 1200, easing: 'easeOutQuart', delay: 150 },
+                    animation: { duration: 1000, easing: 'easeOutCubic', delay: function(ctx) { return ctx.dataIndex * 80 + 150; } },
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 13, font: { size: 11 }, padding: 14 } },
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11, family: "'Plus Jakarta Sans'" }, padding: 16, usePointStyle: true, pointStyle: 'rectRounded' } },
                         tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.92)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
                             callbacks: {
                                 label: function (ctx) {
-                                    return ' ' + ctx.dataset.label + ': ' + ctx.raw + '%';
+                                    return '  ' + ctx.dataset.label + ': ' + ctx.raw + '%';
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            title: { display: true, text: '% de error', font: { size: 10 }, color: '#888' },
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { font: { size: 10 }, callback: function (v) { return v + '%'; } }
+                            title: { display: true, text: '% de error', font: { size: 10 }, color: '#9ca3af' },
+                            grid: { color: 'rgba(15,23,42,0.05)', drawBorder: false },
+                            ticks: { font: { size: 10 }, color: '#9ca3af', callback: function (v) { return v + '%'; } },
+                            border: { display: false }
                         },
-                        y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        y: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#6b7280' }, border: { display: false } }
                     }
                 }
             });
@@ -5444,6 +5477,7 @@
         /* ── 3. Radar: nivel de automatización por módulo ─────────── */
         var ctxRadar = document.getElementById('chartRadar');
         if (ctxRadar) {
+            animateChartCard(ctxRadar.closest('.radar-card'), 250);
             var isMobile = window.innerWidth < 600;
             new Chart(ctxRadar, {
                 type: 'radar',
@@ -5461,20 +5495,22 @@
                         {
                             label: 'Proceso manual',
                             data: [20, 12, 30, 10, 22, 35, 8],
-                            backgroundColor: 'rgba(143,160,184,0.15)',
-                            borderColor: '#8fa0b8',
+                            backgroundColor: 'rgba(100,116,139,0.1)',
+                            borderColor: 'rgba(100,116,139,0.5)',
                             borderWidth: 1.5,
-                            pointBackgroundColor: '#8fa0b8',
-                            pointRadius: isMobile ? 2 : 3
+                            pointBackgroundColor: 'rgba(100,116,139,0.7)',
+                            pointRadius: isMobile ? 2 : 3,
+                            pointHoverRadius: 5
                         },
                         {
                             label: 'Con BIMS',
                             data: [95, 92, 98, 86, 82, 94, 90],
-                            backgroundColor: 'rgba(15,77,158,0.13)',
-                            borderColor: '#0f4d9e',
+                            backgroundColor: 'rgba(37,99,235,0.1)',
+                            borderColor: 'rgba(37,99,235,0.7)',
                             borderWidth: 2,
-                            pointBackgroundColor: '#0f4d9e',
-                            pointRadius: isMobile ? 3 : 4
+                            pointBackgroundColor: '#2563eb',
+                            pointRadius: isMobile ? 3 : 4,
+                            pointHoverRadius: 6
                         }
                     ]
                 },
@@ -5482,11 +5518,20 @@
                     responsive: true,
                     maintainAspectRatio: true,
                     aspectRatio: isMobile ? 1 : 1.3,
-                    animation: { duration: 1400, easing: 'easeOutQuart', delay: 300 },
+                    animation: { duration: 1200, easing: 'easeOutCubic', delay: 300 },
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { boxWidth: 12, font: { size: isMobile ? 10 : 11 }, padding: 12 }
+                            labels: { boxWidth: 10, font: { size: isMobile ? 10 : 11, family: "'Plus Jakarta Sans'" }, padding: 14, usePointStyle: true }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.92)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8
                         }
                     },
                     scales: {
@@ -5497,15 +5542,15 @@
                                 stepSize: 25,
                                 font: { size: isMobile ? 7 : 9 },
                                 backdropColor: 'transparent',
-                                color: '#bbb'
+                                color: '#9ca3af'
                             },
                             pointLabels: {
-                                font: { size: isMobile ? 9 : 11 },
-                                color: '#333',
+                                font: { size: isMobile ? 9 : 11, family: "'Plus Jakarta Sans'", weight: '600' },
+                                color: '#374151',
                                 padding: isMobile ? 4 : 8
                             },
-                            grid: { color: '#e0e6f0' },
-                            angleLines: { color: '#e0e6f0' }
+                            grid: { color: 'rgba(15,23,42,0.07)' },
+                            angleLines: { color: 'rgba(15,23,42,0.07)' }
                         }
                     }
                 }
@@ -5515,6 +5560,7 @@
         /* ── 4. Doughnut: distribución de peso por diámetro ──────── */
         var ctxDonut = document.getElementById('chartDonut');
         if (ctxDonut) {
+            animateChartCard(ctxDonut.closest('.donut-wrap') || ctxDonut.parentElement, 180);
             new Chart(ctxDonut, {
                 type: 'doughnut',
                 data: {
@@ -5522,22 +5568,30 @@
                     datasets: [{
                         data: [11, 24, 58, 45],
                         backgroundColor: [C_ORANGE, C_PURPLE, C_BLUE, C_GREEN],
-                        borderColor: ['#d97700', '#7b2ff7', '#0078D7', '#1a8a4a'],
+                        borderColor: ['rgba(245,158,11,0.3)', 'rgba(124,58,237,0.3)', 'rgba(37,99,235,0.3)', 'rgba(16,185,129,0.3)'],
                         borderWidth: 2,
-                        hoverOffset: 10
+                        hoverOffset: 12,
+                        borderRadius: 4
                     }]
                 },
                 options: {
                     responsive: true,
-                    cutout: '60%',
-                    animation: { duration: 1200, delay: 200 },
+                    cutout: '62%',
+                    animation: { duration: 1100, easing: 'easeOutCubic', delay: 200 },
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 }, padding: 10 } },
+                        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10, family: "'Plus Jakarta Sans'" }, padding: 10, usePointStyle: true } },
                         tooltip: {
+                            backgroundColor: 'rgba(15,23,42,0.92)',
+                            titleColor: '#f1f5f9',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.08)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 8,
                             callbacks: {
                                 label: function (ctx) {
                                     var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
-                                    return ' ' + ctx.label + ' (' + Math.round(ctx.raw / total * 100) + '%)';
+                                    return '  ' + ctx.label + ' (' + Math.round(ctx.raw / total * 100) + '%)';
                                 }
                             }
                         }
