@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BIMS - Plugin profesional para Autodesk Revit. 60+ comandos para encofrado, acero de refuerzo, geometría y más. 30 días gratis.">
+    <meta name="description" content="BIMS - Plugin profesional para Autodesk Revit. Comandos para acero, geometría, importación DWG y más. 30 días gratis.">
     <title>BIMS — Automatización BIM Profesional para Autodesk Revit</title>
     <link rel="icon" type="image/x-icon"             href="/icono/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32"  href="/icono/favicon-32.png">
@@ -3376,7 +3376,7 @@
     <div class="header-inner">
         <div class="header-logo"><img src="/icono/favicon-32.png" alt="BIMS" style="width:38px;height:38px;vertical-align:middle;margin-right:10px;border-radius:6px;">BIMS</div>
         <p class="header-sub">Automatización BIM Profesional para Autodesk Revit</p>
-        <p class="header-by">Soluciones avanzadas de modelado estructural, refuerzo y encofrado para ingeniería y arquitectura</p>
+        <p class="header-by">Soluciones avanzadas de modelado estructural, acero y geometría para ingeniería y arquitectura</p>
         <div class="header-compat-chips">
             <span class="compat-chip">Revit 2024</span>
             <span class="compat-chip">Revit 2025</span>
@@ -3404,7 +3404,9 @@
         <li><a href="#general">General</a></li>
         <li><a href="#estructuras">Estructuras</a></li>
         <li><a href="#geometria">Geometría</a></li>
+        <!-- Item OCULTO: descomentar cuando los comandos del panel Refuerzo estén activos
         <li><a href="#refuerzo">Refuerzo</a></li>
+        -->
         <li><a href="#precios">Precios</a></li>
         <li><a href="#descargar">Descargar</a></li>
         <li><a href="privacy-policy.html">Privacidad</a></li>
@@ -3421,8 +3423,8 @@
     <section id="inicio" class="intro reveal" data-anime-reveal="badges">
         <h2>Automatización Profesional para Ingeniería BIM</h2>
         <p>
-            BIMS extiende Autodesk Revit con más de <strong>60 comandos especializados</strong> organizados en cuatro paneles temáticos:
-            General, Estructuras, Geometría y Refuerzo. Diseñado para ingenieros estructurales, coordinadores BIM
+            BIMS extiende Autodesk Revit con <strong>comandos especializados</strong> organizados en tres paneles temáticos:
+            General, Estructuras y Geometría. Diseñado para ingenieros estructurales, coordinadores BIM
             y arquitectos que requieren automatizar procesos repetitivos, eliminar errores manuales y elevar la
             calidad de la documentación de ingeniería.
         </p>
@@ -3484,7 +3486,8 @@
             <p class="chart-note">100 = automatización total · 0 = proceso completamente manual</p>
         </div>
 
-        <!-- Workflow -->
+        <!-- Workflow BIMS Refuerzo OCULTO: descomentar cuando los comandos del panel
+             Refuerzo (Set Marks, Shape Images, BBS, etc.) estén activos en Application.cs
         <div class="workflow-section reveal" data-anime-reveal="workflow">
             <h3>Flujo de trabajo BIMS Refuerzo — del modelo estructural a la planilla de despiece</h3>
             <div class="workflow-steps">
@@ -3514,6 +3517,7 @@
                 </div>
             </div>
         </div>
+        -->
     </section>
 
     <!-- ══════════════════ CASOS DE USO PRÁCTICO ══════════════════ -->
@@ -3522,14 +3526,22 @@
         <p class="section-sub">Flujos de trabajo documentados con resultados verificables para proyectos de ingeniería estructural</p>
 
         <div class="use-tabs" role="tablist">
+            <!-- Tabs OCULTAS (BBS y Encofrado): descomentar cuando los comandos
+                 correspondientes estén activos en Application.cs.
+                 Si reactivas BBS, mueve "active" de regreso a esta tab.
             <button class="utab active" data-panel="bbs" role="tab">📋 Planilla de Refuerzo (BBS)</button>
             <button class="utab" data-panel="encofrado" role="tab">🏗️ Encofrado Automatizado</button>
-            <button class="utab" data-panel="acero" role="tab">🔩 Acero en Columna</button>
+            -->
+            <button class="utab active" data-panel="acero" role="tab">🔩 Acero en Columna</button>
             <button class="utab" data-panel="dwg" role="tab">📐 Importación DWG → NWC</button>
         </div>
 
-        <!-- ────────── Panel BBS ────────── -->
-        <div class="upanel active" id="panel-bbs">
+        <!-- ────────── Panel BBS ──────────
+             OCULTO: contenido oculto vía display:none mientras los comandos
+             del panel Refuerzo (Set Marks, BBS, Shape Images) NO estén activos
+             en Application.cs. Para REACTIVAR: borra style="display:none" y
+             restaura class="upanel active" (ahora es solo "upanel"). -->
+        <div class="upanel" id="panel-bbs" style="display:none">
             <div class="use-case-layout">
                 <div class="use-steps">
                     <h3>Planilla de Despiece de Armadura — Del modelo Revit al archivo Excel</h3>
@@ -3731,8 +3743,10 @@
             </div>
         </div>
 
-        <!-- ────────── Panel Encofrado ────────── -->
-        <div class="upanel" id="panel-encofrado">
+        <!-- ────────── Panel Encofrado ──────────
+             OCULTO: contenido oculto vía display:none mientras EncofradoAutomaticoCommand
+             NO esté activo en Application.cs. Para REACTIVAR: borra style="display:none". -->
+        <div class="upanel" id="panel-encofrado" style="display:none">
             <div class="use-case-layout">
                 <div class="use-steps">
                     <h3>Encofrado Automatizado — Columnas, Vigas, Losas y Escaleras en un solo comando</h3>
@@ -4178,44 +4192,48 @@
         <div class="panel-body">
             <div class="card-grid">
 
+                <!-- Cards "Encofrado Automatizado" y "Tarrajeo por Habitacion" OCULTAS:
+                     descomentar cuando los comandos correspondientes (EncofradoAutomaticoCommand,
+                     TarrajeoDesdeHabitacionCommand) esten activos en Application.cs.
                 <div class="card green">
                     <h3>Encofrado Automatizado</h3>
-                    <p>Sistema inteligente que clasifica y genera elementos automáticamente</p>
+                    <p>Sistema inteligente que clasifica y genera elementos automaticamente</p>
                     <div class="bim-norm-row">
                         <span class="bim-tag">LOD 400</span>
                         <span class="bim-tag">5D BIM</span>
                         <span class="bim-tag">4D BIM</span>
                         <span class="bim-tag">LOG alto</span>
                     </div>
-                    <p class="bim-card-note">Eleva el encofrado a LOD 400 con geometría de construcción precisa y cuantificable. Las cantidades integradas en el modelo habilitan el 5D BIM (presupuesto de encofrado) y el 4D BIM (programación de obra por etapas constructivas).</p>
+                    <p class="bim-card-note">Eleva el encofrado a LOD 400 con geometria de construccion precisa y cuantificable.</p>
                     <ul class="cmd-list">
-                        <li class="green"><strong class="cmd">Columnas</strong> → Muros de encofrado</li>
-                        <li class="green"><strong class="cmd">Vigas</strong> → Muros laterales + Suelos inferiores</li>
-                        <li class="green"><strong class="cmd">Losas</strong> → Suelos de encofrado</li>
-                        <li class="green"><strong class="cmd">Escaleras</strong> → Muros verticales + Suelos inclinados</li>
-                        <li class="green">Recortes automáticos entre elementos adyacentes</li>
+                        <li class="green"><strong class="cmd">Columnas</strong> -> Muros de encofrado</li>
+                        <li class="green"><strong class="cmd">Vigas</strong> -> Muros laterales + Suelos inferiores</li>
+                        <li class="green"><strong class="cmd">Losas</strong> -> Suelos de encofrado</li>
+                        <li class="green"><strong class="cmd">Escaleras</strong> -> Muros verticales + Suelos inclinados</li>
+                        <li class="green">Recortes automaticos entre elementos adyacentes</li>
                         <li class="green">Integrado con cuantificaciones y tablas de Revit</li>
-                        <li class="green">Preserva curvas y geometría compleja</li>
+                        <li class="green">Preserva curvas y geometria compleja</li>
                     </ul>
                 </div>
 
                 <div class="card green">
-                    <h3>Tarrajeo por Habitación</h3>
+                    <h3>Tarrajeo por Habitacion</h3>
                     <p>Genera muros y suelos de tarrajeo desde las habitaciones del proyecto</p>
                     <div class="bim-norm-row">
-                        <span class="bim-tag">LOD 300→400</span>
+                        <span class="bim-tag">LOD 300->400</span>
                         <span class="bim-tag">5D BIM</span>
                         <span class="bim-tag">LOI</span>
                     </div>
-                    <p class="bim-card-note">Agrega las capas de acabado al modelo con información cuantificable, incrementando el LOD de acabados interiores y enriqueciendo el LOI para presupuesto y control de materiales de obra (5D BIM).</p>
+                    <p class="bim-card-note">Agrega las capas de acabado al modelo con informacion cuantificable.</p>
                     <ul class="cmd-list">
-                        <li class="green">Selección múltiple de habitaciones</li>
-                        <li class="green">Detección automática de elementos límite</li>
-                        <li class="green">Generación de muros de tarrajeo hacia el interior</li>
-                        <li class="green">Generación de suelos (contrapiso) automáticos</li>
+                        <li class="green">Seleccion multiple de habitaciones</li>
+                        <li class="green">Deteccion automatica de elementos limite</li>
+                        <li class="green">Generacion de muros de tarrajeo hacia el interior</li>
+                        <li class="green">Generacion de suelos (contrapiso) automaticos</li>
                         <li class="green">Compatible con modelos vinculados</li>
                     </ul>
                 </div>
+                FIN del bloque Encofrado/Tarrajeo OCULTO -->
 
                 <div class="card green">
                     <h3>Acero de Refuerzo</h3>
@@ -4392,7 +4410,7 @@
                 <h3>Período de Evaluación: 30 días con acceso completo</h3>
                 <p>Sin tarjeta de crédito. Sin compromisos. Acceso irrestricto a todos los módulos desde el primer día de activación.</p>
                 <ul class="trial-checklist">
-                    <li>Todos los paneles desbloqueados: General, Estructuras, Geometría, Refuerzo</li>
+                    <li>Todos los paneles desbloqueados: General, Estructuras, Geometría</li>
                     <li>Sin límite de proyectos ni elementos durante la prueba</li>
                     <li>Licencia vinculada a tu email — actívala en 1 clic</li>
                     <li>Al vencer el trial: elige un plan para continuar o detente sin cargos</li>
@@ -4514,7 +4532,7 @@
 
         </div>
 
-        <!-- Price Cards --><parameter name="new_string">        <!-- Price Cards -->
+        <!-- Price Cards -->
 
             <!-- Empresa -->
             <div class="price-card enterprise reveal reveal-delay-3">
@@ -4544,7 +4562,7 @@
             <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 5 (prueba)</button>
             <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
         </div>
-        ──>
+        -->
 
         <!-- Culqi trust badge -->
         <div class="mp-badge-strip reveal">
@@ -4630,10 +4648,13 @@
                 <div class="faq-answer">Descarga el instalador desde esta página y ejecútalo — el proceso toma menos de un minuto. Cuando haya una nueva versión, se publicará aquí y recibirás notificación por email.</div>
             </div>
 
+            <!-- FAQ OCULTA: descomentar cuando los modulos Encofrado y Tarrajeo
+                 esten activos en Application.cs.
             <div class="faq-item">
-                <div class="faq-question">¿BIMS funciona con modelos vinculados? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.</div>
+                <div class="faq-question">BIMS funciona con modelos vinculados? <span class="faq-chevron">_</span></div>
+                <div class="faq-answer">Si. Varios comandos -en especial del modulo Encofrado y Tarrajeo por Habitacion- estan disenados para trabajar con modelos vinculados, reconociendo muros, columnas y demas elementos de los documentos enlazados.</div>
             </div>
+            -->
 
             <div class="faq-item">
                 <div class="faq-question">¿Qué soporte incluye cada plan? <span class="faq-chevron">▾</span></div>
@@ -4687,7 +4708,9 @@
             <a href="#general">General</a>
             <a href="#estructuras">Estructuras</a>
             <a href="#geometria">Geometría</a>
+            <!-- Link OCULTO: descomentar cuando el panel Refuerzo esté activo
             <a href="#refuerzo">Refuerzo</a>
+            -->
             <a href="#casos">Casos de Uso</a>
         </div>
         <div class="footer-col">
@@ -5637,7 +5660,11 @@
             new Chart(ctxTime, {
                 type: 'bar',
                 data: {
-                    labels: ['Planilla BBS\n(500 barras)', 'Encofrado\n(1 nivel)', 'Exportar BVBS\npara dobladora', 'Set Marks +\nShape Images'],
+                    // Labels actualizados a funciones activas. Si reactivas el panel
+                    // Refuerzo/Encofrado, restaurar:
+                    //   ['Planilla BBS\n(500 barras)', 'Encofrado\n(1 nivel)',
+                    //    'Exportar BVBS\npara dobladora', 'Set Marks +\nShape Images']
+                    labels: ['Asignar Rejillas\n(1000 elem)', 'Importar DWG\n(50 archivos)', 'Acero Columnas\n(50 col)', 'Exportar Planos\na DWG'],
                     datasets: [
                         {
                             label: 'Sin BIMS (manual)',
@@ -5702,7 +5729,11 @@
             new Chart(ctxError, {
                 type: 'bar',
                 data: {
-                    labels: ['Numeración\nde barras', 'Cálculo de\nlongitudes', 'Peso total\n(kg/m²)', 'Duplicados\nde marca'],
+                    // Labels actualizados a funciones activas. Si reactivas el panel
+                    // Refuerzo, restaurar:
+                    //   ['Numeración\nde barras', 'Cálculo de\nlongitudes',
+                    //    'Peso total\n(kg/m²)', 'Duplicados\nde marca']
+                    labels: ['Asignación\nde rejillas', 'Conversión\nDWG→Revit', 'Cálculo de\nvolúmenes', 'Numeración\nde aparatos'],
                     datasets: [
                         {
                             label: 'Sin BIMS (%)',
@@ -5766,14 +5797,16 @@
             new Chart(ctxRadar, {
                 type: 'radar',
                 data: {
+                    // Labels actualizados a funciones activas. Si reactivas Refuerzo/Encofrado,
+                    // restaurar las labels originales (Marcas, Encofrado, Excel/BVBS, Metrados, Imágenes).
                     labels: [
-                        'Marcas',
-                        'Encofrado',
-                        'Excel/BVBS',
+                        'Rejillas',
+                        'Análisis',
+                        'Acero',
                         'Geometría',
                         'DWG→Revit',
-                        'Metrados',
-                        'Imágenes'
+                        'Sanitarias',
+                        'Visuales'
                     ],
                     datasets: [
                         {
