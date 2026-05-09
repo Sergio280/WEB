@@ -135,8 +135,8 @@ async function handleCancellation(sub) {
 
     try {
         const uid = (await auth.getUserByEmail(email)).uid;
-        await db.ref(`users/${uid}/subscription/status`).set('canceled');
-        await db.ref(`users/${uid}/isActive`).set(false);
+        await db.ref(`users_v2/${uid}/subscription/status`).set('canceled');
+        await db.ref(`users_v2/${uid}/isActive`).set(false);
         console.log(`[culqi-webhook] Suscripción cancelada: ${email}`);
     } catch (err) {
         console.warn('[culqi-webhook] No se pudo cancelar:', err?.message);
@@ -175,7 +175,7 @@ async function activateLicense(email, info) {
     // payments, el webhook es un reintento y se ignora para evitar extender
     // la licencia múltiples veces.
     if (info.chargeId) {
-        const dup = await db.ref(`users/${uid}/payments/${info.chargeId}`).once('value');
+        const dup = await db.ref(`users_v2/${uid}/payments/${info.chargeId}`).once('value');
         if (dup.val()) {
             console.log(`[culqi-webhook] Cobro ${info.chargeId} ya procesado — ignorado (duplicado)`);
             return;
@@ -185,7 +185,7 @@ async function activateLicense(email, info) {
     // Suscripción: si el mismo subscriptionId fue procesado hace < 5 minutos,
     // es un reintento de Culqi — ignorar.
     if (info.subscriptionId) {
-        const subSnap = await db.ref(`users/${uid}/subscription`).once('value');
+        const subSnap = await db.ref(`users_v2/${uid}/subscription`).once('value');
         const subData = subSnap.val();
         if (subData?.subscriptionId === info.subscriptionId && subData?.lastWebhookAt) {
             const diffMs = now - new Date(subData.lastWebhookAt);
@@ -201,9 +201,9 @@ async function activateLicense(email, info) {
     // arranca desde HOY (no desde el vencimiento del trial), evitando que
     // el usuario acumule ~60 días gratis (30 trial + 30 primer mes Culqi).
     // Las renovaciones de licencias pagas sí extienden desde la fecha actual.
-    const expSnap     = await db.ref(`users/${uid}/expirationDate`).once('value');
+    const expSnap     = await db.ref(`users_v2/${uid}/expirationDate`).once('value');
     const currentExp  = expSnap.val();
-    const licTypeSnap = await db.ref(`users/${uid}/licenseType`).once('value');
+    const licTypeSnap = await db.ref(`users_v2/${uid}/licenseType`).once('value');
     const existingLicType = licTypeSnap.val();
 
     let baseDate = new Date();
@@ -217,7 +217,7 @@ async function activateLicense(email, info) {
     baseDate.setMonth(baseDate.getMonth() + info.months);
     const newExpDate = baseDate.toISOString();
 
-    console.log(`[culqi-webhook] Escribiendo licencia en: users/${uid}`);
+    console.log(`[culqi-webhook] Escribiendo licencia en: users_v2/${uid}`);
     console.log(`[culqi-webhook] Tipo previo: ${existingLicType || 'ninguno'} | Base: ${baseDate.toISOString()} | Nuevo venc.: ${newExpDate}`);
 
     const updates = {
@@ -232,10 +232,10 @@ async function activateLicense(email, info) {
         ...(isNewUser && { createdAt: now.toISOString(), validationCount: 0, activations: {} }),
     };
 
-    await db.ref(`users/${uid}`).update(updates);
+    await db.ref(`users_v2/${uid}`).update(updates);
 
     if (info.chargeId) {
-        await db.ref(`users/${uid}/payments/${info.chargeId}`).set({
+        await db.ref(`users_v2/${uid}/payments/${info.chargeId}`).set({
             plan: info.plan, duration: info.duration || null,
             amount: info.amount || 0, currency: 'PEN',
             date: now.toISOString(), type: 'onetime',
@@ -243,7 +243,7 @@ async function activateLicense(email, info) {
     }
 
     if (info.subscriptionId) {
-        await db.ref(`users/${uid}/subscription`).set({
+        await db.ref(`users_v2/${uid}/subscription`).set({
             subscriptionId: info.subscriptionId,
             plan:           info.plan,
             status:         'active',
@@ -300,9 +300,14 @@ function verifyHash(event, expectedHash) {
                       || '';
 
         if (!received) {
-            // En desarrollo puede no venir — aceptar pero loguear
-            console.warn('[culqi-webhook] Sin header de hash — aceptado sin verificar');
-            return true;
+            // Producción: rechazar webhooks sin header de hash (anti-falsificación).
+            // Para pruebas locales, setear CULQI_ALLOW_NO_HASH=true en el entorno.
+            if (process.env.CULQI_ALLOW_NO_HASH === 'true') {
+                console.warn('[culqi-webhook] Sin header de hash — aceptado (CULQI_ALLOW_NO_HASH=true)');
+                return true;
+            }
+            console.warn('[culqi-webhook] Sin header de hash — rechazado');
+            return false;
         }
 
         return crypto.timingSafeEqual(

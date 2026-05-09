@@ -89,7 +89,7 @@ exports.handler = async function (event) {
             ...(isNewUser && { createdAt: now.toISOString(), validationCount: 0 }),
         };
 
-        await db.ref(`users/${uid}`).update(updates);
+        await db.ref(`users_v2/${uid}`).update(updates);
 
         // Enviar email para que el usuario establezca su contraseña
         // FIREBASE_API_KEY es la misma clave pública usada en el frontend

@@ -1,7 +1,7 @@
 {
-  "version": "1.0.7",
-  "releaseNotes": "Bugs solved",
-  "isMandatory": true,
-  "releaseDate": "2026-04-01",
+  "version": "1.0.8",
+  "releaseNotes": "Mejoras y correcciones internas",
+  "isMandatory": false,
+  "releaseDate": "2026-05-09",
   "downloadUrl": "https://github.com/Sergio280/WEB/releases/latest/download/BIMS-update.zip"
 }

@@ -16,7 +16,7 @@
  *      → Si no existe: crear usuario y enviar email de activación
  *   4. Calcular nueva ExpirationDate (extiende si ya hay licencia vigente)
  *   5. Escribir en Firebase: IsActive, LicenseType, ExpirationDate, MaxDevices
- *   6. Registrar el pago en users/{uid}/payments/{paymentId}
+ *   6. Registrar el pago en users_v2/{uid}/payments/{paymentId}
  */
 
 const crypto = require('crypto');
@@ -215,7 +215,7 @@ async function activateLicense(email, info) {
 
     // 2. Calcular nueva ExpirationDate
     //    Si tiene licencia vigente → extender desde su vencimiento actual
-    const expSnap   = await db.ref(`users/${uid}/ExpirationDate`).once('value');
+    const expSnap   = await db.ref(`users_v2/${uid}/ExpirationDate`).once('value');
     const currentExp = expSnap.val();
 
     const now      = new Date();
@@ -246,11 +246,11 @@ async function activateLicense(email, info) {
         updates.activations     = {};
     }
 
-    await db.ref(`users/${uid}`).update(updates);
+    await db.ref(`users_v2/${uid}`).update(updates);
 
     // 4. Registrar el pago en el historial
     if (info.paymentId) {
-        await db.ref(`users/${uid}/payments/${info.paymentId}`).set({
+        await db.ref(`users_v2/${uid}/payments/${info.paymentId}`).set({
             plan:        info.plan,
             duration:    info.duration || null,
             amount:      info.amount   || 0,
@@ -262,7 +262,7 @@ async function activateLicense(email, info) {
 
     // 5. Guardar datos de la suscripción activa (para gestión y renovaciones)
     if (info.preapprovalId) {
-        await db.ref(`users/${uid}/subscription`).set({
+        await db.ref(`users_v2/${uid}/subscription`).set({
             preapprovalId: info.preapprovalId,
             plan:          info.plan,
             status:        'authorized',
