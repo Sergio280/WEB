@@ -4560,8 +4560,7 @@
             </div>
 -->
         </div>
-<!--
-         ── Botón de prueba (comentado) ──
+<!-- ── Botón de prueba S/5 (verificación de integración Culqi) ── -->
         <div id="test-pay-box" style="margin:24px auto 0;max-width:400px;text-align:center;border:2px dashed #f59e0b;border-radius:12px;padding:16px 20px;background:#fffbeb;">
             <p style="margin:0 0 6px;font-size:.8rem;font-weight:700;color:#b45309;letter-spacing:.05em;">🧪 MODO PRUEBA</p>
             <p style="margin:0 0 12px;font-size:.85rem;color:#92400e;">Cobro de S/ 5.00 para verificar la integración</p>
@@ -4569,8 +4568,6 @@
             <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 5 (prueba)</button>
             <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
         </div>
-        
--->
         <!-- Culqi trust badge -->
         <div class="mp-badge-strip reveal">
             <div class="mp-badge-item">
@@ -5556,27 +5553,28 @@
         });
     };
 
-    /* ── Botón de prueba S/5 (comentado)
+    /* ── Botón de prueba S/5 (verificación de integración) ──────────────── */
     var testBtn   = document.getElementById('test-pay-btn');
     var testEmail = document.getElementById('test-email');
     var testError = document.getElementById('test-error');
 
     if (testBtn) {
         testBtn.addEventListener('click', function () {
-            var email = (testEmail.value || '').trim();
+            var email = (testEmail && testEmail.value || '').trim();
             if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                testError.textContent = 'Ingresa un email válido.';
-                testError.style.display = 'block';
+                if (testError) {
+                    testError.textContent = 'Ingresa un email válido.';
+                    testError.style.display = 'block';
+                }
                 return;
             }
-            testError.style.display = 'none';
+            if (testError) testError.style.display = 'none';
             window._culqiContext = { email: email, plan: 'test', isSub: false, duration: 'test', isTest: true };
             Culqi.publicKey = CULQI_PUBLIC_KEY;
             Culqi.settings({ title: 'BIMS — Prueba', currency: 'PEN', description: 'Cobro de prueba S/5', amount: 500 });
             Culqi.open({ email: email });
         });
     }
-    ── */
 
     /* ── Event listeners ──────────────────────────────────────────────── */
 
