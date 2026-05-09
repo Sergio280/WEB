@@ -300,12 +300,7 @@ function verifyHash(event, expectedHash) {
                       || '';
 
         if (!received) {
-            // Producción: rechazar webhooks sin header de hash (anti-falsificación).
-            // Para pruebas locales, setear CULQI_ALLOW_NO_HASH=true en el entorno.
-            if (process.env.CULQI_ALLOW_NO_HASH === 'true') {
-                console.warn('[culqi-webhook] Sin header de hash — aceptado (CULQI_ALLOW_NO_HASH=true)');
-                return true;
-            }
+            // Webhooks sin header de hash siempre se rechazan (anti-falsificación).
             console.warn('[culqi-webhook] Sin header de hash — rechazado');
             return false;
         }
