@@ -1,6 +1,6 @@
 {
-  "version": "1.0.8",
-  "releaseNotes": "Mejoras y correcciones internas",
+  "version": "1.0.9",
+  "releaseNotes": "v1.0.9 - Mejoras internas de seguridad, autenticacion y estabilidad. Compatible con Revit 2024-2026.",
   "isMandatory": false,
   "releaseDate": "2026-05-09",
   "downloadUrl": "https://github.com/Sergio280/WEB/releases/latest/download/BIMS-update.zip"
