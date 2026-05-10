@@ -3,8 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BIMS - Plugin profesional para Autodesk Revit. Comandos para acero, geometría, importación DWG y más. 30 días gratis.">
+    <meta name="description" content="BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025 y 2026.">
     <title>BIMS — Automatización BIM Profesional para Autodesk Revit</title>
+
+    <!-- ── Open Graph / Social media (LinkedIn, WhatsApp, Facebook) ────── -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bimsapp.netlify.app/">
+    <meta property="og:title" content="BIMS — Automatización BIM Profesional para Autodesk Revit">
+    <meta property="og:description" content="Add-in profesional para Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG. Compatible con Revit 2024-2026.">
+    <meta property="og:image" content="https://bimsapp.netlify.app/icono/og-cover.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_PE">
+    <meta property="og:site_name" content="BIMS">
+
+    <!-- ── Twitter Card ─────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BIMS — Automatización BIM Profesional para Autodesk Revit">
+    <meta name="twitter:description" content="Add-in profesional para Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG.">
+    <meta name="twitter:image" content="https://bimsapp.netlify.app/icono/og-cover.png">
     <link rel="icon" type="image/x-icon"             href="/icono/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32"  href="/icono/favicon-32.png">
     <link rel="icon" type="image/png" sizes="16x16"  href="/icono/favicon-16.png">
@@ -2363,9 +2380,15 @@
 
     .catalog-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 18px;
-        margin-bottom: 44px;
+        margin: 0 auto 44px;
+        max-width: 1100px;
+        justify-content: center;
+    }
+
+    @media (max-width: 1000px) {
+        .catalog-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .catalog-card {
@@ -3367,7 +3390,7 @@
 
 <!-- ══════════════════ ANNOUNCE BAR ══════════════════ -->
 <div class="announce-bar">
-    🎉 BIMS 1.0.8— Disponible para Revit 2024, 2025 y 2026
+    🎉 BIMS 1.0.10 — Disponible para Revit 2024, 2025 y 2026
     <a href="#descargar">Descargar ahora →</a>
 </div>
 
@@ -3383,7 +3406,7 @@
             <span class="compat-chip">Revit 2026</span>
         </div>
         <div class="header-cta">
-            <a href="#precios" class="btn-hero-primary">Iniciar evaluación gratuita — 30 días</a>
+            <a href="#precios" class="btn-hero-primary">Ver planes y precios →</a>
             <a href="#casos" class="btn-hero-secondary">Ver casos de uso</a>
         </div>
     </div>
@@ -3413,7 +3436,7 @@
         <li><a href="terminos.html">Términos</a></li>
         <li><a href="libro-reclamaciones.html">Reclamaciones</a></li>
         <li><a href="#contacto">Contacto</a></li>
-        <li><a href="#precios" class="nav-cta">Evaluación gratuita →</a></li>
+        <li><a href="#precios" class="nav-cta">Comprar ahora →</a></li>
     </ul>
 </nav>
 
@@ -3436,6 +3459,27 @@
         <p class="bim-std-intro">
             Cada módulo de BIMS está diseñado para elevar el <strong>LOD (Nivel de Detalle)</strong> del modelo estructural — de etapas conceptuales hasta nivel de fabricación —, satisfacer el <strong>LOIN (Nivel de Información Necesaria)</strong> definido en el BEP del proyecto y enriquecer el <strong>LOI</strong> (atributos no geométricos) del <strong>CDE</strong>. Los flujos de <strong>4D BIM</strong> (programación de obra) y <strong>5D BIM</strong> (presupuesto) se habilitan directamente desde el modelo, en conformidad con <strong>ISO 19650</strong> y las normativas técnicas locales de diseño estructural.
         </p>
+    </section>
+
+    <!-- ── VIDEO DEMO ── -->
+    <section id="video-demo" class="video-demo-section reveal" style="margin: 50px 0; text-align: center;">
+        <h2>Mira BIMS en acción</h2>
+        <p class="section-sub" style="margin-bottom: 24px;">Demostración en un proyecto real de Revit</p>
+        <div class="video-demo-wrapper" style="max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+            <!-- TODO: cuando tengas el video en YouTube, reemplaza el div .video-demo-placeholder por:
+                 <iframe src="https://www.youtube.com/embed/TU_VIDEO_ID"
+                         title="BIMS - Demo en Revit"
+                         frameborder="0"
+                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                         allowfullscreen
+                         style="width:100%; height:100%; border:0;"></iframe>
+            -->
+            <div class="video-demo-placeholder" style="width:100%; height:100%; aspect-ratio:16/9; background: linear-gradient(135deg, #1a2840 0%, #0e1525 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); border: 2px dashed rgba(255,255,255,0.18);">
+                <div style="width: 90px; height: 90px; border-radius: 50%; background: rgba(0,120,215,0.3); border: 3px solid rgba(0,120,215,0.6); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; padding-left: 8px; margin-bottom: 18px;">▶</div>
+                <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 6px;">Video demo próximamente</p>
+                <p style="font-size: 0.85rem; opacity: 0.7;">Mientras tanto, explora los casos de uso abajo ↓</p>
+            </div>
+        </div>
     </section>
 
     <!-- ── STATS STRIP ── -->
@@ -4401,30 +4445,7 @@
     <section id="precios" class="pricing-section reveal" data-anime-reveal="pricing">
         <div class="section-header">
             <h2>Planes y Precios</h2>
-            <!--
-            <p>Comience con una evaluación gratuita de 30 días. Sin tarjeta requerida. Seleccione un plan solo cuando confirme el valor para su equipo.</p>
-            -->
-        </div>
-
-        <!-- Trial Banner -->
-        
-        <div class="trial-banner reveal">
-            <div class="trial-banner-text">
-                <!--
-                <h3>Período de Evaluación: 30 días con acceso completo</h3>
-                <p>Sin tarjeta de crédito. Sin compromisos. Acceso irrestricto a todos los módulos desde el primer día de activación.</p>
-                <ul class="trial-checklist">
-                    <li>Todos los paneles desbloqueados: General, Estructuras, Geometría</li>
-                    <li>Sin límite de proyectos ni elementos durante la prueba</li>
-                    <li>Licencia vinculada a tu email — actívala en 1 clic</li>
-                    <li>Al vencer el trial: elige un plan para continuar o detente sin cargos</li>
-                </ul>
-            </div>
-            <div class="trial-cta">
-                <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" download>Empezar gratis →</a>
-                <div class="trial-counter">✅ Sin tarjeta requerida</div>
-            </div>-->
-       
+            <p>Activa BIMS al instante — paga seguro con tarjeta a través de Culqi y recibe tu clave por email en minutos.</p>
         </div>
 
         <!-- ── Catálogo de licencias (mínimo 5 productos visibles) ── -->
@@ -4439,7 +4460,7 @@
                 <div class="catalog-body">
                     <div class="catalog-plan-badge blue-badge">Individual</div>
                     <div class="catalog-name">BIMS Individual — 1 mes</div>
-                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo por 30 días.</div>
+                    <div class="catalog-desc">Plugin completo para Revit. Todos los paneles desbloqueados. Licencia para 1 equipo durante 1 mes.</div>
                     <div class="catalog-price">S/ <strong>60</strong></div>
                     <button class="catalog-btn mp-trigger" data-plan="individual">Comprar</button>
                 </div>
@@ -4560,15 +4581,14 @@
             </div>
 -->
         </div>
-<!-- ── Botón de prueba S/5 (oculto en producción; descomentar para testing) ──
-        <div id="test-pay-box" style="margin:24px auto 0;max-width:400px;text-align:center;border:2px dashed #f59e0b;border-radius:12px;padding:16px 20px;background:#fffbeb;">
+<!-- Boton de prueba S/5 — solo visible al agregar ?debug=1 a la URL -->
+        <div id="test-pay-box" style="display:none;margin:24px auto 0;max-width:400px;text-align:center;border:2px dashed #f59e0b;border-radius:12px;padding:16px 20px;background:#fffbeb;">
             <p style="margin:0 0 6px;font-size:.8rem;font-weight:700;color:#b45309;letter-spacing:.05em;">🧪 MODO PRUEBA</p>
             <p style="margin:0 0 12px;font-size:.85rem;color:#92400e;">Cobro de S/ 5.00 para verificar la integración</p>
             <input id="test-email" type="email" placeholder="Tu email" style="width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #fcd34d;border-radius:8px;margin-bottom:10px;font-size:.9rem;">
             <button id="test-pay-btn" style="background:#f59e0b;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:600;cursor:pointer;width:100%;">Pagar S/ 5 (prueba)</button>
             <p id="test-error" style="color:#dc2626;font-size:.8rem;margin:6px 0 0;display:none;"></p>
         </div>
-        -->
         <!-- Culqi trust badge -->
         <div class="mp-badge-strip reveal">
             <div class="mp-badge-item">
@@ -4592,31 +4612,31 @@
 
         <!-- Payment flow -->
         <div class="payment-flow reveal">
-            <h3>¿Cómo funciona el proceso de pago?</h3>
+            <h3>¿Cómo funciona el proceso?</h3>
             <div class="payment-steps">
                 <div class="pay-step">
                     <div class="step-num">1</div>
-                    Descarga BIMS gratis
+                    Elige tu plan
                 </div>
                 <div class="pay-arrow">→</div>
                 <div class="pay-step">
                     <div class="step-num">2</div>
-                    Activa con tu email (30 días de prueba)
+                    Paga seguro con Culqi
                 </div>
                 <div class="pay-arrow">→</div>
                 <div class="pay-step">
                     <div class="step-num">3</div>
-                    Al vencer, elige tu plan y paga
+                    Recibe tu clave por email
                 </div>
                 <div class="pay-arrow">→</div>
                 <div class="pay-step">
                     <div class="step-num">4</div>
-                    Recibe tu clave de activación por email
+                    Descarga BIMS e instala
                 </div>
                 <div class="pay-arrow">→</div>
                 <div class="pay-step">
                     <div class="step-num">5</div>
-                    Sigue usando BIMS sin interrupciones
+                    Activa y empieza a usarlo
                 </div>
             </div>
         </div>
@@ -4634,13 +4654,13 @@
             </div>
 
             <div class="faq-item">
-                <div class="faq-question">¿Necesito tarjeta de crédito para el trial? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">No. El trial de 30 días se activa únicamente con tu dirección de correo electrónico. No se solicita ningún dato de pago hasta que decidas contratar un plan.</div>
+                <div class="faq-question">¿Cómo recibo mi clave de activación? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">Inmediatamente después del pago exitoso recibes la clave en el correo que indicaste durante la compra. La clave queda vinculada a ese email y la usas para activar BIMS dentro de Revit.</div>
             </div>
 
             <div class="faq-item">
-                <div class="faq-question">¿Qué pasa cuando vence el período de prueba? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">Al vencer los 30 días, BIMS se desactiva automáticamente. Tus proyectos y datos en Revit no se ven afectados en absoluto. Para continuar, elige un plan y recibirás tu clave de activación por email.</div>
+                <div class="faq-question">¿Qué pasa cuando vence mi licencia? <span class="faq-chevron">▾</span></div>
+                <div class="faq-answer">Al vencer el periodo contratado, BIMS deja de ejecutar comandos. Tus proyectos y datos en Revit no se ven afectados. Para continuar usándolo, renueva comprando otro plan en esta misma página.</div>
             </div>
 
             <div class="faq-item">
@@ -4672,7 +4692,7 @@
     <!-- ══════════════════ DOWNLOAD ══════════════════ -->
     <section id="descargar" class="download-section reveal">
         <h2>📥 Descarga BIMS</h2>
-        <p>Instalador directo — Revit 2024, 2025 y 2026 — 30 días gratis</p>
+        <p>Instalador directo — Revit 2024, 2025 y 2026. Después de comprar, recibes tu clave de activación por email.</p>
         <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" class="download-btn" download>⬇ Descargar BIMS</a>
         <div class="version-pills">
             <span class="vpill">Windows 10 / 11</span>
@@ -4706,7 +4726,7 @@
         <div class="footer-col">
             <h3><img src="/icono/favicon-32.png" alt="BIMS" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;border-radius:4px;">BIMS</h3>
             <p>Plugin profesional para Autodesk Revit</p>
-            <p>Versión 1.0.8</p>
+            <p>Versión 1.0.10</p>
         </div>
         <div class="footer-col">
             <h3>Módulos</h3>
@@ -4721,8 +4741,8 @@
         <div class="footer-col">
             <h3>Precios</h3>
             <a href="#precios">Desde S/60/mes</a>
-            <a href="#precios">Empresa — Consultar</a>
-            <a href="#precios">Trial gratuito 30 días</a>
+            <a href="#precios">Plan Profesional</a>
+            <a href="mailto:bimsaddin@gmail.com?subject=BIMS%20Licencia%20Empresa">Empresa — Consultar</a>
         </div>
         <div class="footer-col">
             <h3>Legal</h3>
@@ -4732,7 +4752,8 @@
         </div>
         <div class="footer-col">
             <h3>Contacto</h3>
-            <p>Email: bimsaddin@gmail.com</p>
+            <p>📧 bimsaddin@gmail.com</p>
+            <p>📱 <a href="https://wa.me/51989455558" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">+51 989 455 558</a></p>
         </div>
     </div>
     <div class="footer-bottom">
@@ -5554,10 +5575,19 @@
         });
     };
 
-    /* ── Botón de prueba S/5 (verificación de integración) ──────────────── */
+    /* ── Botón de prueba S/5 (verificación de integración) ────────────────
+       Solo visible al agregar ?debug=1 a la URL. En producción queda oculto. */
+    var testBox   = document.getElementById('test-pay-box');
     var testBtn   = document.getElementById('test-pay-btn');
     var testEmail = document.getElementById('test-email');
     var testError = document.getElementById('test-error');
+
+    try {
+        var qs = new URLSearchParams(window.location.search);
+        if (qs.get('debug') === '1' && testBox) {
+            testBox.style.display = 'block';
+        }
+    } catch (e) { /* navegadores muy viejos: dejar oculto */ }
 
     if (testBtn) {
         testBtn.addEventListener('click', function () {
