@@ -293,10 +293,28 @@ async function sendActivationEmail(email) {
 // ── Verificar hash Culqi (Código Hash del RSA Key en headers) ─────────────────
 function verifyHash(event, expectedHash) {
     try {
+        // ── DEBUG TEMPORAL: loggear nombres de headers recibidos para identificar
+        // exactamente cómo firma Culqi v2. Quitar después de configurar el webhook.
+        const headerNames = Object.keys(event.headers || {});
+        const culqiHeaders = headerNames.filter(h => /culqi|hash|sign|rsa/i.test(h));
+        console.log(`[culqi-webhook] DEBUG headers recibidos (total ${headerNames.length}): ${headerNames.join(', ')}`);
+        console.log(`[culqi-webhook] DEBUG headers culqi/hash/sign: ${JSON.stringify(culqiHeaders)}`);
+        for (const h of culqiHeaders) {
+            const val = event.headers[h] || '';
+            const masked = val.length > 12 ? `${val.slice(0,6)}...${val.slice(-4)}` : '(corto)';
+            console.log(`[culqi-webhook] DEBUG ${h} = ${masked} (len ${val.length})`);
+        }
+        const exp = (expectedHash || '').trim();
+        const expMasked = exp.length > 12 ? `${exp.slice(0,6)}...${exp.slice(-4)}` : '(corto)';
+        console.log(`[culqi-webhook] DEBUG env CULQI_WEBHOOK_HASH = ${expMasked} (len ${exp.length})`);
+        // ── FIN DEBUG TEMPORAL
+
         // Culqi envía el Código Hash en uno de estos headers
         const received = event.headers['x-culqi-rsa-id']
                       || event.headers['x-culqi-hash']
                       || event.headers['x-hash']
+                      || event.headers['culqi-rsa-id']
+                      || event.headers['culqi-hash']
                       || '';
 
         if (!received) {
@@ -305,11 +323,15 @@ function verifyHash(event, expectedHash) {
             return false;
         }
 
-        return crypto.timingSafeEqual(
-            Buffer.from(received.trim()),
-            Buffer.from(expectedHash.trim())
-        );
-    } catch {
+        const recTrim = received.trim();
+        const expTrim = (expectedHash || '').trim();
+        if (recTrim.length !== expTrim.length) {
+            console.warn(`[culqi-webhook] Hash longitud distinta: received=${recTrim.length}, expected=${expTrim.length}`);
+            return false;
+        }
+        return crypto.timingSafeEqual(Buffer.from(recTrim), Buffer.from(expTrim));
+    } catch (err) {
+        console.error('[culqi-webhook] verifyHash exception:', err?.message || err);
         return false;
     }
 }
