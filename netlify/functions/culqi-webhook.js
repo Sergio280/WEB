@@ -84,16 +84,10 @@ exports.handler = async function (event) {
     else                  console.warn(`[culqi-webhook] Tipo desconocido para verificar: id=${object.id}`);
 
     if (!verified) {
-        // Modo diagnóstico: si BIMS_SKIP_WEBHOOK_HASH=true, procesa igual.
-        if (process.env.BIMS_SKIP_WEBHOOK_HASH === 'true') {
-            console.warn('[culqi-webhook] BIMS_SKIP_WEBHOOK_HASH=true — procesando sin verificación');
-        } else {
-            console.warn(`[culqi-webhook] Verificación de Culqi API falló para id=${object.id} — descartado`);
-            return { statusCode: 200, body: '' };
-        }
-    } else {
-        console.log(`[culqi-webhook] ✓ Verificado contra API Culqi: ${object.id}`);
+        console.warn(`[culqi-webhook] Verificación de Culqi API falló para id=${object.id} — descartado`);
+        return { statusCode: 200, body: '' };
     }
+    console.log(`[culqi-webhook] ✓ Verificado contra API Culqi: ${object.id}`);
 
     try {
         // Suscripciones activas/renovadas
