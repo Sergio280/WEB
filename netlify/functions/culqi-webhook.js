@@ -32,14 +32,24 @@ const DURATION_MONTHS = {
 exports.handler = async function (event) {
     if (event.httpMethod !== 'POST') return { statusCode: 200, body: '' };
 
-    // Verificar hash Culqi (obligatorio — configurar CULQI_WEBHOOK_HASH en Netlify)
-    if (!process.env.CULQI_WEBHOOK_HASH) {
-        console.error('[culqi-webhook] CULQI_WEBHOOK_HASH no configurado — rechazando todas las peticiones');
-        return { statusCode: 200, body: '' };
-    }
-    if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
-        console.warn('[culqi-webhook] Hash inválido — descartado');
-        return { statusCode: 200, body: '' };
+    // Verificar hash Culqi (obligatorio — configurar CULQI_WEBHOOK_HASH en Netlify).
+    // BYPASS TEMPORAL: si BIMS_SKIP_WEBHOOK_HASH=true en env vars, se omite la
+    // verificación pero se loguean los headers para diagnóstico. SOLO usar
+    // mientras se ajusta el formato del hash; quitar después.
+    const skipHash = process.env.BIMS_SKIP_WEBHOOK_HASH === 'true';
+    if (skipHash) {
+        console.warn('[culqi-webhook] BIMS_SKIP_WEBHOOK_HASH=true — verificación de hash DESHABILITADA (modo diagnóstico)');
+        // Aún corremos verifyHash solo por sus logs (no usamos el resultado).
+        try { verifyHash(event, process.env.CULQI_WEBHOOK_HASH || ''); } catch {}
+    } else {
+        if (!process.env.CULQI_WEBHOOK_HASH) {
+            console.error('[culqi-webhook] CULQI_WEBHOOK_HASH no configurado — rechazando todas las peticiones');
+            return { statusCode: 200, body: '' };
+        }
+        if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
+            console.warn('[culqi-webhook] Hash inválido — descartado');
+            return { statusCode: 200, body: '' };
+        }
     }
 
     let body;
