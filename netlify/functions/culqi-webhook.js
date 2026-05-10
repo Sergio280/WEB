@@ -1,6 +1,11 @@
 // ── culqi-webhook.js ──────────────────────────────────────────────────────────
 // Recibe y procesa eventos webhook de Culqi.
 // Activa/renueva licencias en Firebase según el evento.
+//
+// VERIFICACIÓN: Culqi v2 NO firma webhooks con header de hash. La autenticidad
+// se valida consultando la API de Culqi con el chargeId/subscriptionId del
+// payload usando CULQI_SECRET_KEY (que sólo tu backend conoce). Si Culqi
+// confirma que el cargo existe y está exitoso, el webhook es legítimo.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const crypto = require('crypto');
@@ -32,26 +37,6 @@ const DURATION_MONTHS = {
 exports.handler = async function (event) {
     if (event.httpMethod !== 'POST') return { statusCode: 200, body: '' };
 
-    // Verificar hash Culqi (obligatorio — configurar CULQI_WEBHOOK_HASH en Netlify).
-    // BYPASS TEMPORAL: si BIMS_SKIP_WEBHOOK_HASH=true en env vars, se omite la
-    // verificación pero se loguean los headers para diagnóstico. SOLO usar
-    // mientras se ajusta el formato del hash; quitar después.
-    const skipHash = process.env.BIMS_SKIP_WEBHOOK_HASH === 'true';
-    if (skipHash) {
-        console.warn('[culqi-webhook] BIMS_SKIP_WEBHOOK_HASH=true — verificación de hash DESHABILITADA (modo diagnóstico)');
-        // Aún corremos verifyHash solo por sus logs (no usamos el resultado).
-        try { verifyHash(event, process.env.CULQI_WEBHOOK_HASH || ''); } catch {}
-    } else {
-        if (!process.env.CULQI_WEBHOOK_HASH) {
-            console.error('[culqi-webhook] CULQI_WEBHOOK_HASH no configurado — rechazando todas las peticiones');
-            return { statusCode: 200, body: '' };
-        }
-        if (!verifyHash(event, process.env.CULQI_WEBHOOK_HASH)) {
-            console.warn('[culqi-webhook] Hash inválido — descartado');
-            return { statusCode: 200, body: '' };
-        }
-    }
-
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
@@ -70,12 +55,47 @@ exports.handler = async function (event) {
 
     console.log(`[culqi-webhook] Evento: "${type}" | object: "${objectType}" | id: ${object.id} | email: ${object.email}`);
 
-    try {
-        // Cobros (wrapper o directo)
-        const isCharge = type === 'charge.creation.succeeded'
-                      || type === 'charge.capture.succeeded'
-                      || objectType === 'charge';
+    // ── Verificar autenticidad consultando la API de Culqi ────────────────────
+    // En lugar de validar un hash en headers (Culqi v2 no envía firma), validamos
+    // que el id existe en la API de Culqi usando CULQI_SECRET_KEY. Si la API
+    // confirma el objeto y su estado es válido, el webhook es legítimo.
+    if (!object.id) {
+        console.warn('[culqi-webhook] Webhook sin id en el body — descartado');
+        return { statusCode: 200, body: '' };
+    }
 
+    if (!process.env.CULQI_SECRET_KEY) {
+        console.error('[culqi-webhook] CULQI_SECRET_KEY no configurado — no se puede verificar webhook');
+        return { statusCode: 200, body: '' };
+    }
+
+    const isCharge = type === 'charge.creation.succeeded'
+                  || type === 'charge.capture.succeeded'
+                  || objectType === 'charge'
+                  || (object.id && object.id.startsWith('chr_'));
+
+    const isSubEvent = type.startsWith('subscription.')
+                    || objectType === 'subscription'
+                    || (object.id && object.id.startsWith('sxn_'));
+
+    let verified = false;
+    if (isCharge)         verified = await verifyChargeWithCulqi(object.id);
+    else if (isSubEvent)  verified = await verifySubscriptionWithCulqi(object.id);
+    else                  console.warn(`[culqi-webhook] Tipo desconocido para verificar: id=${object.id}`);
+
+    if (!verified) {
+        // Modo diagnóstico: si BIMS_SKIP_WEBHOOK_HASH=true, procesa igual.
+        if (process.env.BIMS_SKIP_WEBHOOK_HASH === 'true') {
+            console.warn('[culqi-webhook] BIMS_SKIP_WEBHOOK_HASH=true — procesando sin verificación');
+        } else {
+            console.warn(`[culqi-webhook] Verificación de Culqi API falló para id=${object.id} — descartado`);
+            return { statusCode: 200, body: '' };
+        }
+    } else {
+        console.log(`[culqi-webhook] ✓ Verificado contra API Culqi: ${object.id}`);
+    }
+
+    try {
         // Suscripciones activas/renovadas
         const isSub = type === 'subscription.creation.succeeded'
                    || type === 'subscription.update.succeeded'
@@ -96,6 +116,50 @@ exports.handler = async function (event) {
 
     return { statusCode: 200, body: '' };
 };
+
+// ── Verificación contra API de Culqi ──────────────────────────────────────────
+// Si Culqi confirma el cargo con outcome venta_exitosa, el webhook es legítimo.
+async function verifyChargeWithCulqi(chargeId) {
+    if (!chargeId) return false;
+    try {
+        const response = await fetch(`https://api.culqi.com/v2/charges/${chargeId}`, {
+            headers: { 'Authorization': `Bearer ${process.env.CULQI_SECRET_KEY}` },
+        });
+        if (!response.ok) {
+            console.warn(`[culqi-webhook] Culqi API charge ${chargeId}: HTTP ${response.status}`);
+            return false;
+        }
+        const data = await response.json();
+        const outcomeType = data?.outcome?.type;
+        if (outcomeType !== 'venta_exitosa') {
+            console.warn(`[culqi-webhook] Charge ${chargeId} outcome no exitoso: ${outcomeType}`);
+            return false;
+        }
+        return true;
+    } catch (err) {
+        console.error('[culqi-webhook] verifyCharge exception:', err?.message || err);
+        return false;
+    }
+}
+
+// Si Culqi confirma la suscripción, el webhook es legítimo. Aceptamos cualquier
+// estado (active/canceled) porque el handler decide qué hacer según el tipo.
+async function verifySubscriptionWithCulqi(subId) {
+    if (!subId) return false;
+    try {
+        const response = await fetch(`https://api.culqi.com/v2/subscriptions/${subId}`, {
+            headers: { 'Authorization': `Bearer ${process.env.CULQI_SECRET_KEY}` },
+        });
+        if (!response.ok) {
+            console.warn(`[culqi-webhook] Culqi API subscription ${subId}: HTTP ${response.status}`);
+            return false;
+        }
+        return true;
+    } catch (err) {
+        console.error('[culqi-webhook] verifySubscription exception:', err?.message || err);
+        return false;
+    }
+}
 
 // ── Cobro único ───────────────────────────────────────────────────────────────
 async function handleCharge(charge) {
@@ -297,51 +361,5 @@ async function sendActivationEmail(email) {
         }
     } catch (err) {
         console.warn('[culqi-webhook] sendActivationEmail error:', err?.message);
-    }
-}
-
-// ── Verificar hash Culqi (Código Hash del RSA Key en headers) ─────────────────
-function verifyHash(event, expectedHash) {
-    try {
-        // ── DEBUG TEMPORAL: loggear nombres de headers recibidos para identificar
-        // exactamente cómo firma Culqi v2. Quitar después de configurar el webhook.
-        const headerNames = Object.keys(event.headers || {});
-        const culqiHeaders = headerNames.filter(h => /culqi|hash|sign|rsa/i.test(h));
-        console.log(`[culqi-webhook] DEBUG headers recibidos (total ${headerNames.length}): ${headerNames.join(', ')}`);
-        console.log(`[culqi-webhook] DEBUG headers culqi/hash/sign: ${JSON.stringify(culqiHeaders)}`);
-        for (const h of culqiHeaders) {
-            const val = event.headers[h] || '';
-            const masked = val.length > 12 ? `${val.slice(0,6)}...${val.slice(-4)}` : '(corto)';
-            console.log(`[culqi-webhook] DEBUG ${h} = ${masked} (len ${val.length})`);
-        }
-        const exp = (expectedHash || '').trim();
-        const expMasked = exp.length > 12 ? `${exp.slice(0,6)}...${exp.slice(-4)}` : '(corto)';
-        console.log(`[culqi-webhook] DEBUG env CULQI_WEBHOOK_HASH = ${expMasked} (len ${exp.length})`);
-        // ── FIN DEBUG TEMPORAL
-
-        // Culqi envía el Código Hash en uno de estos headers
-        const received = event.headers['x-culqi-rsa-id']
-                      || event.headers['x-culqi-hash']
-                      || event.headers['x-hash']
-                      || event.headers['culqi-rsa-id']
-                      || event.headers['culqi-hash']
-                      || '';
-
-        if (!received) {
-            // Webhooks sin header de hash siempre se rechazan (anti-falsificación).
-            console.warn('[culqi-webhook] Sin header de hash — rechazado');
-            return false;
-        }
-
-        const recTrim = received.trim();
-        const expTrim = (expectedHash || '').trim();
-        if (recTrim.length !== expTrim.length) {
-            console.warn(`[culqi-webhook] Hash longitud distinta: received=${recTrim.length}, expected=${expTrim.length}`);
-            return false;
-        }
-        return crypto.timingSafeEqual(Buffer.from(recTrim), Buffer.from(expTrim));
-    } catch (err) {
-        console.error('[culqi-webhook] verifyHash exception:', err?.message || err);
-        return false;
     }
 }
