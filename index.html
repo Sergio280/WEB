@@ -3570,13 +3570,15 @@
         <p class="section-sub">Flujos de trabajo documentados con resultados verificables para proyectos de ingeniería estructural</p>
 
         <div class="use-tabs" role="tablist">
-            <!-- Tabs OCULTAS (BBS y Encofrado): descomentar cuando los comandos
-                 correspondientes estén activos en Application.cs.
-                 Si reactivas BBS, mueve "active" de regreso a esta tab.
+            <!-- Tab BBS OCULTA: descomentar cuando los comandos del panel Refuerzo
+                 (Set Marks, BBS, Shape Images) estén activos en Application.cs.
+                 Si reactivas BBS, mueve "active" de regreso a esa tab.
             <button class="utab active" data-panel="bbs" role="tab">📋 Planilla de Refuerzo (BBS)</button>
-            <button class="utab" data-panel="encofrado" role="tab">🏗️ Encofrado Automatizado</button>
             -->
-            <button class="utab active" data-panel="acero" role="tab">🔩 Acero en Columna</button>
+            <button class="utab active" data-panel="encofrado" role="tab">🏗️ Encofrado Automatizado</button>
+            <button class="utab" data-panel="dwg-export" role="tab">📤 Exportar Planos a DWG</button>
+            <button class="utab" data-panel="tarrajeo" role="tab">🧱 Tarrajeo por Habitación</button>
+            <button class="utab" data-panel="acero" role="tab">🔩 Acero en Columna</button>
             <button class="utab" data-panel="dwg" role="tab">📐 Importación DWG → NWC</button>
         </div>
 
@@ -3787,10 +3789,8 @@
             </div>
         </div>
 
-        <!-- ────────── Panel Encofrado ──────────
-             OCULTO: contenido oculto vía display:none mientras EncofradoAutomaticoCommand
-             NO esté activo en Application.cs. Para REACTIVAR: borra style="display:none". -->
-        <div class="upanel" id="panel-encofrado" style="display:none">
+        <!-- ────────── Panel Encofrado ────────── -->
+        <div class="upanel active" id="panel-encofrado">
             <div class="use-case-layout">
                 <div class="use-steps">
                     <h3>Encofrado Automatizado — Columnas, Vigas, Losas y Escaleras en un solo comando</h3>
@@ -3926,6 +3926,190 @@
 
                     <div class="tech-note">
                         <strong>Cada panel cubre exactamente una cara</strong> de la columna — mismo ancho/alto que la cara estructural. Las esquinas quedan sin encofrado, lo que refleja fielmente el área real y elimina sobre-metrados en las cuantificaciones de Revit.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Panel Exportar Planos a DWG ────────── -->
+        <div class="upanel" id="panel-dwg-export">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Exportar Planos a DWG — Archivos portátiles con imágenes embebidas, sin referencias rotas</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Seleccionar planos a exportar</strong>
+                            <p>El diálogo lista todos los ViewSheets del proyecto con vista previa. Seleccione uno, varios o todos los planos a exportar de forma simultánea.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Configurar exportación e imágenes</strong>
+                            <p>Elija carpeta destino, configuración DWG (R2018 / TrueColor / Vista / Defecto / ViewScale / Exacto) y calidad de overlay (Presentación 500 DPI, Borrador 150 DPI, etc.). Active "Insertar imágenes en DWG (OLE)" para que los renders y texturas queden embebidos.</p>
+                            <span class="time-badge">⏱ ~2 min para 10 planos</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Imágenes embebidas dentro del DWG</strong>
+                            <p>A diferencia del exportador nativo de Revit (que deja las imágenes como referencias externas), BIMS embebe las imágenes <strong>directo dentro del archivo .dwg</strong>. El cliente abre el archivo en AutoCAD y todo aparece — sin "Referencia externa no encontrada", sin carpetas adjuntas, sin enlaces rotos.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong>Archivo portátil listo para entregar</strong>
+                            <p>El .dwg resultante es 100% independiente: se puede enviar por email, WhatsApp o subir al CDE sin preocuparse por archivos auxiliares. Compatible con AutoCAD 2018 y posteriores.</p>
+                        </div>
+                    </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>Entregables BIM (ISO 19650):</strong> Garantiza que los planos enviados al CDE del cliente o a la obra no dependan de archivos externos, eliminando una causa frecuente de revisiones rechazadas por información incompleta.</li>
+                            <li><strong>Trazabilidad y archivo:</strong> Un archivo único y portátil es archivable a largo plazo sin riesgo de perder referencias — clave para auditorías y entrega de documentación final del proyecto.</li>
+                            <li><strong>Coordinación con consultores externos:</strong> Estudios sin licencia BIM/Revit reciben los planos completos en formato DWG estándar, manteniendo el flujo de revisión multidisciplinaria del proyecto.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Comparativa: exportador nativo de Revit vs. BIMS</span>
+
+                    <div style="display:grid; grid-template-columns:1fr; gap:14px; margin-top:6px;">
+                        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:14px 16px;">
+                            <div style="font-weight:700; color:#b91c1c; margin-bottom:8px; font-size:0.95em;">❌ Export nativo de Revit</div>
+                            <ul style="padding-left:18px; margin:0; line-height:1.85; font-size:0.85em; color:#555;">
+                                <li><strong>archivo.dwg</strong></li>
+                                <li><strong>imagen_render1.png</strong> ← referencia externa</li>
+                                <li><strong>imagen_render2.png</strong> ← referencia externa</li>
+                                <li><strong>textura_madera.jpg</strong> ← referencia externa</li>
+                                <li>📁 Carpeta de imágenes obligatoria</li>
+                            </ul>
+                            <p style="margin:10px 0 0; font-size:0.8em; color:#7c2d2d;">Si el cliente recibe sólo el .dwg → referencias rotas en AutoCAD.</p>
+                        </div>
+
+                        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px 16px;">
+                            <div style="font-weight:700; color:#047857; margin-bottom:8px; font-size:0.95em;">✓ Export con BIMS</div>
+                            <ul style="padding-left:18px; margin:0; line-height:1.85; font-size:0.85em; color:#555;">
+                                <li><strong>archivo.dwg</strong> ← todo embebido</li>
+                                <li>✓ Imágenes dentro del DWG (OLE)</li>
+                                <li>✓ Texturas dentro del DWG</li>
+                                <li>✓ Sin carpetas auxiliares</li>
+                                <li>✓ Portable por email / WhatsApp</li>
+                            </ul>
+                            <p style="margin:10px 0 0; font-size:0.8em; color:#065f46;">Un solo archivo. Se abre completo en cualquier AutoCAD.</p>
+                        </div>
+                    </div>
+
+                    <div class="tech-note" style="margin-top:12px;">
+                        Configuración DWG recomendada para entrega: <strong>R2018 · TrueColor · Vista · Defecto · ViewScale · Exacto</strong> · calidad overlay <strong>Presentación 500 DPI</strong>. Compatible con AutoCAD 2018, BricsCAD, ZWCAD y visores web.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ────────── Panel Tarrajeo por Habitación ────────── -->
+        <div class="upanel" id="panel-tarrajeo">
+            <div class="use-case-layout">
+                <div class="use-steps">
+                    <h3>Tarrajeo por Habitación — Muros y suelos de acabado generados desde el ambiente</h3>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">01</div>
+                        <div class="use-step-content">
+                            <strong>Seleccionar tipos de muro y suelo de tarrajeo</strong>
+                            <p>Defina el tipo de Wall y/o Floor que se usará como tarrajeo (con su espesor y material configurados en Revit). El tipo controla las capas de acabado que se aplicarán automáticamente.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">02</div>
+                        <div class="use-step-content">
+                            <strong>Seleccionar una o varias habitaciones</strong>
+                            <p>BIMS acepta selección múltiple de Rooms. Detecta automáticamente todos los elementos que limitan cada habitación: muros locales, muros vinculados, columnas y elementos genéricos que sean "Room Bounding".</p>
+                            <span class="time-badge">⏱ ~30 s por habitación promedio</span>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">03</div>
+                        <div class="use-step-content">
+                            <strong>Generación de muros y suelos hacia el interior</strong>
+                            <p>BIMS crea muros de tarrajeo sobre cada cara interna de los elementos límite y un suelo (contrapiso) siguiendo el contorno exacto de la habitación. Compatible con muros desde vínculos de arquitectura — transforma coordenadas con la matriz del link automáticamente.</p>
+                        </div>
+                    </div>
+
+                    <div class="use-step-item">
+                        <div class="use-step-num">04</div>
+                        <div class="use-step-content">
+                            <strong>Resultado cuantificable por ambiente</strong>
+                            <p>Los muros y suelos generados son elementos nativos de Revit (Wall/Floor), no DirectShapes. Aparecen automáticamente en cuantificaciones, tablas de planificación y planos de acabados — listos para presupuesto y metrado.</p>
+                        </div>
+                    </div>
+
+                    <div class="bim-compliance">
+                        <div class="bim-compliance-title">📐 Aporte a las Normativas BIM</div>
+                        <ul>
+                            <li><strong>LOD 300 → 400:</strong> Agrega la capa de acabado como elemento cuantificable, elevando el LOD del modelo arquitectónico al nivel de fabricación y obra.</li>
+                            <li><strong>5D BIM:</strong> Los metrados de tarrajeo (m² por habitación, por tipo de acabado) se extraen automáticamente del modelo para el presupuesto de acabados, sin doble entrada de datos.</li>
+                            <li><strong>LOI (Information):</strong> Cada elemento de tarrajeo hereda el nombre y número de la habitación, habilitando filtros y vistas por ambiente conforme al BEP del proyecto.</li>
+                            <li><strong>Federación con vínculos:</strong> Funciona sobre modelos donde la arquitectura/estructura está en archivos vinculados (ISO 19650), respetando el flujo BIM multidisciplinario.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="use-visual">
+                    <span class="visual-label">Vista en planta — Habitación con tarrajeo en muros perimetrales y suelo de contrapiso</span>
+
+                    <svg viewBox="0 0 260 200" xmlns="http://www.w3.org/2000/svg" style="width:100%; display:block;" aria-label="Planta de habitación con tarrajeo">
+                        <!-- Habitación (espacio interior) -->
+                        <rect x="40" y="40" width="180" height="120" fill="#e8f6ee" stroke="#a7f3d0" stroke-width="1" stroke-dasharray="3,2"/>
+                        <text x="130" y="105" font-size="10" fill="#065f46" text-anchor="middle" font-family="Arial" font-weight="700">HABITACIÓN</text>
+                        <text x="130" y="118" font-size="8" fill="#047857" text-anchor="middle" font-family="Arial">Room 101 · 21.6 m²</text>
+
+                        <!-- Muros estructurales (link arquitectura) -->
+                        <rect x="20" y="20" width="220" height="20" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="1.2"/>
+                        <rect x="20" y="160" width="220" height="20" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="1.2"/>
+                        <rect x="20" y="20" width="20" height="160" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="1.2"/>
+                        <rect x="220" y="20" width="20" height="160" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="1.2"/>
+
+                        <!-- Tarrajeo (capa interior, generada por BIMS) -->
+                        <rect x="40" y="40" width="180" height="5" fill="#d97700" opacity="0.55"/>
+                        <rect x="40" y="155" width="180" height="5" fill="#d97700" opacity="0.55"/>
+                        <rect x="40" y="40" width="5" height="120" fill="#d97700" opacity="0.55"/>
+                        <rect x="215" y="40" width="5" height="120" fill="#d97700" opacity="0.55"/>
+
+                        <!-- Etiquetas tarrajeo -->
+                        <text x="130" y="50" font-size="6" fill="#b36200" text-anchor="middle" font-family="Arial" font-weight="700">tarrajeo 1.5 cm</text>
+
+                        <!-- Cotas -->
+                        <line x1="20" y1="195" x2="240" y2="195" stroke="#888" stroke-width="0.8"/>
+                        <text x="130" y="192" font-size="7" fill="#555" text-anchor="middle" font-family="Arial">6.00 m</text>
+
+                        <!-- Leyenda -->
+                        <rect x="20" y="0" width="220" height="14" fill="#fafafa" stroke="none"/>
+                        <rect x="22" y="5" width="8" height="6" fill="#c8d0dc" stroke="#5a6a7e" stroke-width="0.8"/>
+                        <text x="34" y="11" font-size="6.5" fill="#555" font-family="Arial">Muro estructural (link)</text>
+                        <rect x="125" y="5" width="8" height="6" fill="#d97700" opacity="0.55"/>
+                        <text x="137" y="11" font-size="6.5" fill="#555" font-family="Arial">Tarrajeo generado por BIMS</text>
+                    </svg>
+
+                    <div style="background:#f4f7fb; border-radius:10px; padding:14px 16px; font-size:0.83em; color:#444; margin-top:10px;">
+                        <strong style="color:#333; display:block; margin-bottom:8px;">Ventajas frente al modelado manual:</strong>
+                        <ul style="padding-left:16px; line-height:2; margin:0;">
+                            <li>No hay que dibujar muros uno por uno alrededor de cada habitación</li>
+                            <li>Detección automática de muros vinculados desde el modelo de arquitectura</li>
+                            <li>El contrapiso sigue el contorno exacto de la habitación (incluso formas irregulares)</li>
+                            <li>Cuantificable directamente en planillas de acabados por ambiente</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -4215,7 +4399,6 @@
                     <ul class="cmd-list">
                         <li><strong class="cmd">Resaltar Selección</strong> — Resalta elementos en naranja y hace transparente el resto</li>
                         <li><strong class="cmd">Igualar Gráficos</strong> — Copia el estilo gráfico entre elementos de una vista</li>
-                        <li><strong class="cmd">Igualar Formato Tablas</strong> — Copia la estructura y formato entre tablas de planificación</li>
                         <li><strong class="cmd">Exportar Planos a DWG</strong> — Exporta láminas con imágenes insertadas a formato DWG</li>
                     </ul>
                 </div>
@@ -4236,48 +4419,44 @@
         <div class="panel-body">
             <div class="card-grid">
 
-                <!-- Cards "Encofrado Automatizado" y "Tarrajeo por Habitacion" OCULTAS:
-                     descomentar cuando los comandos correspondientes (EncofradoAutomaticoCommand,
-                     TarrajeoDesdeHabitacionCommand) esten activos en Application.cs.
                 <div class="card green">
                     <h3>Encofrado Automatizado</h3>
-                    <p>Sistema inteligente que clasifica y genera elementos automaticamente</p>
+                    <p>Sistema inteligente que clasifica y genera elementos automáticamente</p>
                     <div class="bim-norm-row">
                         <span class="bim-tag">LOD 400</span>
                         <span class="bim-tag">5D BIM</span>
                         <span class="bim-tag">4D BIM</span>
                         <span class="bim-tag">LOG alto</span>
                     </div>
-                    <p class="bim-card-note">Eleva el encofrado a LOD 400 con geometria de construccion precisa y cuantificable.</p>
+                    <p class="bim-card-note">Eleva el encofrado a LOD 400 con geometría de construcción precisa y cuantificable.</p>
                     <ul class="cmd-list">
-                        <li class="green"><strong class="cmd">Columnas</strong> -> Muros de encofrado</li>
-                        <li class="green"><strong class="cmd">Vigas</strong> -> Muros laterales + Suelos inferiores</li>
-                        <li class="green"><strong class="cmd">Losas</strong> -> Suelos de encofrado</li>
-                        <li class="green"><strong class="cmd">Escaleras</strong> -> Muros verticales + Suelos inclinados</li>
-                        <li class="green">Recortes automaticos entre elementos adyacentes</li>
+                        <li class="green"><strong class="cmd">Columnas</strong> → Muros de encofrado</li>
+                        <li class="green"><strong class="cmd">Vigas</strong> → Muros laterales + Suelos inferiores</li>
+                        <li class="green"><strong class="cmd">Losas</strong> → Suelos de encofrado</li>
+                        <li class="green"><strong class="cmd">Escaleras</strong> → Muros verticales + Suelos inclinados</li>
+                        <li class="green">Recortes automáticos entre elementos adyacentes</li>
                         <li class="green">Integrado con cuantificaciones y tablas de Revit</li>
-                        <li class="green">Preserva curvas y geometria compleja</li>
+                        <li class="green">Preserva curvas y geometría compleja</li>
                     </ul>
                 </div>
 
                 <div class="card green">
-                    <h3>Tarrajeo por Habitacion</h3>
+                    <h3>Tarrajeo por Habitación</h3>
                     <p>Genera muros y suelos de tarrajeo desde las habitaciones del proyecto</p>
                     <div class="bim-norm-row">
-                        <span class="bim-tag">LOD 300->400</span>
+                        <span class="bim-tag">LOD 300→400</span>
                         <span class="bim-tag">5D BIM</span>
                         <span class="bim-tag">LOI</span>
                     </div>
-                    <p class="bim-card-note">Agrega las capas de acabado al modelo con informacion cuantificable.</p>
+                    <p class="bim-card-note">Agrega las capas de acabado al modelo con información cuantificable.</p>
                     <ul class="cmd-list">
-                        <li class="green">Seleccion multiple de habitaciones</li>
-                        <li class="green">Deteccion automatica de elementos limite</li>
-                        <li class="green">Generacion de muros de tarrajeo hacia el interior</li>
-                        <li class="green">Generacion de suelos (contrapiso) automaticos</li>
+                        <li class="green">Selección múltiple de habitaciones</li>
+                        <li class="green">Detección automática de elementos límite</li>
+                        <li class="green">Generación de muros de tarrajeo hacia el interior</li>
+                        <li class="green">Generación de suelos (contrapiso) automáticos</li>
                         <li class="green">Compatible con modelos vinculados</li>
                     </ul>
                 </div>
-                FIN del bloque Encofrado/Tarrajeo OCULTO -->
 
                 <div class="card green">
                     <h3>Acero de Refuerzo</h3>
@@ -4312,7 +4491,7 @@
                         <li class="green"><strong class="cmd">Registros Sanitarios</strong> — Dimensiona automáticamente registros</li>
                         <li class="green"><strong class="cmd">Calcular Longitud</strong> — Calcula longitud total de tuberías</li>
                         <li class="green"><strong class="cmd">Asignar Cota Tapa</strong> — Asigna coordenada Z máxima a COTA_TAPA</li>
-                        <li class="green"><strong class="cmd">Área Acumulativa</strong> — Calcula áreas acumulativas por flujo de drenaje</li>
+                        <li class="green"><strong class="cmd">Asignar Sector</strong> — Asigna ambientes a redes MEP por proyección volumétrica desde habitaciones (incluso vinculadas)</li>
                         <li class="green"><strong class="cmd">Numerar Aparatos</strong> — Numera aparatos por altura</li>
                     </ul>
                 </div>
@@ -5698,15 +5877,13 @@
             new Chart(ctxTime, {
                 type: 'bar',
                 data: {
-                    // Labels actualizados a funciones activas. Si reactivas el panel
-                    // Refuerzo/Encofrado, restaurar:
-                    //   ['Planilla BBS\n(500 barras)', 'Encofrado\n(1 nivel)',
-                    //    'Exportar BVBS\npara dobladora', 'Set Marks +\nShape Images']
-                    labels: ['Asignar Rejillas\n(1000 elem)', 'Importar DWG\n(50 archivos)', 'Acero Columnas\n(50 col)', 'Exportar Planos\na DWG'],
+                    // Labels actualizados a funciones activas. Si reactivas Refuerzo, restaurar:
+                    //   ['Planilla BBS\n(500 barras)', 'Exportar BVBS\npara dobladora', 'Set Marks +\nShape Images']
+                    labels: ['Encofrado\n(1 nivel)', 'Exportar Planos\na DWG (10 planos)', 'Asignar Rejillas\n(1000 elem)', 'Acero Columnas\n(50 col)'],
                     datasets: [
                         {
                             label: 'Sin BIMS (manual)',
-                            data: [480, 240, 90, 180],
+                            data: [360, 180, 480, 90],
                             backgroundColor: C_GRAY,
                             borderColor: 'rgba(100,116,139,0.4)',
                             borderWidth: 1,
@@ -5715,7 +5892,7 @@
                         },
                         {
                             label: 'Con BIMS',
-                            data: [45, 20, 8, 12],
+                            data: [22, 12, 45, 8],
                             backgroundColor: C_BLUE,
                             borderColor: 'rgba(37,99,235,0.5)',
                             borderWidth: 1,
@@ -5771,11 +5948,11 @@
                     // Refuerzo, restaurar:
                     //   ['Numeración\nde barras', 'Cálculo de\nlongitudes',
                     //    'Peso total\n(kg/m²)', 'Duplicados\nde marca']
-                    labels: ['Asignación\nde rejillas', 'Conversión\nDWG→Revit', 'Cálculo de\nvolúmenes', 'Numeración\nde aparatos'],
+                    labels: ['Encofrado\nmasivo', 'Exportar DWG\n(referencias)', 'Asignación\nde rejillas', 'Numeración\nde aparatos'],
                     datasets: [
                         {
                             label: 'Sin BIMS (%)',
-                            data: [15, 8, 6, 12],
+                            data: [10, 18, 15, 12],
                             backgroundColor: C_GRAY,
                             borderColor: 'rgba(100,116,139,0.4)',
                             borderWidth: 1,
@@ -5784,7 +5961,7 @@
                         },
                         {
                             label: 'Con BIMS (%)',
-                            data: [0.4, 0.1, 0.0, 0.0],
+                            data: [0.2, 0.0, 0.4, 0.0],
                             backgroundColor: C_GREEN,
                             borderColor: 'rgba(16,185,129,0.5)',
                             borderWidth: 1,
@@ -5835,21 +6012,22 @@
             new Chart(ctxRadar, {
                 type: 'radar',
                 data: {
-                    // Labels actualizados a funciones activas. Si reactivas Refuerzo/Encofrado,
-                    // restaurar las labels originales (Marcas, Encofrado, Excel/BVBS, Metrados, Imágenes).
+                    // Labels actualizados a funciones activas. Si reactivas Refuerzo,
+                    // restaurar las labels originales (Marcas, Excel/BVBS, Metrados, Imágenes).
                     labels: [
+                        'Encofrado',
+                        'DWG (export)',
                         'Rejillas',
-                        'Análisis',
                         'Acero',
+                        'Análisis',
                         'Geometría',
                         'DWG→Revit',
-                        'Sanitarias',
-                        'Visuales'
+                        'Sanitarias'
                     ],
                     datasets: [
                         {
                             label: 'Proceso manual',
-                            data: [20, 12, 30, 10, 22, 35, 8],
+                            data: [15, 18, 20, 30, 12, 10, 22, 35],
                             backgroundColor: 'rgba(100,116,139,0.1)',
                             borderColor: 'rgba(100,116,139,0.5)',
                             borderWidth: 1.5,
@@ -5859,7 +6037,7 @@
                         },
                         {
                             label: 'Con BIMS',
-                            data: [95, 92, 98, 86, 82, 94, 90],
+                            data: [96, 95, 95, 98, 92, 86, 82, 94],
                             backgroundColor: 'rgba(37,99,235,0.1)',
                             borderColor: 'rgba(37,99,235,0.7)',
                             borderWidth: 2,
