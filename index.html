@@ -4841,7 +4841,10 @@
     <section id="descargar" class="download-section reveal">
         <h2>📥 Descarga BIMS</h2>
         <p>Instalador directo — Revit 2024, 2025 y 2026. Después de comprar, recibes tu clave de activación por email.</p>
-        <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" class="download-btn" download>⬇ Descargar BIMS</a>
+        <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" class="download-btn" id="downloadBtn" download>⬇ Descargar BIMS</a>
+        <p id="downloadConfirm" style="display:none;margin-top:14px;font-weight:600;color:#1a8a4a;">
+            ✓ Descarga iniciada — revisa la barra de descargas de tu navegador o tu carpeta «Descargas».
+        </p>
         <div class="version-pills">
             <span class="vpill">Windows 10 / 11</span>
             <span class="vpill">Revit 2024</span>
@@ -6198,6 +6201,13 @@
 
         if (el.classList.contains('download-btn')) {
             track('download_click');
+            /* Feedback visual: la descarga no cambia la pagina, asi que
+               sin esto los usuarios creen que el boton no funciona y
+               clican repetidamente (dead clicks detectados en Clarity). */
+            var dlConfirm = document.getElementById('downloadConfirm');
+            if (dlConfirm) dlConfirm.style.display = 'block';
+            el.textContent = '⬇ Descargando…';
+            setTimeout(function () { el.textContent = '⬇ Descargar de nuevo'; }, 2500);
         } else if (href.indexOf('wa.me/') !== -1) {
             track('whatsapp_click', { destino: href.indexOf('Empresa') !== -1 ? 'empresa' : 'contacto' });
         } else if (el.classList.contains('btn-hero-primary')) {
