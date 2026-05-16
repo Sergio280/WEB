@@ -3453,6 +3453,7 @@
     <ul id="navMenu">
         <li><a href="#inicio">Inicio</a></li>
         <li><a href="#efectividad">Efectividad</a></li>
+        <li><a href="#clips">Videos</a></li>
         <li><a href="#casos">Casos de Uso</a></li>
         <li><a href="#general">General</a></li>
         <li><a href="#estructuras">Estructuras</a></li>
@@ -3515,6 +3516,130 @@
                     <span style="border-style:solid; border-width:14px 0 14px 24px; border-color:transparent transparent transparent #fff; margin-left:6px;"></span>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- ── GALERÍA DE CLIPS CORTOS ──
+         Cada tarjeta tiene data-yt (ID de YouTube de 11 caracteres) y data-clip
+         (nombre del evento de analítica). Mientras data-yt este vacio, la tarjeta
+         muestra "Proximamente". Al rellenar data-yt, el JS carga la miniatura y,
+         al hacer clic, inyecta el reproductor (patron facade) y registra el evento. -->
+    <style>
+        .clips-section { margin: 60px 0; text-align: center; }
+        .clips-section h2 {
+            font-family: 'Outfit', sans-serif; letter-spacing: -0.02em;
+            color: var(--blue); font-size: 1.9em; margin-bottom: 8px;
+        }
+        .clips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 26px; max-width: 1100px; margin: 0 auto;
+        }
+        .clip-card {
+            background: #fff; border-radius: 14px; overflow: hidden;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            cursor: pointer; text-align: left;
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+        .clip-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+        }
+        .clip-thumb {
+            position: relative; aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #1a2b4a 0%, #0d1a30 100%);
+            background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .clip-play {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #ff0000; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: transform .18s ease;
+        }
+        .clip-card:hover .clip-play { transform: scale(1.1); }
+        .clip-play::after {
+            content: ''; border-style: solid;
+            border-width: 11px 0 11px 18px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 5px;
+        }
+        .clip-soon {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(255,255,255,0.92); color: #0d1a30;
+            font-size: .72em; font-weight: 700; letter-spacing: .03em;
+            padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+        }
+        .clip-info { padding: 16px 18px 20px; }
+        .clip-info h3 {
+            font-family: 'Outfit', sans-serif; font-size: 1.04em;
+            color: #0d1a30; margin: 0 0 6px;
+        }
+        .clip-info p { color: #777; font-size: .9em; margin: 0; line-height: 1.5; }
+        @media (max-width: 600px) {
+            .clips-grid { grid-template-columns: 1fr; gap: 18px; }
+        }
+    </style>
+    <section id="clips" class="clips-section reveal" data-anime-reveal="section">
+        <h2>BIMS en acción, comando por comando</h2>
+        <p class="section-sub" style="margin-bottom: 36px;">Clips cortos: mira cada herramienta resolver una tarea real de Revit</p>
+        <div class="clips-grid">
+
+            <div class="clip-card" data-yt="" data-clip="encofrado" role="button" tabindex="0">
+                <div class="clip-thumb">
+                    <span class="clip-soon">Próximamente</span>
+                    <span class="clip-play"></span>
+                </div>
+                <div class="clip-info">
+                    <h3>Encofrado de todo el edificio en 1 clic</h3>
+                    <p>Genera muros y suelos de encofrado sobre la estructura, automático.</p>
+                </div>
+            </div>
+
+            <div class="clip-card" data-yt="" data-clip="exportar_dwg" role="button" tabindex="0">
+                <div class="clip-thumb">
+                    <span class="clip-soon">Próximamente</span>
+                    <span class="clip-play"></span>
+                </div>
+                <div class="clip-info">
+                    <h3>Exporta planos a DWG con las imágenes adentro</h3>
+                    <p>Las imágenes quedan incrustadas en el DWG, no como referencia externa.</p>
+                </div>
+            </div>
+
+            <div class="clip-card" data-yt="" data-clip="tarrajeo" role="button" tabindex="0">
+                <div class="clip-thumb">
+                    <span class="clip-soon">Próximamente</span>
+                    <span class="clip-play"></span>
+                </div>
+                <div class="clip-info">
+                    <h3>Tarrajeo de todos los ambientes</h3>
+                    <p>Crea el revestimiento de muros y pisos por habitación, listo para metrar.</p>
+                </div>
+            </div>
+
+            <div class="clip-card" data-yt="" data-clip="rejillas" role="button" tabindex="0">
+                <div class="clip-thumb">
+                    <span class="clip-soon">Próximamente</span>
+                    <span class="clip-play"></span>
+                </div>
+                <div class="clip-info">
+                    <h3>Asigna rejillas a cientos de elementos</h3>
+                    <p>Cada elemento recibe sus ejes más cercanos sin selección manual.</p>
+                </div>
+            </div>
+
+            <div class="clip-card" data-yt="" data-clip="acero" role="button" tabindex="0">
+                <div class="clip-thumb">
+                    <span class="clip-soon">Próximamente</span>
+                    <span class="clip-play"></span>
+                </div>
+                <div class="clip-info">
+                    <h3>Refuerzo de columnas y vigas en minutos</h3>
+                    <p>Calcula y coloca el acero estructural automáticamente.</p>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -6281,6 +6406,39 @@
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playVideo(); }
         });
     }
+
+    /* ── Galería de clips cortos ──────────────────────────────────────────
+       Cada .clip-card tiene data-yt (ID de YouTube) y data-clip (evento).
+       - Si data-yt esta vacio: la tarjeta queda como "Proximamente" (sin accion).
+       - Si data-yt tiene ID: se carga la miniatura de YouTube y, al hacer clic,
+         se inyecta el reproductor (patron facade) y se registra clip_play. */
+    document.querySelectorAll('.clip-card').forEach(function (card) {
+        var ytId = (card.getAttribute('data-yt') || '').trim();
+        var clipName = card.getAttribute('data-clip') || 'clip';
+        var thumb = card.querySelector('.clip-thumb');
+        if (!ytId || !thumb) return;  // sin video: se queda en "Proximamente"
+
+        /* Hay video: mostrar miniatura real y quitar la etiqueta "Proximamente" */
+        thumb.style.backgroundImage = "url('https://i.ytimg.com/vi/" + ytId + "/hqdefault.jpg')";
+        var soon = thumb.querySelector('.clip-soon');
+        if (soon) soon.remove();
+
+        var playClip = function () {
+            if (once('clip_' + clipName)) {
+                track('clip_play', { clip: clipName });
+            }
+            thumb.innerHTML =
+                '<iframe src="https://www.youtube.com/embed/' + ytId + '?autoplay=1&rel=0" ' +
+                'title="BIMS — ' + clipName + '" frameborder="0" ' +
+                'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+                'allowfullscreen style="position:absolute; inset:0; width:100%; height:100%; border:0;"></iframe>';
+            card.style.cursor = 'default';
+        };
+        card.addEventListener('click', playClip);
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playClip(); }
+        });
+    });
 })();
 </script>
 
