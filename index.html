@@ -3491,7 +3491,7 @@
         <h2>Mira BIMS en acción</h2>
         <p class="section-sub" style="margin-bottom: 24px;">Demostración en un proyecto real de Revit</p>
         <div class="video-demo-wrapper" style="max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
-            <iframe src="https://www.youtube.com/embed/U9LvemehIkQ"
+            <iframe id="bimsVideo" src="https://www.youtube.com/embed/U9LvemehIkQ?enablejsapi=1"
                     title="BIMS — Demo en Revit"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -6136,6 +6136,106 @@
 
 <!-- Chart.js — defer para no bloquear render -->
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" onload="initCharts()"></script>
+
+<!-- ══════════ SEGUIMIENTO DE ACCIONES DE USUARIO (GA4 + Clarity) ══════════ -->
+<script>
+(function () {
+    'use strict';
+
+    /* Envía el evento a GA4 y a Microsoft Clarity al mismo tiempo.
+       En Clarity, los parámetros se guardan como etiquetas para poder
+       filtrar las grabaciones de sesión por esas acciones. */
+    function track(name, params) {
+        params = params || {};
+        if (typeof gtag === 'function') gtag('event', name, params);
+        if (typeof window.clarity === 'function') {
+            try {
+                window.clarity('event', name);
+                Object.keys(params).forEach(function (k) {
+                    window.clarity('set', k, String(params[k]));
+                });
+            } catch (e) {}
+        }
+    }
+
+    /* Evita que un mismo evento se dispare varias veces por sesión */
+    var fired = {};
+    function once(key) {
+        if (fired[key]) return false;
+        return (fired[key] = true);
+    }
+
+    /* ── Clics en elementos clave (delegado en document) ─────────────── */
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest) return;
+
+        /* Apertura de una pregunta del FAQ (es un div, no un enlace) */
+        var faq = e.target.closest('.faq-question');
+        if (faq) {
+            track('faq_click', {
+                pregunta: (faq.textContent || '').replace('▾', '').replace(/\s+/g, ' ').trim().slice(0, 80)
+            });
+            return;
+        }
+
+        var el = e.target.closest('a, button');
+        if (!el) return;
+        var href = el.getAttribute('href') || '';
+
+        if (el.classList.contains('download-btn')) {
+            track('download_click');
+        } else if (href.indexOf('wa.me/') !== -1) {
+            track('whatsapp_click', { destino: href.indexOf('Empresa') !== -1 ? 'empresa' : 'contacto' });
+        } else if (el.classList.contains('btn-hero-primary')) {
+            track('hero_cta_click', { boton: 'ver_video' });
+        } else if (el.classList.contains('btn-hero-secondary')) {
+            track('hero_cta_click', { boton: 'ver_precios' });
+        } else if (el.classList.contains('utab')) {
+            track('usecase_tab', { panel: el.dataset.panel || '' });
+        }
+    });
+
+    /* ── Email escrito en el modal de compra (mide abandono) ─────────── */
+    var emailInput = document.getElementById('mpEmailInput');
+    if (emailInput) {
+        emailInput.addEventListener('change', function () {
+            if (emailInput.value.indexOf('@') !== -1 && once('email')) {
+                track('modal_email_entered');
+            }
+        });
+    }
+
+    /* ── El usuario llegó a la sección de Precios ────────────────────── */
+    var precios = document.getElementById('precios');
+    if (precios && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting && once('precios')) {
+                    track('view_pricing');
+                    io.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+        io.observe(precios);
+    }
+
+    /* ── Reproducción del video demo (YouTube IFrame API) ────────────── */
+    window.onYouTubeIframeAPIReady = function () {
+        new YT.Player('bimsVideo', {
+            events: {
+                onStateChange: function (ev) {
+                    if (ev.data === YT.PlayerState.PLAYING && once('video')) {
+                        track('video_play');
+                    }
+                }
+            }
+        });
+    };
+    var ytTag = document.createElement('script');
+    ytTag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(ytTag);
+})();
+</script>
 
 </body>
 </html>
