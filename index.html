@@ -5770,6 +5770,20 @@
         });
     });
 
+    /* Toda la tarjeta de precio es clickeable, no solo el botón.
+       Clarity detectó que los usuarios clican el cuerpo/precio de la
+       tarjeta esperando que abra el plan (dead clicks). */
+    document.querySelectorAll('.catalog-card').forEach(function (card) {
+        var cardBtn = card.querySelector('.catalog-btn');
+        if (!cardBtn) return;
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function (e) {
+            /* Si el clic ya fue sobre el botón/enlace, dejar que él lo maneje */
+            if (e.target.closest('.catalog-btn')) return;
+            cardBtn.click();
+        });
+    });
+
     /* Cerrar modal */
     closeBtn.addEventListener('click', closeModal);
 
