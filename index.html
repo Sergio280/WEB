@@ -1941,7 +1941,15 @@
     <!-- ── Google Fonts ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Carga de fuentes sin bloquear el render: el navegador pinta el texto
+         con una fuente del sistema y cambia a la fuente final al descargarla. -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+          media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap">
+    </noscript>
 
     <!-- ── Anime.js v4 (defer — no bloquea render) ── -->
     <script defer src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
@@ -3493,13 +3501,20 @@
     <section id="video-demo" class="video-demo-section reveal" style="margin: 50px 0; text-align: center;">
         <h2>Mira BIMS en acción</h2>
         <p class="section-sub" style="margin-bottom: 24px;">Demostración en un proyecto real de Revit</p>
-        <div class="video-demo-wrapper" style="max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
-            <iframe id="bimsVideo" src="https://www.youtube.com/embed/U9LvemehIkQ?enablejsapi=1"
-                    title="BIMS — Demo en Revit"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    style="width:100%; height:100%; border:0;"></iframe>
+        <!-- Facade del video: muestra solo la miniatura; el reproductor de YouTube
+             se carga al hacer clic, evitando ~1 MB de JS en la carga inicial. -->
+        <div class="video-demo-wrapper" id="videoFacade" role="button" tabindex="0"
+             aria-label="Reproducir demo de BIMS en Revit"
+             style="max-width: 900px; margin: 0 auto; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.15); position: relative; cursor: pointer; background:#000;">
+            <img src="https://i.ytimg.com/vi/U9LvemehIkQ/maxresdefault.jpg"
+                 alt="Demostración de BIMS en un proyecto real de Revit"
+                 loading="lazy"
+                 style="width:100%; height:100%; object-fit:cover; display:block;">
+            <div aria-hidden="true" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.25);">
+                <div style="width:72px; height:72px; border-radius:50%; background:#ff0000; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 24px rgba(0,0,0,0.4);">
+                    <span style="border-style:solid; border-width:14px 0 14px 24px; border-color:transparent transparent transparent #fff; margin-left:6px;"></span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -6246,21 +6261,26 @@
         io.observe(precios);
     }
 
-    /* ── Reproducción del video demo (YouTube IFrame API) ────────────── */
-    window.onYouTubeIframeAPIReady = function () {
-        new YT.Player('bimsVideo', {
-            events: {
-                onStateChange: function (ev) {
-                    if (ev.data === YT.PlayerState.PLAYING && once('video')) {
-                        track('video_play');
-                    }
-                }
-            }
+    /* ── Video demo: el iframe de YouTube se inyecta solo al hacer clic ──
+       Así el JS pesado de YouTube no entra en la carga inicial de la pagina.
+       El evento video_play se registra en el clic (que es justo la intencion
+       de ver el video). */
+    var videoFacade = document.getElementById('videoFacade');
+    if (videoFacade) {
+        var playVideo = function () {
+            if (once('video')) { track('video_play'); }
+            videoFacade.innerHTML =
+                '<iframe src="https://www.youtube.com/embed/U9LvemehIkQ?autoplay=1&rel=0" ' +
+                'title="BIMS — Demo en Revit" frameborder="0" ' +
+                'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+                'allowfullscreen style="width:100%; height:100%; border:0;"></iframe>';
+            videoFacade.style.cursor = 'default';
+        };
+        videoFacade.addEventListener('click', playVideo);
+        videoFacade.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playVideo(); }
         });
-    };
-    var ytTag = document.createElement('script');
-    ytTag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(ytTag);
+    }
 })();
 </script>
 
