@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\SERGIO\\source\\repos\\Sergio280\\WEB\\",
+  "WorkspaceRootPath": "D:\\repos\\Sergio280\\WEB\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\SERGIO\\source\\repos\\Sergio280\\WEB\\PAGE||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\repos\\Sergio280\\WEB\\PAGE||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PAGE||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -52,9 +52,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "PAGE",
-              "DocumentMoniker": "C:\\Users\\SERGIO\\source\\repos\\Sergio280\\WEB\\PAGE",
+              "DocumentMoniker": "D:\\repos\\Sergio280\\WEB\\PAGE",
               "RelativeDocumentMoniker": "PAGE",
-              "ToolTip": "C:\\Users\\SERGIO\\source\\repos\\Sergio280\\WEB\\PAGE",
+              "ToolTip": "D:\\repos\\Sergio280\\WEB\\PAGE",
               "RelativeToolTip": "PAGE",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
