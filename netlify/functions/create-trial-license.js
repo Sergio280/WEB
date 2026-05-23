@@ -44,6 +44,8 @@ const MAX_TRIALS_PER_IP  = 2;
 const IP_WINDOW_DAYS     = 30;
 const MAX_NAME_LENGTH    = 80;
 const MAX_COMPANY_LENGTH = 120;
+const MIN_PASSWORD_LEN   = 8;
+const MAX_PASSWORD_LEN   = 128;
 
 const CORS = {
     'Access-Control-Allow-Origin':  process.env.SITE_URL || '*',
@@ -92,7 +94,7 @@ exports.handler = async function (event) {
     try { body = JSON.parse(event.body || '{}'); }
     catch { return resp(400, { error: 'Body inválido' }); }
 
-    const { email: rawEmail, name: rawName, company: rawCompany, honeypot, turnstileToken } = body;
+    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken } = body;
 
     // ── CAPA 1: Honeypot ─────────────────────────────────────────────────────
     // Si el campo oculto llegó con contenido, fue un bot. Fingir éxito para
@@ -115,6 +117,16 @@ exports.handler = async function (event) {
     // ── CAPA 3: Blocklist de dominios desechables ────────────────────────────
     if (isDisposable(domain))
         return resp(400, { error: 'Por favor usa tu correo profesional o personal real (no temporal). Si tienes dudas, escríbenos a bimsaddin@gmail.com' });
+
+    // ── Validación de contraseña (server-side) ───────────────────────────────
+    // Aunque el cliente ya valida, NUNCA confiar en el cliente. Firebase requiere
+    // mínimo 6 chars; nosotros pedimos 8 para defensa razonable contra bruteforce.
+    if (!rawPassword || typeof rawPassword !== 'string')
+        return resp(400, { error: 'Contraseña requerida' });
+    if (rawPassword.length < MIN_PASSWORD_LEN)
+        return resp(400, { error: `La contraseña debe tener al menos ${MIN_PASSWORD_LEN} caracteres` });
+    if (rawPassword.length > MAX_PASSWORD_LEN)
+        return resp(400, { error: 'Contraseña demasiado larga' });
 
     // ── CAPA 4: Turnstile (opcional, activable con env var) ──────────────────
     const ip = (event.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
@@ -162,13 +174,17 @@ exports.handler = async function (event) {
     try {
         const newUser = await auth.createUser({
             email,
-            password:      crypto.randomBytes(16).toString('base64url'),
+            password:      rawPassword,   // la que el usuario eligió en el form
             emailVerified: false,
             displayName:   name || email.split('@')[0],
         });
         uid = newUser.uid;
     } catch (e) {
         console.error('[trial] createUser failed:', e.message);
+        // Firebase tiene su propia validación de contraseña (mínimo 6 chars).
+        // Mostrar mensaje específico si es por contraseña débil.
+        if (e.code === 'auth/weak-password')
+            return resp(400, { error: 'Contraseña demasiado débil. Usa al menos 8 caracteres con letras y números.' });
         return resp(500, { error: 'No se pudo crear el usuario. Intenta de nuevo.' });
     }
 
@@ -217,37 +233,15 @@ exports.handler = async function (event) {
         console.warn('[trial] No se pudo actualizar contador IP (no crítico):', e.message);
     }
 
-    // ── Enviar email "Set password" vía Firebase (mismo flow que paga) ───────
-    const apiKey = process.env.FIREBASE_API_KEY;
-    let emailSent = false;
-    if (apiKey) {
-        try {
-            const r = await fetch(
-                `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
-                {
-                    method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body:    JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
-                }
-            );
-            const data = await r.json();
-            emailSent = !!data.email;
-            if (!emailSent) console.warn('[trial] Firebase email response:', JSON.stringify(data));
-        } catch (e) {
-            console.warn('[trial] Email send failed (no bloqueante):', e.message);
-        }
-    } else {
-        console.warn('[trial] FIREBASE_API_KEY no configurada — email NO enviado');
-    }
+    // El usuario ya creó su contraseña en el form — no necesitamos enviar email
+    // de Firebase. Si en el futuro queremos enviar un email de bienvenida
+    // informativo, este es el lugar (pero NO bloqueante).
 
-    console.log(`[trial] OK · ${email} · uid=${uid} · vence=${expiresAt.toISOString()} · email=${emailSent}`);
+    console.log(`[trial] OK · ${email} · uid=${uid} · vence=${expiresAt.toISOString()}`);
 
     return resp(200, {
         success:   true,
-        emailSent,
         expiresAt: expiresAt.toISOString(),
-        message:   emailSent
-            ? 'Tu trial de 14 días está listo. Revisa tu correo para crear tu contraseña y descargar BIMS.'
-            : 'Tu trial fue creado pero hubo un problema enviando el correo. Escríbenos a bimsaddin@gmail.com',
+        message:   'Tu trial de 14 días está listo. Descarga BIMS e inicia sesión con tu email y contraseña.',
     });
 };

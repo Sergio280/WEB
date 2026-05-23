@@ -3675,7 +3675,7 @@
             </div>
             <div class="trial-form-card">
                 <h3>Crea tu cuenta de trial</h3>
-                <p class="trial-form-sub">Recibirás un correo en ~1 min para crear tu contraseña y descargar BIMS.</p>
+                <p class="trial-form-sub">Listo en 30 segundos. Sin email de verificación — tu cuenta queda activa al instante.</p>
                 <form id="trialForm" autocomplete="on" novalidate>
                     <label for="trial-email">Email profesional *</label>
                     <input id="trial-email" name="email" type="email" required placeholder="tunombre@empresa.com" autocomplete="email">
@@ -3685,6 +3685,29 @@
 
                     <label for="trial-company">Empresa / Estudio (opcional)</label>
                     <input id="trial-company" name="company" type="text" placeholder="Constructora, estudio de ingeniería, freelance…" maxlength="120">
+
+                    <label for="trial-password">Contraseña * <span style="font-weight:400;color:#888;font-size:0.88em;">(mínimo 8 caracteres)</span></label>
+                    <div style="position:relative;">
+                        <input id="trial-password" name="password" type="password" required minlength="8" maxlength="128"
+                               placeholder="Mínimo 8 caracteres" autocomplete="new-password"
+                               style="padding-right:60px;">
+                        <button type="button" id="togglePw1" tabindex="-1" aria-label="Mostrar contraseña"
+                                style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#0078D7;cursor:pointer;font-size:0.82em;font-weight:600;padding:4px 8px;margin-top:0;width:auto;">Ver</button>
+                    </div>
+                    <div id="pwStrength" style="height:6px;margin-top:6px;border-radius:3px;background:#e8eaef;overflow:hidden;">
+                        <div id="pwStrengthBar" style="height:100%;width:0%;background:#dc2626;transition:width .2s,background .2s;"></div>
+                    </div>
+                    <p id="pwStrengthText" style="font-size:0.78em;color:#888;margin-top:4px;min-height:1.1em;"></p>
+
+                    <label for="trial-password2">Confirma contraseña *</label>
+                    <div style="position:relative;">
+                        <input id="trial-password2" name="password2" type="password" required minlength="8" maxlength="128"
+                               placeholder="Repite la contraseña" autocomplete="new-password"
+                               style="padding-right:60px;">
+                        <button type="button" id="togglePw2" tabindex="-1" aria-label="Mostrar contraseña"
+                                style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#0078D7;cursor:pointer;font-size:0.82em;font-weight:600;padding:4px 8px;margin-top:0;width:auto;">Ver</button>
+                    </div>
+                    <p id="pwMatch" style="font-size:0.78em;margin-top:4px;min-height:1.1em;"></p>
 
                     <!-- Honeypot: NO tocar — campo trampa para bots, ARIA hidden -->
                     <div class="trial-hp-field" aria-hidden="true">
@@ -3697,7 +3720,7 @@
                     <p class="trial-disclaimer">
                         Al continuar aceptas nuestros <a href="terminos.html" style="color:#0078D7;">términos</a> y
                         <a href="privacy-policy.html" style="color:#0078D7;">política de privacidad</a>.
-                        Tu email se usa solo para enviarte la clave y avisos de tu licencia.
+                        Tu email se usa solo para avisos de tu licencia.
                     </p>
                 </form>
             </div>
@@ -3708,6 +3731,13 @@
             const form        = document.getElementById('trialForm');
             const btn         = document.getElementById('trialSubmitBtn');
             const feedback    = document.getElementById('trialFeedback');
+            const pwInput     = document.getElementById('trial-password');
+            const pw2Input    = document.getElementById('trial-password2');
+            const pwBar       = document.getElementById('pwStrengthBar');
+            const pwText      = document.getElementById('pwStrengthText');
+            const pwMatch     = document.getElementById('pwMatch');
+            const togglePw1   = document.getElementById('togglePw1');
+            const togglePw2   = document.getElementById('togglePw2');
             if (!form) return;
 
             function showFeedback(type, msg) {
@@ -3715,6 +3745,58 @@
                 feedback.innerHTML = msg;
             }
 
+            // ── Calculadora de fortaleza de contraseña (0-4) ────────────────
+            function passwordStrength(pw) {
+                if (!pw) return { score: 0, label: '', color: '#dc2626' };
+                let score = 0;
+                if (pw.length >= 8)  score++;
+                if (pw.length >= 12) score++;
+                if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+                if (/\d/.test(pw))   score++;
+                if (/[^a-zA-Z0-9]/.test(pw)) score++;
+                score = Math.min(score, 4);
+                const colors = ['#dc2626', '#dc2626', '#f59e0b', '#1a8a4a', '#0c5c2f'];
+                const labels = ['Muy débil', 'Débil', 'Aceptable', 'Buena', 'Excelente'];
+                return { score, label: labels[score], color: colors[score] };
+            }
+
+            pwInput.addEventListener('input', function() {
+                const pw = pwInput.value;
+                const s  = passwordStrength(pw);
+                pwBar.style.width = (s.score * 25) + '%';
+                pwBar.style.background = s.color;
+                pwText.textContent = pw ? s.label : '';
+                pwText.style.color = s.color;
+                // Re-evaluar match si ya hay algo en password2
+                if (pw2Input.value) checkMatch();
+            });
+
+            function checkMatch() {
+                const ok = pwInput.value && pwInput.value === pw2Input.value;
+                if (!pw2Input.value) {
+                    pwMatch.textContent = '';
+                } else if (ok) {
+                    pwMatch.textContent = '✓ Las contraseñas coinciden';
+                    pwMatch.style.color = '#1a8a4a';
+                } else {
+                    pwMatch.textContent = '✗ Las contraseñas no coinciden';
+                    pwMatch.style.color = '#dc2626';
+                }
+            }
+            pw2Input.addEventListener('input', checkMatch);
+
+            // ── Show/hide toggle ────────────────────────────────────────────
+            function attachToggle(btnEl, inputEl) {
+                btnEl.addEventListener('click', function() {
+                    const isPw = inputEl.type === 'password';
+                    inputEl.type = isPw ? 'text' : 'password';
+                    btnEl.textContent = isPw ? 'Ocultar' : 'Ver';
+                });
+            }
+            attachToggle(togglePw1, pwInput);
+            attachToggle(togglePw2, pw2Input);
+
+            // ── Submit ──────────────────────────────────────────────────────
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 feedback.className = 'trial-feedback';
@@ -3723,10 +3805,20 @@
                 const email    = (document.getElementById('trial-email').value || '').trim();
                 const name     = (document.getElementById('trial-name').value || '').trim();
                 const company  = (document.getElementById('trial-company').value || '').trim();
+                const password = pwInput.value;
+                const password2= pw2Input.value;
                 const honeypot = document.getElementById('trial-website').value;
 
                 if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                     showFeedback('err', '✗ Por favor ingresa un email válido.');
+                    return;
+                }
+                if (password.length < 8) {
+                    showFeedback('err', '✗ La contraseña debe tener al menos 8 caracteres.');
+                    return;
+                }
+                if (password !== password2) {
+                    showFeedback('err', '✗ Las contraseñas no coinciden.');
                     return;
                 }
 
@@ -3738,19 +3830,13 @@
                     const r = await fetch('/api/trial', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, name, company, honeypot })
+                        body: JSON.stringify({ email, name, company, password, honeypot })
                     });
                     const data = await r.json();
 
                     if (r.ok && data.success) {
-                        // Tracking analytics
-                        if (typeof gtag === 'function') {
-                            gtag('event', 'trial_signup', { method: 'web_form' });
-                        }
-                        if (typeof clarity === 'function') {
-                            clarity('event', 'trial_signup');
-                        }
-                        // Redirigir a página de confirmación
+                        if (typeof gtag === 'function')   gtag('event', 'trial_signup', { method: 'web_form' });
+                        if (typeof clarity === 'function') clarity('event', 'trial_signup');
                         window.location.href = '/trial-success.html?email=' + encodeURIComponent(email);
                     } else {
                         showFeedback('err', '✗ ' + (data.error || 'Hubo un error. Intenta de nuevo o escríbenos a bimsaddin@gmail.com'));
@@ -5201,7 +5287,7 @@
 
             <div class="faq-item">
                 <div class="faq-question">¿Cómo funciona el trial de 14 días? <span class="faq-chevron">▾</span></div>
-                <div class="faq-answer">Te registras con tu email en el formulario, recibes un correo para crear tu contraseña y descargar BIMS, y tienes 14 días completos para usar todas las funciones sin restricciones. No pedimos tarjeta de crédito. Si te convence, compras un plan y se aplica a la misma cuenta. Si no, simplemente no haces nada — la licencia se desactiva sola.</div>
+                <div class="faq-answer">Te registras con tu email y eliges tu contraseña directamente en el formulario. Tu cuenta queda activa al instante — sin email de verificación. Descargas BIMS, instalas, abres Revit e inicias sesión con esos datos. Tienes 14 días completos con todas las funciones desbloqueadas, sin tarjeta de crédito. Si te convence, compras un plan y se aplica a la misma cuenta. Si no, no haces nada — la licencia se desactiva sola.</div>
             </div>
 
             <div class="faq-item">
