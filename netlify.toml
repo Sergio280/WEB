@@ -49,3 +49,9 @@
   from   = "/api/admin-create-license"
   to     = "/.netlify/functions/admin-create-license"
   status = 200
+
+# ── Endpoint público: registro de trial 14 días ───────────────────────────────
+[[redirects]]
+  from   = "/api/trial"
+  to     = "/.netlify/functions/create-trial-license"
+  status = 200
