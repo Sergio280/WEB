@@ -197,13 +197,28 @@
             <span class="email-pill" id="emailDisplay">tu email</span>
         </p>
 
+        <!-- Banner de descarga automática -->
+        <div id="downloadBanner" style="background:linear-gradient(135deg,#1a8a4a,#0c5c2f);color:#fff;border-radius:12px;padding:18px 22px;margin:8px 0 22px;display:flex;align-items:center;gap:14px;box-shadow:0 6px 24px rgba(26,138,74,0.25);">
+            <div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <div id="dlSpinner" style="width:22px;height:22px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
+                <span id="dlCheck" style="display:none;font-size:1.4em;font-weight:700;">✓</span>
+            </div>
+            <div style="flex:1;line-height:1.45;">
+                <strong id="dlTitle" style="display:block;font-size:1.02em;">Descargando BIMS…</strong>
+                <span id="dlSub" style="font-size:0.88em;opacity:0.95;">Tu instalador empezará a descargar en un momento.</span>
+            </div>
+        </div>
+        <style>
+            @keyframes spin { to { transform: rotate(360deg); } }
+        </style>
+
         <div class="steps">
             <h3>Solo 2 pasos para empezar:</h3>
             <div class="step">
                 <div class="step-num">1</div>
                 <div class="step-text">
-                    <strong>Descarga e instala BIMS</strong>
-                    Ejecuta el instalador (toma ~1 minuto). Compatible con Revit 2024, 2025 y 2026.
+                    <strong>Instala BIMS</strong>
+                    Ejecuta el instalador que acabas de descargar (toma ~1 minuto). Compatible con Revit 2024, 2025 y 2026.
                 </div>
             </div>
             <div class="step">
@@ -216,11 +231,14 @@
         </div>
 
         <div class="actions">
-            <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" class="btn btn-primary" download>
+            <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe" class="btn btn-primary" download>
                 ⬇ Descargar instalador
             </a>
             <a href="/" class="btn btn-secondary">← Volver al inicio</a>
         </div>
+        <p style="text-align:center;margin-top:14px;font-size:0.86em;color:#888;">
+            ¿La descarga no comenzó? Presiona el botón <strong style="color:#0f4d9e;">«Descargar instalador»</strong>.
+        </p>
 
         <p class="footer-help">
             ¿Problemas? Escríbenos a <a href="mailto:bimsaddin@gmail.com">bimsaddin@gmail.com</a> o por
@@ -229,20 +247,64 @@
     </div>
 
     <script>
-        // Mostrar el email que el usuario ingresó (viene como query param)
         (function() {
+            // ── Mostrar email del query param ──────────────────────────────
             const params = new URLSearchParams(window.location.search);
             const email  = params.get('email');
             if (email) {
                 const el = document.getElementById('emailDisplay');
                 if (el) el.textContent = email;
             }
-            // Tracking de conversión
-            if (typeof gtag === 'function') {
-                gtag('event', 'trial_activated', { method: 'web_form' });
+
+            // ── Tracking de conversión ─────────────────────────────────────
+            if (typeof gtag === 'function')   gtag('event', 'trial_activated', { method: 'web_form' });
+            if (typeof clarity === 'function') clarity('event', 'trial_activated');
+
+            // ── Auto-trigger de descarga ───────────────────────────────────
+            // 600ms de retraso: deja que el DOM pinte el banner antes de iniciar
+            // la descarga, así el usuario ve "Descargando..." y entiende qué pasa.
+            const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe';
+            const banner    = document.getElementById('downloadBanner');
+            const spinner   = document.getElementById('dlSpinner');
+            const checkIcon = document.getElementById('dlCheck');
+            const title     = document.getElementById('dlTitle');
+            const sub       = document.getElementById('dlSub');
+
+            function triggerDownload() {
+                try {
+                    const a = document.createElement('a');
+                    a.href = DOWNLOAD_URL;
+                    a.download = 'BIMS.exe';
+                    a.rel = 'noopener';
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() { document.body.removeChild(a); }, 0);
+
+                    // Tracking de la descarga auto-iniciada
+                    if (typeof gtag === 'function')    gtag('event', 'download_click', { source: 'trial_auto' });
+                    if (typeof clarity === 'function') clarity('event', 'trial_auto_download');
+
+                    // Actualizar UI a estado "descarga iniciada"
+                    setTimeout(function() {
+                        if (spinner)   spinner.style.display = 'none';
+                        if (checkIcon) checkIcon.style.display = 'inline';
+                        if (title)     title.textContent = '✓ Descarga iniciada';
+                        if (sub)       sub.textContent = 'Revisa la barra de descargas de tu navegador. ¿Nada? Toca «Descargar instalador» abajo.';
+                    }, 1500);
+                } catch (e) {
+                    // Si por algún motivo el browser bloquea, mostrar mensaje claro
+                    if (spinner)   spinner.style.display = 'none';
+                    if (title)     title.textContent = 'No se pudo iniciar la descarga';
+                    if (sub)       sub.textContent = 'Por favor presiona «Descargar instalador» abajo para iniciarla manualmente.';
+                }
             }
-            if (typeof clarity === 'function') {
-                clarity('event', 'trial_activated');
+
+            // Esperar a que la página esté visible antes de disparar
+            if (document.readyState === 'complete') {
+                setTimeout(triggerDownload, 600);
+            } else {
+                window.addEventListener('load', function() { setTimeout(triggerDownload, 600); });
             }
         })();
     </script>
