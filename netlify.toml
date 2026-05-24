@@ -9,6 +9,13 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # CSP: defensa en profundidad contra XSS. Permite GA4 (googletagmanager,
+    # google-analytics), Clarity (clarity.ms), Cloudflare Turnstile, Culqi
+    # (js.culqi.com, secure.culqi.com) y nuestro backend (firebaseio.com,
+    # googleapis.com). 'unsafe-inline' se mantiene porque GA4/Clarity y la
+    # propia index.html usan scripts/styles inline; sustituible por nonce/hash
+    # si en el futuro se elimina todo inline.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://js.culqi.com https://secure.culqi.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://secure.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://api.culqi.com; object-src 'none'; base-uri 'self'; form-action 'self' https://secure.culqi.com;"
 
 # ── Descarga de ejecutables ────────────────────────────────────────────────────
 [[headers]]

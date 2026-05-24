@@ -24,15 +24,54 @@ const CATALOG = {
 
 const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
 
-const CORS = {
-    'Access-Control-Allow-Origin':  process.env.SITE_URL || '',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-};
+// ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
+// Producción + Deploy Previews + branch deploys del mismo proyecto Netlify.
+const SITE_URL = process.env.SITE_URL || 'https://bimsapp.netlify.app';
+const ALLOWED_ORIGIN_PATTERNS = [
+    SITE_URL,
+    /^https:\/\/deploy-preview-\d+--bimsapp\.netlify\.app$/,
+    /^https:\/\/[a-z0-9-]+--bimsapp\.netlify\.app$/,
+];
+
+function isOriginAllowed(origin) {
+    if (!origin) return false;
+    for (const p of ALLOWED_ORIGIN_PATTERNS) {
+        if (typeof p === 'string' && p === origin) return true;
+        if (p instanceof RegExp && p.test(origin)) return true;
+    }
+    return false;
+}
+
+function corsHeadersFor(origin) {
+    const headers = {
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Vary': 'Origin',
+    };
+    if (isOriginAllowed(origin)) headers['Access-Control-Allow-Origin'] = origin;
+    return headers;
+}
 
 exports.handler = async function (event) {
-    if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
+    const origin  = event.headers.origin  || event.headers.Origin  || '';
+    const referer = event.headers.referer || event.headers.Referer || '';
+    const CORS    = corsHeadersFor(origin);
+
+    if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS, body: '' };
     if (event.httpMethod !== 'POST')    return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Método no permitido' }) };
+
+    // ── Validación de Origin/Referer ─────────────────────────────────────────
+    // Bloquea scripts externos que intenten usar token_id robados. No es
+    // protección CSRF estricta (no usamos cookies/sesión) pero filtra abuso
+    // automatizado que no setea Origin/Referer válido.
+    const refOk = referer && ALLOWED_ORIGIN_PATTERNS.some(p =>
+        typeof p === 'string' ? referer.startsWith(p)
+                              : p.test(referer.replace(/^(https:\/\/[^\/]+).*$/, '$1'))
+    );
+    if (!isOriginAllowed(origin) && !refOk) {
+        console.warn('[culqi-charge] Origin/Referer no permitido. Origin:', origin, 'Referer:', referer);
+        return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: 'Origen no autorizado' }) };
+    }
 
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }

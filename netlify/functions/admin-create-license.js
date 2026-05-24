@@ -91,9 +91,11 @@ exports.handler = async function (event) {
 
         await db.ref(`users_v2/${uid}`).update(updates);
 
-        // Enviar email para que el usuario establezca su contraseña
-        // FIREBASE_API_KEY es la misma clave pública usada en el frontend
-        const apiKey = process.env.FIREBASE_API_KEY || 'AIzaSyASlVvR9ub9krxDJcVfqnBw88_qLhIMKwM';
+        // Enviar email para que el usuario establezca su contraseña.
+        // FIREBASE_API_KEY es la misma clave pública usada en el frontend.
+        // Fail-fast si no está configurada — evita reintroducir un fallback
+        // hardcoded que sobreviva silenciosamente a rotaciones de credenciales.
+        const apiKey = process.env.FIREBASE_API_KEY;
         let emailSent = false;
         if (apiKey) {
             try {

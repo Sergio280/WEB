@@ -330,10 +330,12 @@ async function activateLicense(email, info) {
 
 // ── Email de activación ───────────────────────────────────────────────────────
 async function sendActivationEmail(email) {
-    // FIREBASE_API_KEY es la misma clave pública usada en el frontend
-    const apiKey = process.env.FIREBASE_API_KEY || 'AIzaSyASlVvR9ub9krxDJcVfqnBw88_qLhIMKwM';
+    // FIREBASE_API_KEY es la misma clave pública usada en el frontend.
+    // Fail-fast si no está configurada — evita reintroducir un fallback hardcoded
+    // que sobreviva silenciosamente a rotaciones de credenciales.
+    const apiKey = process.env.FIREBASE_API_KEY;
     if (!apiKey) {
-        console.warn('[culqi-webhook] FIREBASE_API_KEY no configurado');
+        console.warn('[culqi-webhook] FIREBASE_API_KEY no configurado — email no enviado');
         return;
     }
 
