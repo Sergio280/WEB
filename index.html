@@ -3469,11 +3469,11 @@
             <a href="#trial" class="btn-hero-primary">Empezar prueba gratis de 14 días →</a>
         </div>
         <p class="hero-cta-sub">Sin tarjeta de crédito · Activación instantánea · <a href="#video-demo" style="color:#fff;text-decoration:underline;opacity:.95;">Ver demo de 45 s</a></p>
-        <!-- Prueba social compacta debajo del CTA — refuerza credibilidad sin desviar el clic.
-             El contador de usuarios se anima al hacer scroll (definido en sprint-2 abajo). -->
+        <!-- Bajo el CTA: solo claims verificables (garantía, compatibilidad).
+             Cuando exista métrica real de usuarios, sustituir esta franja por el contador. -->
         <div class="hero-social-proof">
-            <span class="hero-rating">★★★★★</span>
-            <span><strong id="heroUserCount">120+</strong> ingenieros usando BIMS en Perú y LATAM</span>
+            <span style="color:#4ade80;font-weight:700;">✓</span>
+            <span>Garantía de devolución del 100% en 7 días si no te convence</span>
         </div>
     </div>
 </header>
@@ -4155,21 +4155,24 @@
             .qm-num { font-size: 2.6rem; }
         }
     </style>
+    <!-- Métricas extraídas literalmente del chartTime y chartRadar de la sección
+         de Efectividad — cada cifra está anclada a la tarea específica del chart,
+         no se generaliza al "producto completo". -->
     <section class="quick-metrics reveal" aria-label="Resultados medibles">
         <div class="qm-card">
-            <div class="qm-label">De 8 h a</div>
-            <div class="qm-num"><span class="qm-counter" data-target="45" data-suffix=" min">0</span></div>
-            <div class="qm-label">en un proceso completo de despiece</div>
+            <div class="qm-label">Asignar rejillas a 1000 elementos</div>
+            <div class="qm-num"><span class="qm-counter" data-target="8" data-suffix=" h → 45 min">0</span></div>
+            <div class="qm-label">según chart de tiempos comparados</div>
         </div>
         <div class="qm-card" style="background:linear-gradient(135deg,#1a8a4a 0%,#0c5c2f 100%);box-shadow:0 14px 40px rgba(26,138,74,0.22);">
-            <div class="qm-label">Tasa de error</div>
-            <div class="qm-num"><span class="qm-counter" data-target="0.4" data-decimals="1" data-suffix="%">0%</span></div>
-            <div class="qm-label">frente a 12 % en flujo manual</div>
+            <div class="qm-label">Encofrado de 1 nivel estructural</div>
+            <div class="qm-num"><span class="qm-counter" data-target="6" data-suffix=" h → 22 min">0</span></div>
+            <div class="qm-label">según chart de tiempos comparados</div>
         </div>
         <div class="qm-card" style="background:linear-gradient(135deg,#7c3aed 0%,#4c1d95 100%);box-shadow:0 14px 40px rgba(124,58,237,0.22);">
-            <div class="qm-label">Nivel de automatización</div>
-            <div class="qm-num"><span class="qm-counter" data-target="95" data-suffix="%">0%</span></div>
-            <div class="qm-label">vs. 35 % de un flujo solo manual</div>
+            <div class="qm-label">Exportar 10 planos a DWG</div>
+            <div class="qm-num"><span class="qm-counter" data-target="3" data-suffix=" h → 12 min">0</span></div>
+            <div class="qm-label">según chart de tiempos comparados</div>
         </div>
     </section>
 
@@ -4276,7 +4279,9 @@
                     <input type="range" id="roiRate" min="15" max="120" value="35" step="5">
                 </div>
                 <p style="font-size:.82rem;color:#64748b;margin-top:8px;line-height:1.45;">
-                    Cálculo basado en una reducción promedio del 80 % en tareas automatizables (documentación, refuerzo, exportación a DWG). Resultados estimados.
+                    <strong>Estimación orientativa.</strong> Asume una reducción del 80 % del tiempo en tareas
+                    automatizables por BIMS (encofrado, refuerzo, exportación a DWG, asignación de rejillas).
+                    El ahorro real depende del flujo de trabajo de cada estudio.
                 </p>
             </div>
             <div class="roi-results">
@@ -4380,47 +4385,49 @@
             .tst-grid { grid-template-columns: 1fr; }
         }
     </style>
-    <section class="testimonials-section reveal" aria-label="Testimonios de usuarios">
-        <h2>Lo que dicen quienes ya usan BIMS</h2>
-        <p class="section-sub">Reseñas reales recogidas por WhatsApp y email</p>
+    <!-- ══════════════════ TESTIMONIOS — PENDIENTE DE CONTENIDO REAL ══════════════════
+         Esta sección queda preparada visualmente pero SIN reseñas falsas.
+         Cuando recojas testimonios reales con autorización, descomenta el bloque
+         de tarjetas (.tst-grid) más abajo y completa los datos verdaderos. -->
+    <section class="testimonials-section reveal" aria-label="Reseñas de usuarios">
+        <h2>Aún estamos recogiendo las primeras reseñas</h2>
+        <p class="section-sub" style="max-width:680px;margin:0 auto 24px;">
+            BIMS es un producto reciente. En lugar de mostrar testimonios genéricos,
+            preferimos esperar a tener reseñas reales con autorización para publicarlas.
+            Si ya lo probaste y quieres ser de los primeros en compartir tu experiencia,
+            nos encantaría leerte.
+        </p>
+        <div style="text-align:center;margin-top:18px;">
+            <a href="https://wa.me/51989455558?text=Hola%2C%20quiero%20dejar%20mi%20rese%C3%B1a%20sobre%20BIMS"
+               target="_blank" rel="noopener"
+               style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;box-shadow:0 8px 20px rgba(37,211,102,.3);">
+                💬 Dejar mi reseña por WhatsApp
+            </a>
+        </div>
+        <p style="text-align:center;margin-top:20px;font-size:.88rem;color:#64748b;">
+            Mientras tanto, te invitamos a probar el plugin tú mismo con
+            <a href="#trial" style="color:#0078D7;font-weight:600;">14 días gratis</a>
+            y a revisar nuestros <a href="#casos" style="color:#0078D7;font-weight:600;">casos de uso documentados</a>.
+        </p>
+
+        <!-- ──────────── PLANTILLA: tarjetas de testimonios reales ────────────
+             Cuando tengas reseñas con autorización, reemplaza el bloque de
+             arriba por una sección que use este markup:
+
         <div class="tst-grid">
             <div class="tst-card">
                 <div class="tst-stars">★★★★★</div>
-                <p class="tst-quote">"Lo que más me convenció fue la exportación de planos a DWG con las imágenes embebidas. Mi cliente abre el archivo en cualquier PC sin que se rompa nada. Ahorro reuniones de soporte cada semana."</p>
+                <p class="tst-quote">"<TEXTO REAL DEL CLIENTE>"</p>
                 <div class="tst-author">
-                    <div class="tst-avatar">JR</div>
+                    <div class="tst-avatar">XX</div>
                     <div class="tst-author-info">
-                        <strong>Ing. J. Ramírez</strong>
-                        <span>Proyectista estructural · Lima</span>
-                    </div>
-                </div>
-            </div>
-            <div class="tst-card">
-                <div class="tst-stars">★★★★★</div>
-                <p class="tst-quote">"El encofrado automatizado de columnas y vigas me ahorró literalmente días en mi último proyecto de edificio multifamiliar. La inversión se recuperó en la primera semana de uso."</p>
-                <div class="tst-author">
-                    <div class="tst-avatar">MC</div>
-                    <div class="tst-author-info">
-                        <strong>Arq. M. Castillo</strong>
-                        <span>BIM Coordinator · Arequipa</span>
-                    </div>
-                </div>
-            </div>
-            <div class="tst-card">
-                <div class="tst-stars">★★★★★</div>
-                <p class="tst-quote">"Probé el trial de 14 días y al cuarto día ya había automatizado el tarrajeo de todo un proyecto. Pagué la licencia anual al instante. Soporte responde rapidísimo por WhatsApp."</p>
-                <div class="tst-author">
-                    <div class="tst-avatar">LV</div>
-                    <div class="tst-author-info">
-                        <strong>Ing. L. Vargas</strong>
-                        <span>Estudio independiente · Trujillo</span>
+                        <strong><Nombre completo></strong>
+                        <span><Cargo · Empresa · Ciudad></span>
                     </div>
                 </div>
             </div>
         </div>
-        <p style="text-align:center;margin-top:22px;font-size:.85rem;color:#94a3b8;">
-            ¿Ya usas BIMS y quieres compartir tu experiencia? Escríbenos por <a href="https://wa.me/51989455558" target="_blank" rel="noopener" style="color:#0078D7;">WhatsApp</a> y publicamos tu reseña con tu foto.
-        </p>
+        ─────────────────────────────────────────────────────────────────── -->
     </section>
 
     <!-- ══════════════════ CASOS DE USO PRÁCTICO ══════════════════ -->
@@ -7303,12 +7310,7 @@
         counters.forEach(c => io.observe(c));
     }
 
-    // Contador del hero — anima al cargar la página (siempre visible)
-    const heroCount = document.getElementById('heroUserCount');
-    if (heroCount) {
-        // Pequeño delay para que se note después de la primera pintura
-        setTimeout(() => animateNumber(heroCount, 120, 0, '+', 1800), 400);
-    }
+    // (El contador de usuarios del hero se removió hasta tener cifra real verificable.)
 })();
 </script>
 
