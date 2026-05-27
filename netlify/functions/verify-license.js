@@ -42,8 +42,10 @@ if (!admin.apps.length) {
 const db   = admin.database();
 const auth = admin.auth();
 
-// Clave privada de FIRMA de licencias (RSA-2048 PKCS8 PEM). DISTINTA de la de
-// Firebase. Se configura en Netlify como LICENSE_SIGNING_PRIVATE_KEY.
+// Clave privada de FIRMA de licencias (ECDSA P-256 PKCS8 PEM). DISTINTA de la de
+// Firebase. Se configura en Netlify como LICENSE_SIGNING_PRIVATE_KEY. Se usa EC en
+// vez de RSA porque la privada pesa ~240 bytes y así no se excede el límite de 4KB
+// de variables de entorno de AWS Lambda.
 const SIGNING_KEY = (process.env.LICENSE_SIGNING_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 
 // ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
@@ -79,10 +81,13 @@ function resp(statusCode, body, origin) {
 function signVerdict(payloadObj) {
     // `data` son los bytes EXACTOS que se firman y que el cliente verificará.
     const data = JSON.stringify(payloadObj);
-    const signer = crypto.createSign('RSA-SHA256');
+    const signer = crypto.createSign('SHA256');
     signer.update(data, 'utf8');
     signer.end();
-    const signature = signer.sign(SIGNING_KEY).toString('base64');
+    // dsaEncoding 'ieee-p1363' = firma EC como r||s crudo (64 bytes en P-256).
+    // Es el formato que espera ECDsa.VerifyData en .NET Framework (net48), que NO
+    // acepta el DER/ASN.1 por defecto de OpenSSL.
+    const signature = signer.sign({ key: SIGNING_KEY, dsaEncoding: 'ieee-p1363' }).toString('base64');
     return { data, signature };
 }
 
