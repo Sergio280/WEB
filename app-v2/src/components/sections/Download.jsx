@@ -2,7 +2,7 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 
 const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe';
-const PILLS = ['Windows 10 / 11', 'Revit 2024', 'Revit 2025', 'Revit 2026'];
+const PILLS = ['Windows 10 / 11', 'Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'];
 
 export default function Download() {
   return (

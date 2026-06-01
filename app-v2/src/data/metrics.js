@@ -33,6 +33,7 @@ export const MARQUEE_CLAIMS = [
   'Revit 2024',
   'Revit 2025',
   'Revit 2026',
+  'Revit 2027',
   '−80% de tiempo en tareas repetitivas',
   '30+ comandos especializados',
   'Sin tarjeta de crédito',

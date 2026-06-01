@@ -47,7 +47,7 @@ export default function Hero() {
           </motion.p>
 
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="mt-7 flex flex-wrap items-center gap-2">
-            {['Revit 2024', 'Revit 2025', 'Revit 2026'].map((v) => (
+            {['Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'].map((v) => (
               <span key={v} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300">
                 {v}
               </span>
@@ -81,7 +81,7 @@ export default function Hero() {
           className="relative"
         >
           <div className="animate-floaty">
-            <WindowFrame title="Proyecto-Estructural.rvt — Autodesk Revit 2026">
+            <WindowFrame title="Proyecto-Estructural.rvt — Autodesk Revit 2027">
               {/* Ribbon de comandos BIMS */}
               <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
                 {RIBBON.map((c) => (
