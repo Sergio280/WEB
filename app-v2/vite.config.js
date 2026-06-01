@@ -1,14 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// La landing nueva vive bajo /v2 (sin tocar la home actual en /).
-// El bundle se emite a ../dist/v2 y luego copy-legacy.mjs copia el sitio
-// estático existente (index.html, páginas legales, /icono, /update) a ../dist.
+// La landing nueva (React/Vite) es ahora la HOME: se sirve en "/".
+// El bundle se emite a ../dist y luego copy-legacy.mjs copia el resto del
+// sitio estático (páginas legales, /icono, /update) SIN sobreescribir el
+// index.html nuevo. La home anterior se conserva como /legacy.html (rollback).
 export default defineConfig({
-  base: '/v2/',
+  base: '/',
   plugins: [react()],
   build: {
-    outDir: '../dist/v2',
+    outDir: '../dist',
     emptyOutDir: true,
   },
 });
