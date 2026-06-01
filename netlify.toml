@@ -1,5 +1,17 @@
 [build]
+  # La landing nueva (React/Vite) vive en app-v2 y se compila a /v2.
+  # El build corre dentro de app-v2 (vite emite a ../dist/v2) y luego
+  # copy-legacy copia el sitio estático actual (index.html, páginas legales,
+  # /icono, /update) a la raíz de dist/. Así "/" sigue sirviéndose intacto y la
+  # nueva landing queda en "/v2".
+  # NOTA: no se usa `base` para que `publish` y `functions` se resuelvan desde
+  # la raíz del repo (donde realmente viven dist/ y netlify/functions).
+  command   = "cd app-v2 && npm install && npm run build"
+  publish   = "dist"
   functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 # ── Headers de seguridad globales ─────────────────────────────────────────────
 [[headers]]
