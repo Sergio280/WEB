@@ -1,5 +1,7 @@
-// Bento de features — destaca fortalezas reales del producto.
-// Todo el contenido proviene de comandos/claims ya presentes en la home.
+// Bento de features — SOLO funciones activas para los usuarios.
+// (El módulo Refuerzo / Planilla BBS está oculto en el sitio actual, por eso
+//  no aparece aquí.) Todo el contenido proviene de comandos/claims ya
+//  presentes y activos en la home.
 export const BENTO = [
   {
     id: 'dwg',
@@ -24,11 +26,11 @@ export const BENTO = [
     id: 'acero',
     size: 'md',
     icon: '🔩',
-    title: 'Acero de Refuerzo + Planilla BBS',
-    desc: 'Armadura conforme a normativas peruanas, lista para planilla de despiece.',
-    points: ['Acero Columnas / Vigas / Muros / Losas', 'Estribos con confinamiento', 'BBS a Excel y BVBS'],
+    title: 'Acero de Refuerzo',
+    desc: 'Distribuye y modela la armadura en los elementos estructurales conforme a normativas peruanas.',
+    points: ['Acero en Columnas (rectangular y circular)', 'Estribos con zonas de confinamiento'],
     accent: 'violet',
-    tags: ['LOD 400', 'E.030', 'E.060', 'LOIN'],
+    tags: ['LOD 400', 'E.030', 'E.060'],
   },
   {
     id: 'tarrajeo',
@@ -43,17 +45,17 @@ export const BENTO = [
     id: 'utilidades',
     size: 'sm',
     icon: '🧰',
-    title: 'Análisis y Utilidades',
-    desc: 'Importar DWG, Exportar NWC, Calcular Volúmenes, Sólido → Masa y más.',
+    title: 'Importar y Convertir DWG',
+    desc: 'Convierte archivos DWG externos en objetos nativos de Revit y exporta NWC para coordinación.',
     points: [],
     accent: 'emerald',
   },
   {
     id: 'alcance',
-    size: 'sm',
+    size: 'wide',
     icon: '⚡',
     title: '30+ comandos · Revit 2024-2026',
-    desc: 'Un add-in completo para estructura, refuerzo, encofrado y documentación.',
+    desc: 'Un add-in completo para estructura, encofrado, tarrajeo y documentación. Compatible con Windows 10/11 y las tres últimas versiones de Revit.',
     points: [],
     accent: 'violet',
   },

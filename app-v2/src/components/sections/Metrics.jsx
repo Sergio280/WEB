@@ -1,10 +1,9 @@
-import { Bar, Doughnut, Radar } from 'react-chartjs-2';
+import { Bar, Radar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
-  ArcElement,
   RadialLinearScale,
   PointElement,
   LineElement,
@@ -14,13 +13,12 @@ import {
 } from 'chart.js';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
-import { QUICK_METRICS, CHART_TIME, CHART_RADAR, CHART_DONUT } from '../../data/metrics.js';
+import { QUICK_METRICS, CHART_TIME, CHART_ERROR, CHART_RADAR } from '../../data/metrics.js';
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
-  ArcElement,
   RadialLinearScale,
   PointElement,
   LineElement,
@@ -42,55 +40,66 @@ const accentBorder = {
 };
 
 export default function Metrics() {
-  const barData = {
+  // Chart 1 — Tiempo por tarea (minutos)
+  const timeData = {
     labels: CHART_TIME.labels,
     datasets: [
-      { label: 'Proceso manual (min)', data: CHART_TIME.manual, backgroundColor: GREY, borderRadius: 6 },
-      { label: 'Con BIMS (min)', data: CHART_TIME.bims, backgroundColor: BLUE, borderRadius: 6 },
+      { label: 'Sin BIMS (manual)', data: CHART_TIME.manual, backgroundColor: GREY, borderRadius: 6 },
+      { label: 'Con BIMS', data: CHART_TIME.bims, backgroundColor: BLUE, borderRadius: 6 },
     ],
   };
-  const barOpts = {
+  const timeOpts = {
+    indexAxis: 'y',
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: TICK } } },
+    plugins: { legend: { labels: { color: TICK, usePointStyle: true, pointStyle: 'rectRounded' } } },
     scales: {
-      x: { grid: { color: GRID }, ticks: { color: TICK, font: { size: 9 } } },
-      y: { grid: { color: GRID }, ticks: { color: TICK } },
+      x: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => v + ' min' } },
+      y: { grid: { display: false }, ticks: { color: TICK, font: { size: 9 } } },
     },
   };
 
+  // Chart 2 — Tasa de error (%)
+  const errorData = {
+    labels: CHART_ERROR.labels,
+    datasets: [
+      { label: 'Sin BIMS (%)', data: CHART_ERROR.manual, backgroundColor: GREY, borderRadius: 6 },
+      { label: 'Con BIMS (%)', data: CHART_ERROR.bims, backgroundColor: GREEN, borderRadius: 6 },
+    ],
+  };
+  const errorOpts = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: TICK, usePointStyle: true, pointStyle: 'rectRounded' } } },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => v + '%' } },
+      y: { grid: { display: false }, ticks: { color: TICK, font: { size: 9 } } },
+    },
+  };
+
+  // Chart 3 — Radar de automatización por módulo
   const radarData = {
     labels: CHART_RADAR.labels,
     datasets: [
-      { label: 'Manual', data: CHART_RADAR.manual, backgroundColor: 'rgba(100,116,139,.2)', borderColor: GREY, pointBackgroundColor: GREY },
-      { label: 'BIMS', data: CHART_RADAR.bims, backgroundColor: 'rgba(45,125,255,.22)', borderColor: BLUE, pointBackgroundColor: BLUE },
+      { label: 'Proceso manual', data: CHART_RADAR.manual, backgroundColor: 'rgba(100,116,139,.2)', borderColor: GREY, pointBackgroundColor: GREY },
+      { label: 'Con BIMS', data: CHART_RADAR.bims, backgroundColor: 'rgba(45,125,255,.22)', borderColor: BLUE, pointBackgroundColor: BLUE },
     ],
   };
   const radarOpts = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: TICK } } },
+    plugins: { legend: { labels: { color: TICK, usePointStyle: true } } },
     scales: {
       r: {
         angleLines: { color: GRID },
         grid: { color: GRID },
         pointLabels: { color: TICK, font: { size: 10 } },
         ticks: { display: false, stepSize: 25 },
-        suggestedMin: 0,
-        suggestedMax: 100,
+        min: 0,
+        max: 100,
       },
     },
-  };
-
-  const donutData = {
-    labels: CHART_DONUT.labels,
-    datasets: [{ data: CHART_DONUT.values, backgroundColor: [GREEN, 'rgba(255,255,255,.1)'], borderWidth: 0 }],
-  };
-  const donutOpts = {
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '70%',
-    plugins: { legend: { position: 'bottom', labels: { color: TICK, font: { size: 11 } } } },
   };
 
   return (
@@ -114,24 +123,25 @@ export default function Metrics() {
         ))}
       </div>
 
-      {/* Charts */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <Reveal className="rounded-2xl border border-white/10 glass p-5 lg:col-span-2">
+      {/* Charts: tiempo + error */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <Reveal className="rounded-2xl border border-white/10 glass p-5">
           <p className="mb-4 text-sm font-bold text-slate-200">Tiempo por tarea (minutos)</p>
           <div className="h-64">
-            <Bar data={barData} options={barOpts} />
+            <Bar data={timeData} options={timeOpts} />
           </div>
         </Reveal>
         <Reveal delay={0.1} className="rounded-2xl border border-white/10 glass p-5">
-          <p className="mb-4 text-sm font-bold text-slate-200">Tiempo recuperado</p>
+          <p className="mb-4 text-sm font-bold text-slate-200">Tasa de error (%)</p>
           <div className="h-64">
-            <Doughnut data={donutData} options={donutOpts} />
+            <Bar data={errorData} options={errorOpts} />
           </div>
         </Reveal>
       </div>
 
+      {/* Radar */}
       <Reveal delay={0.1} className="mt-4 rounded-2xl border border-white/10 glass p-5">
-        <p className="mb-4 text-sm font-bold text-slate-200">Cobertura manual vs. BIMS</p>
+        <p className="mb-4 text-sm font-bold text-slate-200">Nivel de automatización por módulo</p>
         <div className="mx-auto h-80 max-w-xl">
           <Radar data={radarData} options={radarOpts} />
         </div>

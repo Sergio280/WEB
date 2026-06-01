@@ -3,58 +3,19 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import BeforeAfterSlider from '../ui/BeforeAfterSlider.jsx';
-import { USE_CASES, BBS_DEMO_ROWS } from '../../data/useCases.js';
+import { USE_CASES } from '../../data/useCases.js';
 
 // ── Visuales por caso de uso ──────────────────────────────────────────────
-function BbsVisual() {
-  return (
-    <div>
-      <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
-        Vista previa — Planilla BBS generada automáticamente por BIMS
-      </span>
-      <div className="overflow-hidden rounded-xl border border-white/10">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-gradient-to-r from-brand-700 to-brand-500 text-left text-white">
-              {['Marca', 'Ø', 'Cant.', 'Long.', 'Forma'].map((h) => (
-                <th key={h} className="px-3 py-2 font-bold">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {BBS_DEMO_ROWS.map((r, i) => (
-              <motion.tr
-                key={r[0]}
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="border-b border-white/5 last:border-0 odd:bg-white/[0.02]"
-              >
-                <td className="px-3 py-2 font-extrabold text-violet-300">{r[0]}</td>
-                <td className="px-3 py-2 text-slate-300">{r[1]}</td>
-                <td className="px-3 py-2 text-slate-300">{r[2]}</td>
-                <td className="px-3 py-2 text-slate-300">{r[3]}</td>
-                <td className="px-3 py-2 font-mono text-slate-400">{r[4]}</td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
 function EncofradoVisual() {
   const rows = [
-    { label: 'Columna → 4 paneles', w: '88%', from: 'from-emerald-500', to: 'to-accent-green' },
-    { label: 'Viga → 3 caras', w: '70%', from: 'from-brand-600', to: 'to-brand-300' },
-    { label: 'Losa → suelo inferior', w: '95%', from: 'from-amber-600', to: 'to-accent-amber' },
+    { label: 'Columna → muros', w: '88%', from: 'from-emerald-500', to: 'to-accent-green' },
+    { label: 'Viga → laterales + fondo', w: '70%', from: 'from-brand-600', to: 'to-brand-300' },
+    { label: 'Losa → suelo', w: '95%', from: 'from-amber-600', to: 'to-accent-amber' },
   ];
   return (
     <div>
       <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
-        Resultado — Paneles de encofrado generados
+        Resultado — Encofrado generado automáticamente
       </span>
       <div className="flex flex-col gap-3">
         {rows.map((r) => (
@@ -72,6 +33,16 @@ function EncofradoVisual() {
           </div>
         ))}
       </div>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-center">
+          <div className="font-display text-2xl font-extrabold text-accent-green">22 min</div>
+          <div className="text-xs text-slate-400">con BIMS</div>
+        </div>
+        <div className="rounded-xl border border-rose-400/20 bg-rose-500/10 p-4 text-center">
+          <div className="font-display text-2xl font-extrabold text-rose-300">6 h</div>
+          <div className="text-xs text-slate-400">manual</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -88,15 +59,15 @@ function DwgVisual() {
         before={
           <div className="flex h-full w-full flex-col items-center justify-center bg-rose-950/40 p-6 text-center">
             <span className="text-3xl">🚫🖼️</span>
-            <p className="mt-3 text-sm font-bold text-rose-300">Imágenes perdidas</p>
-            <p className="mt-1 text-xs text-rose-200/70">o quedan como enlaces rotos</p>
+            <p className="mt-3 text-sm font-bold text-rose-300">Imágenes como archivos externos</p>
+            <p className="mt-1 text-xs text-rose-200/70">al mover el DWG, los enlaces se rompen</p>
           </div>
         }
         after={
           <div className="flex h-full w-full flex-col items-center justify-center bg-emerald-950/40 p-6 text-center">
             <span className="text-3xl">📄✅</span>
             <p className="mt-3 text-sm font-bold text-emerald-300">Imágenes embebidas (OLE)</p>
-            <p className="mt-1 text-xs text-emerald-200/70">dentro del archivo DWG</p>
+            <p className="mt-1 text-xs text-emerald-200/70">un solo archivo portátil</p>
           </div>
         }
       />
@@ -122,7 +93,67 @@ function TarrajeoVisual() {
   );
 }
 
-const VISUALS = { bbs: BbsVisual, encofrado: EncofradoVisual, dwg: DwgVisual, tarrajeo: TarrajeoVisual };
+function AceroVisual() {
+  return (
+    <div>
+      <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
+        Esquema — Sección de columna reforzada
+      </span>
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
+        <svg viewBox="0 0 160 160" className="mx-auto block w-full max-w-[220px]" aria-label="Sección de columna con refuerzo">
+          {/* Sección de concreto */}
+          <rect x="30" y="30" width="100" height="100" fill="rgba(255,255,255,.04)" stroke="#475569" strokeWidth="2" />
+          {/* Estribo */}
+          <rect x="40" y="40" width="80" height="80" fill="none" stroke="#8b5cf6" strokeWidth="2" />
+          {/* Barras de esquina */}
+          {[[40, 40], [120, 40], [40, 120], [120, 120]].map(([cx, cy]) => (
+            <circle key={`c${cx}${cy}`} cx={cx} cy={cy} r="5" fill="#2d7dff" />
+          ))}
+          {/* Barras intermedias */}
+          {[[80, 40], [80, 120], [40, 80], [120, 80]].map(([cx, cy]) => (
+            <circle key={`m${cx}${cy}`} cx={cx} cy={cy} r="4" fill="#7db3ff" />
+          ))}
+          <text x="80" y="150" textAnchor="middle" className="fill-slate-400" fontSize="10">Columna reforzada</text>
+        </svg>
+      </div>
+      <p className="mt-3 text-center text-xs text-slate-500">Barras longitudinales + estribos a 135° con confinamiento</p>
+    </div>
+  );
+}
+
+function NwcVisual() {
+  const steps = [
+    { icon: '📄', label: 'DWG externo' },
+    { icon: '🏢', label: 'Objeto Revit' },
+    { icon: '🔍', label: 'NWC Navisworks' },
+  ];
+  return (
+    <div>
+      <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
+        Flujo — DWG externo a modelo federado
+      </span>
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        {steps.map((s, i) => (
+          <div key={s.label} className="flex flex-1 items-center gap-2">
+            <div className="flex-1 text-center">
+              <div className="text-3xl">{s.icon}</div>
+              <div className="mt-1 text-xs text-slate-400">{s.label}</div>
+            </div>
+            {i < steps.length - 1 && <span className="text-xl text-brand-400">→</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const VISUALS = {
+  encofrado: EncofradoVisual,
+  dwg: DwgVisual,
+  tarrajeo: TarrajeoVisual,
+  acero: AceroVisual,
+  nwc: NwcVisual,
+};
 
 export default function UseCases() {
   const [active, setActive] = useState(0);

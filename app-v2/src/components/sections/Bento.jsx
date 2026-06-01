@@ -13,11 +13,20 @@ const accentText = {
   violet: 'text-violet-300',
 };
 
+// Span por tarjeta: la destacada (lg) ocupa 2 columnas; el cierre de alcance
+// ocupa el ancho completo. El resto, 1 columna. Sin row-span para que la
+// altura la marque el contenido de cada fila (evita huecos vacíos).
+const spanFor = (item) => {
+  if (item.size === 'lg') return 'sm:col-span-2';
+  if (item.size === 'wide') return 'sm:col-span-3';
+  return '';
+};
+
 function Card({ item }) {
-  const span = item.size === 'lg' ? 'sm:col-span-2 sm:row-span-2' : '';
+  const isLg = item.size === 'lg';
   return (
     <div
-      className={`group relative flex flex-col rounded-2xl border border-white/10 glass p-6 transition-all duration-300 hover:-translate-y-1 ${accentRing[item.accent]} ${span}`}
+      className={`group relative flex flex-col rounded-2xl border border-white/10 glass p-6 transition-all duration-300 hover:-translate-y-1 ${accentRing[item.accent]} ${spanFor(item)}`}
     >
       <div className="flex items-center gap-3">
         <span className="text-2xl">{item.icon}</span>
@@ -27,13 +36,11 @@ function Card({ item }) {
           </span>
         )}
       </div>
-      <h3 className={`mt-4 font-display font-bold text-white ${item.size === 'lg' ? 'text-2xl' : 'text-lg'}`}>
-        {item.title}
-      </h3>
+      <h3 className={`mt-4 font-display font-bold text-white ${isLg ? 'text-2xl' : 'text-lg'}`}>{item.title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-slate-400">{item.desc}</p>
 
       {item.points?.length > 0 && (
-        <ul className="mt-4 space-y-1.5">
+        <ul className={`mt-4 gap-x-6 gap-y-1.5 ${isLg ? 'grid sm:grid-cols-2' : 'space-y-1.5'}`}>
           {item.points.map((p) => (
             <li key={p} className="flex items-start gap-2 text-sm text-slate-300">
               <span className={`mt-0.5 ${accentText[item.accent]}`}>▸</span>
@@ -44,7 +51,7 @@ function Card({ item }) {
       )}
 
       {item.tags?.length > 0 && (
-        <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+        <div className="mt-4 flex flex-wrap gap-1.5">
           {item.tags.map((t) => (
             <span key={t} className="rounded-md border border-white/10 bg-white/5 px-2 py-0.5 text-[0.65rem] font-semibold text-slate-400">
               {t}
@@ -68,7 +75,7 @@ export default function Bento() {
       </Reveal>
 
       <Reveal delay={0.1} className="mt-12">
-        <div className="grid auto-rows-[1fr] grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {BENTO.map((item) => (
             <Card key={item.id} item={item} />
           ))}
