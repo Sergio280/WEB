@@ -11,7 +11,7 @@ const RIBBON = [
   { icon: '🏗️', label: 'Encofrado' },
   { icon: '🔩', label: 'Acero' },
   { icon: '🎨', label: 'Tarrajeo' },
-  { icon: '📋', label: 'Planilla BBS' },
+  { icon: '📐', label: 'DWG → NWC' },
   { icon: '📤', label: 'Exportar DWG' },
   { icon: '🧰', label: 'Utilidades' },
 ];
