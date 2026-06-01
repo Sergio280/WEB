@@ -21,7 +21,7 @@ const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const FEATURES = [
   'Todos los paneles desbloqueados (General · Estructuras · Geometría)',
-  'Compatible con Revit 2024, 2025 y 2026',
+  'Compatible con Revit 2024, 2025, 2026 y 2027',
   '1 equipo · Activación automática por email',
   'Si te convence, conservas tu cuenta al comprar',
 ];

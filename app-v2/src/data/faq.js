@@ -10,7 +10,7 @@ export const FAQ = [
   },
   {
     q: '¿Es compatible con mi versión de Revit?',
-    a: 'BIMS funciona en Revit 2024, 2025 y 2026 sobre Windows 10 / 11. La instalación toma menos de un minuto y no requiere configuración manual.',
+    a: 'BIMS funciona en Revit 2024, 2025, 2026 y 2027 sobre Windows 10 / 11. La instalación toma menos de un minuto y no requiere configuración manual.',
   },
   {
     q: '¿Cómo es la garantía de devolución?',
