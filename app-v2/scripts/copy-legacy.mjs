@@ -1,11 +1,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // copy-legacy.mjs
-// Tras `vite build` (que emite la landing nueva en dist/v2), este script copia
-// el sitio estático EXISTENTE a la raíz de dist/ para que la home actual siga
-// sirviéndose intacta en "/" y la nueva en "/v2".
-//
-// Copia:
-//   · todos los *.html de la raíz del repo (index, success, terminos, etc.)
+// La landing nueva (React/Vite) es ahora la HOME: `vite build` ya emitió el
+// nuevo index.html + assets a dist/. Este script copia el RESTO del sitio
+// estático sin pisar ese index nuevo:
+//   · páginas estáticas .html de la raíz, EXCEPTO index.html (la home antigua).
+//     La home antigua (index.html del repo) se guarda como dist/legacy.html
+//     para poder hacer rollback rápido apuntando a /legacy.html.
 //   · las carpetas de assets: icono/ y update/
 // NO toca app-v2, node_modules, netlify/functions ni .git.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -19,16 +19,22 @@ const dist = join(repoRoot, 'dist');
 
 mkdirSync(dist, { recursive: true });
 
-// 1) Páginas estáticas de la raíz (.html) — se sirven verbatim.
+// 1) Páginas estáticas de la raíz (.html), preservando el index nuevo de Vite.
 let htmlCount = 0;
 for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
-  if (entry.isFile() && entry.name.endsWith('.html')) {
-    cpSync(join(repoRoot, entry.name), join(dist, entry.name));
-    htmlCount++;
+  if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
+
+  if (entry.name === 'index.html') {
+    // La home antigua NO debe pisar el index nuevo (la landing React).
+    // Se conserva accesible como /legacy.html para rollback de emergencia.
+    cpSync(join(repoRoot, entry.name), join(dist, 'legacy.html'));
+    continue;
   }
+  cpSync(join(repoRoot, entry.name), join(dist, entry.name));
+  htmlCount++;
 }
 
-// 2) Carpetas de assets que la home y las funciones referencian por URL.
+// 2) Carpetas de assets que la web y las funciones referencian por URL.
 const assetDirs = ['icono', 'update'];
 for (const d of assetDirs) {
   const src = join(repoRoot, d);
@@ -37,4 +43,6 @@ for (const d of assetDirs) {
   }
 }
 
-console.log(`[copy-legacy] ${htmlCount} HTML + assets (${assetDirs.join(', ')}) copiados a dist/`);
+console.log(
+  `[copy-legacy] ${htmlCount} HTML estáticas + home antigua -> legacy.html + assets (${assetDirs.join(', ')}) copiados a dist/`
+);
