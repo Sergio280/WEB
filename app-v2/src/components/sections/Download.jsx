@@ -39,6 +39,47 @@ export default function Download() {
         </div>
       </Reveal>
 
+      {/* Aviso SmartScreen — BIMS aún no tiene firma digital (certificado EV) */}
+      <Reveal delay={0.05} className="mx-auto mt-8 max-w-3xl rounded-2xl border border-amber-400/20 bg-amber-500/[0.06] p-6">
+        <div className="flex items-start gap-4">
+          <span className="text-3xl">🛡️</span>
+          <div>
+            <h3 className="font-display font-bold text-white">
+              ¿Windows muestra un aviso al instalar? Es normal — así lo abres
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-400">
+              BIMS es un add-in nuevo y todavía está en proceso de obtener su firma digital (certificado).
+              Por eso, al ejecutar el instalador, <strong className="text-slate-200">Windows SmartScreen</strong> puede
+              mostrar una advertencia azul de “editor desconocido”. No es un virus: solo significa que Microsoft aún no
+              reconoce al editor. Para instalarlo igualmente:
+            </p>
+            <ol className="mt-4 space-y-2.5">
+              {[
+                ['1', 'Ejecuta el archivo BIMS_Setup.exe que descargaste.'],
+                ['2', 'Si aparece la ventana azul “Windows protegió tu PC”, haz clic en “Más información”.'],
+                ['3', 'Pulsa el botón “Ejecutar de todas formas” que aparece abajo.'],
+                ['4', 'Continúa con el instalador con normalidad — toma menos de un minuto.'],
+              ].map(([n, t]) => (
+                <li key={n} className="flex gap-3 text-sm text-slate-300">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-xs font-extrabold text-accent-amber">
+                    {n}
+                  </span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-4 text-xs leading-relaxed text-slate-500">
+              Estamos tramitando la firma digital para eliminar este aviso en próximas versiones. Si tienes cualquier
+              duda, escríbenos a{' '}
+              <a href="mailto:bimsaddin@gmail.com" className="font-semibold text-brand-300 hover:text-white">
+                bimsaddin@gmail.com
+              </a>{' '}
+              o por WhatsApp.
+            </p>
+          </div>
+        </div>
+      </Reveal>
+
       {/* Privacidad */}
       <Reveal delay={0.1} className="mx-auto mt-8 flex max-w-3xl items-center gap-5 rounded-2xl border border-white/10 glass p-6">
         <span className="text-3xl">🔒</span>

@@ -21,6 +21,10 @@ export const FAQ = [
     a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.',
   },
   {
+    q: '¿Por qué Windows muestra una advertencia al instalar BIMS?',
+    a: 'BIMS es un add-in nuevo y aún está en proceso de obtener su firma digital, por lo que Windows SmartScreen puede mostrar un aviso de “editor desconocido”. No es un virus. Para instalarlo: ejecuta BIMS_Setup.exe, si aparece la ventana azul haz clic en “Más información” y luego en “Ejecutar de todas formas”. Estamos tramitando la firma para eliminar este aviso en próximas versiones.',
+  },
+  {
     q: '¿BIMS funciona con modelos vinculados?',
     a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.',
   },
