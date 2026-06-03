@@ -10,7 +10,7 @@ export default function Footer() {
             BIMS
           </div>
           <p className="mt-3 text-sm text-slate-400">Plugin profesional para Autodesk Revit</p>
-          <p className="mt-1 text-sm text-slate-500">Versión 1.1.1</p>
+          <p className="mt-1 text-sm text-slate-500">Versión 1.1.2</p>
         </div>
 
         <div>
