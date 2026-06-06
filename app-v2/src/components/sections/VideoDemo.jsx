@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { YOUTUBE_ID } from '../../data/nav.js';
+import { track } from '../../lib/track.js';
 
 // Facade del video: muestra la miniatura y carga el iframe sólo al hacer clic
 // (evita bloquear la primera pintura). Mismo comportamiento que la home.
@@ -27,7 +28,10 @@ export default function VideoDemo() {
             />
           ) : (
             <button
-              onClick={() => setPlaying(true)}
+              onClick={() => {
+                setPlaying(true);
+                track('video_play', { video: 'demo' });
+              }}
               className="group absolute inset-0 h-full w-full"
               aria-label="Reproducir demo de BIMS en Revit"
             >

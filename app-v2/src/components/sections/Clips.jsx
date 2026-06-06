@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { CLIPS } from '../../data/nav.js';
+import { track } from '../../lib/track.js';
 
 // Lightbox modal que reproduce el clip de YouTube seleccionado.
 function Lightbox({ clip, onClose }) {
@@ -103,7 +104,7 @@ export default function Clips() {
 
   function play(clip) {
     setActive(clip);
-    if (typeof window.gtag === 'function') window.gtag('event', 'clip_play', { clip: clip.title });
+    track('clip_play', { clip: clip.title });
   }
 
   return (

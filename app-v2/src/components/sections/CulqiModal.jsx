@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
+import { track } from '../../lib/track.js';
 
 const DURATIONS = [
   { key: '1m', label: '1 mes' },
@@ -46,6 +47,13 @@ export default function CulqiModal({ planKey, onClose }) {
     }
     setError('');
     setProcessing(true);
+    track('begin_checkout', {
+      plan: planKey,
+      payment_type: isSub ? 'subscription' : 'onetime',
+      duration: isSub ? 'sub' : duration,
+      value: item.price,
+      currency: 'PEN',
+    });
     openCulqiCheckout({
       planKey,
       duration,

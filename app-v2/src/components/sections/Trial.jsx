@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import { track } from '../../lib/track.js';
 
 // Medidor de fortaleza — réplica exacta de passwordStrength() de la home.
 function passwordStrength(pw) {
@@ -67,8 +68,8 @@ export default function Trial() {
       });
       const data = await r.json();
       if (r.ok && data.success) {
-        if (typeof window.gtag === 'function') window.gtag('event', 'trial_signup', { method: 'web_form' });
-        if (typeof window.clarity === 'function') window.clarity('event', 'trial_signup');
+        track('trial_signup', { method: 'web_form' });
+        track('trial_activated', { method: 'web_form' });
         window.location.href = '/trial-success.html?email=' + encodeURIComponent(email.trim());
       } else {
         setFeedback({ type: 'err', msg: '✗ ' + (data.error || 'Hubo un error. Intenta de nuevo o escríbenos a bimsaddin@gmail.com') });

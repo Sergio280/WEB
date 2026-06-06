@@ -1,5 +1,6 @@
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import { track } from '../../lib/track.js';
 
 const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe';
 const PILLS = ['Windows 10 / 11', 'Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'];
@@ -17,12 +18,17 @@ export default function Download() {
           </p>
 
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="#trial" className="rounded-full bg-accent-emerald px-7 py-3.5 font-bold text-white transition-transform hover:-translate-y-0.5">
+            <a
+              href="#trial"
+              onClick={() => track('hero_cta_click', { cta: 'trial', context: 'download' })}
+              className="rounded-full bg-accent-emerald px-7 py-3.5 font-bold text-white transition-transform hover:-translate-y-0.5"
+            >
               🎁 Activar trial gratis 14 días
             </a>
             <a
               href={DOWNLOAD_URL}
               download
+              onClick={() => track('download_click')}
               className="rounded-full border border-white/20 bg-white/5 px-7 py-3.5 font-semibold text-slate-100 transition-colors hover:bg-white/10"
             >
               ⬇ Descargar instalador (requiere clave)
