@@ -4,6 +4,7 @@ import Navbar from './components/sections/Navbar.jsx';
 import Hero from './components/sections/Hero.jsx';
 import MarqueeStrip from './components/sections/MarqueeStrip.jsx';
 import VideoDemo from './components/sections/VideoDemo.jsx';
+import Clips from './components/sections/Clips.jsx';
 import Bento from './components/sections/Bento.jsx';
 import UseCases from './components/sections/UseCases.jsx';
 import Metrics from './components/sections/Metrics.jsx';
@@ -28,6 +29,7 @@ export default function App() {
         <Hero />
         <MarqueeStrip />
         <VideoDemo />
+        <Clips />
         <Bento />
         <UseCases />
         <Metrics />
