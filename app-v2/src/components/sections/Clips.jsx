@@ -69,7 +69,7 @@ function ClipCard({ clip, onPlay }) {
         {soon ? (
           <div className="eng-grid absolute inset-0 flex items-center justify-center">
             <span className="rounded-full border border-white/15 bg-ink-800/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-300">
-              Próximamente
+              Video próximamente
             </span>
           </div>
         ) : (
