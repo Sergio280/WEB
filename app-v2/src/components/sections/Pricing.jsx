@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG, PLAN_COMPARE } from '../../data/culqi.js';
+import { track } from '../../lib/track.js';
 
 const accentMap = {
   brand: { ring: 'border-brand-500/30', btn: 'bg-brand-500 hover:bg-brand-400', text: 'text-brand-300' },
@@ -12,9 +13,35 @@ const accentMap = {
 
 export default function Pricing() {
   const [modalPlan, setModalPlan] = useState(null);
+  const sectionRef = useRef(null);
+
+  // view_pricing: se dispara una vez cuando la sección entra en viewport.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    let fired = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !fired) {
+          fired = true;
+          track('view_pricing');
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  function openPlan(key) {
+    track('select_plan', { plan: key });
+    setModalPlan(key);
+  }
 
   return (
     <Section id="precios">
+      <div ref={sectionRef} />
       <Reveal className="text-center">
         <span className="eyebrow">Planes y precios</span>
         <h2 className="section-title mt-4">Activa BIMS al instante</h2>
@@ -64,21 +91,33 @@ export default function Pricing() {
                 </div>
 
                 {c.whatsapp ? (
-                  <a
-                    href={c.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`mt-5 rounded-xl ${a.btn} px-5 py-3 text-center font-bold text-white transition-colors`}
-                  >
-                    Contactar ventas
-                  </a>
+                  <>
+                    <a
+                      href={c.whatsapp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => track('whatsapp_click', { context: 'pricing_empresa' })}
+                      className={`mt-5 rounded-xl ${a.btn} px-5 py-3 text-center font-bold text-white transition-colors`}
+                    >
+                      Contactar ventas
+                    </a>
+                    <p className="mt-2 text-center text-xs text-slate-500">Cotización a medida · Respuesta el mismo día</p>
+                  </>
                 ) : (
-                  <button
-                    onClick={() => setModalPlan(c.key)}
-                    className={`mt-5 rounded-xl ${a.btn} px-5 py-3 font-bold text-white transition-colors`}
-                  >
-                    Elegir {c.badge}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => openPlan(c.key)}
+                      className={`mt-5 rounded-xl ${a.btn} px-5 py-3 font-bold text-white transition-colors`}
+                    >
+                      Comprar {c.badge}
+                    </button>
+                    <p className="mt-2 text-center text-xs text-slate-500">
+                      Pago seguro con Culqi · Clave por email en minutos
+                    </p>
+                    <a href="#trial" className="mt-1 text-center text-xs font-semibold text-brand-300 hover:text-white">
+                      o prueba 14 días gratis →
+                    </a>
+                  </>
                 )}
               </div>
             </Reveal>

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import WindowFrame from '../ui/WindowFrame.jsx';
+import { track } from '../../lib/track.js';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 26 },
@@ -55,7 +56,11 @@ export default function Hero() {
           </motion.div>
 
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4} className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#trial" className="btn-primary animate-pulse-ring text-base">
+            <a
+              href="#trial"
+              onClick={() => track('hero_cta_click', { cta: 'trial' })}
+              className="btn-primary animate-pulse-ring text-base"
+            >
               Empezar prueba gratis de 14 días →
             </a>
           </motion.div>
