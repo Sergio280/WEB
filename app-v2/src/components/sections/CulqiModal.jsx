@@ -3,19 +3,20 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
 import { track } from '../../lib/track.js';
-
-const DURATIONS = [
-  { key: '1m', label: '1 mes' },
-  { key: '3m', label: '3 meses' },
-  { key: '6m', label: '6 meses' },
-  { key: '12m', label: '1 año' },
-];
+import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Modal de compra: replica el flujo del modal MercadoPago/Culqi de la home.
+// Los precios y URLs de checkout viven en CULQI_CONFIG; el texto, en el idioma
+// activo (t.culqiModal).
 export default function CulqiModal({ planKey, onClose }) {
-  const plan = CULQI_CONFIG.plans[planKey];
+  const { t } = useLang();
+  const c = t.culqiModal;
+  const plan = CULQI_CONFIG.plans[planKey]; // precios + checkout
+  const tp = c.plans[planKey]; // texto: features, periods, savings
+  const badge = t.pricing.catalog[planKey].badge;
+
   const [paymentType, setPaymentType] = useState('onetime'); // 'onetime' | 'subscription'
   const [duration, setDuration] = useState('1m');
   const [email, setEmail] = useState('');
@@ -33,16 +34,17 @@ export default function CulqiModal({ planKey, onClose }) {
   }, [onClose]);
 
   const isSub = paymentType === 'subscription';
-  const item = isSub ? plan.subscription : plan[duration];
+  const price = isSub ? plan.subscription.price : plan[duration].price;
+  const savingsNote = isSub ? '' : tp.savings[duration];
 
   const periodText = useMemo(
-    () => (isSub ? '1er mes gratis · luego S/' + item.price + '/mes' : item.period),
-    [isSub, item]
+    () => (isSub ? c.subPeriod.replace('{price}', price) : tp.periods[duration]),
+    [isSub, price, duration, c, tp]
   );
 
   function handlePay() {
     if (!emailRe.test(email.trim())) {
-      setError('Ingresa un email válido.');
+      setError(c.emailError);
       return;
     }
     setError('');
@@ -51,7 +53,7 @@ export default function CulqiModal({ planKey, onClose }) {
       plan: planKey,
       payment_type: isSub ? 'subscription' : 'onetime',
       duration: isSub ? 'sub' : duration,
-      value: item.price,
+      value: price,
       currency: 'PEN',
     });
     openCulqiCheckout({
@@ -84,8 +86,8 @@ export default function CulqiModal({ planKey, onClose }) {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
-            <span className="rounded-full bg-brand-500/15 px-3 py-1 text-xs font-bold text-brand-300">{plan.badge}</span>
-            <button onClick={onClose} className="text-2xl leading-none text-slate-400 hover:text-white" aria-label="Cerrar">
+            <span className="rounded-full bg-brand-500/15 px-3 py-1 text-xs font-bold text-brand-300">{badge}</span>
+            <button onClick={onClose} className="text-2xl leading-none text-slate-400 hover:text-white" aria-label={c.closeAria}>
               ×
             </button>
           </div>
@@ -99,7 +101,7 @@ export default function CulqiModal({ planKey, onClose }) {
                   !isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
                 }`}
               >
-                Pago único
+                {c.onetime}
               </button>
               <button
                 onClick={() => setPaymentType('subscription')}
@@ -107,14 +109,14 @@ export default function CulqiModal({ planKey, onClose }) {
                   isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
                 }`}
               >
-                Suscripción mensual
+                {c.subscription}
               </button>
             </div>
 
             {/* Duración (solo pago único) */}
             {!isSub && (
               <div className="mb-5 grid grid-cols-4 gap-2">
-                {DURATIONS.map((d) => (
+                {c.durations.map((d) => (
                   <button
                     key={d.key}
                     onClick={() => setDuration(d.key)}
@@ -132,16 +134,16 @@ export default function CulqiModal({ planKey, onClose }) {
 
             {/* Precio */}
             <div className="mb-1 text-center">
-              <span className="font-display text-4xl font-extrabold text-white">S/{item.price}</span>
+              <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
             </div>
             <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
-            {item.savingsNote && (
-              <p className="mb-4 text-center text-xs font-semibold text-accent-green">{item.savingsNote}</p>
+            {savingsNote && (
+              <p className="mb-4 text-center text-xs font-semibold text-accent-green">{savingsNote}</p>
             )}
 
             {/* Features */}
             <ul className="mb-5 space-y-1.5">
-              {plan.features.map((f) => (
+              {tp.features.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm text-slate-300">
                   <span className="text-accent-green">✓</span>
                   {f}
@@ -150,12 +152,12 @@ export default function CulqiModal({ planKey, onClose }) {
             </ul>
 
             {/* Email */}
-            <label className="mb-1.5 block text-sm font-medium text-slate-300">Email para recibir tu clave</label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-300">{c.emailLabel}</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tunombre@empresa.com"
+              placeholder={c.emailPlaceholder}
               className="w-full rounded-lg border border-white/15 bg-ink-900 px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
             />
             {error && <p className="mt-2 text-sm text-rose-400">✗ {error}</p>}
@@ -165,9 +167,13 @@ export default function CulqiModal({ planKey, onClose }) {
               disabled={processing}
               className="mt-4 w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60"
             >
-              {processing ? 'Procesando…' : isSub ? `Suscribirme — S/${item.price}/mes` : `Pagar S/${item.price} con tarjeta`}
+              {processing
+                ? c.processing
+                : isSub
+                  ? c.subscribeBtn.replace('{price}', price)
+                  : c.payBtn.replace('{price}', price)}
             </button>
-            <p className="mt-3 text-center text-xs text-slate-500">Pago seguro con Culqi · Recibes tu clave por email</p>
+            <p className="mt-3 text-center text-xs text-slate-500">{c.secureNote}</p>
           </div>
         </motion.div>
       </motion.div>

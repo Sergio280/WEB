@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
-import { CATALOG, PLAN_COMPARE } from '../../data/culqi.js';
+import { CATALOG } from '../../data/culqi.js';
 import { track } from '../../lib/track.js';
+import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 const accentMap = {
   brand: { ring: 'border-brand-500/30', btn: 'bg-brand-500 hover:bg-brand-400', text: 'text-brand-300' },
@@ -12,6 +13,8 @@ const accentMap = {
 };
 
 export default function Pricing() {
+  const { t } = useLang();
+  const p = t.pricing;
   const [modalPlan, setModalPlan] = useState(null);
   const sectionRef = useRef(null);
 
@@ -43,19 +46,16 @@ export default function Pricing() {
     <Section id="precios">
       <div ref={sectionRef} />
       <Reveal className="text-center">
-        <span className="eyebrow">Planes y precios</span>
-        <h2 className="section-title mt-4">Activa BIMS al instante</h2>
-        <p className="mt-3 text-slate-400">
-          Paga seguro con tarjeta a través de Culqi y recibe tu clave por email en minutos.
-        </p>
+        <span className="eyebrow">{p.eyebrow}</span>
+        <h2 className="section-title mt-4">{p.title}</h2>
+        <p className="mt-3 text-slate-400">{p.subtitle}</p>
       </Reveal>
 
       {/* Garantía */}
       <Reveal delay={0.05} className="mx-auto mt-8 flex max-w-2xl items-center gap-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/[0.07] p-5">
         <span className="text-3xl">🛡️</span>
         <p className="text-sm leading-relaxed text-slate-300">
-          <strong className="text-white">Garantía de 7 días.</strong> Si BIMS no te convence, escríbenos dentro de los 7
-          días siguientes a tu compra y te devolvemos el 100% de tu dinero. Sin preguntas.
+          <strong className="text-white">{p.guaranteeStrong}</strong>{p.guaranteeRest}
         </p>
       </Reveal>
 
@@ -63,6 +63,7 @@ export default function Pricing() {
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         {CATALOG.map((c, i) => {
           const a = accentMap[c.accent];
+          const txt = p.catalog[c.key];
           return (
             <Reveal key={c.key} delay={i * 0.08}>
               <div
@@ -70,23 +71,23 @@ export default function Pricing() {
                   c.featured ? 'lg:scale-[1.03]' : ''
                 }`}
               >
-                {c.ribbon && (
+                {txt.ribbon && (
                   <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-amber-400 to-amber-500 px-4 py-1 text-xs font-extrabold uppercase tracking-wide text-ink-950">
-                    {c.ribbon}
+                    {txt.ribbon}
                   </span>
                 )}
-                <span className={`text-xs font-bold uppercase tracking-wider ${a.text}`}>{c.badge}</span>
-                <h3 className="mt-2 font-display text-xl font-extrabold text-white">{c.name}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{c.desc}</p>
+                <span className={`text-xs font-bold uppercase tracking-wider ${a.text}`}>{txt.badge}</span>
+                <h3 className="mt-2 font-display text-xl font-extrabold text-white">{txt.name}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{txt.desc}</p>
 
                 <div className="mt-5">
                   {c.priceFrom != null ? (
                     <p className="font-display text-3xl font-extrabold text-white">
-                      desde S/{c.priceFrom}
-                      <span className="text-sm font-semibold text-slate-500"> /mes</span>
+                      {p.priceFrom}{c.priceFrom}
+                      <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                     </p>
                   ) : (
-                    <p className="font-display text-2xl font-extrabold text-white">A medida</p>
+                    <p className="font-display text-2xl font-extrabold text-white">{p.custom}</p>
                   )}
                 </div>
 
@@ -99,9 +100,9 @@ export default function Pricing() {
                       onClick={() => track('whatsapp_click', { context: 'pricing_empresa' })}
                       className={`mt-5 rounded-xl ${a.btn} px-5 py-3 text-center font-bold text-white transition-colors`}
                     >
-                      Contactar ventas
+                      {p.contactSales}
                     </a>
-                    <p className="mt-2 text-center text-xs text-slate-500">Cotización a medida · Respuesta el mismo día</p>
+                    <p className="mt-2 text-center text-xs text-slate-500">{p.contactNote}</p>
                   </>
                 ) : (
                   <>
@@ -109,13 +110,11 @@ export default function Pricing() {
                       onClick={() => openPlan(c.key)}
                       className={`mt-5 rounded-xl ${a.btn} px-5 py-3 font-bold text-white transition-colors`}
                     >
-                      Comprar {c.badge}
+                      {p.buy}{txt.badge}
                     </button>
-                    <p className="mt-2 text-center text-xs text-slate-500">
-                      Pago seguro con Culqi · Clave por email en minutos
-                    </p>
+                    <p className="mt-2 text-center text-xs text-slate-500">{p.buyNote}</p>
                     <a href="#trial" className="mt-1 text-center text-xs font-semibold text-brand-300 hover:text-white">
-                      o prueba 14 días gratis →
+                      {p.orTrial}
                     </a>
                   </>
                 )}
@@ -126,8 +125,7 @@ export default function Pricing() {
       </div>
 
       <p className="mx-auto mt-6 max-w-xl text-center text-sm text-slate-500">
-        Al comprar eliges la duración: <strong className="text-slate-300">1, 3, 6 o 12 meses</strong>. Mientras más larga
-        la licencia, mayor el descuento — hasta <strong className="text-slate-300">−17%</strong> frente al precio mensual.
+        {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount}</strong>{p.footnotePost}
       </p>
 
       {/* Tabla comparativa */}
@@ -135,8 +133,8 @@ export default function Pricing() {
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-ink-900 text-white">
-              <th className="px-4 py-3 text-left font-bold">Qué incluye</th>
-              {PLAN_COMPARE.cols.map((col, i) => (
+              <th className="px-4 py-3 text-left font-bold">{p.tableHead}</th>
+              {p.compare.cols.map((col, i) => (
                 <th key={col} className={`px-4 py-3 text-center font-bold ${i === 1 ? 'bg-violet-500/15 text-violet-200' : ''}`}>
                   {col}
                 </th>
@@ -144,7 +142,7 @@ export default function Pricing() {
             </tr>
           </thead>
           <tbody>
-            {PLAN_COMPARE.rows.map((row) => (
+            {p.compare.rows.map((row) => (
               <tr key={row.label} className="border-t border-white/5">
                 <td className="px-4 py-3 text-slate-300">{row.label}</td>
                 {row.cells.map((cell, i) => (
