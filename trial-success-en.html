@@ -205,7 +205,7 @@
             </div>
             <div style="flex:1;line-height:1.45;">
                 <strong id="dlTitle" style="display:block;font-size:1.02em;">Downloading BIMS…</strong>
-                <span id="dlSub" style="font-size:0.88em;opacity:0.95;">Your installer will start downloading in a moment.</span>
+                <span id="dlSub" style="font-size:0.88em;opacity:0.95;">Your installer will start downloading in just a moment.</span>
             </div>
         </div>
         <style>
@@ -218,14 +218,14 @@
                 <div class="step-num">1</div>
                 <div class="step-text">
                     <strong>Install BIMS</strong>
-                    Run the installer you just downloaded (takes ~1 minute). Compatible with Revit 2024, 2025 and 2026.
+                    Run the installer you just downloaded (it takes about 1 minute). Works with Revit 2024, 2025 and 2026.
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">2</div>
                 <div class="step-text">
                     <strong>Open Revit and sign in to BIMS</strong>
-                    Use the email and password you just created. Ready to use for 14 days!
+                    Use the email and password you just created. You're all set for 14 days!
                 </div>
             </div>
         </div>
@@ -237,11 +237,11 @@
             <a href="/" class="btn btn-secondary">← Back to home</a>
         </div>
         <p style="text-align:center;margin-top:14px;font-size:0.86em;color:#888;">
-            Download didn't start? Press the <strong style="color:#0f4d9e;">“Download installer”</strong> button.
+            Download didn't start? Just click the <strong style="color:#0f4d9e;">“Download installer”</strong> button.
         </p>
 
         <p class="footer-help">
-            Having trouble? Write to us at <a href="mailto:bimsaddin@gmail.com">bimsaddin@gmail.com</a> or via
+            Having trouble? Reach out at <a href="mailto:bimsaddin@gmail.com">bimsaddin@gmail.com</a> or via
             <a href="https://wa.me/51989455558" target="_blank" rel="noopener">WhatsApp</a>.
         </p>
     </div>
@@ -291,12 +291,12 @@
                         if (spinner)   spinner.style.display = 'none';
                         if (checkIcon) checkIcon.style.display = 'inline';
                         if (title)     title.textContent = '✓ Download started';
-                        if (sub)       sub.textContent = 'Check your browser’s download bar. Nothing there? Tap “Download installer” below.';
+                        if (sub)       sub.textContent = 'Check your browser’s downloads bar. Nothing there? Tap “Download installer” below.';
                     }, 1500);
                 } catch (e) {
                     // Si el browser bloquea, mostrar mensaje claro y dejar visible el botón manual
                     if (spinner) spinner.style.display = 'none';
-                    if (title)   title.textContent = 'The download could not be started';
+                    if (title)   title.textContent = 'We couldn’t start the download';
                     if (sub)     sub.textContent = 'Please press “Download installer” below to start it manually.';
                 }
             }
