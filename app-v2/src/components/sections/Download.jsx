@@ -85,7 +85,7 @@ export default function Download() {
           <h3 className="font-display font-bold text-white">{d.privacyTitle}</h3>
           <p className="mt-1 text-sm leading-relaxed text-slate-400">
             {d.privacyDesc}
-            <a href="/privacy-policy.html" className="font-semibold text-brand-300 hover:text-white">
+            <a href={d.privacyHref} className="font-semibold text-brand-300 hover:text-white">
               {d.privacyLink}
             </a>
           </p>

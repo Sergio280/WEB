@@ -59,9 +59,16 @@ export function LanguageProvider({ children }) {
     };
   }, [explicit]);
 
-  // Mantener <html lang> sincronizado.
+  // Mantener <html lang>, <title> y la meta description sincronizados con el
+  // idioma activo (accesibilidad y SEO básico para la SPA).
   useEffect(() => {
     document.documentElement.lang = lang;
+    const meta = translations[lang].meta;
+    if (meta) {
+      document.title = meta.title;
+      const desc = document.querySelector('meta[name="description"]');
+      if (desc) desc.setAttribute('content', meta.description);
+    }
   }, [lang]);
 
   function setLang(next) {

@@ -66,7 +66,7 @@ export default function Trial() {
       if (r.ok && data.success) {
         track('trial_signup', { method: 'web_form' });
         track('trial_activated', { method: 'web_form' });
-        window.location.href = '/trial-success.html?email=' + encodeURIComponent(email.trim());
+        window.location.href = tr.successUrl + '?email=' + encodeURIComponent(email.trim());
       } else {
         setFeedback({ type: 'err', msg: '✗ ' + (data.error || tr.errGeneric) });
         setSubmitting(false);
@@ -187,8 +187,8 @@ export default function Trial() {
 
               <p className="text-xs leading-relaxed text-slate-500">
                 {tr.termsPre}
-                <a href="/terminos.html" className="text-brand-300 hover:underline">{tr.termsLink}</a>{tr.termsMid}
-                <a href="/privacy-policy.html" className="text-brand-300 hover:underline">{tr.privacyLink}</a>{tr.termsPost}
+                <a href={tr.termsHref} className="text-brand-300 hover:underline">{tr.termsLink}</a>{tr.termsMid}
+                <a href={tr.privacyHref} className="text-brand-300 hover:underline">{tr.privacyLink}</a>{tr.termsPost}
               </p>
             </div>
           </form>

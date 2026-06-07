@@ -61,6 +61,13 @@ export default function CulqiModal({ planKey, onClose }) {
       duration,
       isSub,
       email: email.trim(),
+      // Textos y destino localizados para el checkout y la redirección final.
+      title: `BIMS — ${badge}`,
+      description: isSub ? c.subscription : periodText,
+      successUrl: c.successUrl,
+      errLoad: c.errLoad,
+      errRejected: c.errRejected,
+      errPay: c.errPay,
       onProcessing: () => setProcessing(true),
       onError: (msg) => {
         setProcessing(false);

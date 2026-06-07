@@ -42,6 +42,11 @@ export const translations = {
   es: {
     langSwitch: { label: 'EN', aria: 'Ver la página en inglés', toGo: 'English' },
 
+    meta: {
+      title: 'BIMS — Automatiza encofrado, tarrajeo y planos DWG en Revit',
+      description: 'BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.',
+    },
+
     announce: {
       gift: '🎁',
       free: '14 días GRATIS',
@@ -429,6 +434,10 @@ export const translations = {
       subscribeBtn: 'Suscribirme — S/{price}/mes',
       payBtn: 'Pagar S/{price} con tarjeta',
       secureNote: 'Pago seguro con Culqi · Recibes tu clave por email',
+      successUrl: '/success.html',
+      errLoad: 'No se pudo cargar el checkout. Recarga la página.',
+      errRejected: 'Pago rechazado',
+      errPay: 'Error al procesar el pago. Intenta de nuevo.',
       plans: {
         individual: {
           features: ['Todos los paneles BIMS', '1 equipo / 1 usuario', 'Actualizaciones incluidas', 'Soporte por email (48 h)'],
@@ -504,6 +513,9 @@ export const translations = {
       termsMid: ' y ',
       privacyLink: 'política de privacidad',
       termsPost: '. Tu email se usa solo para avisos de tu licencia.',
+      termsHref: '/terminos.html',
+      privacyHref: '/privacy-policy.html',
+      successUrl: '/trial-success.html',
     },
 
     testimonials: {
@@ -552,6 +564,7 @@ export const translations = {
       privacyTitle: 'Privacidad y Seguridad',
       privacyDesc: 'BIMS solo recopila los datos estrictamente necesarios para activar tu licencia y entregar actualizaciones. Toda la información se almacena de forma segura en servidores de Google Cloud. Nunca vendemos ni compartimos tus datos con terceros para fines de marketing. ',
       privacyLink: '→ Leer la Política de Privacidad completa',
+      privacyHref: '/privacy-policy.html',
     },
 
     footer: {
@@ -589,6 +602,11 @@ export const translations = {
   // ───────────────────────────────────────────────────────────────────────────
   en: {
     langSwitch: { label: 'ES', aria: 'View the page in Spanish', toGo: 'Español' },
+
+    meta: {
+      title: 'BIMS — Automate formwork, plastering and DWG sheets in Revit',
+      description: 'BIMS — Professional Autodesk Revit add-in that automates formwork, rebar, plastering and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.',
+    },
 
     announce: {
       gift: '🎁',
@@ -977,6 +995,10 @@ export const translations = {
       subscribeBtn: 'Subscribe — S/{price}/mo',
       payBtn: 'Pay S/{price} by card',
       secureNote: 'Secure payment with Culqi · You receive your key by email',
+      successUrl: '/success-en.html',
+      errLoad: 'Couldn’t load the checkout. Please reload the page.',
+      errRejected: 'Payment declined',
+      errPay: 'Error processing the payment. Please try again.',
       plans: {
         individual: {
           features: ['All BIMS panels', '1 machine / 1 user', 'Updates included', 'Email support (48 h)'],
@@ -1052,6 +1074,9 @@ export const translations = {
       termsMid: ' and ',
       privacyLink: 'privacy policy',
       termsPost: '. Your email is used only for license notices.',
+      termsHref: '/terminos-en.html',
+      privacyHref: '/privacy-policy-en.html',
+      successUrl: '/trial-success-en.html',
     },
 
     testimonials: {
@@ -1100,6 +1125,7 @@ export const translations = {
       privacyTitle: 'Privacy and Security',
       privacyDesc: 'BIMS only collects the data strictly necessary to activate your license and deliver updates. All information is stored securely on Google Cloud servers. We never sell or share your data with third parties for marketing purposes. ',
       privacyLink: '→ Read the full Privacy Policy',
+      privacyHref: '/privacy-policy-en.html',
     },
 
     footer: {
@@ -1121,8 +1147,8 @@ export const translations = {
       pricingEnterprise: 'Enterprise — Inquire',
       enterpriseSubject: 'BIMS%20Enterprise%20License',
       legal: [
-        { href: '/privacy-policy.html', label: 'Privacy Policy' },
-        { href: '/terminos.html', label: 'Terms & Conditions' },
+        { href: '/privacy-policy-en.html', label: 'Privacy Policy' },
+        { href: '/terminos-en.html', label: 'Terms & Conditions' },
         { href: '/libro-reclamaciones.html', label: 'Complaints Book' },
       ],
       copyright: '© 2026 BIMS. All rights reserved.',
