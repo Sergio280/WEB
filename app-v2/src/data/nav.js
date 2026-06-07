@@ -31,6 +31,11 @@ export const CLIPS = [
     desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.',
   },
   {
+    yt: 'LHT5X_6WhLE',
+    title: 'Importa DWG, escala sólidos y exporta a familia .RFA',
+    desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.',
+  },
+  {
     yt: '',
     title: 'Asigna rejillas a cientos de elementos',
     desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.',
