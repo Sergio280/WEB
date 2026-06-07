@@ -165,7 +165,10 @@ export default function UseCases() {
       <Reveal className="text-center">
         <span className="eyebrow">Casos de uso práctico</span>
         <h2 className="section-title mt-4">Flujos completos de principio a fin</h2>
-        <p className="mt-3 text-slate-400">Cómo BIMS resuelve tareas reales de documentación</p>
+        <p className="mx-auto mt-3 max-w-2xl text-slate-400">
+          Elige una tarea y mira, paso a paso, cómo BIMS la resuelve dentro de Revit — desde la selección de
+          elementos hasta el resultado listo para metrar o entregar.
+        </p>
       </Reveal>
 
       {/* Tabs */}
@@ -196,9 +199,12 @@ export default function UseCases() {
         >
           {/* Stepper */}
           <div>
-            <h3 className="border-b border-white/10 pb-4 font-display text-lg font-bold leading-snug text-white">
+            <h3 className="font-display text-lg font-bold leading-snug text-white">
               {uc.title}
             </h3>
+            {uc.intro && (
+              <p className="mt-3 border-b border-white/10 pb-5 text-sm leading-relaxed text-slate-400">{uc.intro}</p>
+            )}
             <ol className="mt-6 space-y-5">
               {uc.steps.map((s) => (
                 <li key={s.n} className="flex gap-4">
