@@ -13,6 +13,14 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# ── Geolocalización por IP (idioma automático de la landing) ──────────────────
+# Edge function que devuelve el país del visitante (context.geo) en /api/geo.
+# La landing /v2 la usa para mostrar la página en inglés fuera de países
+# hispanohablantes en la primera visita.
+[[edge_functions]]
+  path     = "/api/geo"
+  function = "geo"
+
 # ── Headers de seguridad globales ─────────────────────────────────────────────
 [[headers]]
   for = "/*"

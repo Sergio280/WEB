@@ -8,3 +8,6 @@ node_modules/
 
 # Visual Studio
 .vs/
+
+# Build output (lo genera Netlify en el deploy)
+dist/

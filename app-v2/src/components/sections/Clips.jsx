@@ -4,9 +4,10 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { CLIPS } from '../../data/nav.js';
 import { track } from '../../lib/track.js';
+import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 // Lightbox modal que reproduce el clip de YouTube seleccionado.
-function Lightbox({ clip, onClose }) {
+function Lightbox({ clip, onClose, labels }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
@@ -36,9 +37,9 @@ function Lightbox({ clip, onClose }) {
         <button
           onClick={onClose}
           className="absolute -top-11 right-0 flex items-center gap-1.5 text-sm font-semibold text-slate-300 hover:text-white"
-          aria-label="Cerrar"
+          aria-label={labels.closeAria}
         >
-          Cerrar ✕
+          {labels.close}
         </button>
         <div className="aspect-video overflow-hidden rounded-2xl border border-white/15 shadow-glow-lg">
           <iframe
@@ -55,7 +56,7 @@ function Lightbox({ clip, onClose }) {
   );
 }
 
-function ClipCard({ clip, onPlay }) {
+function ClipCard({ clip, onPlay, soonLabel }) {
   const soon = !clip.yt;
   return (
     <button
@@ -70,7 +71,7 @@ function ClipCard({ clip, onPlay }) {
         {soon ? (
           <div className="eng-grid absolute inset-0 flex items-center justify-center">
             <span className="rounded-full border border-white/15 bg-ink-800/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-slate-300">
-              Video próximamente
+              {soonLabel}
             </span>
           </div>
         ) : (
@@ -100,7 +101,11 @@ function ClipCard({ clip, onPlay }) {
 }
 
 export default function Clips() {
+  const { t } = useLang();
   const [active, setActive] = useState(null);
+
+  // Combina los IDs de YouTube (data) con los textos del idioma activo.
+  const clips = CLIPS.map((c, i) => ({ yt: c.yt, ...t.clips.items[i] }));
 
   function play(clip) {
     setActive(clip);
@@ -110,21 +115,27 @@ export default function Clips() {
   return (
     <Section id="clips">
       <Reveal className="text-center">
-        <span className="eyebrow">En acción</span>
-        <h2 className="section-title mt-4">BIMS en acción, comando por comando</h2>
-        <p className="mt-3 text-slate-400">Clips cortos: mira cada herramienta resolver una tarea real de Revit</p>
+        <span className="eyebrow">{t.clips.eyebrow}</span>
+        <h2 className="section-title mt-4">{t.clips.title}</h2>
+        <p className="mt-3 text-slate-400">{t.clips.subtitle}</p>
       </Reveal>
 
       <Reveal delay={0.1} className="mt-12">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {CLIPS.map((clip, i) => (
-            <ClipCard key={clip.title} clip={clip} onPlay={play} />
+          {clips.map((clip) => (
+            <ClipCard key={clip.title} clip={clip} onPlay={play} soonLabel={t.clips.soon} />
           ))}
         </div>
       </Reveal>
 
       <AnimatePresence>
-        {active && <Lightbox clip={active} onClose={() => setActive(null)} />}
+        {active && (
+          <Lightbox
+            clip={active}
+            onClose={() => setActive(null)}
+            labels={{ close: t.clips.close, closeAria: t.clips.closeAria }}
+          />
+        )}
       </AnimatePresence>
     </Section>
   );

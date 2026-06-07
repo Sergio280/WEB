@@ -37,14 +37,14 @@ export function useCulqi() {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            window.location.href = '/success.html';
+            window.location.href = ctx.successUrl || '/success.html';
           } else {
-            throw new Error(data.error || 'Pago rechazado');
+            throw new Error(data.error || ctx.errRejected || 'Pago rechazado');
           }
         })
         .catch((err) => {
           console.error('[BIMS] Error de pago:', err);
-          if (ctx.onError) ctx.onError(err.message || 'Error al procesar el pago. Intenta de nuevo.');
+          if (ctx.onError) ctx.onError(err.message || ctx.errPay || 'Error al procesar el pago. Intenta de nuevo.');
         });
     };
 
@@ -55,10 +55,23 @@ export function useCulqi() {
 }
 
 // Abre el checkout de Culqi para un plan/duración/tipo concretos.
-export function openCulqiCheckout({ planKey, duration, isSub, email, onProcessing, onError }) {
+export function openCulqiCheckout({
+  planKey,
+  duration,
+  isSub,
+  email,
+  title,
+  description,
+  successUrl,
+  errLoad,
+  errRejected,
+  errPay,
+  onProcessing,
+  onError,
+}) {
   const plan = CULQI_CONFIG.plans[planKey];
   if (!plan || !window.Culqi) {
-    if (onError) onError('No se pudo cargar el checkout. Recarga la página.');
+    if (onError) onError(errLoad || 'No se pudo cargar el checkout. Recarga la página.');
     return;
   }
   const item = isSub ? plan.subscription : plan[duration];
@@ -66,12 +79,14 @@ export function openCulqiCheckout({ planKey, duration, isSub, email, onProcessin
 
   window.Culqi.publicKey = CULQI_PUBLIC_KEY;
   window.Culqi.settings({
-    title: 'BIMS — ' + plan.name,
+    title: title || 'BIMS — ' + plan.name,
     currency: 'PEN',
-    description: isSub ? 'Suscripción mensual' : item.period,
+    description: description || (isSub ? 'Suscripción mensual' : item.period),
     amount: amountCentavos,
   });
 
-  window._culqiContext = { email, plan: planKey, isSub, duration, onProcessing, onError };
+  // El callback global window.culqi lee estos valores para la redirección y los
+  // mensajes de error en el idioma correcto.
+  window._culqiContext = { email, plan: planKey, isSub, duration, successUrl, errRejected, errPay, onProcessing, onError };
   window.Culqi.open({ email });
 }
