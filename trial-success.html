@@ -230,6 +230,20 @@
             </div>
         </div>
 
+        <!-- Aviso SmartScreen: BIMS aún sin firma digital (certificado EV). Evita que
+             el usuario abandone al ver la advertencia azul de Windows al ejecutar el
+             instalador — es la principal fuga entre "descarga" e "instalación". -->
+        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:12px;padding:16px 18px;margin:0 0 22px;text-align:left;line-height:1.5;">
+            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ Si Windows muestra una advertencia al instalar</strong>
+            <span style="font-size:0.88em;color:#5c4a1a;">
+                BIMS es nuevo y todavía está tramitando su firma digital, por lo que <strong>Windows SmartScreen</strong> puede mostrar un aviso de “editor desconocido”. <strong>No es un virus.</strong> Si aparece la ventana azul «Windows protegió tu PC»:
+            </span>
+            <ol style="margin:10px 0 0;padding-left:20px;font-size:0.88em;color:#5c4a1a;">
+                <li>Haz clic en <strong>“Más información”</strong>.</li>
+                <li>Pulsa <strong>“Ejecutar de todas formas”</strong>.</li>
+            </ol>
+        </div>
+
         <div class="actions">
             <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe" class="btn btn-primary" download>
                 ⬇ Descargar instalador

@@ -230,6 +230,20 @@
             </div>
         </div>
 
+        <!-- SmartScreen notice: BIMS not yet code-signed (EV certificate). Prevents
+             users from bailing when Windows shows the blue warning while running the
+             installer — the main drop-off between "download" and "install". -->
+        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:12px;padding:16px 18px;margin:0 0 22px;text-align:left;line-height:1.5;">
+            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ If Windows shows a warning during installation</strong>
+            <span style="font-size:0.88em;color:#5c4a1a;">
+                BIMS is new and still getting its digital signature, so <strong>Windows SmartScreen</strong> may show an “unknown publisher” notice. <strong>It's not a virus.</strong> If the blue “Windows protected your PC” window appears:
+            </span>
+            <ol style="margin:10px 0 0;padding-left:20px;font-size:0.88em;color:#5c4a1a;">
+                <li>Click <strong>“More info”</strong>.</li>
+                <li>Click <strong>“Run anyway”</strong>.</li>
+            </ol>
+        </div>
+
         <div class="actions">
             <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe" class="btn btn-primary" download>
                 ⬇ Download installer
