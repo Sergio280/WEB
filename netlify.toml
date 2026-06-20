@@ -13,6 +13,13 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# ── Función programada: reporta activaciones reales a Google Ads ───────────────
+# Cada hora busca activaciones nuevas del plugin (users_v2/.../activations) y las
+# sube como conversiones offline para que Ads optimice por instalaciones reales
+# y no por registros de formulario. Idempotente (marca adsConversionSent).
+[functions."report-activations"]
+  schedule = "@hourly"
+
 # ── Geolocalización por IP (idioma automático de la landing) ──────────────────
 # Edge function que devuelve el país del visitante (context.geo) en /api/geo.
 # La landing /v2 la usa para mostrar la página en inglés fuera de países

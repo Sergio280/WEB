@@ -3849,6 +3849,29 @@
             attachToggle(togglePw1, pwInput);
             attachToggle(togglePw2, pw2Input);
 
+            // ── Captura del gclid del anuncio (Google Ads) ───────────────────
+            // Lo guardamos al cargar y lo leemos al enviar, para atribuir luego
+            // la ACTIVACIÓN real como conversión offline (ver report-activations).
+            // Cubre también gbraid/wbraid (iOS/web sin cookies). TTL 90 días.
+            (function captureGclid() {
+                try {
+                    const p = new URLSearchParams(window.location.search);
+                    const id = p.get('gclid') || p.get('gbraid') || p.get('wbraid');
+                    if (id && /^[A-Za-z0-9._-]+$/.test(id)) {
+                        localStorage.setItem('bims_gclid', JSON.stringify({ id: id, at: Date.now() }));
+                    }
+                } catch (e) { /* modo privado: ignorar */ }
+            })();
+            function getStoredGclid() {
+                try {
+                    const raw = localStorage.getItem('bims_gclid');
+                    if (!raw) return '';
+                    const o = JSON.parse(raw);
+                    if (!o || !o.id || !o.at || Date.now() - o.at > 90 * 86400000) return '';
+                    return o.id;
+                } catch (e) { return ''; }
+            }
+
             // ── Submit ──────────────────────────────────────────────────────
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -3883,7 +3906,7 @@
                     const r = await fetch('/api/trial', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, name, company, password, honeypot })
+                        body: JSON.stringify({ email, name, company, password, honeypot, gclid: getStoredGclid() })
                     });
                     const data = await r.json();
 
