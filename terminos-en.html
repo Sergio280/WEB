@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions — BIMS</title>
+    <meta name="description" content="Terms and conditions of use, returns and refund policy for BIMS.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --blue:    #1a6fe0;
+            --blue-dk: #0d4baa;
+            --bg:      #edf0f7;
+            --text:    #141926;
+            --muted:   #5a6a88;
+            --border:  rgba(18,50,130,.09);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(145deg, #0d3f96 0%, #1a6fe0 35%, #0a3580 65%, #07214f 100%);
+            color: white;
+            padding: 52px 20px 44px;
+            text-align: center;
+        }
+
+        .header-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,.7);
+            text-decoration: none;
+            font-size: .88em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: color .2s;
+        }
+        .header-back:hover { color: white; }
+
+        header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2em;
+            font-weight: 800;
+            letter-spacing: -.02em;
+        }
+
+        header p {
+            margin-top: 8px;
+            opacity: .8;
+            font-size: .95em;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 48px 20px 80px;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,20,80,.06), 0 8px 24px rgba(0,20,80,.06);
+            padding: 40px 44px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 28px 22px; }
+        }
+
+        /* Typography */
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--blue);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eef3ff;
+            letter-spacing: -.01em;
+        }
+
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: var(--text);
+            margin: 20px 0 8px;
+        }
+
+        p { color: #3a4a62; margin-bottom: 12px; font-size: .95em; }
+        p:last-child { margin-bottom: 0; }
+
+        ul {
+            list-style: none;
+            margin: 10px 0 14px;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: #3a4a62;
+            font-size: .95em;
+        }
+
+        ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .update-date {
+            text-align: center;
+            font-size: .82em;
+            color: var(--muted);
+            margin-bottom: 28px;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background: #f0f6ff;
+            border: 1px solid #c8deff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            font-size: .93em;
+            color: #1e3a6e;
+        }
+
+        .warning-box {
+            background: #fff8f0;
+            border: 1px solid #ffd4a0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 14px 0;
+            font-size: .93em;
+            color: #7a3a00;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(150deg, #0d1628 0%, #111d34 60%, #080f1e 100%);
+            color: rgba(255,255,255,.45);
+            text-align: center;
+            padding: 28px 20px;
+            font-size: .83em;
+        }
+
+        footer a { color: rgba(255,255,255,.6); text-decoration: none; }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="/" class="header-back">← Back to BIMS</a>
+    <h1>Terms and Conditions</h1>
+    <p>Terms of use, licensing and refund policy</p>
+</header>
+
+<div class="container">
+    <p class="update-date">Last updated: March 2026</p>
+
+    <!-- 1. Generalidades -->
+    <div class="card">
+        <h2>1. Acceptance of the terms</h2>
+        <p>By downloading, installing or using the BIMS plugin ("the Software"), you agree to be bound by these Terms and Conditions. If you do not agree with any of these terms, do not use the Software.</p>
+        <p>BIMS is a plugin for Autodesk Revit developed and marketed by <strong>BIMS</strong>, with RUC (tax ID) and contact details available in the contact section of this site.</p>
+    </div>
+
+    <!-- 2. Licencia -->
+    <div class="card">
+        <h2>2. License terms</h2>
+        <p>BIMS grants the user a personal, non-exclusive, non-transferable and revocable license to use the Software under the following conditions:</p>
+        <ul>
+            <li><strong>Individual Plan:</strong> use on 1 (one) device per registered user.</li>
+            <li><strong>Professional Plan:</strong> use on up to 3 (three) devices per registered user.</li>
+            <li><strong>Enterprise Plan:</strong> number of devices as set out in the contract agreed with BIMS.</li>
+        </ul>
+        <div class="highlight-box">
+            The license is personal and non-transferable. Sharing, reselling, sublicensing or assigning access to third parties is prohibited.
+        </div>
+        <h3>Restrictions</h3>
+        <ul>
+            <li>You may not decompile, reverse-engineer or modify the Software.</li>
+            <li>You may not remove intellectual property notices from the Software.</li>
+            <li>You may not use the Software for unlawful purposes or in any way that infringes the rights of third parties.</li>
+        </ul>
+    </div>
+
+    <!-- 3. Planes y pagos -->
+    <div class="card">
+        <h2>3. Plans, prices and payments</h2>
+        <h3>Trial period</h3>
+        <p>BIMS offers a free evaluation period of <strong>30 days</strong> from the first activation, with no payment details required. When the trial period expires, the Software is deactivated until a plan is purchased.</p>
+
+        <h3>One-time payment plans</h3>
+        <p>You may purchase a license for a term of 1, 3, 6 or 12 months through a single, non-recurring payment. The license expires at the end of the purchased term.</p>
+
+        <h3>Subscription plans</h3>
+        <p>Under the subscription model, you are billed automatically on a monthly basis. You may cancel at any time without penalty, and the license will remain active until the end of the period already paid for.</p>
+
+        <h3>Current prices</h3>
+        <ul>
+            <li>Individual Plan 1 month: S/ 60</li>
+            <li>Individual Plan 3 months: S/ 160</li>
+            <li>Individual Plan 6 months: S/ 300</li>
+            <li>Individual Plan 12 months: S/ 596</li>
+            <li>Professional Plan 1 month: S/ 100</li>
+            <li>Professional Plan 3 months: S/ 268</li>
+            <li>Professional Plan 6 months: S/ 500</li>
+            <li>Professional Plan 12 months: S/ 996</li>
+        </ul>
+        <p>All prices include IGV (VAT). BIMS reserves the right to modify prices with a minimum of 30 days' prior notice.</p>
+    </div>
+
+    <!-- 4. Devoluciones -->
+    <div class="card">
+        <h2>4. Returns and refund policy</h2>
+
+        <h3>Right of withdrawal</h3>
+        <p>In accordance with the Consumer Protection and Defense Code (Law No. 29571), the user has the right to request a full refund within <strong>7 calendar days</strong> following the payment date, provided that:</p>
+        <ul>
+            <li>The Software has serious technical faults that prevent its normal use and BIMS has been unable to resolve them within a reasonable timeframe.</li>
+            <li>The Software has not been activated or used on any device.</li>
+        </ul>
+
+        <div class="warning-box">
+            <strong>No refund applies</strong> when the Software has been downloaded, activated and used during the 30-day free trial period prior to purchase, given that the user had the opportunity to evaluate the product at no cost.
+        </div>
+
+        <h3>Request procedure</h3>
+        <ul>
+            <li>Send an email to <strong>bimsaddin@gmail.com</strong> with the subject "REFUND REQUEST".</li>
+            <li>Indicate: full name, registration email, transaction number and reason.</li>
+            <li>BIMS will respond within a maximum of 5 business days.</li>
+            <li>An approved refund will be processed within 7 to 15 business days depending on the payment method used.</li>
+        </ul>
+    </div>
+
+    <!-- 5. Actualizaciones -->
+    <div class="card">
+        <h2>5. Updates and support</h2>
+        <p>Software updates are published on this website and are available to all users with an active license at no additional cost.</p>
+        <p>Technical support is provided according to the contracted plan:</p>
+        <ul>
+            <li><strong>Individual Plan:</strong> email support with a response within 48 business hours.</li>
+            <li><strong>Professional Plan:</strong> priority support with a response within 24 business hours.</li>
+            <li><strong>Enterprise Plan:</strong> dedicated support, training and customization as per contract.</li>
+        </ul>
+    </div>
+
+    <!-- 6. Propiedad intelectual -->
+    <div class="card">
+        <h2>6. Intellectual property</h2>
+        <p>The Software, its source code, design, documentation and all associated elements are the exclusive property of BIMS and are protected by the intellectual property laws of Peru and international treaties.</p>
+        <p>Autodesk and Revit are registered trademarks of Autodesk, Inc. BIMS has no official affiliation with Autodesk.</p>
+    </div>
+
+    <!-- 7. Limitación de responsabilidad -->
+    <div class="card">
+        <h2>7. Limitation of liability</h2>
+        <p>The Software is provided "as is". BIMS does not warrant that the Software will be uninterrupted or error-free. Under no circumstances shall BIMS be liable for indirect, incidental or consequential damages arising from the use of the Software.</p>
+        <p>BIMS's total liability to the user shall not exceed the amount paid for the current license.</p>
+    </div>
+
+    <!-- 8. Jurisdicción -->
+    <div class="card">
+        <h2>8. Governing law and jurisdiction</h2>
+        <p>These Terms are governed by the laws of the Republic of Peru. Any dispute shall be submitted to the competent courts of Lima, Peru, or resolved through the INDECOPI system if so requested by the user.</p>
+        <p>For claims and complaints you may use our <a href="/libro-reclamaciones.html" style="color:var(--blue);font-weight:600;">Complaints Book</a>.</p>
+    </div>
+
+    <!-- 9. Contacto -->
+    <div class="card">
+        <h2>9. Contact</h2>
+        <ul>
+            <li><strong>Company:</strong> BIMS</li>
+            <li><strong>Email:</strong> bimsaddin@gmail.com</li>
+
+            <li><strong>Hours:</strong> Monday to Friday, 9:00 a.m. – 6:00 p.m. (Lima time)</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 BIMS · <a href="/">BIMS</a> · <a href="/privacy-policy-en.html">Privacy</a> · <a href="/libro-reclamaciones.html">Complaints Book</a></p>
+</footer>
+
+</body>
+</html>

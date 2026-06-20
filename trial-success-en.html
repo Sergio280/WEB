@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trial activado — BIMS</title>
+    <title>Trial activated — BIMS</title>
     <meta name="robots" content="noindex,follow">
 
     <!-- ── Google Analytics 4 ───────────────────────────────────────── -->
@@ -191,21 +191,21 @@
             <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>
         </div>
 
-        <h1>¡Tu trial está activo!</h1>
+        <h1>Your trial is active!</h1>
         <p class="lead">
-            Cuenta creada para<br>
-            <span class="email-pill" id="emailDisplay">tu email</span>
+            Account created for<br>
+            <span class="email-pill" id="emailDisplay">your email</span>
         </p>
 
-        <!-- Banner de descarga automática -->
+        <!-- Automatic download banner -->
         <div id="downloadBanner" style="background:linear-gradient(135deg,#1a8a4a,#0c5c2f);color:#fff;border-radius:12px;padding:18px 22px;margin:8px 0 22px;display:flex;align-items:center;gap:14px;box-shadow:0 6px 24px rgba(26,138,74,0.25);">
             <div style="width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                 <div id="dlSpinner" style="width:22px;height:22px;border:3px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
                 <span id="dlCheck" style="display:none;font-size:1.4em;font-weight:700;">✓</span>
             </div>
             <div style="flex:1;line-height:1.45;">
-                <strong id="dlTitle" style="display:block;font-size:1.02em;">Descargando BIMS…</strong>
-                <span id="dlSub" style="font-size:0.88em;opacity:0.95;">Tu instalador empezará a descargar en un momento.</span>
+                <strong id="dlTitle" style="display:block;font-size:1.02em;">Downloading BIMS…</strong>
+                <span id="dlSub" style="font-size:0.88em;opacity:0.95;">Your installer will start downloading in just a moment.</span>
             </div>
         </div>
         <style>
@@ -213,49 +213,49 @@
         </style>
 
         <div class="steps">
-            <h3>Solo 2 pasos para empezar:</h3>
+            <h3>Just 2 steps to get started:</h3>
             <div class="step">
                 <div class="step-num">1</div>
                 <div class="step-text">
-                    <strong>Instala BIMS</strong>
-                    Ejecuta el instalador que acabas de descargar (toma ~1 minuto). Compatible con Revit 2024, 2025 y 2026.
+                    <strong>Install BIMS</strong>
+                    Run the installer you just downloaded (it takes about 1 minute). Works with Revit 2024, 2025 and 2026.
                 </div>
             </div>
             <div class="step">
                 <div class="step-num">2</div>
                 <div class="step-text">
-                    <strong>Abre Revit e inicia sesión en BIMS</strong>
-                    Usa el email y la contraseña que acabas de crear. ¡Listo para usar 14 días!
+                    <strong>Open Revit and sign in to BIMS</strong>
+                    Use the email and password you just created. You're all set for 14 days!
                 </div>
             </div>
         </div>
 
-        <!-- Aviso SmartScreen: BIMS aún sin firma digital (certificado EV). Evita que
-             el usuario abandone al ver la advertencia azul de Windows al ejecutar el
-             instalador — es la principal fuga entre "descarga" e "instalación". -->
+        <!-- SmartScreen notice: BIMS not yet code-signed (EV certificate). Prevents
+             users from bailing when Windows shows the blue warning while running the
+             installer — the main drop-off between "download" and "install". -->
         <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:12px;padding:16px 18px;margin:0 0 22px;text-align:left;line-height:1.5;">
-            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ Si Windows muestra una advertencia al instalar</strong>
+            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ If Windows shows a warning during installation</strong>
             <span style="font-size:0.88em;color:#5c4a1a;">
-                BIMS es nuevo y todavía está tramitando su firma digital, por lo que <strong>Windows SmartScreen</strong> puede mostrar un aviso de “editor desconocido”. <strong>No es un virus.</strong> Si aparece la ventana azul «Windows protegió tu PC»:
+                BIMS is new and still getting its digital signature, so <strong>Windows SmartScreen</strong> may show an “unknown publisher” notice. <strong>It's not a virus.</strong> If the blue “Windows protected your PC” window appears:
             </span>
             <ol style="margin:10px 0 0;padding-left:20px;font-size:0.88em;color:#5c4a1a;">
-                <li>Haz clic en <strong>“Más información”</strong>.</li>
-                <li>Pulsa <strong>“Ejecutar de todas formas”</strong>.</li>
+                <li>Click <strong>“More info”</strong>.</li>
+                <li>Click <strong>“Run anyway”</strong>.</li>
             </ol>
         </div>
 
         <div class="actions">
             <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe" class="btn btn-primary" download>
-                ⬇ Descargar instalador
+                ⬇ Download installer
             </a>
-            <a href="/" class="btn btn-secondary">← Volver al inicio</a>
+            <a href="/" class="btn btn-secondary">← Back to home</a>
         </div>
         <p style="text-align:center;margin-top:14px;font-size:0.86em;color:#888;">
-            ¿La descarga no comenzó? Presiona el botón <strong style="color:#0f4d9e;">«Descargar instalador»</strong>.
+            Download didn't start? Just click the <strong style="color:#0f4d9e;">“Download installer”</strong> button.
         </p>
 
         <p class="footer-help">
-            ¿Problemas? Escríbenos a <a href="mailto:bimsaddin@gmail.com">bimsaddin@gmail.com</a> o por
+            Having trouble? Reach out at <a href="mailto:bimsaddin@gmail.com">bimsaddin@gmail.com</a> or via
             <a href="https://wa.me/51989455558" target="_blank" rel="noopener">WhatsApp</a>.
         </p>
     </div>
@@ -304,14 +304,14 @@
                     setTimeout(function() {
                         if (spinner)   spinner.style.display = 'none';
                         if (checkIcon) checkIcon.style.display = 'inline';
-                        if (title)     title.textContent = '✓ Descarga iniciada';
-                        if (sub)       sub.textContent = 'Revisa la barra de descargas de tu navegador. ¿Nada? Toca «Descargar instalador» abajo.';
+                        if (title)     title.textContent = '✓ Download started';
+                        if (sub)       sub.textContent = 'Check your browser’s downloads bar. Nothing there? Tap “Download installer” below.';
                     }, 1500);
                 } catch (e) {
                     // Si el browser bloquea, mostrar mensaje claro y dejar visible el botón manual
                     if (spinner) spinner.style.display = 'none';
-                    if (title)   title.textContent = 'No se pudo iniciar la descarga';
-                    if (sub)     sub.textContent = 'Por favor presiona «Descargar instalador» abajo para iniciarla manualmente.';
+                    if (title)   title.textContent = 'We couldn’t start the download';
+                    if (sub)     sub.textContent = 'Please press “Download installer” below to start it manually.';
                 }
             }
 

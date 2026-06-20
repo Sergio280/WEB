@@ -14,6 +14,7 @@ import {
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { QUICK_METRICS, CHART_TIME, CHART_ERROR, CHART_RADAR } from '../../data/metrics.js';
+import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 ChartJS.register(
   CategoryScale,
@@ -40,12 +41,15 @@ const accentBorder = {
 };
 
 export default function Metrics() {
-  // Chart 1 — Tiempo por tarea (minutos)
+  const { t } = useLang();
+  const m = t.metrics;
+
+  // Chart 1 — Tiempo por tarea (minutos). Números de data, labels del idioma.
   const timeData = {
-    labels: CHART_TIME.labels,
+    labels: m.timeLabels,
     datasets: [
-      { label: 'Sin BIMS (manual)', data: CHART_TIME.manual, backgroundColor: GREY, borderRadius: 6 },
-      { label: 'Con BIMS', data: CHART_TIME.bims, backgroundColor: BLUE, borderRadius: 6 },
+      { label: m.dsManualTime, data: CHART_TIME.manual, backgroundColor: GREY, borderRadius: 6 },
+      { label: m.dsBims, data: CHART_TIME.bims, backgroundColor: BLUE, borderRadius: 6 },
     ],
   };
   const timeOpts = {
@@ -54,17 +58,17 @@ export default function Metrics() {
     maintainAspectRatio: false,
     plugins: { legend: { labels: { color: TICK, usePointStyle: true, pointStyle: 'rectRounded' } } },
     scales: {
-      x: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => v + ' min' } },
+      x: { grid: { color: GRID }, ticks: { color: TICK, callback: (v) => v + m.unitMin } },
       y: { grid: { display: false }, ticks: { color: TICK, font: { size: 9 } } },
     },
   };
 
   // Chart 2 — Tasa de error (%)
   const errorData = {
-    labels: CHART_ERROR.labels,
+    labels: m.errorLabels,
     datasets: [
-      { label: 'Sin BIMS (%)', data: CHART_ERROR.manual, backgroundColor: GREY, borderRadius: 6 },
-      { label: 'Con BIMS (%)', data: CHART_ERROR.bims, backgroundColor: GREEN, borderRadius: 6 },
+      { label: m.dsManualPct, data: CHART_ERROR.manual, backgroundColor: GREY, borderRadius: 6 },
+      { label: m.dsBimsPct, data: CHART_ERROR.bims, backgroundColor: GREEN, borderRadius: 6 },
     ],
   };
   const errorOpts = {
@@ -80,10 +84,10 @@ export default function Metrics() {
 
   // Chart 3 — Radar de automatización por módulo
   const radarData = {
-    labels: CHART_RADAR.labels,
+    labels: m.radarLabels,
     datasets: [
-      { label: 'Proceso manual', data: CHART_RADAR.manual, backgroundColor: 'rgba(100,116,139,.2)', borderColor: GREY, pointBackgroundColor: GREY },
-      { label: 'Con BIMS', data: CHART_RADAR.bims, backgroundColor: 'rgba(45,125,255,.22)', borderColor: BLUE, pointBackgroundColor: BLUE },
+      { label: m.dsManualProcess, data: CHART_RADAR.manual, backgroundColor: 'rgba(100,116,139,.2)', borderColor: GREY, pointBackgroundColor: GREY },
+      { label: m.dsBims, data: CHART_RADAR.bims, backgroundColor: 'rgba(45,125,255,.22)', borderColor: BLUE, pointBackgroundColor: BLUE },
     ],
   };
   const radarOpts = {
@@ -105,19 +109,19 @@ export default function Metrics() {
   return (
     <Section id="efectividad">
       <Reveal className="text-center">
-        <span className="eyebrow">Eficiencia cuantificada</span>
-        <h2 className="section-title mt-4">BIMS vs. procesos manuales</h2>
-        <p className="mt-3 text-slate-400">Cifras ancladas a tareas específicas, según el chart de tiempos comparados.</p>
+        <span className="eyebrow">{m.eyebrow}</span>
+        <h2 className="section-title mt-4">{m.title}</h2>
+        <p className="mt-3 text-slate-400">{m.subtitle}</p>
       </Reveal>
 
       {/* Métricas rápidas */}
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        {QUICK_METRICS.map((m, i) => (
-          <Reveal key={m.label} delay={i * 0.1}>
-            <div className={`rounded-2xl border ${accentBorder[m.accent]} glass p-6 text-center`}>
-              <p className="text-sm text-slate-400">{m.label}</p>
-              <p className="mt-2 font-display text-2xl font-extrabold text-white">{m.value}</p>
-              <p className="mt-1 text-xs text-slate-500">según chart de tiempos comparados</p>
+        {QUICK_METRICS.map((metric, i) => (
+          <Reveal key={metric.value} delay={i * 0.1}>
+            <div className={`rounded-2xl border ${accentBorder[metric.accent]} glass p-6 text-center`}>
+              <p className="text-sm text-slate-400">{m.quickLabels[i]}</p>
+              <p className="mt-2 font-display text-2xl font-extrabold text-white">{metric.value}</p>
+              <p className="mt-1 text-xs text-slate-500">{m.quickCaption}</p>
             </div>
           </Reveal>
         ))}
@@ -126,13 +130,13 @@ export default function Metrics() {
       {/* Charts: tiempo + error */}
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <Reveal className="rounded-2xl border border-white/10 glass p-5">
-          <p className="mb-4 text-sm font-bold text-slate-200">Tiempo por tarea (minutos)</p>
+          <p className="mb-4 text-sm font-bold text-slate-200">{m.timeTitle}</p>
           <div className="h-64">
             <Bar data={timeData} options={timeOpts} />
           </div>
         </Reveal>
         <Reveal delay={0.1} className="rounded-2xl border border-white/10 glass p-5">
-          <p className="mb-4 text-sm font-bold text-slate-200">Tasa de error (%)</p>
+          <p className="mb-4 text-sm font-bold text-slate-200">{m.errorTitle}</p>
           <div className="h-64">
             <Bar data={errorData} options={errorOpts} />
           </div>
@@ -141,7 +145,7 @@ export default function Metrics() {
 
       {/* Radar */}
       <Reveal delay={0.1} className="mt-4 rounded-2xl border border-white/10 glass p-5">
-        <p className="mb-4 text-sm font-bold text-slate-200">Nivel de automatización por módulo</p>
+        <p className="mb-4 text-sm font-bold text-slate-200">{m.radarTitle}</p>
         <div className="mx-auto h-80 max-w-xl">
           <Radar data={radarData} options={radarOpts} />
         </div>
