@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { track } from '../../lib/track.js';
+import { getStoredGclid } from '../../lib/gclid.js';
 
 // Medidor de fortaleza — réplica exacta de passwordStrength() de la home.
 function passwordStrength(pw) {
@@ -64,7 +65,7 @@ export default function Trial() {
       const r = await fetch('/api/trial', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot, gclid: getStoredGclid() }),
       });
       const data = await r.json();
       if (r.ok && data.success) {

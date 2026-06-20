@@ -97,6 +97,16 @@ function sanitize(str, maxLen) {
     return str.trim().slice(0, maxLen).replace(/[\x00-\x1f\x7f]/g, '');
 }
 
+// Sanitiza el gclid (Google Click ID) que captura la landing al venir del
+// anuncio. Solo permitimos caracteres URL-safe propios del id (alfanuméricos,
+// '-', '_', '.'); cualquier otra cosa la descartamos para no almacenar basura.
+// Vacío si no aplica (tráfico orgánico/directo). Sirve también para gbraid/wbraid.
+function sanitizeGclid(str) {
+    if (!str || typeof str !== 'string') return '';
+    const clean = str.trim().slice(0, 200);
+    return /^[A-Za-z0-9._-]+$/.test(clean) ? clean : '';
+}
+
 function hashIp(ip) {
     const salt = process.env.IP_SALT || 'bims-trial-default-salt';
     return crypto.createHash('sha256').update(ip + salt).digest('hex').slice(0, 24);
@@ -205,7 +215,7 @@ exports.handler = async function (event) {
     try { body = JSON.parse(event.body || '{}'); }
     catch { return resp(400, { error: 'Body inválido' }, origin); }
 
-    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken } = body;
+    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid } = body;
 
     // IP segura desde el inicio (la usamos en muchos lugares)
     const ip  = getClientIp(event.headers);
@@ -312,6 +322,7 @@ exports.handler = async function (event) {
     // ── Crear usuario + licencia Trial ───────────────────────────────────────
     const name    = sanitize(rawName, MAX_NAME_LENGTH);
     const company = sanitize(rawCompany, MAX_COMPANY_LENGTH);
+    const gclid   = sanitizeGclid(rawGclid);
 
     let uid;
     try {
@@ -354,6 +365,10 @@ exports.handler = async function (event) {
             emailNormHash, // permite admin queries sin exponer el email
             source:        'web-form',
             createdAt:     now.toISOString(),
+            // gclid del anuncio (si vino de Google Ads). Lo usa report-activations
+            // para atribuir la ACTIVACIÓN real como conversión offline. Solo se
+            // guarda si existe, para no ensuciar el registro del tráfico orgánico.
+            ...(gclid ? { gclid } : {}),
         },
     };
 
