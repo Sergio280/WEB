@@ -21,7 +21,7 @@ export const CLIPS = [
     desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.',
   },
   {
-    yt: 'yH4l4qnr_aA',
+    yt: 'no7dvQfRitI',
     title: 'Exporta planos a DWG con las imágenes adentro',
     desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.',
   },
