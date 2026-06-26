@@ -7,7 +7,7 @@ import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Modal de compra: replica el flujo del modal MercadoPago/Culqi de la home.
+// Modal de compra: replica el flujo del modal de pago Culqi de la home.
 // Los precios y URLs de checkout viven en CULQI_CONFIG; el texto, en el idioma
 // activo (t.culqiModal).
 export default function CulqiModal({ planKey, onClose }) {

@@ -57,15 +57,29 @@ exports.handler = async function (event) {
         });
 
         const customer = await customerRes.json();
-        if (!customerRes.ok && customer.object === 'error') {
-            // Si el customer ya existe, lo buscamos
-            if (customer.code !== 'customer_duplicated') {
+        let customerId = customer.id;
+
+        if (!customerRes.ok || customer.object === 'error') {
+            if (customer.code === 'customer_duplicated') {
+                // El email ya está registrado en Culqi: la creación falla y NO
+                // devuelve el id del cliente existente. Lo recuperamos buscándolo
+                // por email para poder asociarle la nueva tarjeta y suscripción.
+                // (Sin esto, un usuario que vuelve a suscribirse quedaba bloqueado.)
+                customerId = await buscarCustomerPorEmail(email);
+                if (!customerId) {
+                    console.error('[culqi-sub] Customer duplicado pero no se pudo recuperar por email:', email);
+                    return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'No se pudo recuperar el cliente existente. Contacta a soporte.' }) };
+                }
+            } else {
                 console.error('[culqi-sub] Error creando customer:', customer);
                 return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: customer.user_message || 'Error al crear cliente' }) };
             }
         }
 
-        const customerId = customer.id;
+        if (!customerId) {
+            console.error('[culqi-sub] customerId vacío tras crear/buscar cliente para:', email);
+            return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Error al identificar el cliente' }) };
+        }
 
         // 2. Crear Card en Culqi (asociar token al customer)
         const cardRes = await fetch('https://api.culqi.com/v2/cards', {
@@ -125,3 +139,26 @@ exports.handler = async function (event) {
         };
     }
 };
+
+// ── Buscar customer existente por email ───────────────────────────────────────
+// Cuando Culqi responde "customer_duplicated" al crear el cliente, no nos da su
+// id. Lo recuperamos listando los customers filtrados por email. Culqi devuelve
+// { data: [ { id, email, ... } ] }; tomamos la coincidencia exacta de email.
+async function buscarCustomerPorEmail(email) {
+    try {
+        const res = await fetch(`https://api.culqi.com/v2/customers?email=${encodeURIComponent(email)}`, {
+            headers: { 'Authorization': `Bearer ${process.env.CULQI_SECRET_KEY}` },
+        });
+        if (!res.ok) {
+            console.warn(`[culqi-sub] búsqueda de customer por email HTTP ${res.status}`);
+            return null;
+        }
+        const data = await res.json();
+        const lista = Array.isArray(data?.data) ? data.data : [];
+        const found = lista.find(c => c.email === email) || lista[0];
+        return found?.id || null;
+    } catch (err) {
+        console.error('[culqi-sub] buscarCustomerPorEmail error:', err?.message || err);
+        return null;
+    }
+}

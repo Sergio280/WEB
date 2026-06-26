@@ -6372,23 +6372,16 @@
     'use strict';
 
     /* ─────────────────────────────────────────────────────────────────────
-     * CONFIGURACIÓN — Reemplaza estos valores con los de tu cuenta MP
+     * CONFIGURACIÓN DE PAGO — Culqi
      *
-     * Dos modalidades de pago:
+     * El cobro se procesa con Culqi (checkout.culqi.com/js/v4): goToCheckout()
+     * abre el widget y el token de tarjeta se envía a las funciones Netlify
+     * /api/culqi-charge (pago único) y /api/culqi-subscription (suscripción).
      *
-     * A) PAGO ÚNICO con licencias temporales (1m · 3m · 6m · 12m)
-     *    → Crea un enlace de pago por cada opción en:
-     *      https://www.mercadopago.com.pe/herramientas-para-vender/link-de-pago
-     *    → Configura cada enlace como pago único (no suscripción).
-     *      Título sugerido: "BIMS Individual — Licencia 3 meses"
-     *
-     * B) SUSCRIPCIÓN MENSUAL recurrente
-     *    → Crea el plan de suscripción en:
-     *      https://www.mercadopago.com.pe/subscription-plans
-     *    → Usa el enlace de suscripción generado (mpago.la/...).
-     *
-     * C) Tu Public Key la encuentras en:
-     *    https://www.mercadopago.com.pe/developers/panel/credentials
+     * - Pago único:  4 duraciones (1m · 3m · 6m · 12m), precio en `price` (S/).
+     * - Suscripción: mensual recurrente; los plan_id de Culqi viven en las
+     *   env vars CULQI_PLAN_INDIVIDUAL / CULQI_PLAN_PROFESIONAL (lado servidor).
+     * - Public Key (pk_live_...) en: https://panel.culqi.com → Desarrollo → Llaves.
      * ───────────────────────────────────────────────────────────────────── */
     var CULQI_PUBLIC_KEY = 'pk_live_aenMPO2MOHaDprCT';
 
@@ -6405,33 +6398,27 @@
                     price: 60,
                     period: 'pago único · licencia 1 mes',
                     savingsNote: '',
-                    checkoutUrl: 'https://mpago.la/14i7PE5'
                 },
                 '3m': {
                     price: 160,
                     period: 'pago único · licencia 3 meses',
                     savingsNote: 'Equivale a S/53/mes — ahorras 11% vs mensual',
-                    checkoutUrl: 'https://mpago.la/2XXUumw'
                 },
                 '6m': {
                     price: 300,
                     period: 'pago único · licencia 6 meses',
                     savingsNote: 'Equivale a S/50/mes — ahorras 17% vs mensual',
-                    checkoutUrl: 'https://mpago.la/1MfzQVu'
                 },
                 '12m': {
                     price: 596,
                     period: 'pago único · licencia 1 año',
                     savingsNote: 'Equivale a S/49.7/mes — ahorras 17% vs mensual',
-                    checkoutUrl: 'https://mpago.la/12r2GZj'
                 },
                 /* ── Suscripción mensual recurrente ── */
                 subscription: {
                     price: 60,
                     period: 'por mes · suscripción recurrente',
                     savingsNote: '',
-                    /* ↓ URL del plan de suscripción creado en MP Subscriptions */
-                    checkoutUrl: 'https://www.mercadopago.com.pe/subscriptions/checkout?preapproval_plan_id=0e1debce8c694e73bfd93687b81cbd3e'
                 },
                 features: [
                     'Todos los paneles BIMS',
@@ -6449,33 +6436,27 @@
                     price: 100,
                     period: 'pago único · licencia 1 mes',
                     savingsNote: '',
-                    checkoutUrl: 'https://mpago.la/1J6N5Mq'
                 },
                 '3m': {
                     price: 268,
                     period: 'pago único · licencia 3 meses',
                     savingsNote: 'Equivale a S/89/mes — ahorras 11% vs mensual',
-                    checkoutUrl: 'https://mpago.la/1mg26VZ'
                 },
                 '6m': {
                     price: 500,
                     period: 'pago único · licencia 6 meses',
                     savingsNote: 'Equivale a S/83/mes — ahorras 17% vs mensual',
-                    checkoutUrl: 'https://mpago.la/1WM53B1'
                 },
                 '12m': {
                     price: 996,
                     period: 'pago único · licencia 1 año',
                     savingsNote: 'Equivale a S/83/mes — ahorras 17% vs mensual',
-                    checkoutUrl: 'https://mpago.la/2tJ9xJU'
                 },
                 /* ── Suscripción mensual recurrente ── */
                 subscription: {
                     price: 100,
                     period: 'por mes · suscripción recurrente',
                     savingsNote: '',
-                    /* ↓ URL del plan de suscripción creado en MP Subscriptions */
-                    checkoutUrl: 'https://www.mercadopago.com.pe/subscriptions/checkout?preapproval_plan_id=8329d236202b469183919db44dd5a235'
                 },
                 features: [
                     'Todos los paneles BIMS',
