@@ -101,3 +101,16 @@
   from   = "/api/verify-license"
   to     = "/.netlify/functions/verify-license"
   status = 200
+
+# ── Redirige el dominio ANTIGUO al nuevo (SEO + marca) ────────────────────────
+# Afecta SOLO al host bimsapp.netlify.app. Por el ORDEN de las reglas, las de
+# /api/* de arriba (status 200) se evalúan PRIMERO y NO se redirigen, así que las
+# llamadas de licencia y trial de los plugins YA INSTALADOS se siguen sirviendo
+# en netlify.app sin redirección. Las visitas humanas y los crawlers van 301 a
+# bimsaddin.com. Los Deploy Previews (deploy-preview-N--bimsapp.netlify.app) NO
+# se ven afectados porque el host del `from` es el de producción exacto.
+[[redirects]]
+  from   = "https://bimsapp.netlify.app/*"
+  to     = "https://bimsaddin.com/:splat"
+  status = 301
+  force  = true
