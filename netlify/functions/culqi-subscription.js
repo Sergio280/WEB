@@ -12,13 +12,40 @@ const PLAN_IDS = {
 const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
 const PLAN_AMOUNTS     = { individual: 6000, profesional: 10000 };
 
-const CORS = {
-    'Access-Control-Allow-Origin':  process.env.SITE_URL || '',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-};
+// ── Allowlist de orígenes (consistente con /api/trial, /api/culqi-charge) ─────
+// Se permiten AMBOS dominios de producción de forma EXPLÍCITA: la web nueva vive
+// en https://bimsaddin.com y el sitio histórico en https://bimsapp.netlify.app.
+// El CORS se refleja por-origen (no un solo SITE_URL fijo) para que el checkout
+// funcione desde cualquiera de los dos dominios mientras convivan.
+const SITE_URL = process.env.SITE_URL || 'https://bimsaddin.com';
+const ALLOWED_ORIGIN_PATTERNS = [
+    SITE_URL,
+    'https://bimsaddin.com',
+    'https://www.bimsaddin.com',
+    'https://bimsapp.netlify.app',
+    /^https:\/\/deploy-preview-\d+--bimsapp\.netlify\.app$/,
+    /^https:\/\/[a-z0-9-]+--bimsapp\.netlify\.app$/,
+];
+
+function isOriginAllowed(origin) {
+    if (!origin) return false;
+    return ALLOWED_ORIGIN_PATTERNS.some(p =>
+        (typeof p === 'string' && p === origin) || (p instanceof RegExp && p.test(origin)));
+}
+
+function corsHeadersFor(origin) {
+    const headers = {
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Vary': 'Origin',
+    };
+    if (isOriginAllowed(origin)) headers['Access-Control-Allow-Origin'] = origin;
+    return headers;
+}
 
 exports.handler = async function (event) {
+    // CORS por-origen: se refleja el Origin solo si pasa la allowlist.
+    const CORS = corsHeadersFor(event.headers?.origin || event.headers?.Origin);
     if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
     if (event.httpMethod !== 'POST')    return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Método no permitido' }) };
 

@@ -55,9 +55,17 @@ const MAX_PASSWORD_LEN   = 128;
 // ── Allowlist de orígenes ────────────────────────────────────────────────────
 // Producción + cualquier Deploy Preview del mismo proyecto Netlify. NO usar '*':
 // si alguien borra SITE_URL por accidente, no queremos quedar abiertos al mundo.
-const SITE_URL = process.env.SITE_URL || 'https://bimsapp.netlify.app';
+// Se permiten AMBOS dominios de producción de forma EXPLÍCITA: los plugins ya
+// distribuidos mandan Origin: https://bimsapp.netlify.app compilado en la DLL,
+// y la web nueva vive en https://bimsaddin.com. Eliminar el subdominio netlify
+// rompería el trial/licencia de los usuarios ya instalados, por eso se conserva
+// para siempre además de SITE_URL.
+const SITE_URL = process.env.SITE_URL || 'https://bimsaddin.com';
 const ALLOWED_ORIGIN_PATTERNS = [
     SITE_URL,
+    'https://bimsaddin.com',
+    'https://www.bimsaddin.com',
+    'https://bimsapp.netlify.app',                     // plugins ya instalados; NO eliminar
     /^https:\/\/deploy-preview-\d+--bimsapp\.netlify\.app$/,
     /^https:\/\/[a-z0-9-]+--bimsapp\.netlify\.app$/,   // branch deploys
 ];
