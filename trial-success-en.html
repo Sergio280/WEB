@@ -233,15 +233,36 @@
         <!-- SmartScreen notice: BIMS not yet code-signed (EV certificate). Prevents
              users from bailing when Windows shows the blue warning while running the
              installer — the main drop-off between "download" and "install". -->
-        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:12px;padding:16px 18px;margin:0 0 22px;text-align:left;line-height:1.5;">
-            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ If Windows shows a warning during installation</strong>
-            <span style="font-size:0.88em;color:#5c4a1a;">
-                BIMS is new and still getting its digital signature, so <strong>Windows SmartScreen</strong> may show an “unknown publisher” notice. <strong>It's not a virus.</strong> If the blue “Windows protected your PC” window appears:
+        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:14px;padding:18px 20px;margin:0 0 22px;text-align:left;line-height:1.55;">
+            <strong style="display:block;font-size:1.05em;color:#8a5a00;margin-bottom:8px;">🛡️ Important: Windows will show a blue notice — that's normal</strong>
+            <span style="font-size:0.9em;color:#5c4a1a;display:block;">
+                Because BIMS is a new program (its digital signature is still being processed), <strong>Windows SmartScreen</strong> shows the blue “Windows protected your PC” screen to <strong>everyone</strong> installing it for the first time. <strong>It's not a virus or an error</strong> — it just means the publisher isn't “known” yet. Getting past it takes 3 seconds:
             </span>
-            <ol style="margin:10px 0 0;padding-left:20px;font-size:0.88em;color:#5c4a1a;">
-                <li>Click <strong>“More info”</strong>.</li>
-                <li>Click <strong>“Run anyway”</strong>.</li>
-            </ol>
+
+            <!-- Step 1 -->
+            <div style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#f5a623;color:#fff;font-size:0.8em;font-weight:700;display:flex;align-items:center;justify-content:center;">1</span>
+                <span style="font-size:0.9em;color:#5c4a1a;">
+                    In the blue window, click the small link
+                    <span style="display:inline-block;background:#eef3fb;border:1px solid #c9d7ec;border-radius:5px;padding:1px 7px;font-weight:600;color:#1a4d8f;white-space:nowrap;">More info</span>
+                    (below the text, on the left).
+                </span>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="margin-top:10px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#f5a623;color:#fff;font-size:0.8em;font-weight:700;display:flex;align-items:center;justify-content:center;">2</span>
+                <span style="font-size:0.9em;color:#5c4a1a;">
+                    A new button appears: click
+                    <span style="display:inline-block;background:#0f4d9e;border-radius:5px;padding:2px 9px;font-weight:600;color:#fff;white-space:nowrap;">Run anyway</span>
+                    and installation continues as normal.
+                </span>
+            </div>
+
+            <p style="margin:13px 0 0;font-size:0.84em;color:#8a5a00;">
+                Stuck? We'll help you in 2 minutes on
+                <a href="https://wa.me/51989455558" target="_blank" rel="noopener" style="color:#0f4d9e;font-weight:600;">WhatsApp</a>.
+            </p>
         </div>
 
         <div class="actions">

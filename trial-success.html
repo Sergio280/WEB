@@ -218,7 +218,7 @@
                 <div class="step-num">1</div>
                 <div class="step-text">
                     <strong>Instala BIMS</strong>
-                    Ejecuta el instalador que acabas de descargar (toma ~1 minuto). Compatible con Revit 2024, 2025 y 2026.
+                    Ejecuta el instalador que acabas de descargar (toma ~1 minuto). Compatible con Revit 2024, 2025, 2026 y 2027.
                 </div>
             </div>
             <div class="step">
@@ -230,18 +230,41 @@
             </div>
         </div>
 
-        <!-- Aviso SmartScreen: BIMS aún sin firma digital (certificado EV). Evita que
-             el usuario abandone al ver la advertencia azul de Windows al ejecutar el
-             instalador — es la principal fuga entre "descarga" e "instalación". -->
-        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:12px;padding:16px 18px;margin:0 0 22px;text-align:left;line-height:1.5;">
-            <strong style="display:block;font-size:0.98em;color:#8a5a00;margin-bottom:6px;">⚠️ Si Windows muestra una advertencia al instalar</strong>
-            <span style="font-size:0.88em;color:#5c4a1a;">
-                BIMS es nuevo y todavía está tramitando su firma digital, por lo que <strong>Windows SmartScreen</strong> puede mostrar un aviso de “editor desconocido”. <strong>No es un virus.</strong> Si aparece la ventana azul «Windows protegió tu PC»:
+        <!-- Aviso SmartScreen: BIMS aún sin firma digital (certificado EV). Es la
+             principal fuga entre "descarga" e "instalación" (~60% de registros no
+             llegan a activar). Se presenta de forma PROMINENTE y como paso NORMAL y
+             esperado (no como alarma), con los dos botones reproducidos visualmente
+             para que el usuario los reconozca en la ventana real de Windows. -->
+        <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:14px;padding:18px 20px;margin:0 0 22px;text-align:left;line-height:1.55;">
+            <strong style="display:block;font-size:1.05em;color:#8a5a00;margin-bottom:8px;">🛡️ Importante: Windows mostrará un aviso azul — es normal</strong>
+            <span style="font-size:0.9em;color:#5c4a1a;display:block;">
+                Como BIMS es un programa nuevo (aún tramitando su firma digital), <strong>Windows SmartScreen</strong> muestra la pantalla azul «Windows protegió tu PC» a <strong>todos</strong> los que lo instalan por primera vez. <strong>No es un virus ni un error</strong> — solo significa que el editor todavía no es “conocido”. Pasarlo toma 3 segundos:
             </span>
-            <ol style="margin:10px 0 0;padding-left:20px;font-size:0.88em;color:#5c4a1a;">
-                <li>Haz clic en <strong>“Más información”</strong>.</li>
-                <li>Pulsa <strong>“Ejecutar de todas formas”</strong>.</li>
-            </ol>
+
+            <!-- Paso 1 -->
+            <div style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#f5a623;color:#fff;font-size:0.8em;font-weight:700;display:flex;align-items:center;justify-content:center;">1</span>
+                <span style="font-size:0.9em;color:#5c4a1a;">
+                    En la ventana azul, haz clic en el enlace pequeño
+                    <span style="display:inline-block;background:#eef3fb;border:1px solid #c9d7ec;border-radius:5px;padding:1px 7px;font-weight:600;color:#1a4d8f;white-space:nowrap;">Más información</span>
+                    (abajo a la izquierda del texto).
+                </span>
+            </div>
+
+            <!-- Paso 2 -->
+            <div style="margin-top:10px;display:flex;align-items:flex-start;gap:10px;">
+                <span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#f5a623;color:#fff;font-size:0.8em;font-weight:700;display:flex;align-items:center;justify-content:center;">2</span>
+                <span style="font-size:0.9em;color:#5c4a1a;">
+                    Aparecerá un botón nuevo: pulsa
+                    <span style="display:inline-block;background:#0f4d9e;border-radius:5px;padding:2px 9px;font-weight:600;color:#fff;white-space:nowrap;">Ejecutar de todas formas</span>
+                    y la instalación continúa normal.
+                </span>
+            </div>
+
+            <p style="margin:13px 0 0;font-size:0.84em;color:#8a5a00;">
+                ¿Te quedaste atascado? Te ayudamos en 2 minutos por
+                <a href="https://wa.me/51989455558" target="_blank" rel="noopener" style="color:#0f4d9e;font-weight:600;">WhatsApp</a>.
+            </p>
         </div>
 
         <div class="actions">
