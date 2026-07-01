@@ -58,6 +58,16 @@ export default function Navbar() {
             </li>
           ))}
           <li className="ml-1">
+            <a
+              href="#descargar"
+              onClick={() => track('nav_download_click')}
+              className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition-colors hover:border-brand-500/40 hover:text-white"
+            >
+              <span aria-hidden="true">⬇</span>
+              {t.nav.download}
+            </a>
+          </li>
+          <li>
             <LangToggle />
           </li>
           <li>
@@ -96,6 +106,15 @@ export default function Navbar() {
               </a>
             </li>
           ))}
+          <li>
+            <a
+              href="#descargar"
+              onClick={() => { track('nav_download_click'); setOpen(false); }}
+              className="mt-1 block rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-center text-sm font-bold text-slate-200"
+            >
+              ⬇ {t.nav.download}
+            </a>
+          </li>
           <li>
             <a
               href="#trial"

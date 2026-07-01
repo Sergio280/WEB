@@ -64,6 +64,7 @@ export const translations = {
         { href: '#contacto', label: 'Contacto' },
       ],
       cta: 'Prueba gratis →',
+      download: 'Descargar',
       menu: 'Menú',
     },
 
@@ -641,6 +642,7 @@ export const translations = {
         { href: '#contacto', label: 'Contact' },
       ],
       cta: 'Free trial →',
+      download: 'Download',
       menu: 'Menu',
     },
 
