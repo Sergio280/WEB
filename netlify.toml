@@ -85,6 +85,17 @@
   to     = "/.netlify/functions/culqi-webhook"
   status = 200
 
+# ── Pasarela internacional (Lemon Squeezy) ────────────────────────────────────
+[[redirects]]
+  from   = "/api/ls-checkout"
+  to     = "/.netlify/functions/create-ls-checkout"
+  status = 200
+
+[[redirects]]
+  from   = "/api/lemonsqueezy-webhook"
+  to     = "/.netlify/functions/lemonsqueezy-webhook"
+  status = 200
+
 [[redirects]]
   from   = "/api/admin-create-license"
   to     = "/.netlify/functions/admin-create-license"
