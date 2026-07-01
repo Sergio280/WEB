@@ -12,11 +12,22 @@ const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Los precios y URLs de checkout viven en CULQI_CONFIG; el texto, en el idioma
 // activo (t.culqiModal).
 export default function CulqiModal({ planKey, onClose }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const c = t.culqiModal;
   const plan = CULQI_CONFIG.plans[planKey]; // precios + checkout
   const tp = c.plans[planKey]; // texto: features, periods, savings
   const badge = t.pricing.catalog[planKey].badge;
+
+  // Fuera de países hispanos (idioma inglés): Culqi no aplica (solo Perú) →
+  // el pago va por Lemon Squeezy en USD como opción PRINCIPAL. Para español,
+  // Culqi es principal y LS queda como opción secundaria.
+  const intl = lang === 'en' && (planKey === 'individual' || planKey === 'profesional');
+  const USD = {
+    individual:  { monthly: '16.90', yearly: '159' },
+    profesional: { monthly: '26.90', yearly: '269' },
+  };
+  const [intlDuration, setIntlDuration] = useState('monthly'); // 'monthly' | 'yearly'
+  const usdPrice = (USD[planKey] || USD.individual)[intlDuration];
 
   const [paymentType, setPaymentType] = useState('onetime'); // 'onetime' | 'subscription'
   const [duration, setDuration] = useState('1m');
@@ -81,17 +92,19 @@ export default function CulqiModal({ planKey, onClose }) {
   // LS solo tiene mensual/anual (suscripción): mapeamos la selección actual —
   // suscripción o cualquier duración != 12m → mensual; 12 meses → anual.
   const lsSupported = planKey === 'individual' || planKey === 'profesional';
-  async function handlePayIntl() {
+  function handlePayIntl() {
     if (!emailRe.test(email.trim())) {
       setError(c.emailError);
       return;
     }
     setError('');
     setProcessing(true);
-    const lsDuration = isSub ? 'monthly' : duration === '12m' ? 'yearly' : 'monthly';
+    // En modo internacional (inglés) usamos el toggle Mensual/Anual; en español
+    // (botón secundario) mapeamos la selección Culqi: 12m → anual, resto → mensual.
+    const lsDuration = intl ? intlDuration : isSub ? 'monthly' : duration === '12m' ? 'yearly' : 'monthly';
     track('begin_checkout', { plan: planKey, gateway: 'lemonsqueezy', duration: lsDuration, currency: 'USD' });
     try {
-      await openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() });
+      openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() });
     } catch (e) {
       setProcessing(false);
       setError(e.message || 'Error al iniciar el pago internacional.');
@@ -122,52 +135,88 @@ export default function CulqiModal({ planKey, onClose }) {
           </div>
 
           <div className="px-6 py-5">
-            {/* Tipo de pago */}
-            <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
-              <button
-                onClick={() => setPaymentType('onetime')}
-                className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-                  !isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
-                }`}
-              >
-                {c.onetime}
-              </button>
-              <button
-                onClick={() => setPaymentType('subscription')}
-                className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-                  isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
-                }`}
-              >
-                {c.subscription}
-              </button>
-            </div>
-
-            {/* Duración (solo pago único) */}
-            {!isSub && (
-              <div className="mb-5 grid grid-cols-4 gap-2">
-                {c.durations.map((d) => (
+            {intl ? (
+              /* ── Modo internacional (inglés): Lemon Squeezy, USD ── */
+              <>
+                <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
                   <button
-                    key={d.key}
-                    onClick={() => setDuration(d.key)}
-                    className={`rounded-lg border px-2 py-2 text-xs font-semibold transition-colors ${
-                      duration === d.key
-                        ? 'border-brand-500 bg-brand-500/15 text-brand-200'
-                        : 'border-white/10 text-slate-400 hover:text-slate-200'
+                    onClick={() => setIntlDuration('monthly')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      intlDuration === 'monthly' ? 'bg-brand-500 text-white' : 'text-slate-400'
                     }`}
                   >
-                    {d.label}
+                    {c.intlMonthly}
                   </button>
-                ))}
-              </div>
-            )}
+                  <button
+                    onClick={() => setIntlDuration('yearly')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      intlDuration === 'yearly' ? 'bg-brand-500 text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {c.intlYearly}
+                  </button>
+                </div>
+                <div className="mb-1 text-center">
+                  <span className="font-display text-4xl font-extrabold text-white">${usdPrice}</span>
+                  <span className="text-sm font-semibold text-slate-500">
+                    {intlDuration === 'yearly' ? c.intlPerYear : c.intlPerMonth}
+                  </span>
+                </div>
+                {intlDuration === 'yearly' && (
+                  <p className="mb-4 text-center text-xs font-semibold text-accent-green">{c.intlYearNote}</p>
+                )}
+              </>
+            ) : (
+              /* ── Modo Perú (español): Culqi, PEN ── */
+              <>
+                {/* Tipo de pago */}
+                <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
+                  <button
+                    onClick={() => setPaymentType('onetime')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      !isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {c.onetime}
+                  </button>
+                  <button
+                    onClick={() => setPaymentType('subscription')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      isSub ? 'bg-brand-500 text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {c.subscription}
+                  </button>
+                </div>
 
-            {/* Precio */}
-            <div className="mb-1 text-center">
-              <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
-            </div>
-            <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
-            {savingsNote && (
-              <p className="mb-4 text-center text-xs font-semibold text-accent-green">{savingsNote}</p>
+                {/* Duración (solo pago único) */}
+                {!isSub && (
+                  <div className="mb-5 grid grid-cols-4 gap-2">
+                    {c.durations.map((d) => (
+                      <button
+                        key={d.key}
+                        onClick={() => setDuration(d.key)}
+                        className={`rounded-lg border px-2 py-2 text-xs font-semibold transition-colors ${
+                          duration === d.key
+                            ? 'border-brand-500 bg-brand-500/15 text-brand-200'
+                            : 'border-white/10 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {d.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Precio */}
+                <div className="mb-1 text-center">
+                  <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
+                </div>
+                <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
+                {savingsNote && (
+                  <p className="mb-4 text-center text-xs font-semibold text-accent-green">{savingsNote}</p>
+                )}
+              </>
             )}
 
             {/* Features */}
@@ -191,37 +240,53 @@ export default function CulqiModal({ planKey, onClose }) {
             />
             {error && <p className="mt-2 text-sm text-rose-400">✗ {error}</p>}
 
-            <button
-              onClick={handlePay}
-              disabled={processing}
-              className="mt-4 w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60"
-            >
-              {processing
-                ? c.processing
-                : isSub
-                  ? c.subscribeBtn.replace('{price}', price)
-                  : c.payBtn.replace('{price}', price)}
-            </button>
-            <p className="mt-3 text-center text-xs text-slate-500">{c.secureNote}</p>
-
-            {/* Pago internacional (fuera de Perú) vía Lemon Squeezy */}
-            {lsSupported && (
+            {intl ? (
+              /* Internacional: Lemon Squeezy como botón principal */
               <>
-                <div className="mt-4 flex items-center gap-3 text-xs text-slate-600">
-                  <div className="h-px flex-1 bg-white/10" />
-                  <span>{c.intlOr || 'o'}</span>
-                  <div className="h-px flex-1 bg-white/10" />
-                </div>
                 <button
                   onClick={handlePayIntl}
                   disabled={processing}
-                  className="mt-3 w-full rounded-xl border border-white/15 px-5 py-3 font-semibold text-slate-200 transition-colors hover:bg-white/5 disabled:opacity-60"
+                  className="mt-4 w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60"
                 >
-                  {c.intlPay || '🌎 Pagar con tarjeta internacional (USD)'}
+                  {processing ? c.processing : c.intlPayBtn.replace('{price}', usdPrice)}
                 </button>
-                <p className="mt-2 text-center text-[11px] text-slate-500">
-                  {c.intlNote || 'Fuera de Perú · Visa / Mastercard / Amex vía Lemon Squeezy'}
-                </p>
+                <p className="mt-3 text-center text-xs text-slate-500">{c.intlSecure}</p>
+              </>
+            ) : (
+              /* Perú: Culqi principal + Lemon Squeezy secundario */
+              <>
+                <button
+                  onClick={handlePay}
+                  disabled={processing}
+                  className="mt-4 w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60"
+                >
+                  {processing
+                    ? c.processing
+                    : isSub
+                      ? c.subscribeBtn.replace('{price}', price)
+                      : c.payBtn.replace('{price}', price)}
+                </button>
+                <p className="mt-3 text-center text-xs text-slate-500">{c.secureNote}</p>
+
+                {lsSupported && (
+                  <>
+                    <div className="mt-4 flex items-center gap-3 text-xs text-slate-600">
+                      <div className="h-px flex-1 bg-white/10" />
+                      <span>{c.intlOr || 'o'}</span>
+                      <div className="h-px flex-1 bg-white/10" />
+                    </div>
+                    <button
+                      onClick={handlePayIntl}
+                      disabled={processing}
+                      className="mt-3 w-full rounded-xl border border-white/15 px-5 py-3 font-semibold text-slate-200 transition-colors hover:bg-white/5 disabled:opacity-60"
+                    >
+                      {c.intlPay || '🌎 Pagar con tarjeta internacional (USD)'}
+                    </button>
+                    <p className="mt-2 text-center text-[11px] text-slate-500">
+                      {c.intlNote || 'Fuera de Perú · Visa / Mastercard / Amex vía Lemon Squeezy'}
+                    </p>
+                  </>
+                )}
               </>
             )}
           </div>
