@@ -438,6 +438,11 @@ export const translations = {
       errLoad: 'No se pudo cargar el checkout. Recarga la página.',
       errRejected: 'Pago rechazado',
       errPay: 'Error al procesar el pago. Intenta de nuevo.',
+      // Selector de método de pago (Culqi Perú / Lemon Squeezy internacional)
+      methodCulqi: '🇵🇪 Perú',
+      methodIntl: '🌎 Internacional',
+      methodCulqiHint: 'Tarjetas peruanas · soles (Culqi)',
+      methodIntlHint: 'Tarjetas internacionales · USD (Lemon Squeezy)',
       // Pago internacional (Lemon Squeezy)
       intlOr: 'o',
       intlPay: '🌎 Pagar con tarjeta internacional (USD)',
@@ -1010,6 +1015,11 @@ export const translations = {
       errLoad: 'Couldn’t load the checkout. Please reload the page.',
       errRejected: 'Payment declined',
       errPay: 'Error processing the payment. Please try again.',
+      // Payment method selector (Culqi Peru / Lemon Squeezy international)
+      methodCulqi: '🇵🇪 Peru',
+      methodIntl: '🌎 International',
+      methodCulqiHint: 'Peruvian cards · soles (Culqi)',
+      methodIntlHint: 'International cards · USD (Lemon Squeezy)',
       // International payment (Lemon Squeezy)
       intlOr: 'or',
       intlPay: '🌍 Pay by card',

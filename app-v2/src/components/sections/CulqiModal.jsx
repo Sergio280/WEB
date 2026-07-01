@@ -18,10 +18,15 @@ export default function CulqiModal({ planKey, onClose }) {
   const tp = c.plans[planKey]; // texto: features, periods, savings
   const badge = t.pricing.catalog[planKey].badge;
 
-  // Fuera de países hispanos (idioma inglés): Culqi no aplica (solo Perú) →
-  // el pago va por Lemon Squeezy en USD como opción PRINCIPAL. Para español,
-  // Culqi es principal y LS queda como opción secundaria.
-  const intl = lang === 'en' && (planKey === 'individual' || planKey === 'profesional');
+  // Ambos métodos de pago SIEMPRE disponibles (nadie queda bloqueado):
+  //   - 'culqi': tarjetas peruanas en soles (solo Perú).
+  //   - 'intl' : tarjetas internacionales en USD vía Lemon Squeezy.
+  // El default depende del idioma (español → Culqi, inglés → internacional),
+  // pero el usuario puede cambiar con el selector de arriba.
+  const lsSupported = planKey === 'individual' || planKey === 'profesional';
+  const [method, setMethod] = useState(lang === 'en' && lsSupported ? 'intl' : 'culqi');
+  const intl = method === 'intl';
+
   const USD = {
     individual:  { monthly: '16.90', yearly: '159' },
     profesional: { monthly: '26.90', yearly: '269' },
@@ -88,10 +93,7 @@ export default function CulqiModal({ planKey, onClose }) {
     });
   }
 
-  // Pago internacional (Lemon Squeezy). Solo planes individual/profesional.
-  // LS solo tiene mensual/anual (suscripción): mapeamos la selección actual —
-  // suscripción o cualquier duración != 12m → mensual; 12 meses → anual.
-  const lsSupported = planKey === 'individual' || planKey === 'profesional';
+  // Pago internacional (Lemon Squeezy). LS solo tiene mensual/anual.
   function handlePayIntl() {
     if (!emailRe.test(email.trim())) {
       setError(c.emailError);
@@ -135,8 +137,35 @@ export default function CulqiModal({ planKey, onClose }) {
           </div>
 
           <div className="px-6 py-5">
+            {/* Selector de método de pago — SIEMPRE visible (nadie queda fuera) */}
+            {lsSupported && (
+              <>
+                <div className="mb-1 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
+                  <button
+                    onClick={() => setMethod('culqi')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      !intl ? 'bg-brand-500 text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {c.methodCulqi}
+                  </button>
+                  <button
+                    onClick={() => setMethod('intl')}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                      intl ? 'bg-brand-500 text-white' : 'text-slate-400'
+                    }`}
+                  >
+                    {c.methodIntl}
+                  </button>
+                </div>
+                <p className="mb-5 text-center text-[11px] text-slate-500">
+                  {intl ? c.methodIntlHint : c.methodCulqiHint}
+                </p>
+              </>
+            )}
+
             {intl ? (
-              /* ── Modo internacional (inglés): Lemon Squeezy, USD ── */
+              /* ── Método internacional: Lemon Squeezy, USD ── */
               <>
                 <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
                   <button
@@ -253,7 +282,7 @@ export default function CulqiModal({ planKey, onClose }) {
                 <p className="mt-3 text-center text-xs text-slate-500">{c.intlSecure}</p>
               </>
             ) : (
-              /* Perú: Culqi principal + Lemon Squeezy secundario */
+              /* Método Perú: Culqi (el selector de arriba permite cambiar a internacional) */
               <>
                 <button
                   onClick={handlePay}
@@ -267,26 +296,6 @@ export default function CulqiModal({ planKey, onClose }) {
                       : c.payBtn.replace('{price}', price)}
                 </button>
                 <p className="mt-3 text-center text-xs text-slate-500">{c.secureNote}</p>
-
-                {lsSupported && (
-                  <>
-                    <div className="mt-4 flex items-center gap-3 text-xs text-slate-600">
-                      <div className="h-px flex-1 bg-white/10" />
-                      <span>{c.intlOr || 'o'}</span>
-                      <div className="h-px flex-1 bg-white/10" />
-                    </div>
-                    <button
-                      onClick={handlePayIntl}
-                      disabled={processing}
-                      className="mt-3 w-full rounded-xl border border-white/15 px-5 py-3 font-semibold text-slate-200 transition-colors hover:bg-white/5 disabled:opacity-60"
-                    >
-                      {c.intlPay || '🌎 Pagar con tarjeta internacional (USD)'}
-                    </button>
-                    <p className="mt-2 text-center text-[11px] text-slate-500">
-                      {c.intlNote || 'Fuera de Perú · Visa / Mastercard / Amex vía Lemon Squeezy'}
-                    </p>
-                  </>
-                )}
               </>
             )}
           </div>
