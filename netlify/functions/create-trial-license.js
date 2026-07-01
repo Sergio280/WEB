@@ -247,7 +247,7 @@ exports.handler = async function (event) {
 
     // ── CAPA 3: Blocklist de dominios desechables ────────────────────────────
     if (isDisposable(domain))
-        return resp(400, { error: 'Por favor usa tu correo profesional o personal real (no temporal). Si tienes dudas, escríbenos a bimsaddin@gmail.com' }, origin);
+        return resp(400, { error: 'Por favor usa tu correo profesional o personal real (no temporal). Si tienes dudas, escríbenos a soporte@bimsaddin.com' }, origin);
 
     // ── Validación de contraseña (server-side) ───────────────────────────────
     if (!rawPassword || typeof rawPassword !== 'string')
@@ -285,7 +285,7 @@ exports.handler = async function (event) {
         });
         if (!txResult.committed || rateLimitHit) {
             console.log('[trial] Rate limit hit · ipHash:', ipH);
-            return resp(429, { error: 'Se alcanzó el máximo de trials desde esta red. Si necesitas más licencias, escríbenos a bimsaddin@gmail.com' }, origin);
+            return resp(429, { error: 'Se alcanzó el máximo de trials desde esta red. Si necesitas más licencias, escríbenos a soporte@bimsaddin.com' }, origin);
         }
     } catch (e) {
         console.warn('[trial] Rate limit transaction failed (no bloqueante):', e.message);
@@ -306,7 +306,7 @@ exports.handler = async function (event) {
         await auth.getUserByEmail(email);
         // Si llegamos aquí, existe — rechazar
         await rollbackRateLimit(ipRef, ipH);
-        return resp(409, { error: 'Ya existe una cuenta con este email. Si nunca usaste BIMS o necesitas extender tu trial, escríbenos a bimsaddin@gmail.com' }, origin);
+        return resp(409, { error: 'Ya existe una cuenta con este email. Si nunca usaste BIMS o necesitas extender tu trial, escríbenos a soporte@bimsaddin.com' }, origin);
     } catch (e) {
         if (e.code !== 'auth/user-not-found') {
             console.error('[trial] Firebase auth lookup error:', e.message);
@@ -321,7 +321,7 @@ exports.handler = async function (event) {
         const normSnap = await normIdxRef.once('value');
         if (normSnap.exists()) {
             await rollbackRateLimit(ipRef, ipH);
-            return resp(409, { error: 'Ya existe una cuenta para este email (o una variante con + o puntos). Escríbenos a bimsaddin@gmail.com si necesitas ayuda.' }, origin);
+            return resp(409, { error: 'Ya existe una cuenta para este email (o una variante con + o puntos). Escríbenos a soporte@bimsaddin.com si necesitas ayuda.' }, origin);
         }
     } catch (e) {
         console.warn('[trial] Normalized index check failed (no bloqueante):', e.message);
