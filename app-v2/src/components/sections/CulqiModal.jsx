@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
+import { openLsCheckout } from '../../lib/lemonsqueezy.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -74,6 +75,27 @@ export default function CulqiModal({ planKey, onClose }) {
         setError(msg);
       },
     });
+  }
+
+  // Pago internacional (Lemon Squeezy). Solo planes individual/profesional.
+  // LS solo tiene mensual/anual (suscripción): mapeamos la selección actual —
+  // suscripción o cualquier duración != 12m → mensual; 12 meses → anual.
+  const lsSupported = planKey === 'individual' || planKey === 'profesional';
+  async function handlePayIntl() {
+    if (!emailRe.test(email.trim())) {
+      setError(c.emailError);
+      return;
+    }
+    setError('');
+    setProcessing(true);
+    const lsDuration = isSub ? 'monthly' : duration === '12m' ? 'yearly' : 'monthly';
+    track('begin_checkout', { plan: planKey, gateway: 'lemonsqueezy', duration: lsDuration, currency: 'USD' });
+    try {
+      await openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() });
+    } catch (e) {
+      setProcessing(false);
+      setError(e.message || 'Error al iniciar el pago internacional.');
+    }
   }
 
   return (
@@ -181,6 +203,27 @@ export default function CulqiModal({ planKey, onClose }) {
                   : c.payBtn.replace('{price}', price)}
             </button>
             <p className="mt-3 text-center text-xs text-slate-500">{c.secureNote}</p>
+
+            {/* Pago internacional (fuera de Perú) vía Lemon Squeezy */}
+            {lsSupported && (
+              <>
+                <div className="mt-4 flex items-center gap-3 text-xs text-slate-600">
+                  <div className="h-px flex-1 bg-white/10" />
+                  <span>{c.intlOr || 'o'}</span>
+                  <div className="h-px flex-1 bg-white/10" />
+                </div>
+                <button
+                  onClick={handlePayIntl}
+                  disabled={processing}
+                  className="mt-3 w-full rounded-xl border border-white/15 px-5 py-3 font-semibold text-slate-200 transition-colors hover:bg-white/5 disabled:opacity-60"
+                >
+                  {c.intlPay || '🌎 Pagar con tarjeta internacional (USD)'}
+                </button>
+                <p className="mt-2 text-center text-[11px] text-slate-500">
+                  {c.intlNote || 'Fuera de Perú · Visa / Mastercard / Amex vía Lemon Squeezy'}
+                </p>
+              </>
+            )}
           </div>
         </motion.div>
       </motion.div>
