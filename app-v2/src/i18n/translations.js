@@ -523,7 +523,7 @@ export const translations = {
       errEmail: '✗ Por favor ingresa un email válido.',
       errPwLen: '✗ La contraseña debe tener al menos 8 caracteres.',
       errPwMatch: '✗ Las contraseñas no coinciden.',
-      errGeneric: 'Hubo un error. Intenta de nuevo o escríbenos a bimsaddin@gmail.com',
+      errGeneric: 'Hubo un error. Intenta de nuevo o escríbenos a soporte@bimsaddin.com',
       errConn: '✗ Error de conexión. Verifica tu internet e intenta de nuevo.',
       termsPre: 'Al continuar aceptas nuestros ',
       termsLink: 'términos',
@@ -554,7 +554,7 @@ export const translations = {
         { q: '¿Necesito tarjeta de crédito para empezar la prueba?', a: 'No. La prueba de 14 días no pide tarjeta. Solo te registras con tu email, eliges contraseña y tu cuenta queda activa al instante — sin email de verificación. Si te convence, compras un plan después; si no, la licencia se desactiva sola.' },
         { q: '¿Qué pasa al terminar los 14 días?', a: 'BIMS deja de ejecutar comandos, pero tus proyectos y modelos en Revit no se ven afectados — todo lo que hiciste durante la prueba queda intacto. Para seguir usándolo basta con elegir un plan y se reactiva en la misma cuenta.' },
         { q: '¿Es compatible con mi versión de Revit?', a: 'BIMS funciona en Revit 2024, 2025, 2026 y 2027 sobre Windows 10 / 11. La instalación toma menos de un minuto y no requiere configuración manual.' },
-        { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a bimsaddin@gmail.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
+        { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
         { q: '¿Puedo cambiar de plan o instalar en varios equipos?', a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.' },
         { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS es un add-in nuevo y aún está en proceso de obtener su firma digital, por lo que Windows SmartScreen puede mostrar un aviso de “editor desconocido”. No es un virus. Para instalarlo: ejecuta BIMS_Setup.exe, si aparece la ventana azul haz clic en “Más información” y luego en “Ejecutar de todas formas”. Estamos tramitando la firma para eliminar este aviso en próximas versiones.' },
         { q: '¿BIMS funciona con modelos vinculados?', a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.' },
@@ -586,7 +586,7 @@ export const translations = {
 
     footer: {
       tagline: 'Plugin profesional para Autodesk Revit',
-      version: 'Versión 1.1.2',
+      version: 'Versión 1.1.4',
       colProduct: 'Producto',
       colPricing: 'Precios',
       colLegal: 'Legal',
@@ -1101,7 +1101,7 @@ export const translations = {
       errEmail: '✗ Please enter a valid email.',
       errPwLen: '✗ The password must be at least 8 characters.',
       errPwMatch: '✗ Passwords don’t match.',
-      errGeneric: 'Something went wrong. Try again or write to us at bimsaddin@gmail.com',
+      errGeneric: 'Something went wrong. Try again or write to us at soporte@bimsaddin.com',
       errConn: '✗ Connection error. Check your internet and try again.',
       termsPre: 'By continuing you accept our ',
       termsLink: 'terms',
@@ -1132,7 +1132,7 @@ export const translations = {
         { q: 'Do I need a credit card to start the trial?', a: 'No. The 14-day trial doesn’t ask for a card. You just register with your email, choose a password and your account is active instantly — no verification email. If you like it, you buy a plan afterward; if not, the license deactivates on its own.' },
         { q: 'What happens when the 14 days end?', a: 'BIMS stops running commands, but your Revit projects and models are unaffected — everything you did during the trial stays intact. To keep using it, just choose a plan and it reactivates on the same account.' },
         { q: 'Is it compatible with my version of Revit?', a: 'BIMS works on Revit 2024, 2025, 2026 and 2027 on Windows 10 / 11. Installation takes less than a minute and requires no manual setup.' },
-        { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at bimsaddin@gmail.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
+        { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at soporte@bimsaddin.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
         { q: 'Can I change plans or install on several machines?', a: 'Yes. The Individual plan covers 1 machine, Professional up to 3, and the Enterprise plan has no limit. You can upgrade at any time — you only pay the prorated difference.' },
         { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is a new add-in and is still in the process of obtaining its digital signature, so Windows SmartScreen may show an “unknown publisher” notice. It’s not a virus. To install it: run BIMS_Setup.exe, if the blue window appears click “More info” and then “Run anyway”. We’re processing the signature to remove this notice in upcoming versions.' },
         { q: 'Does BIMS work with linked models?', a: 'Yes. Several commands —especially in the Formwork and Room Plastering modules— are designed to work with linked models, recognizing walls, columns and other elements from the linked documents.' },
@@ -1164,7 +1164,7 @@ export const translations = {
 
     footer: {
       tagline: 'Professional plugin for Autodesk Revit',
-      version: 'Version 1.1.2',
+      version: 'Version 1.1.4',
       colProduct: 'Product',
       colPricing: 'Pricing',
       colLegal: 'Legal',

@@ -69,8 +69,8 @@ export default function Download() {
             </ol>
             <p className="mt-4 text-xs leading-relaxed text-slate-500">
               {d.smartFootPre}
-              <a href="mailto:bimsaddin@gmail.com" className="font-semibold text-brand-300 hover:text-white">
-                bimsaddin@gmail.com
+              <a href="mailto:soporte@bimsaddin.com" className="font-semibold text-brand-300 hover:text-white">
+                soporte@bimsaddin.com
               </a>
               {d.smartFootPost}
             </p>

@@ -9,7 +9,7 @@ export const NAV_LINKS = [
 ];
 
 export const WHATSAPP_URL = 'https://wa.me/51989455558';
-export const EMAIL = 'bimsaddin@gmail.com';
+export const EMAIL = 'soporte@bimsaddin.com';
 export const YOUTUBE_ID = 'U9LvemehIkQ';
 
 // Galería de clips cortos — IDs de YouTube verbatim de la home original.

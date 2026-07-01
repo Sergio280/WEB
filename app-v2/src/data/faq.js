@@ -14,7 +14,7 @@ export const FAQ = [
   },
   {
     q: '¿Cómo es la garantía de devolución?',
-    a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a bimsaddin@gmail.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.',
+    a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.',
   },
   {
     q: '¿Puedo cambiar de plan o instalar en varios equipos?',
