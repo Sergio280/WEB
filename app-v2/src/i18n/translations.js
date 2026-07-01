@@ -438,6 +438,17 @@ export const translations = {
       errLoad: 'No se pudo cargar el checkout. Recarga la página.',
       errRejected: 'Pago rechazado',
       errPay: 'Error al procesar el pago. Intenta de nuevo.',
+      // Pago internacional (Lemon Squeezy)
+      intlOr: 'o',
+      intlPay: '🌎 Pagar con tarjeta internacional (USD)',
+      intlNote: 'Fuera de Perú · Visa / Mastercard / Amex vía Lemon Squeezy',
+      intlMonthly: 'Mensual',
+      intlYearly: 'Anual',
+      intlPerMonth: '/mes',
+      intlPerYear: '/año',
+      intlPayBtn: 'Pagar ${price} con tarjeta',
+      intlSecure: 'Pago internacional seguro vía Lemon Squeezy · recibes tu clave por email',
+      intlYearNote: '2 meses gratis vs. mensual',
       plans: {
         individual: {
           features: ['Todos los paneles BIMS', '1 equipo / 1 usuario', 'Actualizaciones incluidas', 'Soporte por email (48 h)'],
@@ -945,7 +956,7 @@ export const translations = {
       subtitle: 'Pay securely by card through Culqi and receive your key by email in minutes.',
       guaranteeStrong: '7-day guarantee.',
       guaranteeRest: ' If BIMS doesn’t convince you, write to us within 7 days of your purchase and we’ll refund 100% of your money. No questions asked.',
-      priceFrom: 'from S/',
+      priceFrom: 'from $',
       perMonth: ' /mo',
       custom: 'Custom',
       contactSales: 'Contact sales',
@@ -999,6 +1010,17 @@ export const translations = {
       errLoad: 'Couldn’t load the checkout. Please reload the page.',
       errRejected: 'Payment declined',
       errPay: 'Error processing the payment. Please try again.',
+      // International payment (Lemon Squeezy)
+      intlOr: 'or',
+      intlPay: '🌍 Pay by card',
+      intlNote: 'Visa / Mastercard / Amex · billed in USD via Lemon Squeezy',
+      intlMonthly: 'Monthly',
+      intlYearly: 'Yearly',
+      intlPerMonth: '/mo',
+      intlPerYear: '/yr',
+      intlPayBtn: 'Pay ${price} by card',
+      intlSecure: 'Secure international payment via Lemon Squeezy · you receive your key by email',
+      intlYearNote: '2 months free vs. monthly',
       plans: {
         individual: {
           features: ['All BIMS panels', '1 machine / 1 user', 'Updates included', 'Email support (48 h)'],
