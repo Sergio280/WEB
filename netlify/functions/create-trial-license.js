@@ -26,6 +26,8 @@
 const crypto = require('crypto');
 const admin  = require('firebase-admin');
 const { isDisposable } = require('./_lib/disposable-emails');
+const { sendEmail }     = require('./_lib/mailer');
+const { getTrialEmail } = require('./_lib/trial-emails');
 
 // ── Inicialización Firebase Admin (singleton) ────────────────────────────────
 if (!admin.apps.length) {
@@ -223,7 +225,11 @@ exports.handler = async function (event) {
     try { body = JSON.parse(event.body || '{}'); }
     catch { return resp(400, { error: 'Body inválido' }, origin); }
 
-    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid } = body;
+    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid, lang: rawLang } = body;
+
+    // Idioma de la landing al registrarse (para enviar los correos del trial en
+    // el idioma correcto). Solo 'en' es especial; cualquier otra cosa → español.
+    const lang = rawLang === 'en' ? 'en' : 'es';
 
     // IP segura desde el inicio (la usamos en muchos lugares)
     const ip  = getClientIp(event.headers);
@@ -369,10 +375,14 @@ exports.handler = async function (event) {
         validationCount: 0,
         trialMeta: {
             name, company,
+            lang,          // idioma para la secuencia de correos del trial (ES/EN)
             ipHash:        ipH,
             emailNormHash, // permite admin queries sin exponer el email
             source:        'web-form',
             createdAt:     now.toISOString(),
+            // Marca de qué correos de la secuencia ya se enviaron (idempotencia
+            // del cron trial-nurture). El welcome se marca aquí abajo tras enviarlo.
+            nurture:       {},
             // gclid del anuncio (si vino de Google Ads). Lo usa report-activations
             // para atribuir la ACTIVACIÓN real como conversión offline. Solo se
             // guarda si existe, para no ensuciar el registro del tráfico orgánico.
@@ -398,6 +408,23 @@ exports.handler = async function (event) {
     }
 
     console.log(`[trial] OK · ${logSafeEmail(email)} · uid=${uid} · vence=${expiresAt.toISOString().slice(0,10)}`);
+
+    // ── Correo de bienvenida + ayuda SmartScreen (día 0) ─────────────────────
+    // NO bloqueante: el trial ya está creado; si el email falla no revertimos
+    // nada (el usuario igual puede descargar). Es el correo de mayor impacto:
+    // guía a instalar pese al aviso de Windows, el motivo #1 de abandono.
+    try {
+        const mail = getTrialEmail('welcome', lang, { name });
+        if (mail) {
+            const sent = await sendEmail({ to: email, subject: mail.subject, html: mail.html, replyTo: 'soporte@bimsaddin.com' });
+            if (sent && sent.ok) {
+                // Marca el welcome como enviado para que el cron no lo repita.
+                await db.ref(`users_v2/${uid}/trialMeta/nurture/welcome`).set(now.toISOString()).catch(() => {});
+            }
+        }
+    } catch (e) {
+        console.warn('[trial] Envío de correo de bienvenida falló (no bloqueante):', e.message);
+    }
 
     return resp(200, {
         success:   true,
