@@ -20,6 +20,13 @@
 [functions."report-activations"]
   schedule = "@hourly"
 
+# ── Función programada: secuencia de correos del trial (días 3/7/12) ──────────
+# Una vez al día revisa los trials vigentes y envía el correo de seguimiento que
+# corresponda a su etapa (Resend). El correo de bienvenida (día 0) lo manda
+# create-trial-license.js al registrarse. Idempotente (marca trialMeta.nurture).
+[functions."trial-nurture"]
+  schedule = "@daily"
+
 # ── Geolocalización por IP (idioma automático de la landing) ──────────────────
 # Edge function que devuelve el país del visitante (context.geo) en /api/geo.
 # La landing /v2 la usa para mostrar la página en inglés fuera de países
