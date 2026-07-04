@@ -72,41 +72,59 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Columna mockup */}
+        {/* Columna mockup — es un enlace real a la demo. Antes el ribbon simulaba
+            botones "clicables" (efecto hover por tarjeta) que no hacían nada: era
+            la fuente principal de dead-clicks en la primera pantalla (Clarity ~33%).
+            Ahora todo el mockup es un único destino → #video-demo, y las tarjetas
+            del ribbon ya NO fingen ser botones individuales. */}
         <motion.div
           initial={{ opacity: 0, scale: 0.94, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
-          <div className="animate-floaty">
-            <WindowFrame title={h.mockup.title}>
-              {/* Ribbon de comandos BIMS */}
-              <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-                {h.mockup.ribbon.map((c) => (
-                  <div
-                    key={c.label}
-                    className="flex flex-col items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-3 text-center transition-colors hover:border-brand-500/40 hover:bg-brand-500/10"
-                  >
-                    <span className="text-xl">{c.icon}</span>
-                    <span className="text-[0.66rem] font-medium leading-tight text-slate-400">{c.label}</span>
-                  </div>
-                ))}
-              </div>
+          <a
+            href="#video-demo"
+            onClick={() => track('hero_mockup_click', { target: 'video-demo' })}
+            aria-label={h.mockup.hint}
+            className="group block cursor-pointer rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60"
+          >
+            <div className="animate-floaty">
+              <WindowFrame title={h.mockup.title}>
+                {/* Ribbon de comandos BIMS (decorativo, no interactivo por tarjeta) */}
+                <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+                  {h.mockup.ribbon.map((c) => (
+                    <div
+                      key={c.label}
+                      className="flex flex-col items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-3 text-center transition-colors group-hover:border-brand-500/30"
+                    >
+                      <span className="text-xl">{c.icon}</span>
+                      <span className="text-[0.66rem] font-medium leading-tight text-slate-400">{c.label}</span>
+                    </div>
+                  ))}
+                </div>
 
-              {/* Consola simulada */}
-              <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/80 p-3 font-mono text-[0.72rem] leading-relaxed">
-                <p className="text-slate-500">{h.mockup.console[0]}</p>
-                <p className="text-brand-300">{h.mockup.console[1]}</p>
-                <p className="text-accent-green">{h.mockup.console[2]}</p>
-                <p className="text-slate-500">{h.mockup.console[3]}</p>
-                <p className="text-accent-green">{h.mockup.console[4]}</p>
-              </div>
-            </WindowFrame>
-          </div>
+                {/* Consola simulada */}
+                <div className="mt-3 rounded-lg border border-white/10 bg-ink-950/80 p-3 font-mono text-[0.72rem] leading-relaxed">
+                  <p className="text-slate-500">{h.mockup.console[0]}</p>
+                  <p className="text-brand-300">{h.mockup.console[1]}</p>
+                  <p className="text-accent-green">{h.mockup.console[2]}</p>
+                  <p className="text-slate-500">{h.mockup.console[3]}</p>
+                  <p className="text-accent-green">{h.mockup.console[4]}</p>
+                </div>
+              </WindowFrame>
+            </div>
+
+            {/* Pista de "reproducir demo" que aparece al pasar el cursor sobre el mockup */}
+            <span className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span className="rounded-full bg-brand-500 px-4 py-2 text-sm font-bold text-white shadow-glow">
+                {h.mockup.hint}
+              </span>
+            </span>
+          </a>
 
           {/* Badge flotante */}
-          <div className="absolute -bottom-4 -left-4 hidden rounded-xl border border-white/10 bg-ink-800/90 px-4 py-3 shadow-glow backdrop-blur-xl sm:block">
+          <div className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-xl border border-white/10 bg-ink-800/90 px-4 py-3 shadow-glow backdrop-blur-xl sm:block">
             <p className="font-display text-2xl font-extrabold text-accent-green">{h.mockup.badgeValue}</p>
             <p className="text-[0.7rem] text-slate-400">{h.mockup.badgeLabel}</p>
           </div>
