@@ -111,7 +111,15 @@ export const translations = {
         ],
         badgeValue: '−80%',
         badgeLabel: 'tiempo en tareas repetitivas',
+        hint: '▶ Ver BIMS en acción',
       },
+    },
+
+    midCta: {
+      title: 'Deja de perder horas en tareas repetitivas de Revit',
+      desc: 'Encofrado, refuerzo, tarrajeo y planos DWG — automatizados. Pruébalo gratis 14 días, sin tarjeta.',
+      cta: 'Empezar prueba gratis →',
+      note: 'Garantía de 7 días · Activación instantánea',
     },
 
     videoDemo: {
@@ -689,7 +697,15 @@ export const translations = {
         ],
         badgeValue: '−80%',
         badgeLabel: 'time on repetitive tasks',
+        hint: '▶ See BIMS in action',
       },
+    },
+
+    midCta: {
+      title: 'Stop losing hours on repetitive Revit tasks',
+      desc: 'Formwork, rebar, plastering and DWG sheets — automated. Try it free for 14 days, no card.',
+      cta: 'Start free trial →',
+      note: '7-day guarantee · Instant activation',
     },
 
     videoDemo: {
