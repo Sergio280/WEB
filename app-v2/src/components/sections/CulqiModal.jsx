@@ -12,7 +12,7 @@ const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Los precios y URLs de checkout viven en CULQI_CONFIG; el texto, en el idioma
 // activo (t.culqiModal).
 export default function CulqiModal({ planKey, onClose }) {
-  const { t, lang } = useLang();
+  const { t, region } = useLang();
   const c = t.culqiModal;
   const plan = CULQI_CONFIG.plans[planKey]; // precios + checkout
   const tp = c.plans[planKey]; // texto: features, periods, savings
@@ -21,10 +21,11 @@ export default function CulqiModal({ planKey, onClose }) {
   // Ambos métodos de pago SIEMPRE disponibles (nadie queda bloqueado):
   //   - 'culqi': tarjetas peruanas en soles (solo Perú).
   //   - 'intl' : tarjetas internacionales en USD vía Lemon Squeezy.
-  // El default depende del idioma (español → Culqi, inglés → internacional),
-  // pero el usuario puede cambiar con el selector de arriba.
+  // El default depende de la REGIÓN de pago (no del idioma): Perú → Culqi;
+  // cualquier otro país → internacional, porque un usuario fuera de Perú no
+  // puede pagar con Culqi. El selector de arriba permite cambiar igual.
   const lsSupported = planKey === 'individual' || planKey === 'profesional';
-  const [method, setMethod] = useState(lang === 'en' && lsSupported ? 'intl' : 'culqi');
+  const [method, setMethod] = useState(region === 'INTL' && lsSupported ? 'intl' : 'culqi');
   const intl = method === 'intl';
 
   const USD = {

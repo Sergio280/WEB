@@ -12,13 +12,18 @@ const accentMap = {
   emerald: { ring: 'border-emerald-400/30', btn: 'bg-accent-emerald hover:bg-emerald-500', text: 'text-accent-green' },
 };
 
-// Precio "desde" en USD para la landing en inglés (pago internacional vía Lemon
-// Squeezy). El número en soles vive en CATALOG; en inglés mostramos el USD.
+// Precio "desde" en USD para la región de pago internacional (Lemon Squeezy).
+// El número en soles vive en CATALOG; fuera de Perú mostramos el USD.
 const USD_FROM = { individual: '16.90', profesional: '26.90' };
 
 export default function Pricing() {
-  const { t, lang } = useLang();
+  const { t, region } = useLang();
   const p = t.pricing;
+  // Moneda y monto por REGIÓN (no por idioma): un visitante de México ve el sitio
+  // en español pero con precios en USD (Culqi/soles solo aplica a Perú). Ver
+  // LanguageProvider → region.
+  const intlPay = region === 'INTL';
+  const curSym = intlPay ? '$' : 'S/';
   const [modalPlan, setModalPlan] = useState(null);
   const sectionRef = useRef(null);
 
@@ -87,7 +92,7 @@ export default function Pricing() {
                 <div className="mt-5">
                   {c.priceFrom != null ? (
                     <p className="font-display text-3xl font-extrabold text-white">
-                      {p.priceFrom}{lang === 'en' ? (USD_FROM[c.key] ?? c.priceFrom) : c.priceFrom}
+                      {p.priceFrom}{curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : c.priceFrom}
                       <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                     </p>
                   ) : (
