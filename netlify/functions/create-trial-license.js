@@ -140,6 +140,30 @@ function getClientIp(headers) {
     return 'unknown';
 }
 
+// ── País del visitante (para reconciliar conversión por país en analítica) ───
+// Fuente autoritativa: header 'x-nf-geo' que Netlify inyecta en el edge (JSON
+// en base64, NO falsificable por el cliente). Respaldo: el país que el frontend
+// ya resolvió vía /api/geo y envía en el body. Devuelve ISO-3166 alpha-2 en
+// mayúsculas o '' si no se puede determinar. Solo se usa para métricas (no para
+// seguridad), así que el respaldo del cliente es aceptable.
+function sanitizeCountry(str) {
+    if (!str || typeof str !== 'string') return '';
+    const cc = str.trim().toUpperCase();
+    return /^[A-Z]{2}$/.test(cc) ? cc : '';
+}
+
+function getClientCountry(headers, clientCountry) {
+    const geoHeader = headers['x-nf-geo'];
+    if (geoHeader && typeof geoHeader === 'string') {
+        try {
+            const geo = JSON.parse(Buffer.from(geoHeader, 'base64').toString('utf8'));
+            const cc = sanitizeCountry(geo && geo.country && geo.country.code);
+            if (cc) return cc;
+        } catch { /* header ausente o no parseable → usar respaldo del cliente */ }
+    }
+    return sanitizeCountry(clientCountry);
+}
+
 // ── Normalización de email contra Gmail/Outlook "+" y "." tricks ─────────────
 // Gmail, Outlook y otros tratan "user+anything@gmail.com" como "user@gmail.com".
 // Gmail también ignora puntos en el local-part. Para impedir múltiples trials
@@ -225,11 +249,15 @@ exports.handler = async function (event) {
     try { body = JSON.parse(event.body || '{}'); }
     catch { return resp(400, { error: 'Body inválido' }, origin); }
 
-    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid, lang: rawLang } = body;
+    const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid, lang: rawLang, country: rawCountry } = body;
 
     // Idioma de la landing al registrarse (para enviar los correos del trial en
     // el idioma correcto). Solo 'en' es especial; cualquier otra cosa → español.
     const lang = rawLang === 'en' ? 'en' : 'es';
+
+    // País del visitante (ISO alpha-2) para medir conversión por país (plan LatAm).
+    // Autoritativo desde el header de Netlify; respaldo el que envía el frontend.
+    const country = getClientCountry(event.headers, rawCountry);
 
     // IP segura desde el inicio (la usamos en muchos lugares)
     const ip  = getClientIp(event.headers);
@@ -380,6 +408,9 @@ exports.handler = async function (event) {
             emailNormHash, // permite admin queries sin exponer el email
             source:        'web-form',
             createdAt:     now.toISOString(),
+            // País del visitante (ISO alpha-2) para segmentar conversión por país
+            // en la analítica del plan LatAm. Solo se guarda si se pudo determinar.
+            ...(country ? { country } : {}),
             // Marca de qué correos de la secuencia ya se enviaron (idempotencia
             // del cron trial-nurture). El welcome se marca aquí abajo tras enviarlo.
             nurture:       {},

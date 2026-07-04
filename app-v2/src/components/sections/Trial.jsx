@@ -23,7 +23,7 @@ function passwordStrength(pw) {
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Trial() {
-  const { t, lang } = useLang();
+  const { t, lang, country } = useLang();
   const tr = t.trial;
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -61,7 +61,7 @@ export default function Trial() {
       const r = await fetch('/api/trial', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot, gclid: getStoredGclid(), lang }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot, gclid: getStoredGclid(), lang, country }),
       });
       const data = await r.json();
       if (r.ok && data.success) {
