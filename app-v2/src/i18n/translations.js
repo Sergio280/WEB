@@ -393,7 +393,7 @@ export const translations = {
       subtitle: 'Paga seguro con tarjeta a través de Culqi y recibe tu clave por email en minutos.',
       guaranteeStrong: 'Garantía de 7 días.',
       guaranteeRest: ' Si BIMS no te convence, escríbenos dentro de los 7 días siguientes a tu compra y te devolvemos el 100% de tu dinero. Sin preguntas.',
-      priceFrom: 'desde S/',
+      priceFrom: 'desde ', // el símbolo de moneda (S/ o $) lo añade Pricing según la región de pago
       perMonth: ' /mes',
       custom: 'A medida',
       contactSales: 'Contactar ventas',
@@ -979,7 +979,7 @@ export const translations = {
       subtitle: 'Pay securely by card through Culqi and receive your key by email in minutes.',
       guaranteeStrong: '7-day guarantee.',
       guaranteeRest: ' If BIMS doesn’t convince you, write to us within 7 days of your purchase and we’ll refund 100% of your money. No questions asked.',
-      priceFrom: 'from $',
+      priceFrom: 'from ', // el símbolo de moneda (S/ o $) lo añade Pricing según la región de pago
       perMonth: ' /mo',
       custom: 'Custom',
       contactSales: 'Contact sales',
