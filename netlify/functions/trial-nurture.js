@@ -65,12 +65,20 @@ exports.handler = async function () {
 
     const users = snapshot.val() || {};
     for (const [uid, rec] of Object.entries(users)) {
-        if (!rec || rec.licenseType !== 'Trial') continue;         // solo trials vigentes
+        if (!rec || rec.licenseType !== 'Trial') continue;         // solo licencias de tipo Trial
         const meta = rec.trialMeta || {};
         const createdIso = meta.createdAt || rec.createdAt;
         if (!createdIso) continue;
         const createdMs = Date.parse(createdIso);
         if (Number.isNaN(createdMs)) continue;
+
+        // No nutrir trials YA VENCIDOS: mandarle "vas por la mitad de tus 14 días"
+        // o "termina en 2 días" a alguien cuyo trial expiró hace semanas es
+        // incorrecto y confunde. Los seguimientos solo tienen sentido durante el
+        // trial activo (el día 12 igual cae 2 días antes de expirar, dentro de plazo).
+        const expIso = rec.expirationDate || rec.ExpirationDate;
+        const expMs  = expIso ? Date.parse(expIso) : NaN;
+        if (!Number.isNaN(expMs) && expMs <= now) continue;
 
         scanned++;
         const ageDays  = (now - createdMs) / DAY_MS;
