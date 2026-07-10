@@ -32,7 +32,11 @@ const EXCLUIR_EMAILS = new Set([
     'salejoszap@ucvvirtual.edu.pe',
 ]);
 const EXCLUIR_PATRONES = [
-    /^alejoszapatas?e?rgio\d*@gmail\.com$/i, // alejoszapatasergioNN@ y el typo "segio"
+    // Cualquier variante de las cuentas de Sergio: alejoszapatasergioNN@,
+    // alejoszapatasergio909@ y el typo real "alejoszapatasegio09@" (sin la "r").
+    // El patrón anterior (`alejoszapatas?e?rgio\d*`) NO cubría el typo y colaba
+    // una cuenta de prueba como si fuera un usuario real que instaló y no compró.
+    /^alejoszapata[a-z]*\d*@gmail\.com$/i,
     /^a\.z\.sergio@/i,
     /@autodesk\.com$/i, // el revisor del App Store: instala y prueba, nunca comprará
 ];
