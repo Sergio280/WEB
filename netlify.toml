@@ -118,6 +118,22 @@
   to     = "/.netlify/functions/verify-license"
   status = 200
 
+# ── Proxy de Firebase para redes que bloquean Google (plugin 1.1.5+) ──────────
+# El plugin intenta Google directo y, si el firewall corporativo lo bloquea,
+# reintenta contra estas rutas, que reenvían a Google desde Netlify (fuera del
+# firewall). :splat conserva el resto del path (incl. los ':' de los métodos de
+# identitytoolkit y el .json de la RTDB). El query (?key / ?auth) lo maneja la
+# función vía event.rawUrl. Ver netlify/functions/_lib/proxy-core.js.
+[[redirects]]
+  from   = "/api/gauth/*"
+  to     = "/.netlify/functions/gauth-proxy/:splat"
+  status = 200
+
+[[redirects]]
+  from   = "/api/gdb/*"
+  to     = "/.netlify/functions/gdb-proxy/:splat"
+  status = 200
+
 # ── Redirige el dominio ANTIGUO al nuevo (SEO + marca) ────────────────────────
 # Afecta SOLO al host bimsapp.netlify.app. Por el ORDEN de las reglas, las de
 # /api/* de arriba (status 200) se evalúan PRIMERO y NO se redirigen, así que las
