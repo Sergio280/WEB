@@ -28,6 +28,7 @@ const admin  = require('firebase-admin');
 const { isDisposable } = require('./_lib/disposable-emails');
 const { sendEmail }     = require('./_lib/mailer');
 const { getTrialEmail } = require('./_lib/trial-emails');
+const { resolveLang }   = require('./_lib/spanish-countries');
 
 // ── Inicialización Firebase Admin (singleton) ────────────────────────────────
 if (!admin.apps.length) {
@@ -251,13 +252,18 @@ exports.handler = async function (event) {
 
     const { email: rawEmail, name: rawName, company: rawCompany, password: rawPassword, honeypot, turnstileToken, gclid: rawGclid, lang: rawLang, country: rawCountry } = body;
 
-    // Idioma de la landing al registrarse (para enviar los correos del trial en
-    // el idioma correcto). Solo 'en' es especial; cualquier otra cosa → español.
-    const lang = rawLang === 'en' ? 'en' : 'es';
-
-    // País del visitante (ISO alpha-2) para medir conversión por país (plan LatAm).
-    // Autoritativo desde el header de Netlify; respaldo el que envía el frontend.
+    // País del visitante (ISO alpha-2) para medir conversión por país (plan LatAm)
+    // y para deducir el idioma cuando el cliente no lo envía. Autoritativo desde el
+    // header de Netlify; respaldo el que envía el frontend. Se calcula ANTES que
+    // `lang` porque `resolveLang` depende de él.
     const country = getClientCountry(event.headers, rawCountry);
+
+    // Idioma de los correos del trial. La web envía `lang`; el PLUGIN de Revit no
+    // (su payload es solo {email, password, name} y la DLL ya está distribuida),
+    // así que ahí se deduce del país real. Sin esto, todo registro desde el plugin
+    // caía en español — y con BIMS publicándose en el Autodesk App Store el
+    // tráfico es global y mayormente anglófono.
+    const lang = resolveLang(rawLang, country);
 
     // IP segura desde el inicio (la usamos en muchos lugares)
     const ip  = getClientIp(event.headers);
