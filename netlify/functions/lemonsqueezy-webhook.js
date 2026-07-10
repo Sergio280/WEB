@@ -52,6 +52,17 @@ exports.handler = async function (event) {
     const attrs = data.attributes || {};
     console.log(`[ls-webhook] evento=${eventName} id=${data.id} email=${attrs.user_email} status=${attrs.status} test=${attrs.test_mode}`);
 
+    // ── Guard de modo de prueba ──────────────────────────────────────────────
+    // Una compra en Test mode de Lemon Squeezy NO mueve dinero real (se paga con
+    // tarjetas de prueba tipo 4242…), así que jamás debe provisionar una licencia
+    // real. Sin esta guarda, cualquiera con el enlace de checkout podría obtener
+    // una licencia gratis. Para probar el flujo a propósito, poner en Netlify
+    // LS_ALLOW_TEST_MODE=true (nunca en producción).
+    if (attrs.test_mode === true && process.env.LS_ALLOW_TEST_MODE !== 'true') {
+        console.warn('[ls-webhook] evento en test_mode — ignorado (no se provisiona licencia)');
+        return { statusCode: 200, body: 'ignored (test_mode)' };
+    }
+
     try {
         // ── Cancelación / expiración ─────────────────────────────────────────
         if (eventName === 'subscription_cancelled' || eventName === 'subscription_expired') {
