@@ -4,15 +4,19 @@
 // internacional / wallets. Al pagar, el webhook (lemonsqueezy-webhook) provisiona
 // la licencia mapeando el variant comprado → plan.
 //
-// Slugs (UUID) obtenidos vía API del store 421750. NO cambian salvo que se
-// borre/recree el variant. Ver netlify/functions/_lib/ls-plans.js (mapa inverso
-// que usa el webhook).
+// Slugs (UUID) de los variants en modo LIVE del store 421750, obtenidos vía API
+// 2026-07-09. Ver netlify/functions/_lib/ls-plans.js (mapa inverso del webhook).
+//
+// OJO: los slugs anteriores apuntaban a variants creados con la tienda en Test
+// mode; LS separa por completo test y live, así que aquellos checkouts cobraban
+// con Stripe de prueba (ninguna tarjeta real pasaba). Al recrear los productos
+// en live cambiaron tanto los variant IDs como estos slugs.
 const BUY_BASE = 'https://bims.lemonsqueezy.com/buy';
 const BUY_SLUGS = {
-  'individual|monthly':  'b8e4dab0-ee5d-4215-87b5-9500c6dfade9',
-  'individual|yearly':   '79743f1a-3b8d-4654-8086-9c3438568c67',
-  'profesional|monthly': '0ec235c5-2c2a-49b6-b745-f0f8506f78c8',
-  'profesional|yearly':  '20a8681a-2554-4801-85d6-2b230d031acf',
+  'individual|monthly':  'b12bee57-5b89-4649-813c-5d134bf07140',
+  'individual|yearly':   '6bb19307-0438-43fa-8618-4bcfb088dee6',
+  'profesional|monthly': '14eb7910-34cf-462f-927b-a9cf4aeca9e0',
+  'profesional|yearly':  '2ae535aa-4d59-4c9c-b911-8c6d44debf9a',
 };
 
 // Redirige al checkout de LS del plan/duración. Lanza si el plan no está mapeado.
