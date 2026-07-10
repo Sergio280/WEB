@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import WindowFrame from '../ui/WindowFrame.jsx';
+import AppStoreBadge from '../ui/AppStoreBadge.jsx';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -69,6 +70,12 @@ export default function Hero() {
           <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mt-5 flex items-center gap-2 text-sm text-slate-400">
             <span className="font-bold text-accent-green">✓</span>
             {h.guarantee}
+          </motion.div>
+
+          {/* Sello de confianza del Autodesk App Store (señal de legitimidad,
+              no CTA principal). */}
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7} className="mt-5">
+            <AppStoreBadge />
           </motion.div>
         </div>
 
