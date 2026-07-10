@@ -12,6 +12,15 @@ export const WHATSAPP_URL = 'https://wa.me/51989455558';
 export const EMAIL = 'soporte@bimsaddin.com';
 export const YOUTUBE_ID = 'U9LvemehIkQ';
 
+// Fichas oficiales de BIMS en el Autodesk App Store (publicado 2026-07-10).
+// El sello usa la del idioma activo (la web es bilingüe por geo). Sirve de señal
+// de confianza — "Autodesk revisó y aprobó este plugin" — que combate la duda
+// de legitimidad / el aviso de SmartScreen. NO reemplaza el CTA de prueba.
+export const APPSTORE_URL = {
+  es: 'https://marketplace.autodesk.com/apps/dd59c0cc-37cc-4630-9aea-7418e84006b8',
+  en: 'https://marketplace.autodesk.com/apps/534cf400-2d5e-42ff-b43b-7b8a579b052c',
+};
+
 // Galería de clips cortos — IDs de YouTube verbatim de la home original.
 // yt vacío => tarjeta "Próximamente" (sin reproducción).
 export const CLIPS = [

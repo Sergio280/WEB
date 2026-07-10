@@ -115,6 +115,12 @@ export const translations = {
       },
     },
 
+    appStore: {
+      // "Disponible en" (no "Verificado"): coincide con el badge oficial y evita
+      // insinuar el Certified Apps Program, del que BIMS no forma parte.
+      badge: 'Disponible en el Autodesk App Store',
+    },
+
     midCta: {
       title: 'Deja de perder horas en tareas repetitivas de Revit',
       desc: 'Encofrado, refuerzo, tarrajeo y planos DWG — automatizados. Pruébalo gratis 14 días, sin tarjeta.',
@@ -699,6 +705,12 @@ export const translations = {
         badgeLabel: 'time on repetitive tasks',
         hint: '▶ See BIMS in action',
       },
+    },
+
+    appStore: {
+      // "Available on" (not "Verified"): matches the official badge and avoids
+      // implying the Certified Apps Program, which BIMS is not part of.
+      badge: 'Available on the Autodesk App Store',
     },
 
     midCta: {
