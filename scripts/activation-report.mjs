@@ -34,7 +34,18 @@ const EXCLUIR_EMAILS = new Set([
 const EXCLUIR_PATRONES = [
     /^alejoszapatas?e?rgio\d*@gmail\.com$/i, // alejoszapatasergioNN@ y el typo "segio"
     /^a\.z\.sergio@/i,
+    /@autodesk\.com$/i, // el revisor del App Store: instala y prueba, nunca comprará
 ];
+
+// Fecha en que se desplegó la secuencia de correos del trial (bienvenida +
+// días 3/7/12). Los registros ANTERIORES no recibieron NINGÚN seguimiento, así
+// que su conversión a pago no es una medida justa del producto.
+const NURTURE_DESDE = Date.parse('2026-07-04');
+
+// Supuestos del veredicto, explícitos para poder discutirlos.
+const CERT_USD     = 139;  // Certum Cloud Code Signing Individual, 1 año
+const RECUPERACION = 0.5;  // fracción de la fuga que firmar recuperaría (conservador:
+                           // firmar NO elimina SmartScreen de golpe, sube reputación)
 
 const esCuentaDePrueba = (email) =>
     !email ||
@@ -165,21 +176,59 @@ if (fuga.length) {
 }
 
 // ── Veredicto sobre el certificado ───────────────────────────────────────────
-const totalWeb = web.length;
-const fugaWeb = web.filter((f) => !f.activo).length;
+// REGLA CENTRAL: el certificado solo ataca el paso registro→instalación. Si el
+// paso siguiente (instalación→pago) convierte a 0%, firmar multiplica por cero.
+// Una versión anterior de este script recomendaba comprar mirando SOLO la tasa
+// de instalación; era una métrica mal calibrada.
+const totalWeb   = web.length;
+const instalaron = web.filter((f) => f.activo);
+const fugaWeb    = totalWeb - instalaron.length;
+const pagaron    = instalaron.filter((f) => f.pago).length;
+const conNurture = web.filter((f) => f.creadoMs >= NURTURE_DESDE).length;
+
 console.log('\n' + '─'.repeat(72));
-console.log(' VEREDICTO SOBRE EL CERTIFICADO DE FIRMA ($139/año)');
+console.log(` VEREDICTO SOBRE EL CERTIFICADO DE FIRMA ($${CERT_USD}/año)`);
 console.log('─'.repeat(72));
+console.log(` Embudo web: ${totalWeb} registros → ${instalaron.length} instalaron → ${pagaron} pagaron.`);
+console.log(` (Revisor de Autodesk excluido: instala y prueba, pero nunca comprará.)`);
+
 if (totalWeb < 10) {
-    console.log(` Muestra insuficiente (${totalWeb} registros web). Junta al menos 10 antes de decidir.`);
+    console.log(`\n MUESTRA INSUFICIENTE (${totalWeb} registros). Junta al menos 10 antes de decidir.`);
+} else if (instalaron.length < 5) {
+    console.log(`\n Solo ${instalaron.length} instalaciones: aún no se puede juzgar la conversión a pago.`);
+    console.log(' Espera más instalaciones antes de decidir sobre el certificado.');
+} else if (pagaron === 0) {
+    console.log(`\n ❌ NO COMPRAR — todavía.`);
+    console.log(` De los ${instalaron.length} que SÍ instalaron y usaron BIMS, pagaron ${pagaron}.`);
+    console.log(' El cuello de botella NO es la instalación: es lo que pasa DESPUÉS.');
+    console.log(' Firmar mete más gente por una puerta que hoy desemboca en 0 ventas.');
+    if (conNurture < 5) {
+        console.log(`\n ATENUANTE: solo ${conNurture} registro${conNurture === 1 ? ' es posterior' : 's son posteriores'} al ${new Date(NURTURE_DESDE).toISOString().slice(0, 10)},`);
+        console.log(' cuando se desplegó la secuencia de correos del trial. Los demás NO recibieron');
+        console.log(' ningún seguimiento, así que su 0% de conversión no juzga al producto.');
+        console.log(' → Primero deja correr los correos y vuelve a medir. Cuesta $0.');
+    }
+    console.log('\n Acción de mayor valor ahora (gratis): preguntar a los que instalaron y no');
+    console.log(' compraron qué les faltó, y a los que no instalaron qué los detuvo. Si dicen');
+    console.log(' "me salió una alerta de Windows", ahí tienes la evidencia para comprar.');
 } else {
-    const tasaFuga = fugaWeb / totalWeb;
-    // Recuperación conservadora: firmar no elimina SmartScreen de golpe.
-    const recuperados = fugaWeb * 0.5;
-    console.log(` Fuga web actual: ${fugaWeb}/${totalWeb} (${pct(fugaWeb, totalWeb)}).`);
-    console.log(` Si firmar recuperase la MITAD, serían ~${recuperados.toFixed(1)} instalaciones más en este periodo.`);
-    console.log(tasaFuga > 0.4
-        ? ' → Fuga alta. El certificado tiene sentido si el volumen se sostiene.'
-        : ' → Fuga baja. SmartScreen no parece ser tu cuello de botella principal.');
+    // Hay conversión real: se puede estimar el retorno del certificado.
+    const convInstalados = pagaron / instalaron.length;
+    const dias = (Math.max(...web.map((f) => f.creadoMs)) - Math.min(...web.map((f) => f.creadoMs))) / 864e5 || 1;
+    const registrosAnio  = (totalWeb / dias) * 365;
+    const fugaTasa       = fugaWeb / totalWeb;
+    const instalExtraAnio = registrosAnio * fugaTasa * RECUPERACION;
+    const clientesExtraAnio = instalExtraAnio * convInstalados;
+    const breakEven = clientesExtraAnio > 0 ? CERT_USD / clientesExtraAnio : Infinity;
+
+    console.log(`\n Conversión de los que instalan: ${pct(pagaron, instalaron.length)}`);
+    console.log(` Ritmo actual: ~${registrosAnio.toFixed(0)} registros/año · fuga ${pct(fugaWeb, totalWeb)}`);
+    console.log(` Si firmar recupera el ${(RECUPERACION * 100).toFixed(0)}% de la fuga:`);
+    console.log(`   → ~${instalExtraAnio.toFixed(1)} instalaciones extra/año`);
+    console.log(`   → ~${clientesExtraAnio.toFixed(2)} clientes extra/año`);
+    console.log(`\n Punto de equilibrio: cada cliente extra debe valer ≥ $${breakEven.toFixed(0)} para pagar el certificado.`);
+    console.log(breakEven < 100
+        ? ' ✅ COMPRAR: el umbral está por debajo del valor de un cliente típico.'
+        : ' ⚠️  DUDOSO: el umbral supera lo que vale un cliente. Sube el volumen o la conversión primero.');
 }
 console.log('');
