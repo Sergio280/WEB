@@ -265,6 +265,14 @@ exports.handler = async function (event) {
     // tráfico es global y mayormente anglófono.
     const lang = resolveLang(rawLang, country);
 
+    // Origen del registro. La landing manda `lang` (y `country`) en el body; el
+    // plugin de Revit no manda ninguno de los dos. Distinguirlos importa porque
+    // el embudo es distinto: en la web el usuario se registra ANTES de instalar
+    // (así que "registrado sin activar" mide la fuga de SmartScreen), mientras que
+    // desde el plugin ya instaló antes de registrarse. Sin esta marca no se puede
+    // medir el impacto del Autodesk App Store.
+    const source = (rawLang || rawCountry) ? 'web-form' : 'plugin';
+
     // IP segura desde el inicio (la usamos en muchos lugares)
     const ip  = getClientIp(event.headers);
     const ipH = hashIp(ip);
@@ -412,7 +420,7 @@ exports.handler = async function (event) {
             lang,          // idioma para la secuencia de correos del trial (ES/EN)
             ipHash:        ipH,
             emailNormHash, // permite admin queries sin exponer el email
-            source:        'web-form',
+            source,        // 'web-form' | 'plugin' — embudos distintos, ver arriba
             createdAt:     now.toISOString(),
             // País del visitante (ISO alpha-2) para segmentar conversión por país
             // en la analítica del plan LatAm. Solo se guarda si se pudo determinar.
