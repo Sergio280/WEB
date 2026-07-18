@@ -118,6 +118,12 @@
   to     = "/.netlify/functions/verify-license"
   status = 200
 
+# ── Telemetría de uso (privacy-safe) para calibrar políticas del trial ────────
+[[redirects]]
+  from   = "/api/usage"
+  to     = "/.netlify/functions/usage-event"
+  status = 200
+
 # ── Proxy de Firebase para redes que bloquean Google (plugin 1.1.5+) ──────────
 # El plugin intenta Google directo y, si el firewall corporativo lo bloquea,
 # reintenta contra estas rutas, que reenvían a Google desde Netlify (fuera del
