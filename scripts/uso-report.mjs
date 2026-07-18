@@ -34,10 +34,28 @@ const pct = (arr, p) => {
     return v[Math.min(v.length - 1, Math.floor((p / 100) * v.length))];
 };
 
+// MAPEO param→función (vive AQUÍ, offline, NO en el plugin). El plugin solo manda
+// el rastro crudo "trace:BIMS_*" (parámetros que BIMS ya deja visibles en el
+// modelo). Aquí lo traducimos a nombres legibles. Si aparece un BIMS_* nuevo sin
+// mapear, se muestra crudo (y se agrega aquí).
+const MAPA = [
+    [/^BIMS_Encf_/i,        'Metrado de Encofrado'],
+    [/^BIMS_HostElementId/i,'Encofrado'],
+    [/^BIMS_[A-L]$/i,       'Escalar Sólido'],
+    [/^BIMS_(Mark|Assignment|Layer)/i, 'Acero / Refuerzo'],
+];
+function aFuncion(func) {
+    if (!func) return '(desconocida)';
+    if (!func.startsWith('trace:')) return func; // eventos con func explícito
+    const param = func.slice('trace:'.length);
+    for (const [rx, nombre] of MAPA) if (rx.test(param)) return nombre;
+    return 'BIMS_ (sin mapear): ' + param;
+}
+
 // Agrupar por función.
 const porFunc = {};
 for (const e of events) {
-    const f = e.func || '(desconocida)';
+    const f = aFuncion(e.func);
     (porFunc[f] ||= { total: 0, trial: 0, pago: 0, ns: [] });
     porFunc[f].total++;
     if (e.lic === 'Trial') porFunc[f].trial++;
