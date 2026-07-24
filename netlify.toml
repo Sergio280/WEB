@@ -140,6 +140,23 @@
   to     = "/.netlify/functions/gdb-proxy/:splat"
   status = 200
 
+# ── Proxy de GA4 (primer-partido) para esquivar ad-blockers ───────────────────
+# La mayoría de bloqueadores filtran por DOMINIO (googletagmanager.com,
+# google-analytics.com), no por contenido. Sirviendo el script de gtag.js y sus
+# beacons de medición desde bimsaddin.com, los bloqueadores dejan de detectarlos.
+# El HTML carga /ga4/gtag.js y gtag.js manda sus beacons a transport_url=/g/...
+# (parámetro oficial de gtag.js para este caso). Ver funciones ga-script-proxy.js
+# / ga-collect-proxy.js.
+[[redirects]]
+  from   = "/ga4/gtag.js"
+  to     = "/.netlify/functions/ga-script-proxy"
+  status = 200
+
+[[redirects]]
+  from   = "/g/*"
+  to     = "/.netlify/functions/ga-collect-proxy/:splat"
+  status = 200
+
 # ── Redirige el dominio ANTIGUO al nuevo (SEO + marca) ────────────────────────
 # Afecta SOLO al host bimsapp.netlify.app. Por el ORDEN de las reglas, las de
 # /api/* de arriba (status 200) se evalúan PRIMERO y NO se redirigen, así que las
