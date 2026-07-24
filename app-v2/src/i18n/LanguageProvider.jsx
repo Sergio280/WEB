@@ -79,6 +79,23 @@ export function LanguageProvider({ children }) {
         const cc = String(data.country).toUpperCase();
         setCountry(cc);
         if (!explicit) setLangState(SPANISH_COUNTRIES.has(cc) ? 'es' : 'en');
+
+        // El beacon de GA4 ahora pasa por nuestro proxy (bimsaddin.com/g/...)
+        // para esquivar ad-blockers; Google ya no ve la IP real del visitante,
+        // sino la del datacenter de Netlify (EE.UU.) → su geolocalización
+        // nativa queda inservible para este tráfico. Mandamos el país REAL
+        // (esta misma detección, ya usada para idioma/moneda) como user
+        // property propio, para que los reportes de GA4 no dependan de la
+        // geo de Google en el tráfico proxied. Requiere registrar la
+        // dimensión personalizada "real_country" (alcance Usuario) en
+        // GA4 → Administrar → Definiciones personalizadas.
+        try {
+          if (typeof window.gtag === 'function') {
+            window.gtag('set', 'user_properties', { real_country: cc });
+          }
+        } catch {
+          /* nunca romper el flujo de idioma/región por un fallo de analítica */
+        }
       })
       .catch(() => {
         /* sin geo: se mantiene la estimación del navegador y región 'PE' */
