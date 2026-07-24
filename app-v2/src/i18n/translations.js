@@ -412,6 +412,8 @@ export const translations = {
       footnoteMid: '. Mientras más larga la licencia, mayor el descuento — hasta ',
       footnoteDiscount: '−17%',
       footnotePost: ' frente al precio mensual.',
+      regionAskIntl: '¿Ves precios en dólares por error? Cambiar a soles (Perú)',
+      regionAskPe: '¿Pagas desde fuera de Perú? Ver precios en dólares',
       tableHead: 'Qué incluye',
       catalog: {
         individual: { badge: 'Individual', name: 'BIMS Individual', desc: 'Plugin completo para Revit, todos los paneles desbloqueados. Licencia para 1 equipo. Ideal para profesionales independientes.' },
@@ -1004,6 +1006,8 @@ export const translations = {
       footnoteMid: '. The longer the license, the bigger the discount — up to ',
       footnoteDiscount: '−17%',
       footnotePost: ' off the monthly price.',
+      regionAskIntl: 'Seeing USD prices by mistake? Switch to soles (Peru)',
+      regionAskPe: 'Paying from outside Peru? See prices in USD',
       tableHead: 'What’s included',
       catalog: {
         individual: { badge: 'Individual', name: 'BIMS Individual', desc: 'Complete Revit plugin, every panel unlocked. License for 1 machine. Ideal for independent professionals.' },

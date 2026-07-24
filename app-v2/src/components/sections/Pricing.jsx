@@ -17,7 +17,7 @@ const accentMap = {
 const USD_FROM = { individual: '16.90', profesional: '26.90' };
 
 export default function Pricing() {
-  const { t, region } = useLang();
+  const { t, region, setRegionOverride } = useLang();
   const p = t.pricing;
   // Moneda y monto por REGIÓN (no por idioma): un visitante de México ve el sitio
   // en español pero con precios en USD (Culqi/soles solo aplica a Perú). Ver
@@ -135,6 +135,20 @@ export default function Pricing() {
 
       <p className="mx-auto mt-6 max-w-xl text-center text-sm text-slate-500">
         {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount}</strong>{p.footnotePost}
+      </p>
+
+      {/* Corrección manual de región: la geo-IP a veces falla (ISPs peruanos con
+          bloques de IP registrados en el extranjero) y muestra USD a un usuario
+          de Perú, o viceversa. Este link deja al usuario corregirlo sin depender
+          de que la detección automática acierte. */}
+      <p className="mx-auto mt-2 text-center text-xs">
+        <button
+          type="button"
+          onClick={() => setRegionOverride(intlPay ? 'PE' : 'INTL')}
+          className="text-slate-500 underline decoration-dotted underline-offset-2 hover:text-slate-300"
+        >
+          {intlPay ? p.regionAskIntl : p.regionAskPe}
+        </button>
       </p>
 
       {/* Tabla comparativa */}

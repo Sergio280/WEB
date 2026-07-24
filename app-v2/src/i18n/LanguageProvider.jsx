@@ -24,11 +24,25 @@ import { translations, SPANISH_COUNTRIES } from './translations.js';
 // ─────────────────────────────────────────────────────────────────────────────
 const LangContext = createContext(null);
 const STORAGE_KEY = 'bims_lang';
+const REGION_OVERRIDE_KEY = 'bims_region_override';
 
 function savedLang() {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
     return v === 'es' || v === 'en' ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+// Corrección manual de región cuando la geo-IP se equivoca (pasa con algunos
+// ISPs peruanos cuyo bloque de IP está registrado a nombre de su matriz en el
+// extranjero). NO reemplaza la detección automática: solo la sobre-escribe si
+// el usuario explícitamente dice "no, estoy en Perú" / "no, estoy afuera".
+function savedRegionOverride() {
+  try {
+    const v = localStorage.getItem(REGION_OVERRIDE_KEY);
+    return v === 'PE' || v === 'INTL' ? v : null;
   } catch {
     return null;
   }
@@ -51,6 +65,8 @@ export function LanguageProvider({ children }) {
   // País real del visitante (ISO alpha-2). Vacío hasta que resuelve la geo.
   // Solo alimenta la región de pago; NO lo condiciona la elección de idioma.
   const [country, setCountry] = useState('');
+  // Corrección manual del usuario, si la usó (ver savedRegionOverride).
+  const [regionOverride, setRegionOverrideState] = useState(savedRegionOverride);
 
   // Refinar con geolocalización por IP. El país SIEMPRE se captura (para la
   // región de pago); el idioma solo se ajusta si no hay elección explícita.
@@ -73,7 +89,21 @@ export function LanguageProvider({ children }) {
   }, [explicit]);
 
   // Región de pago derivada del país (no del idioma). Ver cabecera del archivo.
-  const region = country && country !== 'PE' ? 'INTL' : 'PE';
+  // La corrección manual del usuario (regionOverride) tiene prioridad absoluta
+  // sobre la geo-IP: si el usuario dijo explícitamente "no, estoy en Perú" (o
+  // al revés), eso vale más que cualquier detección automática.
+  const geoRegion = country && country !== 'PE' ? 'INTL' : 'PE';
+  const region = regionOverride || geoRegion;
+
+  function setRegionOverride(next) {
+    setRegionOverrideState(next);
+    try {
+      if (next === 'PE' || next === 'INTL') localStorage.setItem(REGION_OVERRIDE_KEY, next);
+      else localStorage.removeItem(REGION_OVERRIDE_KEY);
+    } catch {
+      /* almacenamiento no disponible: la corrección dura solo esta sesión */
+    }
+  }
 
   // Mantener <html lang>, <title> y la meta description sincronizados con el
   // idioma activo (accesibilidad y SEO básico para la SPA).
@@ -101,7 +131,7 @@ export function LanguageProvider({ children }) {
     setLang(lang === 'es' ? 'en' : 'es');
   }
 
-  const value = { lang, setLang, toggleLang, t: translations[lang], country, region };
+  const value = { lang, setLang, toggleLang, t: translations[lang], country, region, setRegionOverride };
   return <LangContext.Provider value={value}>{children}</LangContext.Provider>;
 }
 
