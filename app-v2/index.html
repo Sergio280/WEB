@@ -48,7 +48,7 @@
         // transport_url: manda los beacons de medición por bimsaddin.com en vez
         // de google-analytics.com directo — evita el bloqueo por dominio de la
         // mayoría de ad-blockers (uBlock, AdGuard, Brave, Safari ITP). Ver
-        // netlify/functions/ga-script-proxy.js y ga-collect-proxy.js.
+        // netlify/edge-functions/ga-script.js y functions/ga-collect-proxy.js.
         gtag('config', 'G-P5ZL4FBL4S', { transport_url: 'https://bimsaddin.com' });
     </script>
 
@@ -65,16 +65,17 @@
          Pesos recortados a los que el diseño usa de verdad (antes se pedían 12,
          incluidos varios que ningún componente aplica):
            · Bricolage Grotesque 700/800 → font-display (títulos, cifras)
-           · Plus Jakarta Sans 400/500/600/700 → font-sans (cuerpo y botones)
+           · Plus Jakarta Sans 400/500/600/700/800 → font-sans (cuerpo, botones,
+             y el 800 de las insignias numeradas y el lazo de "Más elegido")
            · JetBrains Mono 400 → font-mono (solo la consola simulada del hero)
          preload + onload: la hoja deja de bloquear el primer render. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" as="style"
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&display=swap"
           onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400&display=swap">
     </noscript>
 
     <!-- Miniaturas de YouTube (demo + 4 clips): abre la conexión en paralelo

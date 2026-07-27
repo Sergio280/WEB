@@ -129,14 +129,17 @@ exports.handler = async function (event) {
 // No devuelven un booleano a propósito: quien llama debe quedarse con el objeto
 // verificado, no con el del body (ver nota de seguridad en la cabecera).
 
-// Sanea el id antes de meterlo en la URL: sólo el formato que emite Culqi.
-// Evita que un id con '../' o query se convierta en otra ruta de la API.
-function isValidCulqiId(id, prefix) {
-    return typeof id === 'string' && new RegExp(`^${prefix}[A-Za-z0-9_-]{1,64}$`).test(id);
+// Sanea el id antes de meterlo en la URL. Se valida el JUEGO DE CARACTERES, que
+// es lo que de verdad protege (nada de '/', '?', '..' que reescriban la ruta de
+// la API), y NO el prefijo: los prefijos de Culqi (chr_, sxn_…) se usan más
+// arriba solo para ENRUTAR el evento, y atarlos aquí haría que un id con un
+// prefijo distinto al esperado se descartara en silencio.
+function isValidCulqiId(id) {
+    return typeof id === 'string' && /^[A-Za-z0-9_-]{4,80}$/.test(id);
 }
 
 async function verifyChargeWithCulqi(chargeId) {
-    if (!isValidCulqiId(chargeId, 'chr_')) {
+    if (!isValidCulqiId(chargeId)) {
         console.warn('[culqi-webhook] charge id con formato inválido — descartado');
         return null;
     }
@@ -164,23 +167,32 @@ async function verifyChargeWithCulqi(chargeId) {
 // Aceptamos cualquier estado (active/canceled): el handler decide qué hacer
 // según el `status` DEL OBJETO VERIFICADO, no según el del body.
 async function verifySubscriptionWithCulqi(subId) {
-    if (!isValidCulqiId(subId, 'sxn_')) {
+    if (!isValidCulqiId(subId)) {
         console.warn('[culqi-webhook] subscription id con formato inválido — descartado');
         return null;
     }
-    try {
-        const response = await fetch(`https://api.culqi.com/v2/subscriptions/${subId}`, {
-            headers: { 'Authorization': `Bearer ${process.env.CULQI_SECRET_KEY}` },
-        });
-        if (!response.ok) {
-            console.warn(`[culqi-webhook] Culqi API subscription ${subId}: HTTP ${response.status}`);
-            return null;
+    // Se prueban las DOS rutas de la API: culqi-subscription.js crea contra
+    // /v2/recurrent/subscriptions, mientras que aquí siempre se consultó
+    // /v2/subscriptions. Si esa ruta no es la correcta para las suscripciones
+    // recurrentes, la verificación fallaba y TODOS los webhooks de suscripción
+    // se descartaban en silencio. Probando ambas, la altas y renovaciones se
+    // verifican con la que responda.
+    const urls = [
+        `https://api.culqi.com/v2/recurrent/subscriptions/${subId}`,
+        `https://api.culqi.com/v2/subscriptions/${subId}`,
+    ];
+    for (const url of urls) {
+        try {
+            const response = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${process.env.CULQI_SECRET_KEY}` },
+            });
+            if (response.ok) return await response.json();
+            console.warn(`[culqi-webhook] Culqi API ${url}: HTTP ${response.status}`);
+        } catch (err) {
+            console.error('[culqi-webhook] verifySubscription exception:', err?.message || err);
         }
-        return await response.json();
-    } catch (err) {
-        console.error('[culqi-webhook] verifySubscription exception:', err?.message || err);
-        return null;
     }
+    return null;
 }
 
 // ── Cobro único ───────────────────────────────────────────────────────────────
@@ -203,10 +215,17 @@ async function handleCharge(charge) {
         return;
     }
 
-    // El importe realmente cobrado debe coincidir con el del catálogo. Si no,
-    // algo se manipuló entre la creación del cobro y el webhook: no provisionar.
-    if (Number(charge.amount) !== item.amount) {
-        console.warn(`[culqi-webhook] Charge ${charge.id}: importe ${charge.amount} ≠ catálogo ${item.amount} para ${plan}/${duration} — descartado`);
+    // Lo cobrado debe cubrir el precio de catálogo de esos términos. Es la
+    // comprobación que impide pagar un plan barato y reclamar uno caro: la
+    // metadata dice QUÉ se compró, pero el dinero manda.
+    //
+    // Se usa "menor que" y no "distinto de" a propósito: un cobro legítimo por
+    // un importe superior (ajuste manual desde el panel de Culqi, redondeo de
+    // una promoción) no debe dejar sin licencia a alguien que YA pagó. Cobrar de
+    // más nunca es un ataque; cobrar de menos sí.
+    const paid = Number(charge.amount);
+    if (!Number.isFinite(paid) || paid < item.amount) {
+        console.warn(`[culqi-webhook] Charge ${charge.id}: pagado ${charge.amount} < catálogo ${item.amount} para ${plan}/${duration} — descartado`);
         return;
     }
 
@@ -250,7 +269,15 @@ async function handleSubscription(sub) {
 // ── Suscripción cancelada ─────────────────────────────────────────────────────
 async function handleCancellation(sub) {
     const email = sub.metadata?.email || sub.email;
-    if (!email) return;
+    if (!email) {
+        // No se calla: si la respuesta de la API no trae email, la cancelación
+        // no se aplica y el usuario conservaría el acceso. Mejor que quede en
+        // los logs a que desaparezca sin rastro. NO se cae al email del body a
+        // propósito: sería una vía para desactivar la licencia de cualquiera
+        // cuyo correo se conozca.
+        console.error(`[culqi-webhook] Cancelación de ${sub.id} sin email en el objeto verificado — no aplicada`);
+        return;
+    }
 
     try {
         const uid = (await auth.getUserByEmail(email)).uid;

@@ -85,13 +85,11 @@
      tantas capas simultáneas el scroll se atasca en portátiles sin GPU
      dedicada, justo el equipo de alguien con Revit abierto de fondo. El fondo
      es casi opaco, así que visualmente la diferencia es inapreciable.
-     El blur se reserva para lo que SÍ se superpone a contenido en movimiento:
-     navbar y modales (.glass-strong). */
+     El blur se mantiene donde SÍ se superpone a contenido en movimiento, y allí
+     se aplica con la utilidad directa de Tailwind: el navbar al hacer scroll
+     (Navbar.jsx) y el fondo de los modales (CulqiModal / Lightbox). */
   .glass {
     @apply border border-white/10 bg-white/[0.04];
-  }
-  .glass-strong {
-    @apply bg-ink-800/70 border border-white/10 backdrop-blur-xl;
   }
 
   /* Texto con gradiente de marca */

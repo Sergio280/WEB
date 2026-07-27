@@ -88,11 +88,12 @@ exports.handler = async function (event) {
     const uid = s(body.uid, 48);
     const ver = s(body.ver, 16);
 
-    // El uid debe corresponder a un usuario REAL. Sin esto cualquiera podía
-    // atribuir eventos a uids inventados (o ajenos) y falsear los reportes.
-    // Sólo se comprueba la EXISTENCIA del nodo, que es lo que ya se leía abajo
-    // para resolver el tipo de licencia: no añade lecturas extra.
-    if (!uid || !/^[A-Za-z0-9_-]{20,48}$/.test(uid)) return ok({ ignored: 'uid' });
+    // El uid es OPCIONAL: UsageTelemetry.Record del plugin lo envía vacío cuando
+    // la sesión aún no está en memoria ("si no hay, se envía sin uid"), y esos
+    // eventos siguen contando para saber QUÉ funciones se usan. Lo que no se
+    // acepta es un uid inventado: si no cumple el formato, se guarda el evento
+    // como anónimo en vez de descartarlo o de atribuirlo a quien no es.
+    const uidOk = uid && /^[A-Za-z0-9_-]{20,48}$/.test(uid);
     // Conteo de elementos: entero acotado, o null si no vino.
     let n = null;
     if (typeof body.n === 'number' && Number.isFinite(body.n)) {
@@ -100,21 +101,29 @@ exports.handler = async function (event) {
     }
 
     // Resolver el tipo de licencia AL MOMENTO del uso (trial vs pago) — es el dato
-    // que da valor al reporte. La misma lectura sirve para confirmar que el uid
-    // existe: si no hay nodo, el evento se descarta en vez de guardarse huérfano.
+    // que da valor al reporte. La misma lectura confirma que el uid corresponde a
+    // un usuario real: si no existe, el evento se guarda como ANÓNIMO (uid null)
+    // en lugar de atribuirse a un uid inventado, que envenenaría los reportes por
+    // usuario. El evento no se pierde: sigue contando para el uso por función.
     let lic = '';
-    try {
-        const snap = await db.ref(`users_v2/${uid}/licenseType`).once('value');
-        if (!snap.exists()) return ok({ ignored: 'unknown-uid' });
-        lic = s(snap.val(), 24);
-    } catch {
-        // Fallo de RTDB: no bloqueamos la telemetría legítima por esto.
+    let storedUid = null;
+    if (uidOk) {
+        try {
+            const snap = await db.ref(`users_v2/${uid}/licenseType`).once('value');
+            if (snap.exists()) {
+                storedUid = uid;
+                lic = s(snap.val(), 24);
+            }
+        } catch {
+            // Fallo de RTDB: no bloqueamos la telemetría legítima por esto.
+            storedUid = uid;
+        }
     }
 
     try {
         await db.ref('usage_events').push({
             func,
-            uid,
+            uid: storedUid,
             n,                      // conteo de elementos o null
             lic: lic || null,      // 'Trial' | 'Monthly' | 'Annual' | null
             ver: ver || null,

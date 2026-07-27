@@ -23,6 +23,10 @@ solución aplicada a cada uno y los números medidos después.
 | Menor | 9 | Accesibilidad de modales, `prefers-reduced-motion`, anclajes bajo el navbar, etc. |
 | Optimización | 13 | Bundle de 574 KB sin dividir · Lambda en el camino crítico · 40 MB de binarios por deploy |
 
+> **Nota tras la implementación:** 33 de los 34 puntos están aplicados. O3 (borrar los
+> 40 MB de `update/`) se revirtió al descubrir que el release no publica los assets
+> a los que habría redirigido — ver el detalle al final.
+
 Lo más urgente son **B1** y **B2**: juntos permiten obtener una licencia
 Profesional de larga duración por S/5 o gratis.
 
@@ -572,7 +576,7 @@ todas las funciones, y una pasada de Playwright sobre el `dist/` servido
 |---|---|
 | O1 | `Metrics` con `React.lazy` + `Suspense`, y `manualChunks` para React y Framer Motion. **Arranque: 194 KB → 131 KB gzip (−32 %)**; Chart.js (64 KB gzip) sale del camino crítico a su propio chunk. El fallback lleva `id="efectividad"` para no romper el enlace del navbar. |
 | O2 | `ga-script-proxy` (Lambda) → `netlify/edge-functions/ga-script.js`, con caché en el PoP y respuesta degradada si Google no responde (nunca un 5xx en el `<head>`). |
-| O3 | Los 40 MB de binarios salen del repo y del deploy; `netlify.toml` redirige `/update/*.exe|zip` a GitHub Releases con **302** para que ningún plugin antiguo se rompa. Repo: **43 MB → 3,2 MB**. |
+| O3 | **NO APLICADO — revertido.** Ver «El hallazgo que impidió aplicar O3», abajo. |
 | O4 | 12 pesos de fuente → 7 (los que el diseño usa), y `preload` + `onload` para que la hoja deje de bloquear el primer render. |
 | O5 | `og-cover.jpg` 276 KB → **92 KB** (calidad 82, progresivo, sin los 300 DPI). |
 | O6 | `background-attachment: fixed` → pseudo-elemento `body::before` con `position: fixed`. |
@@ -584,6 +588,37 @@ todas las funciones, y una pasada de Playwright sobre el `dist/` servido
 | O12 | El script de Culqi v4 pasa a `defer`. |
 | O13 | `useMemo` sobre la lista de clips. |
 
+### El hallazgo que impidió aplicar O3
+
+Los 40 MB de `update/` llegaron a borrarse, con redirects 302 a GitHub Releases
+para cubrir a los plugins antiguos. **Se revirtió antes de dar el trabajo por
+bueno**, al comprobar los assets del release por API:
+
+```
+GET /repos/Sergio280/WEB/releases/latest  →  v1.1.5
+assets: [ BIMS_Setup.exe ]        ← el ÚNICO asset publicado
+```
+
+No existen `BIMS.exe` ni `BIMS-update.zip` en el release. Los redirects habrían
+devuelto 404 y, si el nodo `updates/latest` de Firebase apunta a
+`bimsaddin.com/update/…`, la actualización automática se habría roto para todos
+los usuarios instalados. Los binarios están restaurados y `netlify.toml` lleva
+ahora un aviso explícito de no borrarlos sin comprobar antes la RTDB.
+
+**Además, esto destapa un problema que ya existía y que conviene revisar:**
+
+- `update/version.json` declara
+  `downloadUrl: …/releases/latest/download/BIMS-update.zip` — asset que **no
+  existe** en v1.1.5.
+- `UpdateChecker.cs:17-18` documenta que el `downloadUrl` de la RTDB apunta a
+  `releases/latest/download/BIMS.exe` — que **tampoco existe**.
+
+Si el nodo `updates/latest` de Firebase apunta a cualquiera de esas dos URLs, la
+actualización automática está descargando un 404 ahora mismo. No se ha tocado
+porque el valor real vive en la RTDB y no es visible desde el repositorio: hay
+que mirarlo en la consola de Firebase y, o bien corregir el `downloadUrl`, o
+bien publicar los assets que faltan en el release.
+
 ### Lo único que no se hizo
 
 **Reparto de `translations.js` por idioma** (mencionado en O1 como candidato).
@@ -592,6 +627,50 @@ por idioma** ya minificado, así que el ahorro real sobre los 131 KB de arranque
 es de ~7 %. A cambio, obliga a que el render inicial dependa de un `import()`
 asíncrono, con riesgo de parpadeo de texto sin traducir en la primera pintura.
 Mal negocio: se descarta a propósito.
+
+### Regresiones detectadas en la auto-revisión (y corregidas)
+
+Una pasada de verificación posterior encontró cuatro cosas que la propia
+implementación había roto o podía romper. Todas están arregladas:
+
+1. **`font-extrabold` sin `font-display`.** Al recortar los pesos de fuente se
+   dejó fuera Plus Jakarta Sans 800, que sí usan cuatro elementos (las insignias
+   numeradas de Casos de uso y Descarga, el valor del slider del ROI y el lazo
+   «Más elegido»). Habrían salido con negrita sintética. Peso repuesto: el
+   recorte real es de 12 a 8.
+2. **Validación de id de Culqi por prefijo.** `isValidCulqiId(id, 'sxn_')`
+   habría descartado en silencio cualquier suscripción cuyo id no empezara por
+   ese prefijo exacto. Ahora se valida sólo el juego de caracteres, que es lo
+   que de verdad protege contra reescrituras de ruta.
+3. **`amount !== catálogo` rechazaba cobros legítimos.** Un ajuste manual desde
+   el panel de Culqi habría dejado sin licencia a alguien que ya había pagado.
+   Cambiado a `pagado < catálogo`: cobrar de más nunca es un ataque.
+4. **`/api/usage` descartaba los eventos sin `uid`.** `UsageTelemetry.Record`
+   del plugin los envía así a propósito cuando la sesión aún no está en memoria
+   —su propio comentario dice *«si no hay, se envía sin uid»*— y también en el
+   escaneo de rastros al abrir un documento. Ahora el uid es opcional: si falta
+   o no corresponde a un usuario real, el evento se guarda como anónimo en vez
+   de perderse.
+
+También se detectó que `.glass-strong` no lo usa ningún componente (el blur del
+navbar y los modales viene de utilidades de Tailwind directas), así que se
+eliminó en lugar de dejar la regla muerta.
+
+### Cobertura de pruebas del webhook
+
+La reescritura de `culqi-webhook` (B1/B2) se validó con un banco de 15
+comprobaciones sobre la lógica real, con `firebase-admin` y la API de Culqi
+simuladas:
+
+- Cobro legítimo Individual 1m y Profesional 12m → licencia correcta (tipo,
+  dispositivos, vencimiento).
+- Webhook forjado con `months: 120`, `maxDevices: 99` y otro email → se
+  provisiona con los términos del cobro **verificado**, no con los del body.
+- Pagar S/60 y reclamar Profesional 12m → descartado.
+- SKU de prueba sin `ALLOW_TEST_SKU` → descartado.
+- Cargo inexistente y id con `../` → descartados.
+- Renovación extiende desde el vencimiento vigente; una compra sobre un Trial
+  arranca hoy (no acumula); un reintento del mismo `chargeId` se ignora.
 
 ### Nota para el despliegue
 

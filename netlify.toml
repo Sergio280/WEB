@@ -73,27 +73,26 @@
     Content-Type = "application/octet-stream"
     Content-Disposition = "attachment"
 
-# ── Binarios de actualización → GitHub Releases ───────────────────────────────
-# Los instaladores (BIMS.exe ~24 MB, BIMS-update.zip ~17 MB) YA NO viven en el
-# repositorio: se subían a git y se copiaban a dist/ en CADA deploy (40 MB por
-# despliegue) sin que nada los consumiera. Hoy la fuente real es GitHub Releases:
-#   · UpdateChecker.cs del plugin lee updates/latest.json en Firebase RTDB, cuyo
-#     downloadUrl apunta a releases/latest/download/…
-#   · update/version.json y el botón de descarga de la web apuntan al mismo sitio.
-# Estas reglas 302 cubren a cualquier build ANTIGUO del plugin que todavía pida
-# las rutas /update/*: recibe el mismo artefacto sin romperse. No se usa 301 para
-# poder revertir sin arrastrar cachés permanentes.
-[[redirects]]
-  from   = "/update/BIMS.exe"
-  to     = "https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe"
-  status = 302
-  force  = true
+# ── Descarga de binarios de actualización ─────────────────────────────────────
+# NO BORRAR update/BIMS.exe ni update/BIMS-update.zip sin comprobar antes el
+# nodo `updates/latest` de Firebase RTDB. Son 40 MB que se copian a dist/ en cada
+# deploy y ninguna ruta del repo los referencia, pero el updater del plugin
+# (UpdateChecker.cs) lee su downloadUrl de la RTDB, que no es visible desde el
+# código. Y el release v1.1.5 SOLO publica BIMS_Setup.exe: no existen assets
+# BIMS.exe ni BIMS-update.zip, así que redirigir estas rutas a GitHub Releases
+# devolvería 404 y rompería la actualización automática de los usuarios ya
+# instalados. Ver ANALISIS_WEB_BUGS_Y_OPTIMIZACIONES.md (O3).
+[[headers]]
+  for = "/update/*.exe"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Disposition = "attachment"
 
-[[redirects]]
-  from   = "/update/BIMS-update.zip"
-  to     = "https://github.com/Sergio280/WEB/releases/latest/download/BIMS-update.zip"
-  status = 302
-  force  = true
+[[headers]]
+  for = "/update/*.zip"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Disposition = "attachment"
 
 # ── Rutas API (Culqi) ─────────────────────────────────────────────────────────
 [[redirects]]
