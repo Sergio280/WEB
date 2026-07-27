@@ -13,6 +13,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const crypto = require('crypto');
+const { maskEmail, addMonths } = require('./log-safe');
 const admin  = require('firebase-admin');
 
 // ── Firebase Admin (singleton, idéntico al resto de functions) ───────────────
@@ -65,9 +66,9 @@ async function provisionLicense(email, info) {
         });
         uid = newUser.uid;
         isNewUser = true;
-        console.log(`[provision] usuario creado: ${email} | uid=${uid}`);
+        console.log(`[provision] usuario creado: ${maskEmail(email)} | uid=${uid}`);
     }
-    if (!uid) { console.error(`[provision] uid vacío para ${email}`); return; }
+    if (!uid) { console.error(`[provision] uid vacío para ${maskEmail(email)}`); return; }
 
     const now = new Date();
 
@@ -112,8 +113,9 @@ async function provisionLicense(email, info) {
             const existing = new Date(currentExp);
             if (existing > now) baseDate = existing;
         }
-        baseDate.setMonth(baseDate.getMonth() + (info.months || 1));
-        newExpDate = baseDate.toISOString();
+        // addMonths (no setMonth): comprar un día 31 desbordaba al mes siguiente
+        // del siguiente ("31 de febrero" se normaliza hacia adelante).
+        newExpDate = addMonths(baseDate, info.months || 1).toISOString();
     }
 
     // 4) Escribir licencia
@@ -156,7 +158,7 @@ async function provisionLicense(email, info) {
     // 6) Email de activación al usuario nuevo o primer pago
     if (isNewUser) await sendActivationEmail(email);
 
-    console.log(`✅ [provision] licencia ${info.gateway}: ${email} | ${info.licenseType} | vence ${newExpDate}`);
+    console.log(`✅ [provision] licencia ${info.gateway}: ${maskEmail(email)} | ${info.licenseType} | vence ${newExpDate}`);
 }
 
 // ── Cancelar / desactivar una suscripción ─────────────────────────────────────
@@ -168,7 +170,7 @@ async function cancelSubscription(email) {
         // No desactivamos isActive de inmediato: el usuario conserva acceso hasta
         // el vencimiento ya pagado (expirationDate). LS deja de renovar y la
         // licencia caduca sola en verify-license por fecha.
-        console.log(`[provision] suscripción marcada cancelada: ${email}`);
+        console.log(`[provision] suscripción marcada cancelada: ${maskEmail(email)}`);
     } catch (err) {
         console.warn('[provision] cancelSubscription:', err?.message);
     }
@@ -187,7 +189,7 @@ async function sendActivationEmail(email) {
                 body:    JSON.stringify({ requestType: 'PASSWORD_RESET', email }),
             }
         );
-        if (res.ok) console.log(`[provision] email de activación enviado: ${email}`);
+        if (res.ok) console.log(`[provision] email de activación enviado: ${maskEmail(email)}`);
         else console.warn(`[provision] email Firebase HTTP ${res.status}`);
     } catch (err) {
         console.warn('[provision] sendActivationEmail:', err?.message);

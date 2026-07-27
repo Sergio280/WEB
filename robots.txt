@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Descargas y binarios: no aportan nada al índice.
+Disallow: /update/
+
+# Páginas de confirmación post-pago / post-registro: sin valor de búsqueda y
+# se llega a ellas solo tras completar un flujo.
+Disallow: /success.html
+Disallow: /success-en.html
+Disallow: /trial-success.html
+Disallow: /trial-success-en.html
+
+# Home anterior conservada solo para rollback de emergencia: no debe indexarse
+# ni competir con "/" por las mismas palabras clave (contenido duplicado).
+Disallow: /legacy.html
+
+Sitemap: https://bimsaddin.com/sitemap.xml

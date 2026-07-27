@@ -1,22 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { CLIPS } from '../../data/nav.js';
+import { useModalA11y } from '../../hooks/useModalA11y.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 // Lightbox modal que reproduce el clip de YouTube seleccionado.
 function Lightbox({ clip, onClose, labels }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
-  }, [onClose]);
+  // Escape, bloqueo de scroll, foco inicial, focus trap y restauración del foco.
+  const dialogRef = useModalA11y(onClose);
 
   return (
     <motion.div
@@ -27,6 +21,10 @@ function Lightbox({ clip, onClose, labels }) {
       onClick={onClose}
     >
       <motion.div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={clip.title}
         className="relative w-full max-w-4xl"
         initial={{ scale: 0.92, y: 20 }}
         animate={{ scale: 1, y: 0 }}
@@ -105,7 +103,9 @@ export default function Clips() {
   const [active, setActive] = useState(null);
 
   // Combina los IDs de YouTube (data) con los textos del idioma activo.
-  const clips = CLIPS.map((c, i) => ({ yt: c.yt, ...t.clips.items[i] }));
+  // useMemo: sin él, el array se recreaba en cada render y forzaba el rerender
+  // de las 6 tarjetas aunque no hubiera cambiado nada.
+  const clips = useMemo(() => CLIPS.map((c, i) => ({ yt: c.yt, ...t.clips.items[i] })), [t]);
 
   function play(clip) {
     setActive(clip);

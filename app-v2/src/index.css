@@ -11,18 +11,57 @@
     scroll-behavior: smooth;
   }
 
+  /* El navbar es sticky: sin esto, los anclajes (#precios, #trial, #faq…)
+     aterrizan con el título metido debajo de la barra. 5.5rem ≈ alto del
+     navbar + un respiro. */
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+
   body {
     @apply bg-ink-950 text-slate-300 font-sans antialiased;
-    /* Atmósfera: dos glows azules suaves fijos detrás de todo el contenido */
+  }
+
+  /* Atmósfera: dos glows azules suaves detrás de todo el contenido.
+     Va en un pseudo-elemento fijo en vez de `background-attachment: fixed` en
+     el body: esa propiedad obliga al navegador a repintar el fondo en cada
+     frame de scroll (jank conocido en móvil). Con position:fixed la capa se
+     compone una vez y el scroll no la toca. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image:
       radial-gradient(60rem 60rem at 75% -10%, rgba(45, 125, 255, 0.14), transparent 60%),
       radial-gradient(50rem 50rem at 0% 20%, rgba(15, 77, 158, 0.12), transparent 55%);
-    background-attachment: fixed;
   }
 
   ::selection {
     background: rgba(45, 125, 255, 0.32);
     color: #fff;
+  }
+}
+
+/* ── Respeto a "reducir movimiento" ──────────────────────────────────────────
+   El sistema operativo puede pedir menos animación (accesibilidad: mareo,
+   vestibular, epilepsia fotosensible). Aquí se neutralizan el scroll suave, la
+   cinta infinita, el flotado del mockup y el anillo pulsante del CTA, y se
+   reducen a cero las transiciones de Framer Motion — que quedan visibles
+   igualmente porque su estado final es el contenido ya montado. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -39,9 +78,17 @@
     mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
   }
 
-  /* Tarjeta de vidrio con borde 1px translúcido */
+  /* Tarjeta de vidrio con borde 1px translúcido.
+     SIN backdrop-blur a propósito: esta clase se aplica a ~15 tarjetas a la vez
+     (precios, métricas, gráficos, casos, FAQ, formulario de trial) y el
+     desenfoque de fondo es de los efectos más caros del compositor — con
+     tantas capas simultáneas el scroll se atasca en portátiles sin GPU
+     dedicada, justo el equipo de alguien con Revit abierto de fondo. El fondo
+     es casi opaco, así que visualmente la diferencia es inapreciable.
+     El blur se reserva para lo que SÍ se superpone a contenido en movimiento:
+     navbar y modales (.glass-strong). */
   .glass {
-    @apply bg-white/[0.03] border border-white/10 backdrop-blur-xl;
+    @apply border border-white/10 bg-white/[0.04];
   }
   .glass-strong {
     @apply bg-ink-800/70 border border-white/10 backdrop-blur-xl;

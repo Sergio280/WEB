@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
-import { CATALOG } from '../../data/culqi.js';
+import { CATALOG, USD_PRICES } from '../../data/culqi.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -13,8 +14,8 @@ const accentMap = {
 };
 
 // Precio "desde" en USD para la región de pago internacional (Lemon Squeezy).
-// El número en soles vive en CATALOG; fuera de Perú mostramos el USD.
-const USD_FROM = { individual: '16.90', profesional: '26.90' };
+// El número en soles vive en CATALOG; fuera de Perú mostramos el USD mensual,
+// que sale de la misma tabla que usa el modal de compra (data/culqi.js).
 
 export default function Pricing() {
   const { t, region, setRegionOverride } = useLang();
@@ -92,7 +93,7 @@ export default function Pricing() {
                 <div className="mt-5">
                   {c.priceFrom != null ? (
                     <p className="font-display text-3xl font-extrabold text-white">
-                      {p.priceFrom}{curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : c.priceFrom}
+                      {p.priceFrom}{curSym}{intlPay ? (USD_PRICES[c.key]?.monthly ?? c.priceFrom) : c.priceFrom}
                       <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                     </p>
                   ) : (
@@ -184,7 +185,11 @@ export default function Pricing() {
         </table>
       </Reveal>
 
-      {modalPlan && <CulqiModal planKey={modalPlan} onClose={() => setModalPlan(null)} />}
+      {/* AnimatePresence aquí (no dentro de CulqiModal): al desmontarse con el
+          hijo, las animaciones de salida del modal nunca se reproducían. */}
+      <AnimatePresence>
+        {modalPlan && <CulqiModal key={modalPlan} planKey={modalPlan} onClose={() => setModalPlan(null)} />}
+      </AnimatePresence>
     </Section>
   );
 }

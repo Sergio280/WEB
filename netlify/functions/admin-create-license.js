@@ -6,6 +6,7 @@
 
 const crypto = require('crypto');
 const admin  = require('firebase-admin');
+const { maskEmail } = require('./_lib/log-safe');
 
 if (!admin.apps.length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -63,7 +64,7 @@ exports.handler = async function (event) {
 
         try {
             uid = (await auth.getUserByEmail(email)).uid;
-            console.log(`[admin-create-license] Usuario existente: ${email} | uid: ${uid}`);
+            console.log(`[admin-create-license] Usuario existente: ${maskEmail(email)} | uid: ${uid}`);
         } catch {
             const newUser = await auth.createUser({
                 email,
@@ -73,7 +74,7 @@ exports.handler = async function (event) {
             });
             uid = newUser.uid;
             isNewUser = true;
-            console.log(`[admin-create-license] Usuario creado: ${email} | uid: ${uid}`);
+            console.log(`[admin-create-license] Usuario creado: ${maskEmail(email)} | uid: ${uid}`);
         }
 
         const now = new Date();
@@ -110,7 +111,7 @@ exports.handler = async function (event) {
                 const emailData = await emailRes.json();
                 if (emailData.email) {
                     emailSent = true;
-                    console.log(`[admin-create-license] Email de bienvenida enviado a: ${email}`);
+                    console.log(`[admin-create-license] Email de bienvenida enviado a: ${maskEmail(email)}`);
                 } else {
                     console.warn(`[admin-create-license] Firebase no envió email:`, JSON.stringify(emailData));
                 }
@@ -121,7 +122,7 @@ exports.handler = async function (event) {
             console.warn('[admin-create-license] FIREBASE_API_KEY no configurada — email no enviado');
         }
 
-        console.log(`[admin-create-license] Licencia creada: ${email} | ${licenseType} | vence: ${expirationDate}`);
+        console.log(`[admin-create-license] Licencia creada: ${maskEmail(email)} | ${licenseType} | vence: ${expirationDate}`);
 
         return {
             statusCode: 200,

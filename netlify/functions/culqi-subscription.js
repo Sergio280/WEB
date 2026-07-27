@@ -4,6 +4,8 @@
 // Body: { token_id, email, plan }
 // ─────────────────────────────────────────────────────────────────────────────
 
+const { maskEmail } = require('./_lib/log-safe');
+
 const PLAN_IDS = {
     individual:  () => process.env.CULQI_PLAN_INDIVIDUAL,
     profesional: () => process.env.CULQI_PLAN_PROFESIONAL,
@@ -94,7 +96,7 @@ exports.handler = async function (event) {
                 // (Sin esto, un usuario que vuelve a suscribirse quedaba bloqueado.)
                 customerId = await buscarCustomerPorEmail(email);
                 if (!customerId) {
-                    console.error('[culqi-sub] Customer duplicado pero no se pudo recuperar por email:', email);
+                    console.error('[culqi-sub] Customer duplicado pero no se pudo recuperar por email:', maskEmail(email));
                     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'No se pudo recuperar el cliente existente. Contacta a soporte.' }) };
                 }
             } else {
@@ -104,7 +106,7 @@ exports.handler = async function (event) {
         }
 
         if (!customerId) {
-            console.error('[culqi-sub] customerId vacío tras crear/buscar cliente para:', email);
+            console.error('[culqi-sub] customerId vacío tras crear/buscar cliente para:', maskEmail(email));
             return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Error al identificar el cliente' }) };
         }
 
@@ -149,7 +151,7 @@ exports.handler = async function (event) {
             return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: sub.user_message || 'Error al crear suscripción' }) };
         }
 
-        console.log(`[culqi-sub] Suscripción creada: ${email} | plan: ${plan} | sub_id: ${sub.id}`);
+        console.log(`[culqi-sub] Suscripción creada: ${maskEmail(email)} | plan: ${plan} | sub_id: ${sub.id}`);
 
         return {
             statusCode: 200,

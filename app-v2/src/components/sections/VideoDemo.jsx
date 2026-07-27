@@ -25,7 +25,7 @@ export default function VideoDemo() {
               className="h-full w-full"
               src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`}
               title={t.videoDemo.iframeTitle}
-              allow="accelerated-feedback; autoplay; encrypted-media; picture-in-picture"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           ) : (
@@ -41,7 +41,17 @@ export default function VideoDemo() {
                 src={`https://i.ytimg.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`}
                 alt={t.videoDemo.thumbAlt}
                 className="h-full w-full object-cover"
-                loading="eager"
+                loading="lazy"
+                decoding="async"
+                width={1280}
+                height={720}
+                // YouTube no genera maxresdefault para todos los vídeos: cuando
+                // falta devuelve 404 y quedaba una imagen rota en la portada del
+                // demo. hqdefault siempre existe.
+                onError={(e) => {
+                  const fallback = `https://i.ytimg.com/vi/${YOUTUBE_ID}/hqdefault.jpg`;
+                  if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
+                }}
               />
               <span className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/20">
                 <span className="flex h-20 w-20 items-center justify-center rounded-full bg-red-600 shadow-2xl transition-transform group-hover:scale-110">

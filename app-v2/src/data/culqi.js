@@ -83,31 +83,24 @@ export const CULQI_CONFIG = {
 };
 
 // Catálogo visible de planes (tarjetas de la sección Precios).
+// SOLO datos no traducibles: el badge, el nombre, la descripción y el lazo
+// ("★ Más elegido") salen de t.pricing.catalog[key] en el idioma activo — antes
+// también estaban aquí, pero Pricing.jsx los ignoraba por completo.
 export const CATALOG = [
   {
     key: 'individual',
-    badge: 'Individual',
-    name: 'BIMS Individual',
-    desc: 'Plugin completo para Revit, todos los paneles desbloqueados. Licencia para 1 equipo. Ideal para profesionales independientes.',
     priceFrom: 60,
     accent: 'brand',
     featured: false,
   },
   {
     key: 'profesional',
-    badge: 'Profesional',
-    name: 'BIMS Profesional',
-    desc: 'Todo lo de Individual, para hasta 3 equipos. Soporte prioritario 24 h y acceso anticipado a funciones beta.',
     priceFrom: 100,
     accent: 'violet',
     featured: true,
-    ribbon: '★ Más elegido',
   },
   {
     key: 'empresa',
-    badge: 'Empresa',
-    name: 'BIMS Empresa',
-    desc: 'Licencias para todo tu equipo, facturación a nombre de la empresa y capacitación incluida.',
     priceFrom: null, // "A medida"
     accent: 'emerald',
     featured: false,
@@ -116,15 +109,12 @@ export const CATALOG = [
   },
 ];
 
-// Comparativa de planes (tabla) — verbatim.
-export const PLAN_COMPARE = {
-  cols: ['Individual', 'Profesional ⭐', 'Empresa'],
-  rows: [
-    { label: 'Todos los paneles BIMS desbloqueados', cells: ['✓', '✓', '✓'] },
-    { label: 'Equipos (PCs) por licencia', cells: ['1', 'hasta 3', 'ilimitados'] },
-    { label: 'Soporte por email', cells: ['48 h', 'prioritario 24 h', 'dedicado'] },
-    { label: 'Acceso anticipado a funciones beta', cells: ['—', '✓', '✓'] },
-    { label: 'Capacitación incluida', cells: ['—', '—', '✓'] },
-    { label: 'Facturación a nombre de empresa', cells: ['—', '✓', '✓'] },
-  ],
+// ── Precios en USD (región de pago internacional, Lemon Squeezy) ─────────────
+// Fuente ÚNICA: antes estaban duplicados en CulqiModal.jsx (mensual + anual) y
+// en Pricing.jsx (sólo mensual), así que un cambio de precio obligaba a tocar
+// tres archivos. Deben coincidir con los variants LIVE de Lemon Squeezy —
+// ver netlify/functions/_lib/ls-plans.js, que es el mapa inverso del webhook.
+export const USD_PRICES = {
+  individual:  { monthly: '16.90', yearly: '159' },
+  profesional: { monthly: '26.90', yearly: '269' },
 };

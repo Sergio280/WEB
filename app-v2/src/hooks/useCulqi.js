@@ -11,11 +11,24 @@ export function useCulqi() {
     // Callback global que Culqi invoca al obtener el token de tarjeta.
     window.culqi = function () {
       const ctx = window._culqiContext || {};
+
+      // Culqi llama a este callback TAMBIÉN cuando el usuario cierra el popup o
+      // cuando la tarjeta es rechazada. Si salimos sin avisar a la UI, el botón
+      // de pago se queda en "Procesando…" y `disabled` para siempre: el usuario
+      // tiene que recargar la página para reintentar. Por eso ambas salidas
+      // liberan el estado.
       if (window.Culqi.error) {
+        const msg = window.Culqi.error.user_message || window.Culqi.error.merchant_message || '';
         console.warn('[Culqi] Error/cancelado:', window.Culqi.error);
+        if (ctx.onError) ctx.onError(msg || ctx.errRejected || 'Pago no completado. Puedes intentarlo de nuevo.');
         return;
       }
-      if (!window.Culqi.token) return;
+      if (!window.Culqi.token) {
+        // Sin token y sin error = el usuario cerró el checkout. No es un fallo,
+        // así que se limpia el estado sin mostrar mensaje de error.
+        if (ctx.onDismiss) ctx.onDismiss();
+        return;
+      }
 
       const token_id = window.Culqi.token.id;
       const email = ctx.email;
@@ -68,6 +81,7 @@ export function openCulqiCheckout({
   errPay,
   onProcessing,
   onError,
+  onDismiss,
 }) {
   const plan = CULQI_CONFIG.plans[planKey];
   if (!plan || !window.Culqi) {
@@ -87,6 +101,6 @@ export function openCulqiCheckout({
 
   // El callback global window.culqi lee estos valores para la redirección y los
   // mensajes de error en el idioma correcto.
-  window._culqiContext = { email, plan: planKey, isSub, duration, successUrl, errRejected, errPay, onProcessing, onError };
+  window._culqiContext = { email, plan: planKey, isSub, duration, successUrl, errRejected, errPay, onProcessing, onError, onDismiss };
   window.Culqi.open({ email });
 }

@@ -26,9 +26,12 @@ export default function Download() {
             >
               {d.ctaTrial}
             </a>
+            {/* Sin `download`: el atributo se ignora en URLs cross-origin, así
+                que no hacía nada. GitHub Releases ya sirve el .exe con
+                Content-Disposition: attachment, que es lo que fuerza la
+                descarga de verdad. */}
             <a
               href={DOWNLOAD_URL}
-              download
               onClick={() => track('download_click')}
               className="rounded-full border border-white/20 bg-white/5 px-7 py-3.5 font-semibold text-slate-100 transition-colors hover:bg-white/10"
             >

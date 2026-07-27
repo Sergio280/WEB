@@ -1,13 +1,3 @@
-// Enlaces de navegación (anclas internas de la landing /v2).
-export const NAV_LINKS = [
-  { href: '#video-demo', label: 'Demo' },
-  { href: '#casos', label: 'Casos de uso' },
-  { href: '#efectividad', label: 'Resultados' },
-  { href: '#precios', label: 'Precios' },
-  { href: '#faq', label: 'FAQ' },
-  { href: '#contacto', label: 'Contacto' },
-];
-
 export const WHATSAPP_URL = 'https://wa.me/51989455558';
 export const EMAIL = 'soporte@bimsaddin.com';
 export const YOUTUBE_ID = 'U9LvemehIkQ';
@@ -21,37 +11,18 @@ export const APPSTORE_URL = {
   en: 'https://marketplace.autodesk.com/apps/534cf400-2d5e-42ff-b43b-7b8a579b052c',
 };
 
-// Galería de clips cortos — IDs de YouTube verbatim de la home original.
-// yt vacío => tarjeta "Próximamente" (sin reproducción).
+// Galería de clips cortos — SOLO los IDs de YouTube, en el mismo ORDEN que
+// t.clips.items (i18n/translations.js), de donde salen título y descripción en
+// el idioma activo. Antes este array también llevaba title/desc, pero Clips.jsx
+// los descartaba (`{ yt: c.yt, ...t.clips.items[i] }`): eran texto duplicado
+// destinado a desincronizarse del que se muestra de verdad.
+//
+// Cadena vacía => tarjeta "Próximamente" (sin reproducción).
 export const CLIPS = [
-  {
-    yt: 'U9LvemehIkQ',
-    title: 'Encofrado de todo el edificio en 1 clic',
-    desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.',
-  },
-  {
-    yt: 'no7dvQfRitI',
-    title: 'Exporta planos a DWG con las imágenes adentro',
-    desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.',
-  },
-  {
-    yt: 'b-g0enh0D6o',
-    title: 'Tarrajeo de todos los ambientes',
-    desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.',
-  },
-  {
-    yt: 'LHT5X_6WhLE',
-    title: 'Importa DWG, escala sólidos y exporta a familia .RFA',
-    desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.',
-  },
-  {
-    yt: '',
-    title: 'Asigna rejillas a cientos de elementos',
-    desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.',
-  },
-  {
-    yt: '',
-    title: 'Refuerzo de columnas y vigas en minutos',
-    desc: 'Calcula y coloca el acero estructural automáticamente.',
-  },
+  { yt: 'U9LvemehIkQ' }, // Encofrado de todo el edificio en 1 clic
+  { yt: 'no7dvQfRitI' }, // Exportar planos a DWG con imágenes embebidas
+  { yt: 'b-g0enh0D6o' }, // Tarrajeo de todos los ambientes
+  { yt: 'LHT5X_6WhLE' }, // Importar DWG, escalar sólidos y exportar a .RFA
+  { yt: '' },            // Asignar rejillas — próximamente
+  { yt: '' },            // Refuerzo de columnas y vigas — próximamente
 ];

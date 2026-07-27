@@ -34,6 +34,21 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Menú móvil abierto: bloquear el scroll del fondo y permitir cerrarlo con
+  // Escape o tocando fuera. Antes se quedaba abierto tapando la página mientras
+  // el contenido de debajo seguía desplazándose.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
   return (
     <nav
       className={`sticky top-0 z-40 transition-all duration-300 ${
@@ -84,6 +99,8 @@ export default function Navbar() {
             className="flex h-10 w-10 flex-col items-center justify-center gap-1.5"
             onClick={() => setOpen((v) => !v)}
             aria-label={t.nav.menu}
+            aria-expanded={open}
+            aria-controls="nav-mobile-menu"
           >
             <span className={`h-0.5 w-6 rounded bg-slate-200 transition-all ${open ? 'translate-y-2 rotate-45' : ''}`} />
             <span className={`h-0.5 w-6 rounded bg-slate-200 transition-all ${open ? 'opacity-0' : ''}`} />
@@ -92,9 +109,16 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Menú móvil desplegable */}
+      {/* Menú móvil desplegable. La capa de debajo cierra al tocar fuera. */}
       {open && (
-        <ul className="flex flex-col gap-1 border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl md:hidden">
+        <div
+          className="fixed inset-0 top-0 z-[-1] md:hidden"
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+        />
+      )}
+      {open && (
+        <ul id="nav-mobile-menu" className="flex flex-col gap-1 border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl md:hidden">
           {t.nav.links.map((l) => (
             <li key={l.href}>
               <a

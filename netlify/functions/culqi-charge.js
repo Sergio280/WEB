@@ -4,25 +4,12 @@
 // Body: { token_id, email, plan, duration }
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CATALOG = {
-    individual: {
-        '1m':  { title: 'BIMS Individual – 1 mes',    amount: 6000,  months: 1  },
-        '3m':  { title: 'BIMS Individual – 3 meses',  amount: 16000, months: 3  },
-        '6m':  { title: 'BIMS Individual – 6 meses',  amount: 30000, months: 6  },
-        '12m': { title: 'BIMS Individual – 1 año',    amount: 59600, months: 12 },
-    },
-    profesional: {
-        '1m':  { title: 'BIMS Profesional – 1 mes',   amount: 10000, months: 1  },
-        '3m':  { title: 'BIMS Profesional – 3 meses', amount: 26800, months: 3  },
-        '6m':  { title: 'BIMS Profesional – 6 meses', amount: 50000, months: 6  },
-        '12m': { title: 'BIMS Profesional – 1 año',   amount: 99600, months: 12 },
-    },
-    test: {
-        'test': { title: 'BIMS TEST – S/5', amount: 500, months: 1 },
-    },
-};
-
-const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
+// Catálogo e importes viven en _lib/culqi-plans.js — la MISMA fuente que usa
+// culqi-webhook para derivar los términos de la licencia y comprobar que el
+// importe cobrado es el correcto. El SKU de prueba de S/5 sólo existe si
+// ALLOW_TEST_SKU === 'true' (antes estaba siempre disponible en producción).
+const { getPlanItem, maxDevicesFor } = require('./_lib/culqi-plans');
+const { maskEmail } = require('./_lib/log-safe');
 
 // ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
 // Producción + Deploy Previews + branch deploys del mismo proyecto Netlify.
@@ -91,9 +78,9 @@ exports.handler = async function (event) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Email inválido' }) };
 
-    const item = CATALOG[plan]?.[duration];
+    const item = getPlanItem(plan, duration);
     if (!item)
-        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Plan/duración inválido: plan="${plan}", duration="${duration}"` }) };
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Plan o duración no válidos' }) };
 
     try {
         const response = await fetch('https://api.culqi.com/v2/charges', {
@@ -108,12 +95,15 @@ exports.handler = async function (event) {
                 email,
                 source_id:     token_id,
                 description:   item.title,
+                // La metadata sirve para IDENTIFICAR qué se compró; el webhook
+                // deriva meses y dispositivos del catálogo del servidor a partir
+                // de plan+duration, no de estos campos.
                 metadata: {
                     plan,
                     duration,
                     email,
                     months:     String(item.months),
-                    maxDevices: String(PLAN_MAX_DEVICES[plan] || 1),
+                    maxDevices: String(maxDevicesFor(plan)),
                 },
             }),
         });
@@ -121,7 +111,9 @@ exports.handler = async function (event) {
         const data = await response.json();
 
         if (!response.ok || data.object === 'error') {
-            console.error('[culqi-charge] Error:', data);
+            // Sólo los campos de diagnóstico: el objeto entero de Culqi puede
+            // arrastrar datos del intento de pago a los logs.
+            console.error('[culqi-charge] Error de Culqi:', response.status, data?.merchant_message || data?.user_message || data?.code || 'sin detalle');
             return {
                 statusCode: 400,
                 headers: CORS,
@@ -137,7 +129,7 @@ exports.handler = async function (event) {
             };
         }
 
-        console.log(`[culqi-charge] Cobro exitoso: ${email} | ${item.title} | charge_id: ${data.id}`);
+        console.log(`[culqi-charge] Cobro exitoso: ${maskEmail(email)} | ${item.title} | charge_id: ${data.id}`);
 
         return {
             statusCode: 200,

@@ -19,8 +19,14 @@
 //
 // Seguridad:
 //   - Verifica el idToken con Firebase Admin y exige que decoded.uid === userId.
-//   - nonce de un solo uso (lo genera el cliente) → impide replay de un veredicto
-//     "válido" capturado antes.
+//   - nonce: challenge-response. El CLIENTE genera un nonce nuevo por consulta y
+//     el servidor lo devuelve DENTRO del payload firmado. Como la firma cubre el
+//     nonce, un veredicto "válido" capturado antes no sirve para responder a una
+//     consulta posterior: el cliente compara el nonce recibido con el que acaba
+//     de enviar y descarta el que no coincida.
+//     OJO — el servidor NO lleva registro de nonces usados (no hay estado): la
+//     protección anti-replay depende de que el cliente haga esa comparación.
+//     Ver LicenseActivationService en el plugin.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const crypto = require('crypto');

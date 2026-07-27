@@ -7,6 +7,17 @@
     <title>BIMS — Automatiza encofrado, tarrajeo y planos DWG en Revit</title>
 
     <link rel="canonical" href="https://bimsaddin.com/">
+
+    <!-- ── Versiones por idioma ──────────────────────────────────────────
+         La landing es una SPA bilingüe: ?lang=en da a la versión en inglés una
+         URL propia, rastreable e indexable. Sin esto (canonical fijo + idioma
+         resuelto solo en cliente) el sitio en inglés era invisible para Google,
+         justo el tráfico que trae el Autodesk App Store. LanguageProvider
+         mantiene canonical/og sincronizados con el idioma activo. -->
+    <link rel="alternate" hreflang="es" href="https://bimsaddin.com/">
+    <link rel="alternate" hreflang="en" href="https://bimsaddin.com/?lang=en">
+    <link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/">
+
     <!-- ── Open Graph / Social media ────── -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bimsaddin.com/">
@@ -50,13 +61,61 @@
         })(window, document, "clarity", "script", "wrtgszpyuc");
     </script>
 
-    <!-- ── Fuentes (Google Fonts — ya permitidas por la CSP) ── -->
+    <!-- ── Fuentes (Google Fonts — ya permitidas por la CSP) ──────────────
+         Pesos recortados a los que el diseño usa de verdad (antes se pedían 12,
+         incluidos varios que ningún componente aplica):
+           · Bricolage Grotesque 700/800 → font-display (títulos, cifras)
+           · Plus Jakarta Sans 400/500/600/700 → font-sans (cuerpo y botones)
+           · JetBrains Mono 400 → font-mono (solo la consola simulada del hero)
+         preload + onload: la hoja deja de bloquear el primer render. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+    <link rel="preload" as="style"
+          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap">
+    </noscript>
 
-    <!-- ── Culqi Checkout v4 (mismo contrato que la home actual) ── -->
-    <script src="https://checkout.culqi.com/js/v4"></script>
+    <!-- Miniaturas de YouTube (demo + 4 clips): abre la conexión en paralelo
+         con el HTML en vez de esperar al primer <img>. -->
+    <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
+
+    <!-- ── Culqi Checkout v4 (mismo contrato que la home actual) ──────────
+         defer: sólo hace falta cuando el usuario abre el modal de compra, y en
+         <head> síncrono bloqueaba el parser del HTML en TODAS las visitas. -->
+    <script src="https://checkout.culqi.com/js/v4" defer></script>
+
+    <!-- ── Datos estructurados (SoftwareApplication) ──────────────────────
+         Permite a Google mostrar precio, categoría y compatibilidad en los
+         resultados. Los precios son los de entrada en soles (plan Individual). -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "BIMS",
+      "applicationCategory": "DesignApplication",
+      "applicationSubCategory": "Autodesk Revit Add-in",
+      "operatingSystem": "Windows 10, Windows 11",
+      "softwareRequirements": "Autodesk Revit 2024, 2025, 2026 o 2027",
+      "url": "https://bimsaddin.com/",
+      "description": "Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG.",
+      "inLanguage": ["es", "en"],
+      "offers": {
+        "@type": "Offer",
+        "price": "60",
+        "priceCurrency": "PEN",
+        "category": "Licencia mensual",
+        "url": "https://bimsaddin.com/#precios"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "BIMS",
+        "email": "soporte@bimsaddin.com",
+        "url": "https://bimsaddin.com/"
+      }
+    }
+    </script>
 </head>
 <body>
     <div id="root"></div>

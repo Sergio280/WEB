@@ -15,6 +15,7 @@
 const crypto = require('crypto');
 const { provisionLicense, cancelSubscription } = require('./_lib/provision-license');
 const { planForVariant } = require('./_lib/ls-plans');
+const { maskEmail } = require('./_lib/log-safe');
 
 exports.handler = async function (event) {
     if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
@@ -50,7 +51,7 @@ exports.handler = async function (event) {
     const eventName = payload?.meta?.event_name || '';
     const data  = payload?.data || {};
     const attrs = data.attributes || {};
-    console.log(`[ls-webhook] evento=${eventName} id=${data.id} email=${attrs.user_email} status=${attrs.status} test=${attrs.test_mode}`);
+    console.log(`[ls-webhook] evento=${eventName} id=${data.id} email=${maskEmail(attrs.user_email)} status=${attrs.status} test=${attrs.test_mode}`);
 
     // ── Guard de modo de prueba ──────────────────────────────────────────────
     // Una compra en Test mode de Lemon Squeezy NO mueve dinero real (se paga con

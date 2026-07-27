@@ -35,6 +35,15 @@
   path     = "/api/geo"
   function = "geo"
 
+# ── gtag.js servido desde nuestro dominio (esquiva ad-blockers) ───────────────
+# Antes era una Netlify Function: como el <script> va en el <head> de todas las
+# páginas, cada visitante nuevo pagaba un cold start de Lambda y una invocación
+# facturable para servir un archivo estático. En el edge no hay cold start y la
+# respuesta se cachea en el PoP. Ver netlify/edge-functions/ga-script.js.
+[[edge_functions]]
+  path     = "/ga4/gtag.js"
+  function = "ga-script"
+
 # ── Headers de seguridad globales ─────────────────────────────────────────────
 [[headers]]
   for = "/*"
@@ -64,17 +73,27 @@
     Content-Type = "application/octet-stream"
     Content-Disposition = "attachment"
 
-[[headers]]
-  for = "/update/*.exe"
-  [headers.values]
-    Content-Type = "application/octet-stream"
-    Content-Disposition = "attachment"
+# ── Binarios de actualización → GitHub Releases ───────────────────────────────
+# Los instaladores (BIMS.exe ~24 MB, BIMS-update.zip ~17 MB) YA NO viven en el
+# repositorio: se subían a git y se copiaban a dist/ en CADA deploy (40 MB por
+# despliegue) sin que nada los consumiera. Hoy la fuente real es GitHub Releases:
+#   · UpdateChecker.cs del plugin lee updates/latest.json en Firebase RTDB, cuyo
+#     downloadUrl apunta a releases/latest/download/…
+#   · update/version.json y el botón de descarga de la web apuntan al mismo sitio.
+# Estas reglas 302 cubren a cualquier build ANTIGUO del plugin que todavía pida
+# las rutas /update/*: recibe el mismo artefacto sin romperse. No se usa 301 para
+# poder revertir sin arrastrar cachés permanentes.
+[[redirects]]
+  from   = "/update/BIMS.exe"
+  to     = "https://github.com/Sergio280/WEB/releases/latest/download/BIMS.exe"
+  status = 302
+  force  = true
 
-[[headers]]
-  for = "/update/*.zip"
-  [headers.values]
-    Content-Type = "application/octet-stream"
-    Content-Disposition = "attachment"
+[[redirects]]
+  from   = "/update/BIMS-update.zip"
+  to     = "https://github.com/Sergio280/WEB/releases/latest/download/BIMS-update.zip"
+  status = 302
+  force  = true
 
 # ── Rutas API (Culqi) ─────────────────────────────────────────────────────────
 [[redirects]]
@@ -144,14 +163,9 @@
 # La mayoría de bloqueadores filtran por DOMINIO (googletagmanager.com,
 # google-analytics.com), no por contenido. Sirviendo el script de gtag.js y sus
 # beacons de medición desde bimsaddin.com, los bloqueadores dejan de detectarlos.
-# El HTML carga /ga4/gtag.js y gtag.js manda sus beacons a transport_url=/g/...
-# (parámetro oficial de gtag.js para este caso). Ver funciones ga-script-proxy.js
-# / ga-collect-proxy.js.
-[[redirects]]
-  from   = "/ga4/gtag.js"
-  to     = "/.netlify/functions/ga-script-proxy"
-  status = 200
-
+# El HTML carga /ga4/gtag.js (edge function ga-script, arriba) y gtag.js manda
+# sus beacons a transport_url=/g/... (parámetro oficial de gtag.js para este
+# caso), que sí sigue siendo una función. Ver ga-collect-proxy.js.
 [[redirects]]
   from   = "/g/*"
   to     = "/.netlify/functions/ga-collect-proxy/:splat"

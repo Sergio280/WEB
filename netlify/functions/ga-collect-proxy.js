@@ -12,10 +12,13 @@
 // con body) ambos posibles según el navegador; se reenvían ambos tal cual.
 // Ver _lib/proxy-core.js para el diseño compartido.
 // ─────────────────────────────────────────────────────────────────────────────
-const { forward, gate, subAfter } = require('./_lib/proxy-core');
+const { forward, gate, subAfter, RL_ANALYTICS } = require('./_lib/proxy-core');
 
 exports.handler = async function (event) {
-    const blocked = gate(event, ['GET', 'POST']);
+    // Tope alto a propósito: con el límite por defecto (60/min/IP), una oficina
+    // detrás de NAT superaba la cuota con 10-15 personas navegando y GA4 perdía
+    // hits en silencio. Aquí sólo queremos un freno anti-inundación.
+    const blocked = gate(event, ['GET', 'POST'], RL_ANALYTICS);
     if (blocked) return blocked;
 
     let u;

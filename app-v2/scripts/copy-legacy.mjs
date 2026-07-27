@@ -34,7 +34,21 @@ for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
   htmlCount++;
 }
 
-// 2) Carpetas de assets que la web y las funciones referencian por URL.
+// 2) Ficheros sueltos de la raíz que deben servirse tal cual desde el dominio.
+//    robots.txt y sitemap.xml TIENEN que estar en la raíz del sitio para que los
+//    buscadores los encuentren; como no son .html, el bucle de arriba no los
+//    copiaba.
+const rootFiles = ['robots.txt', 'sitemap.xml'];
+let rootCount = 0;
+for (const f of rootFiles) {
+  const src = join(repoRoot, f);
+  if (existsSync(src)) {
+    cpSync(src, join(dist, f));
+    rootCount++;
+  }
+}
+
+// 3) Carpetas de assets que la web y las funciones referencian por URL.
 const assetDirs = ['icono', 'update'];
 for (const d of assetDirs) {
   const src = join(repoRoot, d);
@@ -44,5 +58,5 @@ for (const d of assetDirs) {
 }
 
 console.log(
-  `[copy-legacy] ${htmlCount} HTML estáticas + home antigua -> legacy.html + assets (${assetDirs.join(', ')}) copiados a dist/`
+  `[copy-legacy] ${htmlCount} HTML estáticas + home antigua -> legacy.html + ${rootCount} ficheros raíz (${rootFiles.join(', ')}) + assets (${assetDirs.join(', ')}) copiados a dist/`
 );

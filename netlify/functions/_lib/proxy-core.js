@@ -55,37 +55,75 @@ function ipHash(ip) {
 // Rate-limit en memoria por instancia de función (best-effort). No es perfecto
 // entre instancias, pero corta ráfagas de abuso sin depender de Firebase (que es
 // justo lo que este proxy protege). Ventana deslizante simple.
+//
+// El límite se pasa por parámetro porque los dos usos son muy distintos:
+//   · gauth/gdb  → 60/min: protege contra fuerza bruta de login. Ajustado a
+//     propósito.
+//   · beacons GA → un límite bajo aquí DESCARTA ANALÍTICA en silencio. Una
+//     oficina detrás de NAT comparte una IP pública: con 10-15 personas
+//     navegando se superaban los 60/min y GA4 perdía hits — justo el tráfico
+//     corporativo que motivó estos proxies. Ver RL_ANALYTICS.
 const RL_WINDOW_MS = 60 * 1000;
-const RL_MAX = 60; // 60 req/min/IP por instancia — holgado para uso legítimo
+const RL_DEFAULT = 60;        // gauth / gdb — sensible, es superficie de login
+const RL_ANALYTICS = 3000;    // beacons GA — sólo como tope anti-inundación
 const _hits = new Map();
 
-function rateLimited(headers) {
+function rateLimited(headers, max = RL_DEFAULT) {
     const key = ipHash(clientIp(headers));
     const now = Date.now();
     const arr = (_hits.get(key) || []).filter((t) => now - t < RL_WINDOW_MS);
     arr.push(now);
     _hits.set(key, arr);
-    // Limpieza oportunista para no crecer sin límite.
-    if (_hits.size > 5000) _hits.clear();
-    return arr.length > RL_MAX;
+    // Poda por antigüedad. Antes era _hits.clear(), que reseteaba la ventana de
+    // TODOS los clientes de golpe y hacía el límite errático.
+    if (_hits.size > 5000) {
+        for (const [k, v] of _hits) {
+            if (!v.length || now - v[v.length - 1] > RL_WINDOW_MS) _hits.delete(k);
+        }
+    }
+    return arr.length > max;
 }
 
-// Reenvía la petición al destino ya validado. Preserva método, body y el
-// Content-Type. Devuelve la respuesta de Google/Firebase VERBATIM (status +
-// cuerpo), para que el plugin la procese igual que si viniera directa.
+// Reenvía la petición al destino ya validado. Preserva método, body, el
+// Content-Type y —importante— la identidad del CLIENTE (User-Agent, idioma, IP).
+// Devuelve la respuesta de Google/Firebase VERBATIM (status + cuerpo), para que
+// el plugin la procese igual que si viniera directa.
+//
+// POR QUÉ SE REENVÍA EL User-Agent Y LA IP: antes sólo se mandaba Content-Type,
+// así que los beacons de GA4 llegaban a Google con el User-Agent de Node y la IP
+// del datacenter de Netlify. Resultado: dispositivo, navegador, SO y geo quedaban
+// inservibles en TODOS los informes de GA4 desde que se activó el proxy. La geo
+// ya se había parcheado a mano mandando `real_country` como user property; esto
+// arregla el resto en origen. Para gauth/gdb no cambia nada funcional (Google
+// ignora estos headers en las APIs REST) pero mantiene el proxy transparente.
 async function forward(targetUrl, event) {
     const method = event.httpMethod;
     let body;
     if (method !== 'GET' && method !== 'HEAD' && event.body != null) {
         body = event.isBase64Encoded ? Buffer.from(event.body, 'base64') : event.body;
     }
-    const contentType = event.headers['content-type'] || event.headers['Content-Type'] || 'application/json';
+    const h = event.headers || {};
+    const contentType = h['content-type'] || h['Content-Type'] || 'application/json';
+
+    const outHeaders = {};
+    if (body != null) outHeaders['Content-Type'] = contentType;
+
+    const ua = h['user-agent'] || h['User-Agent'];
+    if (ua) outHeaders['User-Agent'] = ua;
+
+    const al = h['accept-language'] || h['Accept-Language'];
+    if (al) outHeaders['Accept-Language'] = al;
+
+    // IP real del visitante para que la geolocalización de Google funcione.
+    // x-nf-client-connection-ip la pone el edge de Netlify y no es falsificable.
+    const ip = clientIp(h);
+    if (ip && ip !== 'unknown') outHeaders['X-Forwarded-For'] = ip;
 
     let upstream;
     try {
         upstream = await fetch(targetUrl, {
             method,
-            headers: body != null ? { 'Content-Type': contentType } : undefined,
+            headers: Object.keys(outHeaders).length ? outHeaders : undefined,
             body,
         });
     } catch (e) {
@@ -105,15 +143,16 @@ async function forward(targetUrl, event) {
 }
 
 // Barrera común: método permitido, origen, rate-limit. Devuelve una respuesta de
-// error si algo falla, o null si puede continuar.
-function gate(event, allowedMethods) {
+// error si algo falla, o null si puede continuar. `maxPerMin` permite a los
+// proxies de analítica pedir un tope mucho más alto (ver RL_ANALYTICS).
+function gate(event, allowedMethods, maxPerMin = RL_DEFAULT) {
     if (!allowedMethods.includes(event.httpMethod)) {
         return { statusCode: 405, body: 'method not allowed' };
     }
     if (!originAllowed(event)) {
         return { statusCode: 403, body: 'origin not allowed' };
     }
-    if (rateLimited(event.headers)) {
+    if (rateLimited(event.headers, maxPerMin)) {
         return { statusCode: 429, body: 'rate limited' };
     }
     return null;
@@ -130,4 +169,4 @@ function subAfter(pathname, markers) {
     return null;
 }
 
-module.exports = { forward, gate, subAfter };
+module.exports = { forward, gate, subAfter, RL_ANALYTICS };

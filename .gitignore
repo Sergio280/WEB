@@ -14,3 +14,8 @@ dist/
 
 # Visual Studio
 .vs/
+
+# Binarios de actualización: la fuente es GitHub Releases, no el repo.
+# netlify.toml redirige /update/*.exe|zip allí para los plugins antiguos.
+update/*.exe
+update/*.zip

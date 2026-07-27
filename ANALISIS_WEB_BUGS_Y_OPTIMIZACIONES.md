@@ -8,7 +8,9 @@ Método: lectura completa del código, `npx vite build` para medir el bundle rea
 `file(1)` sobre los assets, y contraste con el plugin (`bims-vanilla-revit`) para
 verificar qué endpoints y rutas se consumen de verdad.
 
-Este documento es **sólo análisis**. No se ha modificado código de producción.
+**Estado: todos los hallazgos están corregidos.** El diagnóstico de cada
+apartado se conserva tal cual; al final del documento hay una tabla con la
+solución aplicada a cada uno y los números medidos después.
 
 ---
 
@@ -519,3 +521,80 @@ Vale la pena dejarlo por escrito, porque condiciona qué se puede tocar:
 6. **B6 + B7** — sin esto, los datos con los que se miden los puntos anteriores
    no son fiables.
 7. **B8** (SEO en inglés) — el de mayor techo, y el de más trabajo.
+
+---
+
+## Estado de las correcciones
+
+Todo lo anterior está aplicado. Verificado con `vite build`, `node --check` sobre
+todas las funciones, y una pasada de Playwright sobre el `dist/` servido
+(anclajes, lazy-load, modal, idioma, recuperación del botón de pago).
+
+### Críticos
+
+| # | Solución |
+|---|---|
+| B1 | `verifyChargeWithCulqi` / `verifySubscriptionWithCulqi` ahora devuelven el **objeto de la API de Culqi** en vez de un booleano, y los handlers trabajan sólo con él. Del body se usa únicamente el `id`, validado contra `^chr_\|sxn_[A-Za-z0-9_-]{1,64}$`. Los términos de la licencia (meses, dispositivos) se derivan del catálogo del servidor y **se comprueba que el importe cobrado coincida** con el de ese catálogo. El estado de cancelación también sale del objeto verificado. |
+| B2 | Catálogo movido a `netlify/functions/_lib/culqi-plans.js`, fuente única de importes y términos. El SKU de S/5 sólo se registra si `ALLOW_TEST_SKU === 'true'`. |
+| B3 | `Origin` pasa a ser obligatorio (antes `if (origin && …)` se saltaba omitiendo el header), rate-limit de 120/min por hash de IP, `uid` validado por formato y **comprobado contra la RTDB**: un uid inexistente descarta el evento en vez de guardarlo huérfano. |
+| B4 | El callback de Culqi ya no sale en silencio: la rama de error llama a `onError` con el mensaje de Culqi, y la de "sin token" (usuario cerró el popup) llama a un `onDismiss` nuevo. Además `handlePay` ya no marca `processing` antes de abrir el checkout — sólo lo hace `onProcessing`, cuando el cobro empieza de verdad. |
+
+### Medios
+
+| # | Solución |
+|---|---|
+| B5 | Los cinco assets regenerados como PNG/ICO reales desde `favicon-512`, con cuantización de paleta (la fuente traía ~60 000 colores, que era ruido JPEG). `favicon-16` 11,7 KB → **496 B**; `favicon-32` 12,7 KB → **1,4 KB**; `apple-touch-icon` 37 KB → **24 KB**; `favicon.ico` 4,3 KB → **3,6 KB** (16+32). Corrección al diagnóstico: el logo tiene fondo azul opaco por diseño, así que la falta de canal alfa no afectaba al aspecto — el problema real era el MIME y el peso. |
+| B6 | `forward()` reenvía `User-Agent`, `Accept-Language` y `X-Forwarded-For` con la IP real de `x-nf-client-connection-ip`. GA4 vuelve a ver dispositivo, navegador, SO y geo. |
+| B7 | `gate()` acepta un límite por llamada. `ga-collect-proxy` usa `RL_ANALYTICS` (3000/min); gauth/gdb mantienen 60/min. El `_hits.clear()` global se sustituye por poda por antigüedad. |
+| B8 | `?lang=en` es ahora una URL real: máxima prioridad en la detección de idioma, reflejada con `replaceState` al usar el toggle, y con `canonical`/`og:*` sincronizados. Añadidos `hreflang` (es/en/x-default), JSON-LD `SoftwareApplication`, `robots.txt` y `sitemap.xml` — más su copia a `dist/` en `copy-legacy.mjs`, que sólo trataba `.html`. |
+| B9 | `accelerated-feedback` → `accelerometer; … gyroscope`, igual que `Clips.jsx`. |
+| B10 | `onError` que cae a `hqdefault`, más `width`/`height` para reservar espacio. |
+| B11 | `addMonths()` en `_lib/log-safe.js`, usado por `culqi-webhook` y `provision-license`: si el día no existe en el mes destino se ancla al último día, en vez de desbordar hacia adelante. |
+| B12 | `maskEmail()` compartido, aplicado en los ~15 puntos de `culqi-webhook`, `culqi-charge`, `culqi-subscription`, `lemonsqueezy-webhook`, `admin-create-license` y `provision-license`. El volcado del objeto de error de Culqi se reduce a status + mensaje. |
+
+### Menores
+
+| # | Solución |
+|---|---|
+| B13 | `AnimatePresence` movido a `Pricing.jsx` (el padre), con `key` en el modal. |
+| B14 | Hook `useModalA11y` compartido por el modal de compra y el lightbox: `role="dialog"`, `aria-modal`, focus trap con Tab/Shift+Tab, foco inicial, restauración del foco al cerrar y bloqueo de scroll compensando el ancho de la barra. |
+| B15 | `explicit` se lee por ref dentro del efecto; el array de dependencias queda vacío. Medido en Playwright: **0 peticiones extra a `/api/geo`** tras cambiar de idioma. |
+| B16 | Bloqueo de scroll, cierre con Escape, capa de cierre al tocar fuera y `aria-expanded`/`aria-controls`. |
+| B17 | `[id] { scroll-margin-top: 5.5rem }`. Verificado: 88 px calculados en `#precios`. |
+| B18 | Bloque `@media (prefers-reduced-motion: reduce)` que anula scroll suave, marquee, flotado, anillo pulsante y transiciones. |
+| B19 | Reescrito con Pointer Events + `setPointerCapture` y `touch-action: none` (se acabó el scroll parásito al arrastrar en móvil), más `role="slider"` operable con flechas, Inicio y Fin. |
+| B20 | Atributo `download` retirado, con el motivo comentado. |
+| B21 | Comentario reescrito: es challenge-response y el servidor **no** guarda nonces; la protección depende de que el cliente compare el eco. |
+
+### Optimizaciones
+
+| # | Solución |
+|---|---|
+| O1 | `Metrics` con `React.lazy` + `Suspense`, y `manualChunks` para React y Framer Motion. **Arranque: 194 KB → 131 KB gzip (−32 %)**; Chart.js (64 KB gzip) sale del camino crítico a su propio chunk. El fallback lleva `id="efectividad"` para no romper el enlace del navbar. |
+| O2 | `ga-script-proxy` (Lambda) → `netlify/edge-functions/ga-script.js`, con caché en el PoP y respuesta degradada si Google no responde (nunca un 5xx en el `<head>`). |
+| O3 | Los 40 MB de binarios salen del repo y del deploy; `netlify.toml` redirige `/update/*.exe|zip` a GitHub Releases con **302** para que ningún plugin antiguo se rompa. Repo: **43 MB → 3,2 MB**. |
+| O4 | 12 pesos de fuente → 7 (los que el diseño usa), y `preload` + `onload` para que la hoja deje de bloquear el primer render. |
+| O5 | `og-cover.jpg` 276 KB → **92 KB** (calidad 82, progresivo, sin los 300 DPI). |
+| O6 | `background-attachment: fixed` → pseudo-elemento `body::before` con `position: fixed`. |
+| O7 | `backdrop-blur-xl` fuera de `.glass` (~15 tarjetas simultáneas); se mantiene en navbar y modales, que son los que sí se superponen a contenido en movimiento. |
+| O8 | Borrados `data/faq.js` y `data/commands.js` (sin un solo import) y `NAV_LINKS`/`PLAN_COMPARE`. `CATALOG` y `CLIPS` reducidos a los campos que se usan de verdad: el resto era texto duplicado del de `translations.js`, condenado a desincronizarse. |
+| O9 | `USD_PRICES` en `data/culqi.js`, consumido por el modal y por la tarjeta de precios. |
+| O10 | `loading="lazy"` + `decoding="async"` en la miniatura del demo. |
+| O11 | `preconnect` a `i.ytimg.com`. |
+| O12 | El script de Culqi v4 pasa a `defer`. |
+| O13 | `useMemo` sobre la lista de clips. |
+
+### Lo único que no se hizo
+
+**Reparto de `translations.js` por idioma** (mencionado en O1 como candidato).
+Medido antes de implementarlo: el archivo son 72 KB en bruto pero **~9 KB gzip
+por idioma** ya minificado, así que el ahorro real sobre los 131 KB de arranque
+es de ~7 %. A cambio, obliga a que el render inicial dependa de un `import()`
+asíncrono, con riesgo de parpadeo de texto sin traducir en la primera pintura.
+Mal negocio: se descarta a propósito.
+
+### Nota para el despliegue
+
+`ALLOW_TEST_SKU` **no debe existir** como variable de entorno en producción. Sólo
+se define en local o en un Deploy Preview cuando haga falta probar el cobro de
+S/5 de punta a punta.
