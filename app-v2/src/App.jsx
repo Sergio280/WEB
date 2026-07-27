@@ -24,12 +24,25 @@ import BackToTop from './components/ui/BackToTop.jsx';
 // llega mucho antes de que nadie baje hasta ahí.
 const Metrics = lazy(() => import('./components/sections/Metrics.jsx'));
 
-// Reserva de altura mientras carga el chunk: evita que la página dé un salto
-// cuando la sección aparece (CLS). Lleva el id="efectividad" porque el enlace
-// del navbar apunta ahí: sin él, pulsarlo antes de que cargue el chunk no
-// llevaría a ninguna parte.
+// Reserva de altura mientras carga el chunk, para que el contenido de debajo no
+// dé un salto cuando la sección aparece (CLS).
+//
+// Las alturas son las MEDIDAS de la sección ya renderizada en cada breakpoint
+// (los gráficos se apilan en móvil, por eso crece al estrecharse):
+//   ≥1024px 1256px · 768px 1642px · 640px 1674px · 390px 1890px
+// Una reserva a ojo de 40rem desplazaba 616px todo lo que hay debajo —
+// precios, prueba y pie— justo el salto que este hueco debe evitar.
+//
+// Lleva el id="efectividad" porque el enlace del navbar apunta ahí: sin él,
+// pulsarlo antes de que cargue el chunk no llevaría a ninguna parte.
 function MetricsFallback() {
-  return <div id="efectividad" className="min-h-[40rem]" aria-hidden="true" />;
+  return (
+    <div
+      id="efectividad"
+      aria-hidden="true"
+      className="min-h-[118rem] sm:min-h-[105rem] md:min-h-[103rem] lg:min-h-[79rem]"
+    />
+  );
 }
 
 export default function App() {

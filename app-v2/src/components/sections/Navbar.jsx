@@ -37,14 +37,25 @@ export default function Navbar() {
   // Menú móvil abierto: bloquear el scroll del fondo y permitir cerrarlo con
   // Escape o tocando fuera. Antes se quedaba abierto tapando la página mientras
   // el contenido de debajo seguía desplazándose.
+  //
+  // El listener de `md` cierra el menú al ensanchar la ventana: el desplegable
+  // es `md:hidden`, así que al pasar a escritorio desaparecía de la vista pero
+  // `open` seguía true y el scroll del body quedaba bloqueado sin nada visible
+  // que explicara por qué la página no se movía.
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const mq = window.matchMedia('(min-width: 768px)');
+    const onDesktop = (e) => e.matches && setOpen(false);
+    if (mq.matches) { setOpen(false); return; }
+
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
+    mq.addEventListener('change', onDesktop);
     return () => {
       window.removeEventListener('keydown', onKey);
+      mq.removeEventListener('change', onDesktop);
       document.body.style.overflow = prevOverflow;
     };
   }, [open]);

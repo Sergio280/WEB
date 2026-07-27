@@ -58,7 +58,10 @@ exports.handler = async function (event) {
     const objectType     = isDirectObject ? body.object : null;
     if (isDirectObject) object = body;
 
-    console.log(`[culqi-webhook] Evento: "${type}" | object: "${objectType}" | id: ${object.id}`);
+    // `safeId` para logs: el id viene del body sin verificar y podría llevar
+    // saltos de línea con los que fabricar entradas de log falsas.
+    const safeId = String(object.id ?? '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 80) || '(vacío)';
+    console.log(`[culqi-webhook] Evento: "${String(type).replace(/[^\w.]/g, '')}" | object: "${String(objectType ?? '').replace(/[^\w]/g, '')}" | id: ${safeId}`);
 
     // ── Verificar autenticidad consultando la API de Culqi ────────────────────
     // En lugar de validar un hash en headers (Culqi v2 no envía firma), validamos
@@ -88,13 +91,13 @@ exports.handler = async function (event) {
     let trusted = null;
     if (isCharge)         trusted = await verifyChargeWithCulqi(object.id);
     else if (isSubEvent)  trusted = await verifySubscriptionWithCulqi(object.id);
-    else                  console.warn(`[culqi-webhook] Tipo desconocido para verificar: id=${object.id}`);
+    else                  console.warn(`[culqi-webhook] Tipo desconocido para verificar: id=${safeId}`);
 
     if (!trusted) {
-        console.warn(`[culqi-webhook] Verificación de Culqi API falló para id=${object.id} — descartado`);
+        console.warn(`[culqi-webhook] Verificación de Culqi API falló para id=${safeId} — descartado`);
         return { statusCode: 200, body: '' };
     }
-    console.log(`[culqi-webhook] ✓ Verificado contra API Culqi: ${object.id}`);
+    console.log(`[culqi-webhook] ✓ Verificado contra API Culqi: ${safeId}`);
 
     try {
         // El estado de la suscripción también se toma del objeto verificado: un
@@ -106,11 +109,20 @@ exports.handler = async function (event) {
                       || trustedStatus === 'canceled'
                       || trustedStatus === 'cancelled';
 
-        const isSub = !isCancel && (
+        // Solo los eventos que representan un alta o una renovación EXITOSA
+        // extienden la licencia. Aceptar cualquier `subscription.*` haría que un
+        // evento de cobro fallido o de reintento sumara un mes igualmente.
+        // Además el estado del objeto verificado debe ser vigente: si Culqi no
+        // devuelve `status` se acepta (no todos los endpoints lo incluyen), pero
+        // un estado explícito distinto de activo no provisiona.
+        const statusVigente = !trustedStatus
+                           || trustedStatus === 'active'
+                           || trustedStatus === 'activa';
+
+        const isSub = !isCancel && statusVigente && (
                       type === 'subscription.creation.succeeded'
                    || type === 'subscription.update.succeeded'
-                   || objectType === 'subscription'
-                   || isSubEvent);
+                   || objectType === 'subscription');
 
         if (isCharge)       await handleCharge(trusted);
         else if (isCancel)  await handleCancellation(trusted);
@@ -200,10 +212,12 @@ async function verifySubscriptionWithCulqi(subId) {
 // la escribió culqi-charge.js al crear el cobro, así que es de confianza para
 // identificar QUÉ se compró (plan + duración) — pero los TÉRMINOS de la licencia
 // (meses, dispositivos) se derivan del catálogo del servidor, nunca de la
-// metadata, y se comprueba que el importe cobrado sea el del catálogo.
+// metadata, y se comprueba que el importe cobrado cubra el del catálogo.
 async function handleCharge(charge) {
-    const email    = charge.email;
     const meta     = charge.metadata || {};
+    // Ambos campos vienen del objeto VERIFICADO, así que la caída a la metadata
+    // es igual de fiable y cubre que la respuesta de la API omita el email raíz.
+    const email    = charge.email || meta.email;
     const plan     = meta.plan     || 'individual';
     const duration = meta.duration || '1m';
 

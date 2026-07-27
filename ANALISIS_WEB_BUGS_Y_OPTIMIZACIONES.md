@@ -656,9 +656,37 @@ También se detectó que `.glass-strong` no lo usa ningún componente (el blur d
 navbar y los modales viene de utilidades de Tailwind directas), así que se
 eliminó en lugar de dejar la regla muerta.
 
+### Segunda revisión
+
+Una segunda pasada adversarial sobre el propio diff encontró cinco cosas más.
+Todas corregidas y verificadas:
+
+1. **El hueco reservado para Metrics desplazaba 616 px la página.** El
+   `min-h-[40rem]` era una estimación a ojo; la sección mide 1256 px en
+   escritorio y hasta 1890 px en móvil. Todo lo que hay debajo —precios, prueba,
+   pie— daba un salto al cargar el chunk: exactamente el CLS que ese hueco debía
+   evitar. Ahora las alturas están **medidas por breakpoint** (118/105/103/79
+   rem). Desplazamiento comprobado: de **616 px a −8 px**.
+2. **`isSub` aceptaba cualquier evento `subscription.*`.** Al reescribir el
+   enrutado se coló un `|| isSubEvent` que convertía en renovación eventos como
+   un cobro fallido o un reintento: habrían sumado un mes de licencia. Ahora
+   solo provisionan `creation.succeeded`, `update.succeeded` y
+   `object === 'subscription'`, y además el estado del objeto verificado debe
+   ser vigente.
+3. **El menú móvil dejaba la página bloqueada al pasar a escritorio.** El
+   desplegable es `md:hidden`, así que al ensanchar la ventana desaparecía de la
+   vista pero `open` seguía activo y el scroll del body bloqueado, sin nada
+   visible que lo explicara. Se cierra con un listener de `matchMedia`.
+4. **Inyección en los logs.** El `id` del body se escribía sin sanear en cuatro
+   líneas de log; un id con saltos de línea permitía fabricar entradas falsas
+   (incluida la de «✓ Verificado contra API Culqi»). Se usa un `safeId` filtrado.
+5. **`handleCharge` dependía del `email` raíz del cobro.** Si la respuesta de la
+   API lo omitiera, ningún pago provisionaría. Ahora cae a `metadata.email`, que
+   viene del mismo objeto verificado y es igual de fiable.
+
 ### Cobertura de pruebas del webhook
 
-La reescritura de `culqi-webhook` (B1/B2) se validó con un banco de 15
+La reescritura de `culqi-webhook` (B1/B2) se validó con un banco de 23
 comprobaciones sobre la lógica real, con `firebase-admin` y la API de Culqi
 simuladas:
 
@@ -671,6 +699,16 @@ simuladas:
 - Cargo inexistente y id con `../` → descartados.
 - Renovación extiende desde el vencimiento vigente; una compra sobre un Trial
   arranca hoy (no acumula); un reintento del mismo `chargeId` se ignora.
+- Un alta de suscripción provisiona con el email del objeto verificado; un
+  `subscription.charge.failed` **no** extiende; una suscripción cancelada no
+  reactiva; un id con salto de línea se descarta; un cobro sin email raíz cae a
+  la metadata verificada.
+
+En el navegador, sobre el `dist` compilado, se comprobó además: focus trap del
+modal (0 escapes en 42 pulsaciones de Tab/Shift+Tab), restauración del foco al
+botón que lo abrió, `prefers-reduced-motion` anulando marquee y scroll suave,
+`scroll-margin-top` efectivo (88 px) y el menú móvil liberando el scroll al
+pasar a escritorio.
 
 ### Nota para el despliegue
 
