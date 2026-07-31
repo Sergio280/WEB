@@ -1,4 +1,4 @@
-import { EMAIL, WHATSAPP_URL } from '../../data/nav.js';
+import { EMAIL, WHATSAPP_URL, PLUGIN_VERSION } from '../../data/nav.js';
 import AppStoreBadge from '../ui/AppStoreBadge.jsx';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 import { precioDesde } from '../../data/pricing.js';
@@ -19,7 +19,7 @@ export default function Footer() {
             BIMS
           </div>
           <p className="mt-3 text-sm text-slate-400">{f.tagline}</p>
-          <p className="mt-1 text-sm text-slate-500">{f.version}</p>
+          <p className="mt-1 text-sm text-slate-500">{f.version.replace('{v}', PLUGIN_VERSION)}</p>
           <AppStoreBadge className="mt-4" />
         </div>
 

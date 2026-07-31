@@ -12,6 +12,17 @@ export const WHATSAPP_URL = 'https://wa.me/51989455558';
 export const EMAIL = 'soporte@bimsaddin.com';
 export const YOUTUBE_ID = 'U9LvemehIkQ';
 
+// Versión del plugin que se ofrece en la web. Vive aquí y NO en los textos
+// traducidos porque es un dato, no una frase: escrito a mano en cada idioma se
+// olvidaba actualizar uno de los dos y la web anunciaba versiones distintas
+// según se viera en español o en inglés.
+//
+// Debe coincidir con `updates/latest.json` en Firebase, que es lo que el plugin
+// consulta para avisar de actualizaciones, y con el instalador que sirve
+// GitHub Releases. Ojo: la ficha del Autodesk App Store lleva su propio número
+// y se actualiza aparte, al subir el bundle a revisión.
+export const PLUGIN_VERSION = '1.1.5';
+
 // Fichas oficiales de BIMS en el Autodesk App Store (publicado 2026-07-10).
 // El sello usa la del idioma activo (la web es bilingüe por geo). Sirve de señal
 // de confianza — "Autodesk revisó y aprobó este plugin" — que combate la duda

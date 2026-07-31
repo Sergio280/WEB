@@ -618,7 +618,7 @@ export const translations = {
 
     footer: {
       tagline: 'Plugin profesional para Autodesk Revit',
-      version: 'Versión 1.1.4',
+      version: 'Versión {v}', // {v} lo rellena Footer desde PLUGIN_VERSION (data/nav.js)
       colProduct: 'Producto',
       colPricing: 'Precios',
       colLegal: 'Legal',
@@ -1226,7 +1226,7 @@ export const translations = {
 
     footer: {
       tagline: 'Professional plugin for Autodesk Revit',
-      version: 'Version 1.1.4',
+      version: 'Version {v}', // {v} lo rellena Footer desde PLUGIN_VERSION (data/nav.js)
       colProduct: 'Product',
       colPricing: 'Pricing',
       colLegal: 'Legal',
