@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
+import { PRECIOS_USD, equivalenteMensual, ahorroPct } from '../../data/pricing.js';
+import { validarComprobante, normalizarComprobante, UMBRAL_DNI_BOLETA } from '../../lib/comprobante.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
 import { openLsCheckout } from '../../lib/lemonsqueezy.js';
 import { track } from '../../lib/track.js';
@@ -28,18 +30,25 @@ export default function CulqiModal({ planKey, onClose }) {
   const [method, setMethod] = useState(region === 'INTL' && lsSupported ? 'intl' : 'culqi');
   const intl = method === 'intl';
 
-  const USD = {
-    individual:  { monthly: '16.90', yearly: '159' },
-    profesional: { monthly: '26.90', yearly: '269' },
-  };
+  // Precios en USD: viven en data/pricing.js junto con los de soles, para que
+  // no haya dos tablas de precios en el frontend.
   const [intlDuration, setIntlDuration] = useState('monthly'); // 'monthly' | 'yearly'
-  const usdPrice = (USD[planKey] || USD.individual)[intlDuration];
+  const usdPrice = (PRECIOS_USD[planKey] || PRECIOS_USD.individual)[intlDuration];
 
   const [paymentType, setPaymentType] = useState('onetime'); // 'onetime' | 'subscription'
   const [duration, setDuration] = useState('1m');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
+
+  // Datos para el comprobante electrónico (solo aplica al pago en Perú: fuera
+  // de Perú cobra Lemon Squeezy como Merchant of Record y emite él su recibo).
+  // Por defecto BOLETA, que es el caso mayoritario y no exige escribir nada en
+  // compras pequeñas; quien necesita factura la elige explícitamente.
+  const [cpTipo, setCpTipo] = useState('boleta'); // 'boleta' | 'factura'
+  const [cpDoc, setCpDoc] = useState('');
+  const [cpRazon, setCpRazon] = useState('');
+  const [cpCampoError, setCpCampoError] = useState(null); // 'doc' | 'razonSocial' | null
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
@@ -53,7 +62,19 @@ export default function CulqiModal({ planKey, onClose }) {
 
   const isSub = paymentType === 'subscription';
   const price = isSub ? plan.subscription.price : plan[duration].price;
-  const savingsNote = isSub ? '' : tp.savings[duration];
+
+  // El texto de ahorro se compone aquí: la traducción aporta el formato
+  // (c.savingsTpl) y pricing.js los números. Antes había seis frases escritas a
+  // mano (dos planes × tres duraciones × dos idiomas) que quedaban mintiendo en
+  // cuanto se movía un precio.
+  const savingsNote = useMemo(() => {
+    if (isSub) return '';
+    const pct = ahorroPct(planKey, duration);
+    if (pct <= 0) return '';
+    return c.savingsTpl
+      .replace('{mensual}', equivalenteMensual(planKey, duration))
+      .replace('{pct}', pct);
+  }, [isSub, planKey, duration, c]);
 
   const periodText = useMemo(
     () => (isSub ? c.subPeriod.replace('{price}', price) : tp.periods[duration]),
@@ -63,9 +84,24 @@ export default function CulqiModal({ planKey, onClose }) {
   function handlePay() {
     if (!emailRe.test(email.trim())) {
       setError(c.emailError);
+      setCpCampoError(null);
       return;
     }
+
+    // Datos fiscales. El backend los revalida, pero se comprueban aquí para
+    // avisar ANTES de abrir el checkout de Culqi: si el RUC estuviera mal, el
+    // usuario ya habría metido su tarjeta cuando el servidor lo rechazara.
+    const datosCp = { tipo: cpTipo, doc: cpDoc, razonSocial: cpRazon };
+    const v = validarComprobante(datosCp, price);
+    if (!v.ok) {
+      const msg = { rucInvalido: c.cpErrRuc, razonRequerida: c.cpErrRazon, dniInvalido: c.cpErrDni };
+      setError(msg[v.motivo] || c.cpErrRuc);
+      setCpCampoError(v.campo);
+      return;
+    }
+
     setError('');
+    setCpCampoError(null);
     setProcessing(true);
     track('begin_checkout', {
       plan: planKey,
@@ -79,6 +115,7 @@ export default function CulqiModal({ planKey, onClose }) {
       duration,
       isSub,
       email: email.trim(),
+      comprobante: normalizarComprobante(datosCp),
       // Textos y destino localizados para el checkout y la redirección final.
       title: `BIMS — ${badge}`,
       description: isSub ? c.subscription : periodText,
@@ -238,9 +275,12 @@ export default function CulqiModal({ planKey, onClose }) {
                   </div>
                 )}
 
-                {/* Precio */}
+                {/* Precio. El monto YA incluye IGV (se absorbe, no se suma al
+                    precio de lista), así que se avisa junto al número para que
+                    nadie espere un recargo en el checkout. */}
                 <div className="mb-1 text-center">
                   <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
+                  <span className="ml-2 align-middle text-xs font-semibold text-slate-500">{c.igvNote}</span>
                 </div>
                 <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
                 {savingsNote && (
@@ -258,6 +298,92 @@ export default function CulqiModal({ planKey, onClose }) {
                 </li>
               ))}
             </ul>
+
+            {/* Comprobante electrónico — solo en el pago por Perú (Culqi).
+                En el pago internacional cobra Lemon Squeezy como Merchant of
+                Record: vende a su nombre y emite su propio recibo, así que
+                pedir RUC ahí solo confundiría. */}
+            {!intl && (
+              <div className="mb-5 rounded-xl border border-white/10 bg-ink-900/60 p-4">
+                <p className="mb-2.5 text-sm font-semibold text-slate-300">{c.cpTitle}</p>
+
+                <div className="mb-3 grid grid-cols-2 gap-2 rounded-lg bg-ink-900 p-1">
+                  {[
+                    { key: 'boleta', label: c.cpBoleta },
+                    { key: 'factura', label: c.cpFactura },
+                  ].map((o) => (
+                    <button
+                      key={o.key}
+                      type="button"
+                      onClick={() => {
+                        setCpTipo(o.key);
+                        // Al cambiar de tipo el documento anterior deja de ser
+                        // válido (un RUC no es un DNI), así que se limpia para
+                        // que nadie envíe el número equivocado sin darse cuenta.
+                        setCpDoc('');
+                        setCpRazon('');
+                        setCpCampoError(null);
+                      }}
+                      className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                        cpTipo === o.key ? 'bg-brand-500 text-white' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+
+                {cpTipo === 'factura' ? (
+                  <>
+                    <label className="mb-1 block text-xs font-medium text-slate-400">{c.cpRucLabel}</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={11}
+                      value={cpDoc}
+                      onChange={(e) => setCpDoc(e.target.value.replace(/\D/g, ''))}
+                      placeholder={c.cpRucPlaceholder}
+                      className={`mb-2.5 w-full rounded-lg border bg-ink-900 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500/30 ${
+                        cpCampoError === 'doc' ? 'border-rose-500/60' : 'border-white/15 focus:border-brand-500'
+                      }`}
+                    />
+                    <label className="mb-1 block text-xs font-medium text-slate-400">{c.cpRazonLabel}</label>
+                    <input
+                      type="text"
+                      value={cpRazon}
+                      onChange={(e) => setCpRazon(e.target.value)}
+                      placeholder={c.cpRazonPlaceholder}
+                      className={`w-full rounded-lg border bg-ink-900 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500/30 ${
+                        cpCampoError === 'razonSocial' ? 'border-rose-500/60' : 'border-white/15 focus:border-brand-500'
+                      }`}
+                    />
+                    <p className="mt-2 text-[11px] leading-relaxed text-slate-500">{c.cpHintFactura}</p>
+                  </>
+                ) : (
+                  <>
+                    <label className="mb-1 block text-xs font-medium text-slate-400">
+                      {/* Por debajo del umbral el DNI es opcional; a partir de
+                          S/700 SUNAT exige identificar al comprador. */}
+                      {price >= UMBRAL_DNI_BOLETA ? c.cpDniRequiredLabel : c.cpDniLabel}
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={8}
+                      value={cpDoc}
+                      onChange={(e) => setCpDoc(e.target.value.replace(/\D/g, ''))}
+                      placeholder={c.cpDniPlaceholder}
+                      className={`w-full rounded-lg border bg-ink-900 px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500/30 ${
+                        cpCampoError === 'doc' ? 'border-rose-500/60' : 'border-white/15 focus:border-brand-500'
+                      }`}
+                    />
+                    <p className="mt-2 text-[11px] leading-relaxed text-slate-500">
+                      {price >= UMBRAL_DNI_BOLETA ? c.cpHintBoletaReq : c.cpHintBoleta}
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
 
             {/* Email */}
             <label className="mb-1.5 block text-sm font-medium text-slate-300">{c.emailLabel}</label>

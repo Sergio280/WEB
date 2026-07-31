@@ -11,6 +11,10 @@
 const crypto = require('crypto');
 const admin  = require('firebase-admin');
 
+// Desglose base imponible / IGV para el comprobante electrónico. Ver la fuente
+// única de precios del backend en _lib/pricing.js.
+const { desglosarIgv } = require('./_lib/pricing');
+
 // ── Firebase Admin (singleton) ────────────────────────────────────────────────
 if (!admin.apps.length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -166,6 +170,25 @@ async function handleCharge(charge) {
 
     if (!email) { console.warn('[culqi-webhook] Charge sin email'); return; }
 
+    // Desglose base imponible / IGV para el comprobante electrónico. Viene en la
+    // metadata que escribió culqi-charge.js al crear el cobro; si por alguna
+    // razón faltara (cobros anteriores al 2026-07-30, o creados fuera de ese
+    // flujo), se recalcula desde el total, que YA incluye IGV.
+    const totalSoles = (charge.amount || 0) / 100;
+    const respaldo   = desglosarIgv(totalSoles);
+    const base = meta.baseImponible != null ? Number(meta.baseImponible) : respaldo.base;
+    const igv  = meta.igv          != null ? Number(meta.igv)          : respaldo.igv;
+
+    // Datos fiscales del comprador (RUC/DNI + razón social). Viajan
+    // serializados en la metadata porque Culqi solo admite strings. Si vinieran
+    // corruptos NO se aborta: el cobro ya ocurrió y la licencia debe activarse
+    // igual; el comprobante se completa después a mano.
+    let comprobante = null;
+    if (meta.comprobante) {
+        try { comprobante = JSON.parse(meta.comprobante); }
+        catch (e) { console.warn('[culqi-webhook] comprobante ilegible en metadata:', e?.message || e); }
+    }
+
     await activateLicense(email, {
         licenseType: months >= 12 ? 'Annual' : 'Monthly',
         months,
@@ -173,6 +196,9 @@ async function handleCharge(charge) {
         chargeId:    charge.id,
         plan, duration,
         amount:      charge.amount,
+        baseImponible: base,
+        igv,
+        comprobante,
         paymentType: 'onetime',
     });
 }
@@ -185,6 +211,24 @@ async function handleSubscription(sub) {
 
     if (!email) { console.warn('[culqi-webhook] Subscription sin email'); return; }
 
+    // Desglose de IGV: se prefiere el que escribió culqi-subscription.js en la
+    // metadata al crear la suscripción, porque queda congelado con la tasa
+    // vigente ese día. Si no está (suscripciones anteriores al 2026-07-30), se
+    // recalcula desde el monto cobrado, que YA incluye IGV.
+    const meta       = sub.metadata || {};
+    const montoSoles = (sub.plan?.amount || 0) / 100;
+    const respaldo   = desglosarIgv(montoSoles);
+    const base = meta.baseImponible != null ? Number(meta.baseImponible) : respaldo.base;
+    const igv  = meta.igv          != null ? Number(meta.igv)          : respaldo.igv;
+
+    // Datos fiscales del comprador, para emitir el comprobante de cada
+    // renovación. Un JSON corrupto no debe impedir renovar la licencia.
+    let comprobante = null;
+    if (meta.comprobante) {
+        try { comprobante = JSON.parse(meta.comprobante); }
+        catch (e) { console.warn('[culqi-webhook] comprobante ilegible en suscripción:', e?.message || e); }
+    }
+
     await activateLicense(email, {
         licenseType:    'Monthly',
         months:         1,
@@ -192,6 +236,9 @@ async function handleSubscription(sub) {
         subscriptionId: sub.id,
         plan,
         amount:         sub.plan?.amount || 0,
+        baseImponible:  base,
+        igv,
+        comprobante,
         paymentType:    'subscription',
     });
 }
@@ -306,6 +353,21 @@ async function activateLicense(email, info) {
         await db.ref(`users_v2/${uid}/payments/${info.chargeId}`).set({
             plan: info.plan, duration: info.duration || null,
             amount: info.amount || 0, currency: 'PEN',
+            // Desglose tributario del cobro, en SOLES (`amount` va en céntimos).
+            // Se guarda para poder emitir el comprobante electrónico: SUNAT
+            // exige base imponible e IGV separados, y `base + igv` debe cuadrar
+            // exacto con el total cobrado.
+            baseImponible: info.baseImponible ?? null,
+            igv:           info.igv ?? null,
+            igvIncluido:   true, // el precio de lista ya lleva el IGV dentro
+            // A quién se le emite el comprobante: { tipo, docTipo, docNumero,
+            // razonSocial }. Null si el comprador no dejó datos (boleta simple
+            // por debajo del umbral en que SUNAT exige identificarlo).
+            comprobante:   info.comprobante ?? null,
+            // Marca de si el comprobante ya se emitió en SUNAT. Se pone a mano
+            // (o desde el panel) al emitirlo, para saber qué pagos quedan
+            // pendientes de facturar sin tener que cruzarlo contra SUNAT.
+            comprobanteEmitido: false,
             date: now.toISOString(), type: 'onetime',
         });
     }
@@ -318,6 +380,12 @@ async function activateLicense(email, info) {
             lastRenewal:    now.toISOString(),
             lastWebhookAt:  now.toISOString(), // timestamp para deduplicación
             nextBilling:    newExpDate,
+            // Desglose y datos fiscales, para emitir el comprobante de cada
+            // renovación sin tener que volver a pedírselos al cliente.
+            baseImponible:  info.baseImponible ?? null,
+            igv:            info.igv ?? null,
+            igvIncluido:    true,
+            comprobante:    info.comprobante ?? null,
         });
     }
 

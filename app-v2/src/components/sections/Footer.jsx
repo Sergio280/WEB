@@ -1,10 +1,15 @@
 import { EMAIL, WHATSAPP_URL } from '../../data/nav.js';
 import AppStoreBadge from '../ui/AppStoreBadge.jsx';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
+import { precioDesde } from '../../data/pricing.js';
 
 export default function Footer() {
   const { t } = useLang();
   const f = t.footer;
+  // El enlace "Desde S/60/mes" traía el precio escrito a mano en cada idioma.
+  // Ahora la traducción lleva el marcador {price} y el número sale de
+  // pricing.js, la fuente única. Las etiquetas sin marcador no se ven afectadas.
+  const conPrecio = (label) => label.replace('{price}', precioDesde('individual'));
   return (
     <footer id="contacto" className="border-t border-white/10 bg-ink-900/60">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 sm:grid-cols-2 lg:grid-cols-5">
@@ -31,7 +36,7 @@ export default function Footer() {
           <h3 className="font-display text-sm font-bold text-brand-300">{f.colPricing}</h3>
           <ul className="mt-3 space-y-2 text-sm">
             {f.pricing.map((l) => (
-              <li key={l.label}><a href={l.href} className="text-slate-400 hover:text-white">{l.label}</a></li>
+              <li key={l.label}><a href={l.href} className="text-slate-400 hover:text-white">{conPrecio(l.label)}</a></li>
             ))}
             <li><a href={`mailto:${EMAIL}?subject=${f.enterpriseSubject}`} className="text-slate-400 hover:text-white">{f.pricingEnterprise}</a></li>
           </ul>

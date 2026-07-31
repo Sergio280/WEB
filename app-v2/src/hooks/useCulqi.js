@@ -23,9 +23,11 @@ export function useCulqi() {
       window.Culqi.close();
 
       const endpoint = isSub ? '/api/culqi-subscription' : '/api/culqi-charge';
+      // `comprobante` lleva los datos fiscales del comprador (RUC/DNI + razón
+      // social) para poder emitir factura o boleta. Va también en suscripciones.
       const body = isSub
-        ? { token_id, email, plan: ctx.plan }
-        : { token_id, email, plan: ctx.plan, duration: ctx.duration };
+        ? { token_id, email, plan: ctx.plan, comprobante: ctx.comprobante }
+        : { token_id, email, plan: ctx.plan, duration: ctx.duration, comprobante: ctx.comprobante };
 
       if (ctx.onProcessing) ctx.onProcessing();
 
@@ -60,6 +62,7 @@ export function openCulqiCheckout({
   duration,
   isSub,
   email,
+  comprobante,
   title,
   description,
   successUrl,
@@ -87,6 +90,6 @@ export function openCulqiCheckout({
 
   // El callback global window.culqi lee estos valores para la redirección y los
   // mensajes de error en el idioma correcto.
-  window._culqiContext = { email, plan: planKey, isSub, duration, successUrl, errRejected, errPay, onProcessing, onError };
+  window._culqiContext = { email, plan: planKey, isSub, duration, comprobante, successUrl, errRejected, errPay, onProcessing, onError };
   window.Culqi.open({ email });
 }

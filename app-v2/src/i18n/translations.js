@@ -410,8 +410,11 @@ export const translations = {
       footnotePre: 'Al comprar eliges la duración: ',
       footnoteDurations: '1, 3, 6 o 12 meses',
       footnoteMid: '. Mientras más larga la licencia, mayor el descuento — hasta ',
-      footnoteDiscount: '−17%',
+      footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' frente al precio mensual.',
+      // Solo se muestra en la región Perú (Culqi/soles). Fuera de Perú cobra
+      // Lemon Squeezy como Merchant of Record y los impuestos los gestiona él.
+      igvNote: 'Precios en soles con IGV incluido.',
       regionAskIntl: '¿Ves precios en dólares por error? Cambiar a soles (Perú)',
       regionAskPe: '¿Pagas desde fuera de Perú? Ver precios en dólares',
       tableHead: 'Qué incluye',
@@ -443,6 +446,29 @@ export const translations = {
       onetime: 'Pago único',
       subscription: 'Suscripción mensual',
       subPeriod: '1er mes gratis · luego S/{price}/mes',
+      // Plantilla del texto de ahorro. Los números ({mensual} y {pct}) los
+      // calcula CulqiModal desde data/pricing.js, para que nunca contradigan al
+      // precio mostrado. Antes estaban escritos a mano y duplicados por plan y
+      // por idioma: seis strings que había que recordar actualizar a la vez.
+      savingsTpl: 'Equivale a S/{mensual}/mes — ahorras {pct}% vs mensual',
+      igvNote: 'IGV incluido',
+      // Bloque de datos para el comprobante electrónico (solo pagos en Perú).
+      cpTitle: '¿Necesitas comprobante?',
+      cpBoleta: 'Boleta',
+      cpFactura: 'Factura (empresa)',
+      cpRucLabel: 'RUC de la empresa',
+      cpRucPlaceholder: '20123456789',
+      cpRazonLabel: 'Razón social',
+      cpRazonPlaceholder: 'Constructora Ejemplo S.A.C.',
+      cpDniLabel: 'DNI (opcional)',
+      cpDniPlaceholder: '12345678',
+      cpDniRequiredLabel: 'DNI',
+      cpHintBoleta: 'Para persona natural. Recibes la boleta por email.',
+      cpHintBoletaReq: 'Desde S/700 la SUNAT exige identificar al comprador.',
+      cpHintFactura: 'Recibes la factura electrónica por email, con IGV desagregado.',
+      cpErrRuc: 'Ingresa un RUC válido de 11 dígitos.',
+      cpErrRazon: 'Ingresa la razón social de la empresa.',
+      cpErrDni: 'Ingresa un DNI válido de 8 dígitos.',
       emailLabel: 'Email para recibir tu clave',
       emailPlaceholder: 'tunombre@empresa.com',
       emailError: 'Ingresa un email válido.',
@@ -481,11 +507,6 @@ export const translations = {
             '12m': 'pago único · licencia 1 año',
             subscription: 'por mes · suscripción recurrente',
           },
-          savings: {
-            '3m': 'Equivale a S/53/mes — ahorras 11% vs mensual',
-            '6m': 'Equivale a S/50/mes — ahorras 17% vs mensual',
-            '12m': 'Equivale a S/49.7/mes — ahorras 17% vs mensual',
-          },
         },
         profesional: {
           features: ['Todos los paneles BIMS', 'Hasta 3 equipos / 1 usuario', 'Actualizaciones incluidas', 'Soporte prioritario (24 h)', 'Funciones beta anticipadas'],
@@ -495,11 +516,6 @@ export const translations = {
             '6m': 'pago único · licencia 6 meses',
             '12m': 'pago único · licencia 1 año',
             subscription: 'por mes · suscripción recurrente',
-          },
-          savings: {
-            '3m': 'Equivale a S/89/mes — ahorras 11% vs mensual',
-            '6m': 'Equivale a S/83/mes — ahorras 17% vs mensual',
-            '12m': 'Equivale a S/83/mes — ahorras 17% vs mensual',
           },
         },
       },
@@ -613,7 +629,7 @@ export const translations = {
         { href: '#efectividad', label: 'Resultados' },
       ],
       pricing: [
-        { href: '#precios', label: 'Desde S/60/mes' },
+        { href: '#precios', label: 'Desde S/{price}/mes' }, // {price} lo rellena Footer desde pricing.js
         { href: '#precios', label: 'Plan Profesional' },
       ],
       pricingEnterprise: 'Empresa — Consultar',
@@ -1004,8 +1020,10 @@ export const translations = {
       footnotePre: 'When you buy you choose the duration: ',
       footnoteDurations: '1, 3, 6 or 12 months',
       footnoteMid: '. The longer the license, the bigger the discount — up to ',
-      footnoteDiscount: '−17%',
+      footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' off the monthly price.',
+      // Ver nota de la versión en español: solo aplica a la región Perú.
+      igvNote: 'Prices in soles include Peruvian VAT (IGV).',
       regionAskIntl: 'Seeing USD prices by mistake? Switch to soles (Peru)',
       regionAskPe: 'Paying from outside Peru? See prices in USD',
       tableHead: 'What’s included',
@@ -1037,6 +1055,28 @@ export const translations = {
       onetime: 'One-time',
       subscription: 'Monthly subscription',
       subPeriod: '1st month free · then S/{price}/mo',
+      // Ver la nota de la versión en español: los números los calcula CulqiModal
+      // desde data/pricing.js; aquí solo vive el texto.
+      savingsTpl: 'Equals S/{mensual}/mo — save {pct}% vs monthly',
+      igvNote: 'VAT (IGV) included',
+      // Tax receipt block (Peru payments only). Kept in English for consistency
+      // with the rest of the UI, but the documents themselves are Peruvian.
+      cpTitle: 'Need a tax receipt?',
+      cpBoleta: 'Boleta',
+      cpFactura: 'Factura (company)',
+      cpRucLabel: 'Company RUC',
+      cpRucPlaceholder: '20123456789',
+      cpRazonLabel: 'Legal name',
+      cpRazonPlaceholder: 'Constructora Ejemplo S.A.C.',
+      cpDniLabel: 'DNI (optional)',
+      cpDniPlaceholder: '12345678',
+      cpDniRequiredLabel: 'DNI',
+      cpHintBoleta: 'For individuals. You receive the boleta by email.',
+      cpHintBoletaReq: 'From S/700 SUNAT requires identifying the buyer.',
+      cpHintFactura: 'You receive the electronic factura by email, with VAT broken out.',
+      cpErrRuc: 'Enter a valid 11-digit RUC.',
+      cpErrRazon: 'Enter the company legal name.',
+      cpErrDni: 'Enter a valid 8-digit DNI.',
       emailLabel: 'Email to receive your key',
       emailPlaceholder: 'yourname@company.com',
       emailError: 'Enter a valid email.',
@@ -1075,11 +1115,6 @@ export const translations = {
             '12m': 'one-time · 1-year license',
             subscription: 'per month · recurring subscription',
           },
-          savings: {
-            '3m': 'Equals S/53/mo — save 11% vs monthly',
-            '6m': 'Equals S/50/mo — save 17% vs monthly',
-            '12m': 'Equals S/49.7/mo — save 17% vs monthly',
-          },
         },
         profesional: {
           features: ['All BIMS panels', 'Up to 3 machines / 1 user', 'Updates included', 'Priority support (24 h)', 'Early beta features'],
@@ -1089,11 +1124,6 @@ export const translations = {
             '6m': 'one-time · 6-month license',
             '12m': 'one-time · 1-year license',
             subscription: 'per month · recurring subscription',
-          },
-          savings: {
-            '3m': 'Equals S/89/mo — save 11% vs monthly',
-            '6m': 'Equals S/83/mo — save 17% vs monthly',
-            '12m': 'Equals S/83/mo — save 17% vs monthly',
           },
         },
       },
@@ -1207,7 +1237,7 @@ export const translations = {
         { href: '#efectividad', label: 'Results' },
       ],
       pricing: [
-        { href: '#precios', label: 'From S/60/mo' },
+        { href: '#precios', label: 'From S/{price}/mo' }, // {price} lo rellena Footer desde pricing.js
         { href: '#precios', label: 'Professional plan' },
       ],
       pricingEnterprise: 'Enterprise — Inquire',

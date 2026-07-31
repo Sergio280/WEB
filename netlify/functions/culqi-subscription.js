@@ -9,8 +9,12 @@ const PLAN_IDS = {
     profesional: () => process.env.CULQI_PLAN_PROFESIONAL,
 };
 
-const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
-const PLAN_AMOUNTS     = { individual: 6000, profesional: 10000 };
+// Precios, equipos por plan y desglose de IGV: fuente única del backend.
+// Antes este archivo tenía su propia copia (`PLAN_AMOUNTS = { individual: 6000,
+// profesional: 10000 }`), una cuarta tabla de precios que podía quedar
+// desincronizada de las demás sin que nadie lo notara.
+const { PRECIOS_PEN, PLAN_MAX_DEVICES, aCentimos, desglosarIgv } = require('./_lib/pricing');
+const { validarComprobante } = require('./_lib/comprobante');
 
 // ── Allowlist de orígenes (consistente con /api/trial, /api/culqi-charge) ─────
 // Se permiten AMBOS dominios de producción de forma EXPLÍCITA: la web nueva vive
@@ -52,7 +56,7 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const { token_id, email, plan } = body;
+    const { token_id, email, plan, comprobante } = body;
 
     if (!token_id || !email || !plan)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Faltan campos: token_id, email, plan' }) };
@@ -63,6 +67,17 @@ exports.handler = async function (event) {
     const planId = PLAN_IDS[plan]?.();
     if (!planId)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Plan inválido: "${plan}". Configure CULQI_PLAN_INDIVIDUAL / CULQI_PLAN_PROFESIONAL en Netlify.` }) };
+
+    // Cuota mensual del plan y su desglose de IGV (el precio ya lo incluye).
+    const cuotaSoles = PRECIOS_PEN[plan]?.sub;
+    if (cuotaSoles == null)
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Plan sin precio de suscripción: "${plan}"` }) };
+    const { base, igv } = desglosarIgv(cuotaSoles);
+
+    // Datos fiscales del comprador para el comprobante de cada renovación.
+    const vc = validarComprobante(comprobante, cuotaSoles);
+    if (!vc.ok)
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: vc.error }) };
 
     try {
         // 1. Crear o reusar Customer en Culqi
@@ -138,7 +153,12 @@ exports.handler = async function (event) {
                     email,
                     plan,
                     maxDevices: String(PLAN_MAX_DEVICES[plan] || 1),
-                    amount:     String(PLAN_AMOUNTS[plan] || 0),
+                    amount:     String(aCentimos(cuotaSoles)),
+                    // Desglose y datos fiscales para el comprobante de cada
+                    // renovación. Culqi solo admite strings en metadata.
+                    baseImponible: base.toFixed(2),
+                    igv:           igv.toFixed(2),
+                    ...(vc.datos ? { comprobante: JSON.stringify(vc.datos) } : {}),
                 },
             }),
         });

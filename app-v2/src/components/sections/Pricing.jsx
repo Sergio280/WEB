@@ -3,6 +3,7 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG } from '../../data/culqi.js';
+import { PRECIOS_USD, ahorroMaximoPct } from '../../data/pricing.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -12,9 +13,12 @@ const accentMap = {
   emerald: { ring: 'border-emerald-400/30', btn: 'bg-accent-emerald hover:bg-emerald-500', text: 'text-accent-green' },
 };
 
-// Precio "desde" en USD para la región de pago internacional (Lemon Squeezy).
-// El número en soles vive en CATALOG; fuera de Perú mostramos el USD.
-const USD_FROM = { individual: '16.90', profesional: '26.90' };
+// Precio "desde" en USD para la región de pago internacional (Lemon Squeezy):
+// el mensual de cada plan. Sale de pricing.js igual que el resto de precios.
+const USD_FROM = {
+  individual: PRECIOS_USD.individual.monthly,
+  profesional: PRECIOS_USD.profesional.monthly,
+};
 
 export default function Pricing() {
   const { t, region, setRegionOverride } = useLang();
@@ -134,8 +138,16 @@ export default function Pricing() {
       </div>
 
       <p className="mx-auto mt-6 max-w-xl text-center text-sm text-slate-500">
-        {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount}</strong>{p.footnotePost}
+        {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount.replace('{pct}', ahorroMaximoPct())}</strong>{p.footnotePost}
       </p>
+
+      {/* Aviso de IGV: solo en la región Perú, donde cobra Culqi en soles y el
+          precio de lista ya lleva el impuesto dentro. Fuera de Perú cobra Lemon
+          Squeezy como Merchant of Record y los impuestos los gestiona él, así
+          que este aviso no aplica y confundiría. */}
+      {!intlPay && (
+        <p className="mx-auto mt-2 max-w-xl text-center text-xs text-slate-500">{p.igvNote}</p>
+      )}
 
       {/* Corrección manual de región: la geo-IP a veces falla (ISPs peruanos con
           bloques de IP registrados en el extranjero) y muestra USD a un usuario

@@ -4,25 +4,16 @@
 // Body: { token_id, email, plan, duration }
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CATALOG = {
-    individual: {
-        '1m':  { title: 'BIMS Individual – 1 mes',    amount: 6000,  months: 1  },
-        '3m':  { title: 'BIMS Individual – 3 meses',  amount: 16000, months: 3  },
-        '6m':  { title: 'BIMS Individual – 6 meses',  amount: 30000, months: 6  },
-        '12m': { title: 'BIMS Individual – 1 año',    amount: 59600, months: 12 },
-    },
-    profesional: {
-        '1m':  { title: 'BIMS Profesional – 1 mes',   amount: 10000, months: 1  },
-        '3m':  { title: 'BIMS Profesional – 3 meses', amount: 26800, months: 3  },
-        '6m':  { title: 'BIMS Profesional – 6 meses', amount: 50000, months: 6  },
-        '12m': { title: 'BIMS Profesional – 1 año',   amount: 99600, months: 12 },
-    },
-    test: {
-        'test': { title: 'BIMS TEST – S/5', amount: 500, months: 1 },
-    },
-};
+// El catálogo de precios (que antes estaba escrito a mano aquí, en céntimos)
+// vive ahora en _lib/pricing.js, la fuente única del backend. `itemCobrable`
+// devuelve título, monto en céntimos, meses de licencia, equipos permitidos y
+// el desglose base imponible / IGV.
+const { itemCobrable } = require('./_lib/pricing');
 
-const PLAN_MAX_DEVICES = { individual: 1, profesional: 3 };
+// Validación de los datos fiscales del comprador (RUC/DNI + razón social) que
+// se necesitan para emitir el comprobante electrónico. Se revalida en servidor
+// porque la validación del navegador se puede saltar.
+const { validarComprobante } = require('./_lib/comprobante');
 
 // ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
 // Producción + Deploy Previews + branch deploys del mismo proyecto Netlify.
@@ -83,7 +74,7 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const { token_id, email, plan, duration } = body;
+    const { token_id, email, plan, duration, comprobante } = body;
 
     if (!token_id || !email || !plan || !duration)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Faltan campos requeridos: token_id, email, plan, duration' }) };
@@ -91,9 +82,15 @@ exports.handler = async function (event) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Email inválido' }) };
 
-    const item = CATALOG[plan]?.[duration];
+    const item = itemCobrable(plan, duration);
     if (!item)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Plan/duración inválido: plan="${plan}", duration="${duration}"` }) };
+
+    // Datos fiscales del comprador. Un dato inválido SÍ corta el cobro (mejor
+    // que emitir el comprobante a un contribuyente equivocado); su ausencia no.
+    const vc = validarComprobante(comprobante, item.totalSoles);
+    if (!vc.ok)
+        return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: vc.error }) };
 
     try {
         const response = await fetch('https://api.culqi.com/v2/charges', {
@@ -113,7 +110,19 @@ exports.handler = async function (event) {
                     duration,
                     email,
                     months:     String(item.months),
-                    maxDevices: String(PLAN_MAX_DEVICES[plan] || 1),
+                    maxDevices: String(item.maxDevices),
+                    // Desglose para el comprobante electrónico. El precio de
+                    // lista YA incluye IGV, así que aquí se guarda cuánto de
+                    // ese total es base imponible y cuánto impuesto. Se calcula
+                    // en el momento del cobro y no después, para que quede
+                    // congelado con la tasa vigente ese día aunque el IGV
+                    // cambie más adelante. Culqi exige strings en metadata.
+                    baseImponible: item.base.toFixed(2),
+                    igv:           item.igv.toFixed(2),
+                    // Datos del comprobante. Culqi solo admite strings en
+                    // metadata, así que el objeto viaja serializado; el webhook
+                    // lo vuelve a parsear para guardarlo en Firebase.
+                    ...(vc.datos ? { comprobante: JSON.stringify(vc.datos) } : {}),
                 },
             }),
         });

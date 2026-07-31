@@ -1,7 +1,49 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Configuración de planes Culqi — COPIA VERBATIM de la home actual.
+// Configuración de planes Culqi.
+//
+// Los NÚMEROS ya no viven aquí: se derivan de data/pricing.js, la fuente única
+// de precios del frontend. Este archivo se queda solo con lo que es propio del
+// checkout de Culqi (llave pública) y con la descripción comercial de los
+// planes (features, textos del catálogo, tabla comparativa).
+//
+// La forma de los objetos exportados NO cambió respecto a la versión anterior,
+// para no tocar a sus consumidores (CulqiModal, Pricing, useCulqi).
 // ─────────────────────────────────────────────────────────────────────────────
+import {
+  PRECIOS_PEN,
+  DURACIONES,
+  precioPen,
+  precioDesde,
+  equivalenteMensual,
+  ahorroPct,
+} from './pricing.js';
+
 export const CULQI_PUBLIC_KEY = 'pk_live_aenMPO2MOHaDprCT';
+
+const ETIQUETA_DURACION = {
+  '1m': 'licencia 1 mes',
+  '3m': 'licencia 3 meses',
+  '6m': 'licencia 6 meses',
+  '12m': 'licencia 1 año',
+};
+
+// Construye las entradas por duración de un plan a partir de la tabla de
+// precios. `savingsNote` se calcula (no se escribe a mano) para que nunca
+// contradiga al precio: antes decía "Equivale a S/53/mes" en un archivo y el
+// precio vivía en otro, así que un cambio en uno dejaba mintiendo al otro.
+function entradasDeDuracion(planKey) {
+  const out = {};
+  for (const dur of DURACIONES) {
+    const pct = ahorroPct(planKey, dur);
+    out[dur] = {
+      price: precioPen(planKey, dur),
+      period: `pago único · ${ETIQUETA_DURACION[dur]}`,
+      savingsNote:
+        pct > 0 ? `Equivale a S/${equivalenteMensual(planKey, dur)}/mes — ahorras ${pct}% vs mensual` : '',
+    };
+  }
+  return out;
+}
 
 export const CULQI_CONFIG = {
   publicKey: CULQI_PUBLIC_KEY,
@@ -10,28 +52,9 @@ export const CULQI_CONFIG = {
       name: 'Individual',
       badge: 'Plan Individual',
       featured: false,
-      '1m': {
-        price: 60,
-        period: 'pago único · licencia 1 mes',
-        savingsNote: '',
-      },
-      '3m': {
-        price: 160,
-        period: 'pago único · licencia 3 meses',
-        savingsNote: 'Equivale a S/53/mes — ahorras 11% vs mensual',
-      },
-      '6m': {
-        price: 300,
-        period: 'pago único · licencia 6 meses',
-        savingsNote: 'Equivale a S/50/mes — ahorras 17% vs mensual',
-      },
-      '12m': {
-        price: 596,
-        period: 'pago único · licencia 1 año',
-        savingsNote: 'Equivale a S/49.7/mes — ahorras 17% vs mensual',
-      },
+      ...entradasDeDuracion('individual'),
       subscription: {
-        price: 60,
+        price: PRECIOS_PEN.individual.sub,
         period: 'por mes · suscripción recurrente',
         savingsNote: '',
       },
@@ -46,28 +69,9 @@ export const CULQI_CONFIG = {
       name: 'Profesional',
       badge: 'Plan Profesional',
       featured: true,
-      '1m': {
-        price: 100,
-        period: 'pago único · licencia 1 mes',
-        savingsNote: '',
-      },
-      '3m': {
-        price: 268,
-        period: 'pago único · licencia 3 meses',
-        savingsNote: 'Equivale a S/89/mes — ahorras 11% vs mensual',
-      },
-      '6m': {
-        price: 500,
-        period: 'pago único · licencia 6 meses',
-        savingsNote: 'Equivale a S/83/mes — ahorras 17% vs mensual',
-      },
-      '12m': {
-        price: 996,
-        period: 'pago único · licencia 1 año',
-        savingsNote: 'Equivale a S/83/mes — ahorras 17% vs mensual',
-      },
+      ...entradasDeDuracion('profesional'),
       subscription: {
-        price: 100,
+        price: PRECIOS_PEN.profesional.sub,
         period: 'por mes · suscripción recurrente',
         savingsNote: '',
       },
@@ -89,7 +93,7 @@ export const CATALOG = [
     badge: 'Individual',
     name: 'BIMS Individual',
     desc: 'Plugin completo para Revit, todos los paneles desbloqueados. Licencia para 1 equipo. Ideal para profesionales independientes.',
-    priceFrom: 60,
+    priceFrom: precioDesde('individual'),
     accent: 'brand',
     featured: false,
   },
@@ -98,7 +102,7 @@ export const CATALOG = [
     badge: 'Profesional',
     name: 'BIMS Profesional',
     desc: 'Todo lo de Individual, para hasta 3 equipos. Soporte prioritario 24 h y acceso anticipado a funciones beta.',
-    priceFrom: 100,
+    priceFrom: precioDesde('profesional'),
     accent: 'violet',
     featured: true,
     ribbon: '★ Más elegido',
