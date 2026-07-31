@@ -48,14 +48,30 @@
     #   script-src: GA4 (googletagmanager, google-analytics), Clarity,
     #     Turnstile, Culqi checkout (checkout.culqi.com — NO js.culqi.com),
     #     jsDelivr (anime.js, chart.js).
-    #   frame-src: Turnstile, Culqi secure popup, YouTube embeds.
+    #   frame-src: Turnstile, el CHECKOUT de Culqi, 3DS de Culqi, YouTube.
     #   connect-src: GA4, Clarity, Firebase RTDB, Identity Toolkit, Turnstile,
-    #     Culqi API.
+    #     API de Culqi y tokenización (secure.culqi.com).
     #   img-src 'https:': YouTube thumbnails (i.ytimg.com) + datos en general.
     # 'unsafe-inline' se mantiene porque GA4/Clarity y la propia index.html
     # usan scripts/styles inline; sustituible por nonce/hash si en el futuro
     # se elimina todo inline.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://checkout.culqi.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://secure.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://api.culqi.com; object-src 'none'; base-uri 'self'; form-action 'self' https://secure.culqi.com;"
+    #
+    # ⚠️ LOS DOS DOMINIOS DE CULQI NO SON INTERCAMBIABLES (esto rompió los pagos
+    # entre el 2026-05-24 y el 2026-07-31). Comprobado leyendo el propio
+    # checkout v4:
+    #   • checkout.culqi.com → el IFRAME del checkout. En el bundle:
+    #     `_culqiCheckoutUrl = "https://checkout.culqi.com/v4"` y
+    #     `kv("iframe", { id: "culqi_checkout_frame", ... })`.  ⇒ frame-src
+    #   • secure.culqi.com  → API de tokenización, se llama por fetch:
+    #     `_culqiApiSecure = "https://secure.culqi.com"` + `service.post("/tokens")`.
+    #     NO es un iframe.                                      ⇒ connect-src
+    # Estaban justo al revés: secure.culqi.com en frame-src y checkout.culqi.com
+    # en ninguna de las dos. Resultado: al pulsar «Pagar», Chrome bloqueaba el
+    # iframe y el usuario veía «Este contenido está bloqueado» a pantalla
+    # completa, sin poder pagar. Antes de tocar esta línea, comprobar con qué
+    # dominio se sirve cada cosa: un fallo aquí NO da error en consola visible
+    # para el usuario, solo un pago que nunca ocurre.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://checkout.culqi.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://checkout.culqi.com https://secure.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://api.culqi.com https://secure.culqi.com https://checkout.culqi.com; object-src 'none'; base-uri 'self'; form-action 'self' https://secure.culqi.com https://checkout.culqi.com;"
 
 # ── Descarga de ejecutables ────────────────────────────────────────────────────
 [[headers]]
