@@ -55,8 +55,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
 
-    <!-- ── Culqi Checkout v4 (mismo contrato que la home actual) ── -->
-    <script src="https://checkout.culqi.com/js/v4"></script>
+    <!-- ── Culqi Checkout v4 ──
+         `defer` es IMPORTANTE: este script pesa ~850 KB (más que todo el bundle
+         de la web) y sin él bloqueaba el parseo del HTML, retrasando la primera
+         pintura para TODOS los visitantes, incluidos los que nunca abren el
+         checkout. Con defer se descarga en paralelo y se ejecuta al terminar de
+         parsear, antes del módulo de React, así que `window.Culqi` sigue estando
+         listo mucho antes de que nadie pueda pulsar «Pagar».
+
+         NO añadir `integrity="sha384-..."` (SRI) a este script: Culqi actualiza
+         su SDK sin avisar y sin versionar la URL, así que un hash fijo dejaría
+         de coincidir en la primera actualización suya y el navegador bloquearía
+         el script — cobros caídos sin ningún cambio por nuestra parte. SRI sirve
+         para recursos estáticos versionados, no para SDKs de pasarela en vivo. -->
+    <script defer src="https://checkout.culqi.com/js/v4"></script>
 </head>
 <body>
     <div id="root"></div>

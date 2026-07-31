@@ -2,13 +2,18 @@ import { useMemo, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
+import { precioDesde } from '../../data/pricing.js';
 
 // Fórmula EXACTA de la home actual:
-//   PRECIO_MES = 60, AHORRO = 0.80
 //   horasAhorradas = round(proyectos * horas * 0.80)
 //   dinero = horasAhorradas * tarifa
-//   diasPayback = max(0.1, 60 / (tarifa * 8)).toFixed(1)
-const PRECIO_MES = 60;
+//   diasPayback = max(0.1, precioMensual / (tarifa * 8)).toFixed(1)
+//
+// El precio mensual SALE DE pricing.js, no escrito a mano: antes había aquí un
+// `const PRECIO_MES = 60` que era una copia más del precio. Si se cambiaba la
+// tarifa, esta calculadora seguía prometiendo un retorno calculado sobre el
+// precio viejo — es decir, mentía al visitante justo en el argumento de venta.
+const PRECIO_MES = precioDesde('individual');
 const AHORRO = 0.8;
 
 function Slider({ label, value, min, max, step, onChange, suffix, prefix }) {
