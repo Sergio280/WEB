@@ -92,9 +92,17 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Menú móvil desplegable */}
+      {/* Menú móvil desplegable.
+          La barra es `sticky top-0`, así que el menú queda anclado con ella: si
+          es más alto que la ventana (móvil en horizontal, o pantallas cortas),
+          las últimas opciones quedarían fuera y sin forma de alcanzarlas. Se
+          limita el alto a la ventana menos la barra (~4rem) y se deja que
+          scrollee por dentro. */}
       {open && (
-        <ul className="flex flex-col gap-1 border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl md:hidden">
+        <ul
+          className="flex max-h-[calc(100vh-4rem)] flex-col gap-1 overflow-y-auto overscroll-contain border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl md:hidden"
+          style={{ maxHeight: 'calc(100dvh - 4rem)' }}
+        >
           {t.nav.links.map((l) => (
             <li key={l.href}>
               <a

@@ -26,8 +26,15 @@ function Lightbox({ clip, onClose, labels }) {
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
+      {/* El ancho se limita por DOS cosas a la vez: el máximo de diseño (56rem)
+          y el que permita el alto disponible manteniendo el 16:9. Sin lo
+          segundo, en una pantalla de portátil el vídeo salía más alto que la
+          ventana y el botón de cerrar —que va por encima del marco— quedaba
+          fuera de la pantalla. Se descuentan 9rem: el botón de cerrar arriba,
+          el título abajo y el margen del overlay. */}
       <motion.div
         className="relative w-full max-w-4xl"
+        style={{ width: 'min(56rem, calc((100dvh - 9rem) * 16 / 9))' }}
         initial={{ scale: 0.92, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.92, y: 20 }}

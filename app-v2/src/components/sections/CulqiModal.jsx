@@ -160,21 +160,32 @@ export default function CulqiModal({ planKey, onClose }) {
         exit={{ opacity: 0 }}
         onClick={onClose}
       >
+        {/* El alto se limita al de la ventana y el cuerpo scrollea por dentro.
+            Sin esto, en pantallas de portátil (y con el bloque de comprobante
+            añadido) el modal crecía más que la pantalla y quedaba CORTADO: el
+            `overflow-hidden` recortaba el contenido y el botón de pagar podía
+            quedar fuera, sin forma de llegar a él.
+            El `max-h` en línea usa dvh (alto real de la ventana, descontando
+            las barras del navegador móvil); la clase Tailwind con vh queda de
+            respaldo para navegadores que no entiendan dvh. */}
         <motion.div
-          className="w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-glow-lg"
+          className="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-glow-lg"
+          style={{ maxHeight: 'calc(100dvh - 2rem)' }}
           initial={{ scale: 0.94, y: 16 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.94, y: 16 }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+          {/* La cabecera no se encoge ni se va con el scroll: el aspa de cerrar
+              tiene que estar siempre a la vista. */}
+          <div className="flex shrink-0 items-center justify-between border-b border-white/10 px-6 py-4">
             <span className="rounded-full bg-brand-500/15 px-3 py-1 text-xs font-bold text-brand-300">{badge}</span>
             <button onClick={onClose} className="text-2xl leading-none text-slate-400 hover:text-white" aria-label={c.closeAria}>
               ×
             </button>
           </div>
 
-          <div className="px-6 py-5">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-5">
             {/* Selector de método de pago — SIEMPRE visible (nadie queda fuera) */}
             {lsSupported && (
               <>
