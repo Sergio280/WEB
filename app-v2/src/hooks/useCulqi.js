@@ -27,7 +27,7 @@ export function useCulqi() {
       // social) para poder emitir factura o boleta. Va también en suscripciones.
       const body = isSub
         ? { token_id, email, plan: ctx.plan, comprobante: ctx.comprobante }
-        : { token_id, email, plan: ctx.plan, duration: ctx.duration, comprobante: ctx.comprobante };
+        : { token_id, email, plan: ctx.plan, duration: ctx.duration, comprobante: ctx.comprobante, codigo: ctx.codigo };
 
       if (ctx.onProcessing) ctx.onProcessing();
 
@@ -63,6 +63,8 @@ export function openCulqiCheckout({
   isSub,
   email,
   comprobante,
+  codigo,
+  precio,
   title,
   description,
   successUrl,
@@ -78,7 +80,12 @@ export function openCulqiCheckout({
     return;
   }
   const item = isSub ? plan.subscription : plan[duration];
-  const amountCentavos = item.price * 100; // Culqi usa centavos
+  // `precio` llega con la promoción ya aplicada (si la hay) para que el widget
+  // de Culqi enseñe el mismo importe que se va a cobrar. Sin esto, el cliente
+  // vería S/60 en el formulario de tarjeta y se le cobrarían S/40: aunque le
+  // favorezca, es una discrepancia que destruye la confianza en el checkout.
+  // El importe REAL lo recalcula el servidor; esto es solo la vitrina.
+  const amountCentavos = Math.round((precio ?? item.price) * 100); // Culqi usa centavos
 
   window.Culqi.publicKey = CULQI_PUBLIC_KEY;
   window.Culqi.settings({
@@ -90,6 +97,6 @@ export function openCulqiCheckout({
 
   // El callback global window.culqi lee estos valores para la redirección y los
   // mensajes de error en el idioma correcto.
-  window._culqiContext = { email, plan: planKey, isSub, duration, comprobante, successUrl, errRejected, errPay, onProcessing, onError };
+  window._culqiContext = { email, plan: planKey, isSub, duration, comprobante, codigo, successUrl, errRejected, errPay, onProcessing, onError };
   window.Culqi.open({ email });
 }

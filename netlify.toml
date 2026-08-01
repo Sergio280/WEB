@@ -108,6 +108,13 @@
   to     = "/.netlify/functions/culqi-webhook"
   status = 200
 
+# Consulta el precio rebajado de un código de promoción, solo para MOSTRARLO.
+# El importe que se cobra lo decide culqi-charge revalidando el mismo código.
+[[redirects]]
+  from   = "/api/validar-descuento"
+  to     = "/.netlify/functions/validar-descuento"
+  status = 200
+
 # ── Pasarela internacional (Lemon Squeezy) ────────────────────────────────────
 # El checkout usa enlaces hospedados buy/{slug} directo desde el frontend (sin
 # API key en el servidor → evita el límite de 4 KB de env vars). Solo el webhook

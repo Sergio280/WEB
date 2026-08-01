@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
 import { PRECIOS_USD, equivalenteMensual, ahorroPct } from '../../data/pricing.js';
 import { validarComprobante, normalizarComprobante, UMBRAL_DNI_BOLETA } from '../../lib/comprobante.js';
+import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
 import { openLsCheckout } from '../../lib/lemonsqueezy.js';
 import { track } from '../../lib/track.js';
@@ -61,7 +62,28 @@ export default function CulqiModal({ planKey, onClose }) {
   }, [onClose]);
 
   const isSub = paymentType === 'subscription';
-  const price = isSub ? plan.subscription.price : plan[duration].price;
+  const precioLista = isSub ? plan.subscription.price : plan[duration].price;
+
+  // Promoción por enlace (?promo=CODIGO). Solo aplica a PAGO ÚNICO: en Culqi el
+  // importe de una suscripción lo fija el plan registrado en su panel, así que
+  // un descuento ahí exigiría crear otro plan. Ver _lib/descuentos.js.
+  const codigoPromo = useMemo(() => leerPromo(), []);
+  const [promo, setPromo] = useState(null); // { total, totalOriginal, ahorro }
+
+  useEffect(() => {
+    if (!codigoPromo || isSub || intl) { setPromo(null); return; }
+    let vigente = true;
+    consultarPromo({ codigo: codigoPromo, plan: planKey, duration }).then((p) => {
+      if (vigente) setPromo(p);
+    });
+    // Se vuelve a consultar al cambiar de duración porque un código puede estar
+    // limitado a una concreta (p. ej. solo el plan de 1 mes).
+    return () => { vigente = false; };
+  }, [codigoPromo, planKey, duration, isSub, intl]);
+
+  // Precio que se muestra y que se le pasa al widget de Culqi. El importe que
+  // realmente se cobra lo recalcula el servidor; esto es solo la vitrina.
+  const price = promo ? promo.total : precioLista;
 
   // El texto de ahorro se compone aquí: la traducción aporta el formato
   // (c.savingsTpl) y pricing.js los números. Antes había seis frases escritas a
@@ -116,6 +138,10 @@ export default function CulqiModal({ planKey, onClose }) {
       isSub,
       email: email.trim(),
       comprobante: normalizarComprobante(datosCp),
+      // El servidor revalida el código y recalcula el importe: aquí solo se
+      // transporta. Si el código ya no aplicara, cobraría precio de lista.
+      codigo: promo ? codigoPromo : null,
+      precio: price, // para que el widget de Culqi muestre el importe con promoción
       // Textos y destino localizados para el checkout y la redirección final.
       title: `BIMS — ${badge}`,
       description: isSub ? c.subscription : periodText,
@@ -290,9 +316,21 @@ export default function CulqiModal({ planKey, onClose }) {
                     precio de lista), así que se avisa junto al número para que
                     nadie espere un recargo en el checkout. */}
                 <div className="mb-1 text-center">
+                  {/* Con promoción se tacha el precio de lista al lado, para que
+                      se vea el ahorro y no parezca que el precio bajó sin más. */}
+                  {promo && (
+                    <span className="mr-2 align-middle text-lg font-semibold text-slate-500 line-through">
+                      S/{promo.totalOriginal}
+                    </span>
+                  )}
                   <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
                   <span className="ml-2 align-middle text-xs font-semibold text-slate-500">{c.igvNote}</span>
                 </div>
+                {promo && (
+                  <p className="mb-1 text-center text-xs font-bold text-accent-green">
+                    {c.promoApplied.replace('{ahorro}', promo.ahorro)}
+                  </p>
+                )}
                 <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
                 {savingsNote && (
                   <p className="mb-4 text-center text-xs font-semibold text-accent-green">{savingsNote}</p>

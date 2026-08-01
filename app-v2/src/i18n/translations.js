@@ -452,6 +452,7 @@ export const translations = {
       // por idioma: seis strings que había que recordar actualizar a la vez.
       savingsTpl: 'Equivale a S/{mensual}/mes — ahorras {pct}% vs mensual',
       igvNote: 'IGV incluido',
+      promoApplied: '🎁 Promoción aplicada — ahorras S/{ahorro}',
       // Bloque de datos para el comprobante electrónico (solo pagos en Perú).
       cpTitle: '¿Necesitas comprobante?',
       cpBoleta: 'Boleta',
@@ -1059,6 +1060,7 @@ export const translations = {
       // desde data/pricing.js; aquí solo vive el texto.
       savingsTpl: 'Equals S/{mensual}/mo — save {pct}% vs monthly',
       igvNote: 'VAT (IGV) included',
+      promoApplied: '🎁 Promo applied — you save S/{ahorro}',
       // Tax receipt block (Peru payments only). Kept in English for consistency
       // with the rest of the UI, but the documents themselves are Peruvian.
       cpTitle: 'Need a tax receipt?',

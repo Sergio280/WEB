@@ -15,6 +15,25 @@ const { itemCobrable } = require('./_lib/pricing');
 // porque la validación del navegador se puede saltar.
 const { validarComprobante } = require('./_lib/comprobante');
 
+// Códigos de promoción. Se revalidan AQUÍ aunque la web ya los haya consultado
+// en /api/validar-descuento: aquella llamada solo sirve para mostrar el precio,
+// esta es la que fija lo que se cobra de verdad.
+const admin = require('firebase-admin');
+const { buscarCodigo, aplicar, usosDisponibles, registrarUso } = require('./_lib/descuentos');
+
+if (!admin.apps.length) {
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    admin.initializeApp({
+        credential: admin.credential.cert({
+            projectId,
+            clientEmail: `firebase-adminsdk-fbsvc@${projectId}.iam.gserviceaccount.com`,
+            privateKey:  (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+        }),
+        databaseURL: `https://${projectId}-default-rtdb.firebaseio.com`,
+    });
+}
+const db = admin.database();
+
 // ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
 // Producción + Deploy Previews + branch deploys del mismo proyecto Netlify.
 // Se permiten AMBOS dominios de producción de forma EXPLÍCITA: los plugins ya
@@ -74,7 +93,7 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const { token_id, email, plan, duration, comprobante } = body;
+    const { token_id, email, plan, duration, comprobante, codigo } = body;
 
     if (!token_id || !email || !plan || !duration)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Faltan campos requeridos: token_id, email, plan, duration' }) };
@@ -86,9 +105,36 @@ exports.handler = async function (event) {
     if (!item)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: `Plan/duración inválido: plan="${plan}", duration="${duration}"` }) };
 
+    // ── Promoción ────────────────────────────────────────────────────────────
+    // Se recalcula el importe DESDE CERO con el código que llegó, sin confiar en
+    // ningún monto enviado por el navegador. Un código inválido o agotado no
+    // corta el pago: simplemente no se aplica y se cobra precio de lista. Es
+    // preferible cobrar de más (y devolver la diferencia) a rechazar una compra.
+    let cobrado = { total: item.totalSoles, base: item.base, igv: item.igv, ahorro: 0 };
+    let promoAplicada = null;
+
+    if (codigo) {
+        const bc = buscarCodigo(codigo, plan, duration);
+        if (bc.ok) {
+            const cupo = await usosDisponibles(db, bc.promo);
+            if (cupo.ok) {
+                cobrado = aplicar(bc.promo, item.totalSoles);
+                promoAplicada = bc.promo;
+            } else {
+                console.warn(`[culqi-charge] código "${codigo}" agotado; se cobra precio de lista`);
+            }
+        } else {
+            console.warn(`[culqi-charge] código "${codigo}" no aplicable (${bc.motivo}); se cobra precio de lista`);
+        }
+    }
+
+    const montoCentimos = Math.round(cobrado.total * 100);
+
     // Datos fiscales del comprador. Un dato inválido SÍ corta el cobro (mejor
     // que emitir el comprobante a un contribuyente equivocado); su ausencia no.
-    const vc = validarComprobante(comprobante, item.totalSoles);
+    // Se valida contra el importe REALMENTE cobrado, que es el que decide si el
+    // DNI es obligatorio en una boleta (umbral de S/700).
+    const vc = validarComprobante(comprobante, cobrado.total);
     if (!vc.ok)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: vc.error }) };
 
@@ -100,25 +146,30 @@ exports.handler = async function (event) {
                 'Content-Type':  'application/json',
             },
             body: JSON.stringify({
-                amount:        item.amount,
+                amount:        montoCentimos,
                 currency_code: 'PEN',
                 email,
                 source_id:     token_id,
-                description:   item.title,
+                description:   promoAplicada ? `${item.title} (promo)` : item.title,
                 metadata: {
                     plan,
                     duration,
                     email,
                     months:     String(item.months),
                     maxDevices: String(item.maxDevices),
-                    // Desglose para el comprobante electrónico. El precio de
-                    // lista YA incluye IGV, así que aquí se guarda cuánto de
-                    // ese total es base imponible y cuánto impuesto. Se calcula
-                    // en el momento del cobro y no después, para que quede
-                    // congelado con la tasa vigente ese día aunque el IGV
-                    // cambie más adelante. Culqi exige strings en metadata.
-                    baseImponible: item.base.toFixed(2),
-                    igv:           item.igv.toFixed(2),
+                    // Desglose para el comprobante electrónico, calculado sobre
+                    // el importe REALMENTE cobrado (con promoción aplicada si la
+                    // hubo). El precio ya incluye IGV, así que aquí se guarda
+                    // cuánto de ese total es base imponible y cuánto impuesto.
+                    // Se congela en el momento del cobro con la tasa de ese día,
+                    // por si el IGV cambiara más adelante. Culqi exige strings.
+                    baseImponible: cobrado.base.toFixed(2),
+                    igv:           cobrado.igv.toFixed(2),
+                    // Trazabilidad de la promoción, para saber después qué se
+                    // vendió con descuento y por qué el importe no es el de lista.
+                    ...(promoAplicada
+                        ? { promoCodigo: String(promoAplicada.codigo), promoAhorro: cobrado.ahorro.toFixed(2) }
+                        : {}),
                     // Datos del comprobante. Culqi solo admite strings en
                     // metadata, así que el objeto viaja serializado; el webhook
                     // lo vuelve a parsear para guardarlo en Firebase.
@@ -146,7 +197,22 @@ exports.handler = async function (event) {
             };
         }
 
-        console.log(`[culqi-charge] Cobro exitoso: ${email} | ${item.title} | charge_id: ${data.id}`);
+        console.log(
+            `[culqi-charge] Cobro exitoso: ${email} | ${item.title} | S/${cobrado.total}` +
+            (promoAplicada ? ` (promo ${promoAplicada.codigo}, -S/${cobrado.ahorro})` : '') +
+            ` | charge_id: ${data.id}`
+        );
+
+        // El uso se cuenta SOLO cuando el cobro se aprobó. Si se contara antes,
+        // una tarjeta rechazada consumiría el cupo de un código de un solo uso.
+        if (promoAplicada) {
+            await registrarUso(db, promoAplicada.codigo, {
+                email, plan, duration,
+                chargeId: data.id,
+                total: cobrado.total,
+                ahorro: cobrado.ahorro,
+            });
+        }
 
         return {
             statusCode: 200,
