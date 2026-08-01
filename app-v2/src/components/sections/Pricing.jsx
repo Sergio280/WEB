@@ -4,6 +4,7 @@ import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG } from '../../data/culqi.js';
 import { PRECIOS_USD, ahorroMaximoPct } from '../../data/pricing.js';
+import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -30,6 +31,39 @@ export default function Pricing() {
   const curSym = intlPay ? '$' : 'S/';
   const [modalPlan, setModalPlan] = useState(null);
   const sectionRef = useRef(null);
+
+  // Promoción por enlace (?promo=CODIGO): si hay una vigente, la tarjeta enseña
+  // ya el precio rebajado en vez de esperar a que abran el modal. Quien recibe
+  // un enlace de promoción espera ver el descuento de entrada, no después de
+  // pulsar «Comprar».
+  //
+  // Se consulta el precio "desde" de cada plan, que es el de 1 mes. Si el código
+  // está reservado a un correo concreto, aquí todavía no se conoce: el servidor
+  // concede el beneficio de la duda y el modal lo confirma al teclearlo.
+  const [promoPorPlan, setPromoPorPlan] = useState({});
+
+  useEffect(() => {
+    const codigo = leerPromo();
+    // Sin código no se llama a nada: la inmensa mayoría de visitas no traen
+    // promoción y no tienen por qué pagar una petición extra.
+    if (!codigo || intlPay) return;
+
+    let vigente = true;
+    const planes = CATALOG.filter((c) => c.priceFrom != null).map((c) => c.key);
+
+    Promise.all(
+      planes.map((k) =>
+        consultarPromo({ codigo, plan: k, duration: '1m' }).then((p) => [k, p])
+      )
+    ).then((pares) => {
+      if (!vigente) return;
+      const m = {};
+      for (const [k, p] of pares) if (p) m[k] = p;
+      setPromoPorPlan(m);
+    });
+
+    return () => { vigente = false; };
+  }, [intlPay]);
 
   // view_pricing: se dispara una vez cuando la sección entra en viewport.
   useEffect(() => {
@@ -95,10 +129,25 @@ export default function Pricing() {
 
                 <div className="mt-5">
                   {c.priceFrom != null ? (
-                    <p className="font-display text-3xl font-extrabold text-white">
-                      {p.priceFrom}{curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : c.priceFrom}
-                      <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
-                    </p>
+                    <>
+                      <p className="font-display text-3xl font-extrabold text-white">
+                        {p.priceFrom}
+                        {/* Con promoción se tacha el precio de lista al lado para
+                            que se lea como un descuento y no como el precio normal. */}
+                        {promoPorPlan[c.key] && (
+                          <span className="mr-2 text-xl font-semibold text-slate-500 line-through">
+                            {curSym}{c.priceFrom}
+                          </span>
+                        )}
+                        {curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
+                        <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
+                      </p>
+                      {promoPorPlan[c.key] && (
+                        <p className="mt-1 text-xs font-bold text-accent-green">
+                          {p.promoBadge.replace('{ahorro}', promoPorPlan[c.key].ahorro)}
+                        </p>
+                      )}
+                    </>
                   ) : (
                     <p className="font-display text-2xl font-extrabold text-white">{p.custom}</p>
                   )}

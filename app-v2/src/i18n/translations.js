@@ -415,6 +415,7 @@ export const translations = {
       // Solo se muestra en la región Perú (Culqi/soles). Fuera de Perú cobra
       // Lemon Squeezy como Merchant of Record y los impuestos los gestiona él.
       igvNote: 'Precios en soles con IGV incluido.',
+      promoBadge: '🎁 Promoción — ahorras S/{ahorro}',
       regionAskIntl: '¿Ves precios en dólares por error? Cambiar a soles (Perú)',
       regionAskPe: '¿Pagas desde fuera de Perú? Ver precios en dólares',
       tableHead: 'Qué incluye',
@@ -1025,6 +1026,7 @@ export const translations = {
       footnotePost: ' off the monthly price.',
       // Ver nota de la versión en español: solo aplica a la región Perú.
       igvNote: 'Prices in soles include Peruvian VAT (IGV).',
+      promoBadge: '🎁 Promo — you save S/{ahorro}',
       regionAskIntl: 'Seeing USD prices by mistake? Switch to soles (Peru)',
       regionAskPe: 'Paying from outside Peru? See prices in USD',
       tableHead: 'What’s included',

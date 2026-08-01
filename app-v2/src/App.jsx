@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useCulqi } from './hooks/useCulqi.js';
 import AnnounceBar from './components/sections/AnnounceBar.jsx';
 import Navbar from './components/sections/Navbar.jsx';
@@ -21,6 +22,79 @@ import BackToTop from './components/ui/BackToTop.jsx';
 export default function App() {
   // Registra el callback global window.culqi para el checkout de pagos.
   useCulqi();
+
+  // Lleva al ancla cuando se llega desde fuera con una URL tipo
+  // bimsaddin.com/#precios.
+  //
+  // El navegador lo intenta al cargar el documento, pero en ese momento #root
+  // está vacío: React aún no ha pintado las secciones, así que no existe ningún
+  // elemento con ese id y la página se queda arriba. Afecta a CUALQUIER enlace
+  // con ancla que venga de fuera (un correo, la ficha del App Store, un
+  // anuncio), no solo a los de promoción.
+  //
+  // No basta con hacer scroll una vez en cuanto aparece la sección: las de
+  // arriba se montan y crecen después (imágenes, iframes, gráficas diferidas) y
+  // empujan el destino hacia abajo, dejándote a mitad de camino. Medido: con un
+  // solo intento la página paraba en 996 px cuando la sección acababa en 8738.
+  //
+  // Por eso se reposiciona de forma continuada hasta que la posición del
+  // objetivo deja de moverse, con un tope de tiempo por si nunca se estabiliza.
+  useEffect(() => {
+    const id = decodeURIComponent((window.location.hash || '').slice(1));
+    if (!id) return;
+
+    // Se reacciona a que el documento CAMBIE DE TAMAÑO en vez de sondear por
+    // reloj: así da igual cuánto tarden las imágenes o las gráficas: cada vez
+    // que algo crece se recoloca. Un temporizador fijo siempre se queda corto o
+    // largo según la conexión.
+    let cancelado = false;
+    let ro = null;
+
+    const recolocar = () => {
+      if (cancelado) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      window.scrollTo({ top: Math.round(el.getBoundingClientRect().top + window.scrollY), behavior: 'auto' });
+    };
+
+    // Si el visitante hace scroll por su cuenta, se le deja en paz: seguir
+    // moviéndole la página sería exasperante.
+    const abortar = () => {
+      cancelado = true;
+      if (ro) ro.disconnect();
+    };
+    window.addEventListener('wheel', abortar, { passive: true, once: true });
+    window.addEventListener('touchstart', abortar, { passive: true, once: true });
+    window.addEventListener('keydown', abortar, { once: true });
+
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(recolocar);
+      ro.observe(document.documentElement);
+    }
+
+    // Sondeo de apoyo para el arranque, mientras la sección todavía no existe
+    // (el observador no dispara si el tamaño no cambia) y para navegadores sin
+    // ResizeObserver.
+    let intentos = 0;
+    const t = setInterval(() => {
+      if (cancelado || ++intentos > 30) { clearInterval(t); return; }
+      recolocar();
+    }, 100);
+
+    // Se deja de perseguir el ancla a los 6 s: a partir de ahí, cualquier
+    // cambio de alto es cosa del usuario navegando, no de la carga.
+    const fin = setTimeout(abortar, 6000);
+
+    return () => {
+      cancelado = true;
+      clearInterval(t);
+      clearTimeout(fin);
+      if (ro) ro.disconnect();
+      window.removeEventListener('wheel', abortar);
+      window.removeEventListener('touchstart', abortar);
+      window.removeEventListener('keydown', abortar);
+    };
+  }, []);
 
   return (
     <>
