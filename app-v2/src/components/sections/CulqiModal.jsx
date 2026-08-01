@@ -73,13 +73,22 @@ export default function CulqiModal({ planKey, onClose }) {
   useEffect(() => {
     if (!codigoPromo || isSub || intl) { setPromo(null); return; }
     let vigente = true;
-    consultarPromo({ codigo: codigoPromo, plan: planKey, duration }).then((p) => {
-      if (vigente) setPromo(p);
-    });
-    // Se vuelve a consultar al cambiar de duración porque un código puede estar
-    // limitado a una concreta (p. ej. solo el plan de 1 mes).
-    return () => { vigente = false; };
-  }, [codigoPromo, planKey, duration, isSub, intl]);
+
+    // Se espera un poco antes de preguntar: el correo cambia en cada tecla y no
+    // tiene sentido consultar mientras se está escribiendo. Solo se manda si ya
+    // parece un correo completo; si no, se consulta sin él y el servidor
+    // concede el beneficio de la duda.
+    const correo = emailRe.test(email.trim()) ? email.trim() : '';
+    const t = setTimeout(() => {
+      consultarPromo({ codigo: codigoPromo, plan: planKey, duration, email: correo }).then((p) => {
+        if (vigente) setPromo(p);
+      });
+    }, 400);
+
+    // Se reconsulta al cambiar de duración (un código puede valer solo para una)
+    // y al cambiar el correo (puede estar reservado a una persona concreta).
+    return () => { vigente = false; clearTimeout(t); };
+  }, [codigoPromo, planKey, duration, isSub, intl, email]);
 
   // Precio que se muestra y que se le pasa al widget de Culqi. El importe que
   // realmente se cobra lo recalcula el servidor; esto es solo la vitrina.

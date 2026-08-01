@@ -64,13 +64,15 @@ exports.handler = async function (event) {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch { body = {}; }
 
-    const { codigo, plan, duration } = body;
+    // `email` es opcional: al abrir el modal el visitante aún no lo ha escrito.
+    // Sirve para promociones reservadas a una persona concreta.
+    const { codigo, plan, duration, email } = body;
 
     const item = itemCobrable(plan, duration);
     if (!item)
         return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'Plan o duración inválidos' }) };
 
-    const r = buscarCodigo(codigo, plan, duration);
+    const r = buscarCodigo(codigo, plan, duration, email);
     // Un código inválido NO es un error del servidor: se responde 200 con
     // `valido:false` para que la web muestre un aviso amable en vez de romperse.
     if (!r.ok)
@@ -92,6 +94,9 @@ exports.handler = async function (event) {
             ahorro: d.ahorro,
             base: d.base,
             igv: d.igv,
+            // La promo está reservada a un correo y aún no se ha escrito: la web
+            // muestra el precio rebajado pero volverá a preguntar al teclearlo.
+            requiereEmail: !!r.requiereEmail,
         }),
     };
 };

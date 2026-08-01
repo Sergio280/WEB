@@ -42,18 +42,21 @@ export function leerPromo() {
  * Pregunta al servidor el precio con el código aplicado.
  * @returns {Promise<null | { total, totalOriginal, ahorro }>} null si no aplica.
  */
-export async function consultarPromo({ codigo, plan, duration }) {
+export async function consultarPromo({ codigo, plan, duration, email }) {
   if (!codigo) return null;
   try {
     const r = await fetch('/api/validar-descuento', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ codigo, plan, duration }),
+      // El correo va solo si ya se escribió: sirve para las promociones
+      // reservadas a una persona concreta. Sin él, el servidor concede el
+      // beneficio de la duda y devuelve `requiereEmail`.
+      body: JSON.stringify({ codigo, plan, duration, email: email || undefined }),
     });
     if (!r.ok) return null;
     const d = await r.json();
     if (!d.valido) return null;
-    return { total: d.total, totalOriginal: d.totalOriginal, ahorro: d.ahorro };
+    return { total: d.total, totalOriginal: d.totalOriginal, ahorro: d.ahorro, requiereEmail: d.requiereEmail };
   } catch {
     // Sin red o con el endpoint caído no se aplica descuento y se muestra el
     // precio de lista. Nunca se bloquea la compra por esto.

@@ -21,12 +21,22 @@
 //       "planes": ["individual"],   // opcional; si falta, vale para todos
 //       "duraciones": ["1m"],       // opcional; si falta, vale para todas
 //       "vence": "2026-08-31",      // opcional, inclusive (fin de ese día UTC)
-//       "usosMax": 1                // opcional; si falta, ilimitado
+//       "usosMax": 1,               // opcional; si falta, ilimitado
+//       "email": "persona@empresa.com"  // opcional; ver abajo
 //     }
 //   ]
 //
 // En vez de `precioFinal` se puede usar `descuentoPct` (p. ej. 30 = −30%).
 // `precioFinal` manda si están los dos.
+//
+// ── Promociones para UNA persona concreta ────────────────────────────────────
+// Con `email` el código solo se aplica si el comprador escribe ESE correo. Si
+// el enlace se filtra o se comparte, quien lo abra verá el precio de lista en
+// cuanto ponga su propio correo, y el servidor cobra lista aunque intente
+// saltarse la web. Combínalo con un código impredecible (algo tipo
+// "p7f3k9x2m4qz") en vez de una palabra adivinable, y con `usosMax: 1`.
+//
+// `email` acepta también una lista: ["ana@x.com", "luis@y.com"].
 // ─────────────────────────────────────────────────────────────────────────────
 
 const { desglosarIgv } = require('./pricing');
@@ -49,14 +59,28 @@ function cargarCodigos() {
 /** Normaliza para comparar: sin espacios, en mayúsculas. */
 const norm = (s) => String(s || '').trim().toUpperCase();
 
+/** Correos a los que está reservada una promo, normalizados. [] = a nadie en concreto. */
+function correosDe(promo) {
+    const e = promo.email ?? promo.emails;
+    if (!e) return [];
+    return (Array.isArray(e) ? e : [e]).map((x) => String(x).trim().toLowerCase()).filter(Boolean);
+}
+
 /**
  * Busca un código y comprueba que aplique a este plan/duración y siga vigente.
  * NO comprueba el número de usos: eso necesita leer Firebase y lo hace
  * `usosDisponibles`, que solo se llama donde hace falta.
  *
- * @returns {{ ok:boolean, motivo?:string, promo?:object }}
+ * @param {string} email  Correo del comprador. Puede venir vacío: al abrir el
+ *   modal aún no lo ha escrito. En ese caso una promo reservada se considera
+ *   aplicable «de momento» y se devuelve `requiereEmail`, para que la web
+ *   enseñe el precio rebajado desde el principio y lo revise al teclearlo.
+ *   `estricto: true` desactiva esa cortesía — lo usa el cobro, donde el correo
+ *   ya se conoce y no hay nada que suponer.
+ *
+ * @returns {{ ok:boolean, motivo?:string, promo?:object, requiereEmail?:boolean }}
  */
-function buscarCodigo(codigo, plan, duration) {
+function buscarCodigo(codigo, plan, duration, email = '', estricto = false) {
     const c = norm(codigo);
     if (!c) return { ok: false, motivo: 'vacio' };
 
@@ -73,6 +97,17 @@ function buscarCodigo(codigo, plan, duration) {
         // Vigente durante TODO el día indicado: se compara contra su final.
         const fin = Date.parse(promo.vence + 'T23:59:59Z');
         if (!Number.isNaN(fin) && Date.now() > fin) return { ok: false, motivo: 'caducado' };
+    }
+
+    // Promoción reservada a uno o varios correos concretos.
+    const reservada = correosDe(promo);
+    if (reservada.length) {
+        const e = String(email || '').trim().toLowerCase();
+        if (!e) {
+            if (estricto) return { ok: false, motivo: 'otro_email' };
+            return { ok: true, promo, requiereEmail: true };
+        }
+        if (!reservada.includes(e)) return { ok: false, motivo: 'otro_email' };
     }
 
     return { ok: true, promo };
@@ -134,4 +169,4 @@ async function registrarUso(db, codigo, datos = {}) {
     }
 }
 
-module.exports = { cargarCodigos, buscarCodigo, aplicar, usosDisponibles, registrarUso, norm };
+module.exports = { cargarCodigos, buscarCodigo, aplicar, usosDisponibles, registrarUso, norm, correosDe };

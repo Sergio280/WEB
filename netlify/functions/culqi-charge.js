@@ -114,7 +114,10 @@ exports.handler = async function (event) {
     let promoAplicada = null;
 
     if (codigo) {
-        const bc = buscarCodigo(codigo, plan, duration);
+        // `estricto: true` — aquí el correo YA se conoce, así que una promoción
+        // reservada a otra persona no se aplica. Es la comprobación que hace que
+        // un enlace filtrado no sirva de nada aunque se salten la web.
+        const bc = buscarCodigo(codigo, plan, duration, email, true);
         if (bc.ok) {
             const cupo = await usosDisponibles(db, bc.promo);
             if (cupo.ok) {
