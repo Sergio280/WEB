@@ -22,8 +22,13 @@ if (!admin.apps.length) {
 const db   = admin.database();
 const auth = admin.auth();
 
+// Sin restricción de origen a propósito: este endpoint es una herramienta
+// interna (AdminPanel/admin-panel.html) que se abre local, no desde
+// bimsaddin.com — un Origin fijo aquí solo producía "Failed to fetch" sin
+// aportar seguridad real. La barrera de verdad es el token de Firebase +
+// ADMIN_EMAILS que se valida más abajo, no el origen de la petición.
 const CORS = {
-    'Access-Control-Allow-Origin':  process.env.SITE_URL || '',
+    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
 };
