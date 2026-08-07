@@ -68,6 +68,20 @@ exports.handler = async function (event) {
         } catch { /* no bloquear la telemetría por esto */ }
     }
 
+    // Registrar en el registro del usuario la ÚLTIMA versión de BIMS que se vio en
+    // uso, para poder consultar en el administrador de licencias qué versión tiene
+    // instalada cada usuario. Se escribe con el Admin SDK (ignora las reglas RTDB,
+    // sin riesgo de esquema) y es best-effort: si falla, la telemetría sigue igual.
+    // Nivel usuario (no por máquina): la telemetría no envía hardwareId.
+    if (uid && ver) {
+        try {
+            await db.ref(`users_v2/${uid}`).update({
+                lastVersion: ver,                       // p.ej. "1.1.6.0"
+                lastVersionAt: new Date().toISOString(),
+            });
+        } catch { /* best-effort: no romper la telemetría por esto */ }
+    }
+
     try {
         await db.ref('usage_events').push({
             func,

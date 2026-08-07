@@ -41,41 +41,60 @@ const pct = (arr, p) => {
 const MAPA = [
     [/^BIMS_Encf_/i,        'Metrado de Encofrado'],
     [/^BIMS_HostElementId/i,'Encofrado'],
+    [/^BIMS_Area$/i,        'Encofrado'],   // encofrado genérico estampa HostElementId + Area
     [/^BIMS_[A-L]$/i,       'Escalar Sólido'],
     [/^BIMS_(Mark|Assignment|Layer)/i, 'Acero / Refuerzo'],
 ];
+// cmd:<idBotón> → nombre legible (quita el sufijo "Button" y separa CamelCase).
+// El mapeo es DERIVADO (no una tabla hardcodeada), así vive 100% offline.
+function prettyCmd(id) {
+    return id.replace(/Button$/, '').replace(/([a-z0-9])([A-Z])/g, '$1 $2').trim();
+}
 function aFuncion(func) {
     if (!func) return '(desconocida)';
-    if (!func.startsWith('trace:')) return func; // eventos con func explícito
+    if (func.startsWith('cmd:')) return prettyCmd(func.slice(4)); // invocación real de comando
+    if (!func.startsWith('trace:')) return func;                  // eventos con func explícito
     const param = func.slice('trace:'.length);
     for (const [rx, nombre] of MAPA) if (rx.test(param)) return nombre;
     return 'BIMS_ (sin mapear): ' + param;
 }
 
-// Agrupar por función.
-const porFunc = {};
+// Separar eventos: cmd: = comando REALMENTE ejecutado por el usuario (señal directa);
+// trace: = huella pasiva (params BIMS_ que existen en el modelo abierto).
+const porCmd = {}, porTrace = {};
 for (const e of events) {
+    const esCmd = (e.func || '').startsWith('cmd:');
+    const dest = esCmd ? porCmd : porTrace;
     const f = aFuncion(e.func);
-    (porFunc[f] ||= { total: 0, trial: 0, pago: 0, ns: [] });
-    porFunc[f].total++;
-    if (e.lic === 'Trial') porFunc[f].trial++;
-    else if (e.lic) porFunc[f].pago++;
-    if (typeof e.n === 'number' && e.n > 0) porFunc[f].ns.push(e.n);
+    (dest[f] ||= { total: 0, trial: 0, pago: 0, ns: [] });
+    dest[f].total++;
+    if (e.lic === 'Trial') dest[f].trial++;
+    else if (e.lic) dest[f].pago++;
+    if (typeof e.n === 'number' && e.n > 0) dest[f].ns.push(e.n);
 }
+
+function tabla(titulo, obj) {
+    const filas = Object.entries(obj).sort((a, b) => b[1].total - a[1].total);
+    if (!filas.length) { console.log('\n' + titulo + '\n  (sin eventos de este tipo aún)'); return; }
+    console.log('\n' + titulo);
+    console.log('  ' + 'función'.padEnd(28) + 'usos'.padStart(6) + 'trial'.padStart(7) + 'pago'.padStart(6) + '   elementos (p50/p90/max)');
+    for (const [f, s] of filas) {
+        let dist = '—';
+        if (s.ns.length) dist = `${pct(s.ns, 50)} / ${pct(s.ns, 90)} / ${Math.max(...s.ns)}  (n=${s.ns.length})`;
+        console.log('  ' + f.slice(0, 27).padEnd(28) + String(s.total).padStart(6) + String(s.trial).padStart(7) + String(s.pago).padStart(6) + '   ' + dist);
+    }
+}
+
+const nCmd = Object.values(porCmd).reduce((a, s) => a + s.total, 0);
+const nTrace = Object.values(porTrace).reduce((a, s) => a + s.total, 0);
 
 console.log('═'.repeat(74));
 console.log(' TELEMETRÍA DE USO — BIMS  (solo lectura)');
 console.log('═'.repeat(74));
-console.log(` Eventos totales: ${events.length}`);
+console.log(` Eventos totales: ${events.length}   (comandos: ${nCmd} · rastros: ${nTrace})`);
 
-console.log('\n▸ FUNCIONES POR FRECUENCIA (usos · trial / pago · elementos si hay)');
-const filas = Object.entries(porFunc).sort((a, b) => b[1].total - a[1].total);
-console.log('  ' + 'función'.padEnd(28) + 'usos'.padStart(6) + 'trial'.padStart(7) + 'pago'.padStart(6) + '   elementos (p50/p90/max)');
-for (const [f, s] of filas) {
-    let dist = '—';
-    if (s.ns.length) dist = `${pct(s.ns, 50)} / ${pct(s.ns, 90)} / ${Math.max(...s.ns)}  (n=${s.ns.length})`;
-    console.log('  ' + f.slice(0, 27).padEnd(28) + String(s.total).padStart(6) + String(s.trial).padStart(7) + String(s.pago).padStart(6) + '   ' + dist);
-}
+tabla('▸ COMANDOS EJECUTADOS  (evento cmd: — señal DIRECTA de qué función se usa)', porCmd);
+tabla('▸ HUELLA EN MODELOS  (evento trace: — pasivo; solo funciones que estampan BIMS_*)', porTrace);
 
 console.log('\n▸ CÓMO LEERLO PARA FIJAR EL CAP');
 console.log('  - Capar las funciones de ARRIBA (más usadas) y de mayor valor.');
