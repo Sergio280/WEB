@@ -52,6 +52,7 @@ export const translations = {
       free: '14 días GRATIS',
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
+      version: 'Nueva versión 1.1.6 con mejoras en el encofrado',
     },
 
     nav: {
@@ -664,6 +665,7 @@ export const translations = {
       free: '14 days FREE',
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
+      version: 'New version 1.1.6 with formwork improvements',
     },
 
     nav: {

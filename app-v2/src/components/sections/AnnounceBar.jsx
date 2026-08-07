@@ -10,6 +10,11 @@ export default function AnnounceBar() {
         <a href="#trial" className="ml-2 text-brand-300 underline-offset-2 hover:text-white hover:underline">
           {t.announce.cta}
         </a>
+        {t.announce.version && (
+          <span className="ml-3 inline-flex items-center gap-1 rounded-full bg-brand-500/15 px-2.5 py-0.5 text-[0.72rem] font-semibold text-brand-200 ring-1 ring-brand-400/30">
+            ✨ {t.announce.version}
+          </span>
+        )}
       </div>
     </div>
   );
