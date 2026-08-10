@@ -9,6 +9,9 @@ export default function Marquee({ items, className = '' }) {
         {[...items, ...items].map((item, i) => (
           <span
             key={i}
+            // La segunda vuelta es la copia que hace el bucle continuo: existe
+            // para los ojos, no para quien escucha la página.
+            aria-hidden={i >= items.length ? 'true' : undefined}
             className="flex items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-white/[0.03] px-5 py-2 text-sm font-semibold text-slate-200"
           >
             <span className="text-brand-400">◆</span>

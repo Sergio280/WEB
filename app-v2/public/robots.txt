@@ -1,0 +1,20 @@
+# bimsaddin.com — https://bimsaddin.com/robots.txt
+#
+# Los archivos de esta carpeta (app-v2/public/) los copia Vite tal cual a la
+# raíz del sitio publicado. Este archivo NO se edita en dist/: se regenera en
+# cada despliegue desde aquí.
+
+User-agent: *
+Allow: /
+
+# Páginas de después de comprar o de registrarse. No tienen valor de búsqueda y
+# llevan el correo del cliente en la URL.
+Disallow: /success.html
+Disallow: /success-en.html
+Disallow: /trial-success.html
+Disallow: /trial-success-en.html
+
+# Endpoints, no páginas.
+Disallow: /api/
+
+Sitemap: https://bimsaddin.com/sitemap.xml

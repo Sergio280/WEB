@@ -1,20 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CULQI_CONFIG } from '../../data/culqi.js';
-import { PRECIOS_USD, equivalenteMensual, ahorroPct } from '../../data/pricing.js';
+import { PRECIOS_USD, equivalenteMensual, ahorroPct, formatoUsd } from '../../data/pricing.js';
 import { validarComprobante, normalizarComprobante, UMBRAL_DNI_BOLETA } from '../../lib/comprobante.js';
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
 import { openLsCheckout } from '../../lib/lemonsqueezy.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
+import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Modal de compra: replica el flujo del modal de pago Culqi de la home.
 // Los precios y URLs de checkout viven en CULQI_CONFIG; el texto, en el idioma
 // activo (t.culqiModal).
-export default function CulqiModal({ planKey, onClose }) {
+export default function CulqiModal({ planKey, onClose, errorInicial = '', onErrorTrasCierre }) {
   const { t, region } = useLang();
   const c = t.culqiModal;
   const plan = CULQI_CONFIG.plans[planKey]; // precios + checkout
@@ -31,16 +31,61 @@ export default function CulqiModal({ planKey, onClose }) {
   const [method, setMethod] = useState(region === 'INTL' && lsSupported ? 'intl' : 'culqi');
   const intl = method === 'intl';
 
+  // El método arrancaba fijado al montar el modal, y la región tarda en
+  // saberse: sale de /api/geo, que es una petición de red. Hasta que responde
+  // se asume Perú, así que quien abría el modal en los primeros instantes veía
+  // precios en soles y el checkout de Culqi — con el que no puede pagar si está
+  // fuera de Perú. Ahora, mientras el usuario no haya tocado el selector, la
+  // elección se recoloca sola en cuanto se conoce el país.
+  // Se da por elegido en cuanto el usuario toca el selector O pulsa «Pagar»:
+  // a partir de ahí la geo no puede cambiarle el método por debajo.
+  const metodoElegido = useRef(false);
+  useEffect(() => {
+    if (metodoElegido.current) return;
+    setMethod(region === 'INTL' && lsSupported ? 'intl' : 'culqi');
+  }, [region, lsSupported]);
+
+  // Un pago puede fallar cuando este modal YA NO EXISTE: el formulario de
+  // tarjeta de Culqi se dibuja encima y sigue vivo aunque se cierre el modal de
+  // debajo. El mensaje llegaba a un componente desmontado y se perdía en
+  // silencio — el cobro no se hacía y el comprador no se enteraba de nada.
+  // Se avisa a Pricing, que sí sobrevive, para que lo vuelva a abrir con el
+  // motivo a la vista.
+  // Se marca en el cuerpo del efecto, no solo en la limpieza: en desarrollo
+  // StrictMode monta, desmonta y vuelve a montar, y el ref sobrevive a ese
+  // ciclo — sin esto se quedaría en `false` para siempre.
+  const montado = useRef(true);
+  useEffect(() => {
+    montado.current = true;
+    return () => { montado.current = false; };
+  }, []);
+
+  // El foco se queda dentro del diálogo mientras está abierto y vuelve al botón
+  // que lo abrió al cerrarlo. Aquí es donde se teclean RUC, correo y datos
+  // fiscales: salirse con Tab significaba escribirlos en campos invisibles.
+  const cajaRef = useRef(null);
+  useFocusTrap(cajaRef);
+
   // Precios en USD: viven en data/pricing.js junto con los de soles, para que
   // no haya dos tablas de precios en el frontend.
   const [intlDuration, setIntlDuration] = useState('monthly'); // 'monthly' | 'yearly'
+  // Número para cualquier cuenta; `usdTexto` es lo único que se pinta.
   const usdPrice = (PRECIOS_USD[planKey] || PRECIOS_USD.individual)[intlDuration];
+  const usdTexto = formatoUsd(usdPrice);
 
   const [paymentType, setPaymentType] = useState('onetime'); // 'onetime' | 'subscription'
   const [duration, setDuration] = useState('1m');
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  // `errorInicial` trae el motivo de un pago que falló con el modal cerrado.
+  const [error, setError] = useState(errorInicial);
   const [processing, setProcessing] = useState(false);
+  // `processing` cubre dos etapas muy distintas y solo UNA se puede rearmar:
+  //   · checkout abierto / redirigiendo → el usuario puede echarse atrás, y
+  //     entonces hay que devolverle el botón (ver efecto de rearme abajo).
+  //   · confirmando contra nuestro servidor (ya hay token de tarjeta y la
+  //     petición está en vuelo) → NO se toca: rearmar aquí enseñaría un botón
+  //     «Pagar» activo mientras el cobro se está resolviendo.
+  const confirmando = useRef(false);
 
   // Datos para el comprobante electrónico (solo aplica al pago en Perú: fuera
   // de Perú cobra Lemon Squeezy como Merchant of Record y emite él su recibo).
@@ -60,6 +105,49 @@ export default function CulqiModal({ planKey, onClose }) {
       document.body.style.overflow = '';
     };
   }, [onClose]);
+
+  // ── Rearme del botón de pago ────────────────────────────────────────────
+  // El pago continúa FUERA de esta página (el iframe de Culqi o el checkout de
+  // Lemon Squeezy) y ninguno de los dos avisa de forma fiable cuando el usuario
+  // se echa atrás:
+  //   · Culqi: si cierra su ventana con la X, no siempre llama a window.culqi.
+  //   · Lemon Squeezy: es una navegación completa a otro dominio. Al volver con
+  //     «atrás», el navegador restaura la página TAL CUAL desde bfcache — con
+  //     el modal abierto y processing = true.
+  // En ambos casos el botón se quedaba deshabilitado («Procesando…») para
+  // siempre: el usuario vuelve, pulsa y no pasa NADA. Medido en Clarity como
+  // clic sin respuesta, con el usuario cerrando y reabriendo el modal para
+  // poder reintentar.
+  useEffect(() => {
+    if (!processing) return;
+
+    const rearmar = () => {
+      if (!confirmando.current) setProcessing(false);
+    };
+
+    // 1) Vuelta atrás desde el checkout externo (bfcache).
+    const onPageShow = (e) => { if (e.persisted) rearmar(); };
+    window.addEventListener('pageshow', onPageShow);
+
+    // 2) Cierre del widget de Culqi: inserta #culqi_checkout_frame al abrir y
+    //    lo quita al cerrar. Se vigila el DOM en vez de sondear por reloj.
+    let vistoFrame = false;
+    const obs = new MutationObserver(() => {
+      if (document.getElementById('culqi_checkout_frame')) vistoFrame = true;
+      else if (vistoFrame) rearmar();
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+
+    // 3) Red de seguridad: si el checkout nunca llegó a abrirse ni la
+    //    navegación ocurrió, el botón se rearma solo en vez de quedar muerto.
+    const t = setTimeout(rearmar, 20000);
+
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      obs.disconnect();
+      clearTimeout(t);
+    };
+  }, [processing]);
 
   const isSub = paymentType === 'subscription';
   const precioLista = isSub ? plan.subscription.price : plan[duration].price;
@@ -133,6 +221,8 @@ export default function CulqiModal({ planKey, onClose }) {
 
     setError('');
     setCpCampoError(null);
+    confirmando.current = false;
+    metodoElegido.current = true;
     setProcessing(true);
     track('begin_checkout', {
       plan: planKey,
@@ -158,10 +248,44 @@ export default function CulqiModal({ planKey, onClose }) {
       errLoad: c.errLoad,
       errRejected: c.errRejected,
       errPay: c.errPay,
-      onProcessing: () => setProcessing(true),
+      // A partir de aquí ya hay token y la petición al servidor está en vuelo:
+      // el botón deja de ser rearmable hasta que responda.
+      onProcessing: () => {
+        confirmando.current = true;
+        setProcessing(true);
+      },
       onError: (msg) => {
+        confirmando.current = false;
+        // El embudo medía dónde EMPIEZA el pago y nunca dónde se cae, así que
+        // los fallos solo se veían mirando grabaciones de sesión una por una.
+        // El motivo va recortado: es texto de la pasarela y GA4 no admite
+        // valores largos.
+        track('payment_error', {
+          plan: planKey,
+          gateway: 'culqi',
+          payment_type: isSub ? 'subscription' : 'onetime',
+          motivo: String(msg).slice(0, 100),
+        });
+        if (montado.current) {
+          setProcessing(false);
+          setError(msg);
+        } else if (onErrorTrasCierre) {
+          // El modal ya no está: que lo reabra quien sí sigue en pie.
+          onErrorTrasCierre(msg);
+        }
+      },
+      // El usuario cerró el formulario de tarjeta sin pagar: se le devuelve el
+      // botón, sin mensaje de error (no ha fallado nada, se lo pensó mejor).
+      // Se registra igual: abandonar el formulario de tarjeta es la señal más
+      // valiosa del embudo y era invisible.
+      onCancel: () => {
+        confirmando.current = false;
         setProcessing(false);
-        setError(msg);
+        track('payment_cancelled', {
+          plan: planKey,
+          gateway: 'culqi',
+          payment_type: isSub ? 'subscription' : 'onetime',
+        });
       },
     });
   }
@@ -173,6 +297,10 @@ export default function CulqiModal({ planKey, onClose }) {
       return;
     }
     setError('');
+    // La navegación a Lemon Squeezy sale de esta página: si el usuario vuelve
+    // con «atrás», el efecto de rearme le devuelve el botón (bfcache).
+    confirmando.current = false;
+    metodoElegido.current = true;
     setProcessing(true);
     // En modo internacional (inglés) usamos el toggle Mensual/Anual; en español
     // (botón secundario) mapeamos la selección Culqi: 12m → anual, resto → mensual.
@@ -182,19 +310,17 @@ export default function CulqiModal({ planKey, onClose }) {
       openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() });
     } catch (e) {
       setProcessing(false);
-      setError(e.message || 'Error al iniciar el pago internacional.');
+      const msg = e.message || 'Error al iniciar el pago internacional.';
+      setError(msg);
+      track('payment_error', { plan: planKey, gateway: 'lemonsqueezy', motivo: String(msg).slice(0, 100) });
     }
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
+    <div
+      className="anim-fade fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
         {/* El alto se limita al de la ventana y el cuerpo scrollea por dentro.
             Sin esto, en pantallas de portátil (y con el bloque de comprobante
             añadido) el modal crecía más que la pantalla y quedaba CORTADO: el
@@ -203,12 +329,14 @@ export default function CulqiModal({ planKey, onClose }) {
             El `max-h` en línea usa dvh (alto real de la ventana, descontando
             las barras del navegador móvil); la clase Tailwind con vh queda de
             respaldo para navegadores que no entiendan dvh. */}
-        <motion.div
-          className="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-glow-lg"
+      <div
+          ref={cajaRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${c.title || 'BIMS'} — ${badge}`}
+          tabIndex={-1}
+          className="anim-modal flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-glow-lg focus:outline-none"
           style={{ maxHeight: 'calc(100dvh - 2rem)' }}
-          initial={{ scale: 0.94, y: 16 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.94, y: 16 }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* La cabecera no se encoge ni se va con el scroll: el aspa de cerrar
@@ -226,7 +354,7 @@ export default function CulqiModal({ planKey, onClose }) {
               <>
                 <div className="mb-1 grid grid-cols-2 gap-2 rounded-xl bg-ink-900 p-1">
                   <button
-                    onClick={() => setMethod('culqi')}
+                    onClick={() => { metodoElegido.current = true; setMethod('culqi'); }}
                     className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
                       !intl ? 'bg-brand-500 text-white' : 'text-slate-400'
                     }`}
@@ -234,7 +362,7 @@ export default function CulqiModal({ planKey, onClose }) {
                     {c.methodCulqi}
                   </button>
                   <button
-                    onClick={() => setMethod('intl')}
+                    onClick={() => { metodoElegido.current = true; setMethod('intl'); }}
                     className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
                       intl ? 'bg-brand-500 text-white' : 'text-slate-400'
                     }`}
@@ -270,7 +398,7 @@ export default function CulqiModal({ planKey, onClose }) {
                   </button>
                 </div>
                 <div className="mb-1 text-center">
-                  <span className="font-display text-4xl font-extrabold text-white">${usdPrice}</span>
+                  <span className="font-display text-4xl font-extrabold text-white">${usdTexto}</span>
                   <span className="text-sm font-semibold text-slate-500">
                     {intlDuration === 'yearly' ? c.intlPerYear : c.intlPerMonth}
                   </span>
@@ -462,7 +590,7 @@ export default function CulqiModal({ planKey, onClose }) {
                   disabled={processing}
                   className="mt-4 w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60"
                 >
-                  {processing ? c.processing : c.intlPayBtn.replace('{price}', usdPrice)}
+                  {processing ? c.processing : c.intlPayBtn.replace('{price}', usdTexto)}
                 </button>
                 <p className="mt-3 text-center text-xs text-slate-500">{c.intlSecure}</p>
               </>
@@ -484,8 +612,7 @@ export default function CulqiModal({ planKey, onClose }) {
               </>
             )}
           </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </div>
   );
 }

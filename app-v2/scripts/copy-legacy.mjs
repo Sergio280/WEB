@@ -3,9 +3,8 @@
 // La landing nueva (React/Vite) es ahora la HOME: `vite build` ya emitió el
 // nuevo index.html + assets a dist/. Este script copia el RESTO del sitio
 // estático sin pisar ese index nuevo:
-//   · páginas estáticas .html de la raíz, EXCEPTO index.html (la home antigua).
-//     La home antigua (index.html del repo) se guarda como dist/legacy.html
-//     para poder hacer rollback rápido apuntando a /legacy.html.
+//   · páginas estáticas .html de la raíz, EXCEPTO index.html (la home antigua),
+//     que NO se publica. Ver más abajo.
 //   · las carpetas de assets: icono/ y update/
 // NO toca app-v2, node_modules, netlify/functions ni .git.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -25,9 +24,19 @@ for (const entry of readdirSync(repoRoot, { withFileTypes: true })) {
   if (!entry.isFile() || !entry.name.endsWith('.html')) continue;
 
   if (entry.name === 'index.html') {
-    // La home antigua NO debe pisar el index nuevo (la landing React).
-    // Se conserva accesible como /legacy.html para rollback de emergencia.
-    cpSync(join(repoRoot, entry.name), join(dist, 'legacy.html'));
+    // LA HOME ANTIGUA NO SE PUBLICA.
+    //
+    // Durante un tiempo se copiaba a dist/legacy.html «por si acaso», y eso
+    // dejaba en producción una SEGUNDA implementación completa del checkout —
+    // con su propia integración de Culqi, su propio formulario de prueba y sus
+    // propios precios escritos a mano, fuera de scripts/verificar-precios.mjs.
+    // Nadie la mantenía y nadie la verificaba, pero cualquier enlace viejo o
+    // resultado de búsqueda podía llevar a alguien a comprar por ahí y ver una
+    // tarifa que ya no existe.
+    //
+    // El rollback NO depende de que esté publicada: el archivo sigue en el
+    // repositorio (raíz, index.html) y en el historial de git. Para volver a
+    // servirla basta con reponer aquí el cpSync a 'legacy.html' y desplegar.
     continue;
   }
   cpSync(join(repoRoot, entry.name), join(dist, entry.name));
@@ -44,5 +53,5 @@ for (const d of assetDirs) {
 }
 
 console.log(
-  `[copy-legacy] ${htmlCount} HTML estáticas + home antigua -> legacy.html + assets (${assetDirs.join(', ')}) copiados a dist/`
+  `[copy-legacy] ${htmlCount} HTML estáticas + assets (${assetDirs.join(', ')}) copiados a dist/ · la home antigua NO se publica`
 );

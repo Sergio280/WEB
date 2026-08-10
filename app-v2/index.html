@@ -6,7 +6,53 @@
     <meta name="description" content="BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.">
     <title>BIMS — Automatiza encofrado, tarrajeo y planos DWG en Revit</title>
 
+    <!-- ── Idiomas ──
+         La versión en inglés es una página propia (/en/, ver app-v2/en/), no un
+         cambio de textos sobre esta misma URL: así el buscador puede indexar
+         cada idioma por separado. `x-default` apunta al español, que es el
+         mercado principal. Si se toca una de estas tres líneas, hay que tocar
+         las mismas en en/index.html — han de ser recíprocas o Google descarta
+         la relación entera. -->
     <link rel="canonical" href="https://bimsaddin.com/">
+    <link rel="alternate" hreflang="es" href="https://bimsaddin.com/">
+    <link rel="alternate" hreflang="en" href="https://bimsaddin.com/en/">
+    <link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/">
+
+    <!-- ── Datos estructurados ──
+         Describe el producto para que el buscador pueda enseñar precio y
+         plataforma en el resultado. NO lleva aggregateRating: no hay
+         valoraciones reales que declarar, y la sección de testimonios del
+         propio sitio dice explícitamente que no se inventan. Inventarlas aquí
+         sería mentir en un formato que Google penaliza. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "BIMS",
+      "applicationCategory": "DesignApplication",
+      "applicationSubCategory": "Complemento para Autodesk Revit",
+      "operatingSystem": "Windows 10, Windows 11",
+      "softwareRequirements": "Autodesk Revit 2024, 2025, 2026 o 2027",
+      "url": "https://bimsaddin.com/",
+      "inLanguage": "es",
+      "description": "Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG.",
+      "offers": {
+        "@type": "Offer",
+        "price": "60",
+        "priceCurrency": "PEN",
+        "category": "subscription",
+        "url": "https://bimsaddin.com/#precios",
+        "availability": "https://schema.org/InStock"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "BIMS",
+        "url": "https://bimsaddin.com/",
+        "email": "soporte@bimsaddin.com"
+      }
+    }
+    </script>
+
     <!-- ── Open Graph / Social media ────── -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://bimsaddin.com/">
@@ -16,6 +62,7 @@
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:locale" content="es_PE">
+    <meta property="og:locale:alternate" content="en_US">
     <meta property="og:site_name" content="BIMS">
 
     <meta name="twitter:card" content="summary_large_image">

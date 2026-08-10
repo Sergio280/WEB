@@ -44,10 +44,26 @@ export const PRECIOS_PEN = {
 // Merchant of Record — vende a su nombre, gestiona los impuestos de cada país y
 // nos liquida a nosotros. Nuestro cliente es LS, no el usuario final.
 // Estos valores son SOLO para mostrar: los cobra LS según su propio panel.
+// NÚMEROS, no texto. Estuvieron guardados como cadenas ('16.90', '159') para
+// que al mostrarlos no se perdiera el segundo decimal, pero eso convertía en
+// trampa cualquier cuenta que se hiciera con ellos: '16.90' * 12 cuela, y
+// '159' + algo concatena en vez de sumar, sin avisar. El formateo es cosa de la
+// vista: para eso está `formatoUsd`.
 export const PRECIOS_USD = {
-  individual:  { monthly: '16.90', yearly: '159' },
-  profesional: { monthly: '26.90', yearly: '269' },
+  individual:  { monthly: 16.90, yearly: 159 },
+  profesional: { monthly: 26.90, yearly: 269 },
 };
+
+/**
+ * Formatea un importe en dólares para enseñarlo: dos decimales si los tiene,
+ * ninguno si es redondo. 16.9 → "16.90"; 159 → "159". Es la regla que seguían
+ * los valores cuando eran texto, ahora en un solo sitio.
+ */
+export function formatoUsd(valor) {
+  const n = Number(valor);
+  if (!Number.isFinite(n)) return '';
+  return Number.isInteger(n) ? String(n) : n.toFixed(2);
+}
 
 // Meses de licencia que otorga cada duración.
 export const MESES_POR_DURACION = { '1m': 1, '3m': 3, '6m': 6, '12m': 12 };
@@ -105,6 +121,28 @@ export function ahorroMaximoPct() {
   let max = 0;
   for (const plan of Object.keys(PRECIOS_PEN))
     for (const dur of DURACIONES) max = Math.max(max, ahorroPct(plan, dur));
+  return max;
+}
+
+/**
+ * Mayor descuento del PAGO INTERNACIONAL: anual frente a doce mensualidades.
+ *
+ * Existe aparte de `ahorroMaximoPct` porque las dos ofertas no se parecen. En
+ * soles se venden cuatro duraciones (1/3/6/12 meses) y el mejor descuento ronda
+ * el 17 %; Lemon Squeezy solo tiene mensual y anual, y ahí el anual de
+ * Individual baja un 22 %. La nota al pie de Precios anunciaba a TODO el mundo
+ * las cuatro duraciones y el porcentaje en soles, así que a quien compraba
+ * fuera de Perú se le prometían opciones que su checkout no tiene y un
+ * descuento que no era el suyo.
+ */
+export function ahorroMaximoPctUsd() {
+  let max = 0;
+  for (const plan of Object.keys(PRECIOS_USD)) {
+    const mensual = PRECIOS_USD[plan].monthly;
+    const anual   = PRECIOS_USD[plan].yearly;
+    if (!mensual || !anual) continue;
+    max = Math.max(max, Math.round((1 - anual / (mensual * 12)) * 100));
+  }
   return max;
 }
 

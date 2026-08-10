@@ -25,7 +25,7 @@ export default function VideoDemo() {
               className="h-full w-full"
               src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`}
               title={t.videoDemo.iframeTitle}
-              allow="accelerated-feedback; autoplay; encrypted-media; picture-in-picture"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           ) : (

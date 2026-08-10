@@ -15,6 +15,10 @@
 const crypto = require('crypto');
 const admin  = require('firebase-admin');
 
+// Suma de meses que no desborda al mes siguiente cuando el día no existe en el
+// destino (31 de enero + 1 mes → 28 de febrero, no 3 de marzo).
+const { sumarMeses } = require('./fechas');
+
 // ── Firebase Admin (singleton, idéntico al resto de functions) ───────────────
 if (!admin.apps.length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -97,23 +101,29 @@ async function provisionLicense(email, info) {
     //      próximo cobro → alinea la licencia con la facturación real).
     //    - Si no, sumamos meses a la base, SIN acumular el Trial gratuito
     //      (un Trial no extiende; una licencia paga vigente sí).
+    //
+    // La licencia previa se lee SIEMPRE, tanto si hace falta para calcular la
+    // fecha como si no: el paso 6 la necesita para saber si este es el primer
+    // pago de esta persona y decidir si le manda el correo de activación.
+    const [expSnap, licTypeSnap] = await Promise.all([
+        db.ref(`users_v2/${uid}/expirationDate`).once('value'),
+        db.ref(`users_v2/${uid}/licenseType`).once('value'),
+    ]);
+    const currentExp = expSnap.val();
+    const existingLicType = licTypeSnap.val();
+
     let newExpDate;
     if (info.expiresAt && !isNaN(Date.parse(info.expiresAt))) {
         newExpDate = new Date(info.expiresAt).toISOString();
     } else {
-        const [expSnap, licTypeSnap] = await Promise.all([
-            db.ref(`users_v2/${uid}/expirationDate`).once('value'),
-            db.ref(`users_v2/${uid}/licenseType`).once('value'),
-        ]);
-        const currentExp = expSnap.val();
-        const existingLicType = licTypeSnap.val();
         let baseDate = new Date();
         if (currentExp && existingLicType !== 'Trial') {
             const existing = new Date(currentExp);
             if (existing > now) baseDate = existing;
         }
-        baseDate.setMonth(baseDate.getMonth() + (info.months || 1));
-        newExpDate = baseDate.toISOString();
+        // Recorta el día al final del mes en vez de desbordarlo: 31 de enero
+        // + 1 mes es 28 de febrero, no 3 de marzo. Ver _lib/fechas.js.
+        newExpDate = sumarMeses(baseDate, info.months || 1).toISOString();
     }
 
     // 4) Escribir licencia
@@ -153,8 +163,18 @@ async function provisionLicense(email, info) {
         });
     }
 
-    // 6) Email de activación al usuario nuevo o primer pago
-    if (isNewUser) await sendActivationEmail(email);
+    // 6) Email de activación al usuario nuevo O en su primer pago
+    //
+    // Antes bastaba con `isNewUser`, y eso dejaba fuera un caso real: la cuenta
+    // de un comprador puede existir ya con una CONTRASEÑA ALEATORIA que él
+    // nunca vio — la crea este mismo archivo (y culqi-webhook) con
+    // crypto.randomBytes cuando llega un pago de alguien sin cuenta. Si aquel
+    // correo de activación se perdió y ahora compra por la vía internacional,
+    // no recibía nada: licencia activa y sin poder entrar a su cuenta.
+    //
+    // Mismo criterio que culqi-webhook. Mandar un correo de más aquí es barato;
+    // no mandarlo deja a un cliente que ya pagó sin forma de entrar.
+    if (isNewUser || !currentExp) await sendActivationEmail(email);
 
     console.log(`✅ [provision] licencia ${info.gateway}: ${email} | ${info.licenseType} | vence ${newExpDate}`);
 }

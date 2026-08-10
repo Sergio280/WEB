@@ -3,7 +3,7 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG } from '../../data/culqi.js';
-import { PRECIOS_USD, ahorroMaximoPct } from '../../data/pricing.js';
+import { PRECIOS_USD, ahorroMaximoPct, ahorroMaximoPctUsd, formatoUsd } from '../../data/pricing.js';
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
@@ -30,6 +30,9 @@ export default function Pricing() {
   const intlPay = region === 'INTL';
   const curSym = intlPay ? '$' : 'S/';
   const [modalPlan, setModalPlan] = useState(null);
+  // Motivo de un pago que falló DESPUÉS de cerrarse el modal (ver más abajo).
+  const [errorPago, setErrorPago] = useState('');
+  const planEnCurso = useRef(null); // último plan cuyo checkout se abrió
   const sectionRef = useRef(null);
 
   // Promoción por enlace (?promo=CODIGO): si hay una vigente, la tarjeta enseña
@@ -86,7 +89,21 @@ export default function Pricing() {
 
   function openPlan(key) {
     track('select_plan', { plan: key });
+    planEnCurso.current = key;
+    setErrorPago('');
     setModalPlan(key);
+  }
+
+  // El formulario de tarjeta de Culqi se dibuja ENCIMA del modal y sigue vivo
+  // aunque el modal se cierre, así que un pago puede fallar cuando ya no hay
+  // modal donde enseñarlo: el mensaje moría en un componente desmontado y el
+  // comprador se quedaba creyendo que había pagado. Esta sección no se
+  // desmonta nunca, así que puede recoger el aviso y reabrir el modal del plan
+  // que estaba comprando, con el motivo delante.
+  function reportarErrorPago(msg) {
+    if (!planEnCurso.current) return;
+    setErrorPago(msg);
+    setModalPlan(planEnCurso.current);
   }
 
   return (
@@ -139,7 +156,7 @@ export default function Pricing() {
                             {curSym}{c.priceFrom}
                           </span>
                         )}
-                        {curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
+                        {curSym}{intlPay ? (USD_FROM[c.key] != null ? formatoUsd(USD_FROM[c.key]) : c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
                         <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                       </p>
                       {promoPorPlan[c.key] && (
@@ -186,8 +203,22 @@ export default function Pricing() {
         })}
       </div>
 
+      {/* Nota de duraciones y descuento — POR REGIÓN, igual que el aviso de IGV
+          de abajo. Las dos ofertas no son la misma: en soles se venden cuatro
+          duraciones (1/3/6/12 meses) y en el pago internacional Lemon Squeezy
+          solo tiene mensual y anual, con otro porcentaje de ahorro. Antes se
+          pintaba siempre la versión en soles, así que a quien compraba desde
+          fuera se le prometían opciones que su checkout no le iba a ofrecer. */}
       <p className="mx-auto mt-6 max-w-xl text-center text-sm text-slate-500">
-        {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount.replace('{pct}', ahorroMaximoPct())}</strong>{p.footnotePost}
+        {intlPay ? (
+          <>
+            {p.footnoteIntlPre}<strong className="text-slate-300">{p.footnoteIntlDurations}</strong>{p.footnoteIntlMid}<strong className="text-slate-300">{p.footnoteIntlDiscount.replace('{pct}', ahorroMaximoPctUsd())}</strong>{p.footnoteIntlPost}
+          </>
+        ) : (
+          <>
+            {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount.replace('{pct}', ahorroMaximoPct())}</strong>{p.footnotePost}
+          </>
+        )}
       </p>
 
       {/* Aviso de IGV: solo en la región Perú, donde cobra Culqi en soles y el
@@ -245,7 +276,14 @@ export default function Pricing() {
         </table>
       </Reveal>
 
-      {modalPlan && <CulqiModal planKey={modalPlan} onClose={() => setModalPlan(null)} />}
+      {modalPlan && (
+        <CulqiModal
+          planKey={modalPlan}
+          errorInicial={errorPago}
+          onErrorTrasCierre={reportarErrorPago}
+          onClose={() => setModalPlan(null)}
+        />
+      )}
     </Section>
   );
 }

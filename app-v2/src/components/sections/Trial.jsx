@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import Turnstile, { TURNSTILE_SITE_KEY } from '../ui/Turnstile.jsx';
 import { track } from '../../lib/track.js';
 import { getStoredGclid } from '../../lib/gclid.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
@@ -35,6 +36,10 @@ export default function Trial() {
   const [showPw2, setShowPw2] = useState(false);
   const [feedback, setFeedback] = useState(null); // { type, msg }
   const [submitting, setSubmitting] = useState(false);
+  // Token de Turnstile. Vacío mientras no haya widget (si no está configurada
+  // VITE_TURNSTILE_SITE_KEY no se pinta ninguno y el servidor tampoco lo exige).
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const turnstileRef = useRef(null);
 
   const strength = useMemo(() => passwordStrength(password), [password]);
   const match = password2 ? password === password2 : null;
@@ -55,13 +60,19 @@ export default function Trial() {
       setFeedback({ type: 'err', msg: tr.errPwMatch });
       return;
     }
+    // Solo se exige si hay widget: sin clave pública configurada, el servidor
+    // tampoco pide token y el registro va como siempre.
+    if (TURNSTILE_SITE_KEY && !turnstileToken) {
+      setFeedback({ type: 'err', msg: tr.errCaptcha });
+      return;
+    }
 
     setSubmitting(true);
     try {
       const r = await fetch('/api/trial', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot, gclid: getStoredGclid(), lang, country }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim(), company: company.trim(), password, honeypot, turnstileToken, gclid: getStoredGclid(), lang, country }),
       });
       const data = await r.json();
       if (r.ok && data.success) {
@@ -71,10 +82,15 @@ export default function Trial() {
       } else {
         setFeedback({ type: 'err', msg: '✗ ' + (data.error || tr.errGeneric) });
         setSubmitting(false);
+        // El token de Turnstile es de un solo uso: si el envío no prosperó, el
+        // que había ya está gastado y hay que pedir otro, o el reintento
+        // fallaría por la verificación en vez de por el motivo real.
+        turnstileRef.current?.reset();
       }
     } catch {
       setFeedback({ type: 'err', msg: tr.errConn });
       setSubmitting(false);
+      turnstileRef.current?.reset();
     }
   }
 
@@ -175,6 +191,10 @@ export default function Trial() {
                 <label htmlFor="trial-website">{tr.honeypotLabel}</label>
                 <input id="trial-website" name="honeypot" type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
               </div>
+
+              {/* Verificación antibot. No pinta nada si no hay clave pública
+                  configurada, que es el estado por defecto hoy. */}
+              <Turnstile onToken={setTurnstileToken} innerRef={turnstileRef} />
 
               <button type="submit" disabled={submitting} className="w-full rounded-xl bg-brand-500 px-5 py-3.5 font-bold text-white transition-colors hover:bg-brand-400 disabled:opacity-60">
                 {submitting ? tr.submitting : tr.submit}

@@ -12,14 +12,33 @@ export function useCulqi() {
     window.culqi = function () {
       const ctx = window._culqiContext || {};
       if (window.Culqi.error) {
-        console.warn('[Culqi] Error/cancelado:', window.Culqi.error);
+        // Antes esto solo hacía console.warn y salía: el botón de la web se
+        // quedaba en «Procesando…» (deshabilitado) para siempre y el usuario no
+        // veía NINGÚN motivo. Volvía, pulsaba «Pagar» y no pasaba nada — es uno
+        // de los dead clicks que salen en las grabaciones de Clarity.
+        // Culqi manda el motivo en user_message (texto para el comprador) y
+        // merchant_message (texto técnico); se prefiere el primero.
+        const e = window.Culqi.error;
+        console.warn('[Culqi] Error/cancelado:', e);
+        if (ctx.onError) ctx.onError(e.user_message || e.merchant_message || ctx.errRejected || 'No se pudo procesar la tarjeta.');
         return;
       }
-      if (!window.Culqi.token) return;
+      // Sin token no hay nada que cobrar (el usuario cerró el formulario). Se
+      // rearma el botón para que pueda volver a intentarlo.
+      if (!window.Culqi.token) {
+        if (ctx.onCancel) ctx.onCancel();
+        return;
+      }
 
       const token_id = window.Culqi.token.id;
       const email = ctx.email;
       const isSub = ctx.isSub;
+      // Se avisa ANTES de cerrar el iframe: al cerrarlo, la web detecta que el
+      // widget desapareció y rearma el botón de pagar (para el caso de que el
+      // usuario lo cierre sin pagar). Aquí sí hay cobro en marcha, así que hay
+      // que marcarlo primero o el botón parpadearía a «Pagar» durante la
+      // confirmación.
+      if (ctx.onProcessing) ctx.onProcessing();
       window.Culqi.close();
 
       const endpoint = isSub ? '/api/culqi-subscription' : '/api/culqi-charge';
@@ -28,8 +47,6 @@ export function useCulqi() {
       const body = isSub
         ? { token_id, email, plan: ctx.plan, comprobante: ctx.comprobante }
         : { token_id, email, plan: ctx.plan, duration: ctx.duration, comprobante: ctx.comprobante, codigo: ctx.codigo };
-
-      if (ctx.onProcessing) ctx.onProcessing();
 
       fetch(endpoint, {
         method: 'POST',
@@ -73,6 +90,7 @@ export function openCulqiCheckout({
   errPay,
   onProcessing,
   onError,
+  onCancel,
 }) {
   const plan = CULQI_CONFIG.plans[planKey];
   if (!plan || !window.Culqi) {
@@ -97,6 +115,6 @@ export function openCulqiCheckout({
 
   // El callback global window.culqi lee estos valores para la redirección y los
   // mensajes de error en el idioma correcto.
-  window._culqiContext = { email, plan: planKey, isSub, duration, comprobante, codigo, successUrl, errRejected, errPay, onProcessing, onError };
+  window._culqiContext = { email, plan: planKey, isSub, duration, comprobante, codigo, successUrl, errRejected, errPay, onProcessing, onError, onCancel };
   window.Culqi.open({ email });
 }

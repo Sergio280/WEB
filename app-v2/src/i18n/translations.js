@@ -11,29 +11,11 @@
 // devuelve uno de estos, la página arranca en español; en cualquier otro caso,
 // en inglés. La preferencia explícita del usuario (toggle) siempre manda.
 // ─────────────────────────────────────────────────────────────────────────────
-export const SPANISH_COUNTRIES = new Set([
-  'ES', // España
-  'MX', // México
-  'AR', // Argentina
-  'CO', // Colombia
-  'PE', // Perú
-  'VE', // Venezuela
-  'CL', // Chile
-  'EC', // Ecuador
-  'GT', // Guatemala
-  'CU', // Cuba
-  'BO', // Bolivia
-  'DO', // República Dominicana
-  'HN', // Honduras
-  'PY', // Paraguay
-  'SV', // El Salvador
-  'NI', // Nicaragua
-  'CR', // Costa Rica
-  'PA', // Panamá
-  'UY', // Uruguay
-  'PR', // Puerto Rico
-  'GQ', // Guinea Ecuatorial
-]);
+// La lista de países hispanohablantes se mudó a su propio archivo para que
+// pueda importarla también la edge function que reparte idioma (no puede
+// cargar este archivo entero). Se re-exporta para no tocar a quien ya la
+// importaba desde aquí.
+export { SPANISH_COUNTRIES } from './paises-hispanos.js';
 
 export const translations = {
   // ───────────────────────────────────────────────────────────────────────────
@@ -139,6 +121,19 @@ export const translations = {
       ctaLink: 'Activa tu prueba gratis →',
     },
 
+    saltarAlContenido: 'Saltar al contenido',
+    langBanner: {
+      es: {
+        msg: 'Esta página también está en español.',
+        cta: 'Ver en español',
+        dismiss: 'Cerrar aviso',
+      },
+      en: {
+        msg: 'This page is also available in English.',
+        cta: 'View in English',
+        dismiss: 'Dismiss',
+      },
+    },
     clips: {
       eyebrow: 'En acción',
       title: 'BIMS en acción, comando por comando',
@@ -146,14 +141,14 @@ export const translations = {
       soon: 'Video próximamente',
       close: 'Cerrar ✕',
       closeAria: 'Cerrar',
-      items: [
-        { title: 'Encofrado de todo el edificio en 1 clic', desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.' },
-        { title: 'Exporta planos a DWG con las imágenes adentro', desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.' },
-        { title: 'Tarrajeo de todos los ambientes', desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.' },
-        { title: 'Importa DWG, escala sólidos y exporta a familia .RFA', desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.' },
-        { title: 'Asigna rejillas a cientos de elementos', desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.' },
-        { title: 'Refuerzo de columnas y vigas en minutos', desc: 'Calcula y coloca el acero estructural automáticamente.' },
-      ],
+      items: {
+        encofrado: { title: 'Encofrado de todo el edificio en 1 clic', desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.' },
+        dwg: { title: 'Exporta planos a DWG con las imágenes adentro', desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.' },
+        tarrajeo: { title: 'Tarrajeo de todos los ambientes', desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.' },
+        rfa: { title: 'Importa DWG, escala sólidos y exporta a familia .RFA', desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.' },
+        rejillas: { title: 'Asigna rejillas a cientos de elementos', desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.' },
+        refuerzo: { title: 'Refuerzo de columnas y vigas en minutos', desc: 'Calcula y coloca el acero estructural automáticamente.' },
+      },
     },
 
     bento: {
@@ -381,11 +376,10 @@ export const translations = {
       hours: 'Horas de documentación por proyecto',
       rate: 'Valor de tu hora profesional',
       hoursSuffix: ' h',
-      ratePrefix: 'S/ ',
       note: { strong: 'Estimación orientativa.', rest: ' Asume una reducción del 80 % del tiempo en tareas automatizables por BIMS (encofrado, refuerzo, exportación a DWG, asignación de rejillas). El ahorro real depende del flujo de trabajo de cada estudio.' },
       resultLabel: 'Te ahorras al mes',
       resultHours: ' h',
-      moneyPre: '= S/ ',
+      moneyPre: '= ',
       moneyPost: ' en honorarios recuperados',
       paybackPre: 'La licencia se paga sola en ',
       paybackBold: '≈ {d} días',
@@ -413,6 +407,14 @@ export const translations = {
       footnoteMid: '. Mientras más larga la licencia, mayor el descuento — hasta ',
       footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' frente al precio mensual.',
+      // Nota equivalente para la región de pago internacional: Lemon Squeezy
+      // solo vende mensual y anual, así que prometer 1/3/6/12 meses ahí sería
+      // ofrecer algo que su checkout no puede darle.
+      footnoteIntlPre: 'Al comprar eliges la periodicidad: ',
+      footnoteIntlDurations: 'mensual o anual',
+      footnoteIntlMid: '. El plan anual sale hasta ',
+      footnoteIntlDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPctUsd()
+      footnoteIntlPost: ' más barato que pagar mes a mes.',
       // Solo se muestra en la región Perú (Culqi/soles). Fuera de Perú cobra
       // Lemon Squeezy como Merchant of Record y los impuestos los gestiona él.
       igvNote: 'Precios en soles con IGV incluido.',
@@ -560,6 +562,7 @@ export const translations = {
       errPwMatch: '✗ Las contraseñas no coinciden.',
       errGeneric: 'Hubo un error. Intenta de nuevo o escríbenos a soporte@bimsaddin.com',
       errConn: '✗ Error de conexión. Verifica tu internet e intenta de nuevo.',
+      errCaptcha: '✗ Completa la verificación de seguridad para continuar.',
       termsPre: 'Al continuar aceptas nuestros ',
       termsLink: 'términos',
       termsMid: ' y ',
@@ -752,6 +755,19 @@ export const translations = {
       ctaLink: 'Activate your free trial →',
     },
 
+    saltarAlContenido: 'Skip to content',
+    langBanner: {
+      es: {
+        msg: 'Esta página también está en español.',
+        cta: 'Ver en español',
+        dismiss: 'Cerrar aviso',
+      },
+      en: {
+        msg: 'This page is also available in English.',
+        cta: 'View in English',
+        dismiss: 'Dismiss',
+      },
+    },
     clips: {
       eyebrow: 'In action',
       title: 'BIMS in action, command by command',
@@ -759,14 +775,14 @@ export const translations = {
       soon: 'Video coming soon',
       close: 'Close ✕',
       closeAria: 'Close',
-      items: [
-        { title: 'Formwork for the whole building in 1 click', desc: 'Generates formwork walls and floors over the structure, automatically.' },
-        { title: 'Export sheets to DWG with the images inside', desc: 'Images stay embedded in the DWG, not as external references.' },
-        { title: 'Plastering for every room', desc: 'Creates wall and floor finishes per room, ready to quantify.' },
-        { title: 'Import DWG, scale solids and export to .RFA family', desc: 'Turns a DWG’s solids into editable Revit objects: scale them and export them as an .RFA family.' },
-        { title: 'Assign grids to hundreds of elements', desc: 'Each element gets its nearest grids with no manual selection.' },
-        { title: 'Column and beam reinforcement in minutes', desc: 'Calculates and places the structural rebar automatically.' },
-      ],
+      items: {
+        encofrado: { title: 'Formwork for the whole building in 1 click', desc: 'Generates formwork walls and floors over the structure, automatically.' },
+        dwg: { title: 'Export sheets to DWG with the images inside', desc: 'Images stay embedded in the DWG, not as external references.' },
+        tarrajeo: { title: 'Plastering for every room', desc: 'Creates wall and floor finishes per room, ready to quantify.' },
+        rfa: { title: 'Import DWG, scale solids and export to .RFA family', desc: 'Turns a DWG’s solids into editable Revit objects: scale them and export them as an .RFA family.' },
+        rejillas: { title: 'Assign grids to hundreds of elements', desc: 'Each element gets its nearest grids with no manual selection.' },
+        refuerzo: { title: 'Column and beam reinforcement in minutes', desc: 'Calculates and places the structural rebar automatically.' },
+      },
     },
 
     bento: {
@@ -994,11 +1010,10 @@ export const translations = {
       hours: 'Documentation hours per project',
       rate: 'Your professional hourly rate',
       hoursSuffix: ' h',
-      ratePrefix: 'S/ ',
       note: { strong: 'Indicative estimate.', rest: ' Assumes an 80% time reduction on the tasks BIMS automates (formwork, rebar, DWG export, grid assignment). Actual savings depend on each firm’s workflow.' },
       resultLabel: 'You save per month',
       resultHours: ' h',
-      moneyPre: '= S/ ',
+      moneyPre: '= ',
       moneyPost: ' in recovered fees',
       paybackPre: 'The license pays for itself in ',
       paybackBold: '≈ {d} days',
@@ -1026,6 +1041,13 @@ export const translations = {
       footnoteMid: '. The longer the license, the bigger the discount — up to ',
       footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' off the monthly price.',
+      // Same note for the international payment region: Lemon Squeezy only
+      // sells monthly and yearly.
+      footnoteIntlPre: 'When you buy you choose the billing period: ',
+      footnoteIntlDurations: 'monthly or yearly',
+      footnoteIntlMid: '. The yearly plan works out up to ',
+      footnoteIntlDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPctUsd()
+      footnoteIntlPost: ' cheaper than paying month to month.',
       // Ver nota de la versión en español: solo aplica a la región Perú.
       igvNote: 'Prices in soles include Peruvian VAT (IGV).',
       promoBadge: '🎁 Promo — you save S/{ahorro}',
@@ -1171,6 +1193,7 @@ export const translations = {
       errPwMatch: '✗ Passwords don’t match.',
       errGeneric: 'Something went wrong. Try again or write to us at soporte@bimsaddin.com',
       errConn: '✗ Connection error. Check your internet and try again.',
+      errCaptcha: '✗ Complete the security check to continue.',
       termsPre: 'By continuing you accept our ',
       termsLink: 'terms',
       termsMid: ' and ',

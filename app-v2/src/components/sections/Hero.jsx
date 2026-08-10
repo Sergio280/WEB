@@ -1,13 +1,12 @@
-import { motion } from 'framer-motion';
 import WindowFrame from '../ui/WindowFrame.jsx';
 import AppStoreBadge from '../ui/AppStoreBadge.jsx';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 26 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] } }),
-};
+// Entrada escalonada: cada elemento aparece una décima después del anterior.
+// Lo hacía framer-motion con variantes y `custom`; ahora es una clase CSS
+// (.anim-entrada) más el retardo en una variable. Mismos tiempos y misma curva.
+const escalon = (i) => ({ '--anim-delay': `${i * 0.1}s` });
 
 const REVIT_VERSIONS = ['Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'];
 
@@ -23,34 +22,30 @@ export default function Hero() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
         {/* Columna texto */}
         <div>
-          <motion.span variants={fadeUp} initial="hidden" animate="show" custom={0} className="eyebrow">
+          <span className="anim-entrada eyebrow" style={escalon(0)}>
             {h.eyebrow}
-          </motion.span>
+          </span>
 
-          <motion.h1
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={1}
-            className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl"
+          <h1
+            className="anim-entrada mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl" style={escalon(1)}
           >
             {h.title.pre}<span className="text-gradient">{h.title.h1}</span>{h.title.mid}
             <br className="hidden sm:block" /> {h.title.post}<span className="text-gradient">{h.title.h2}</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p variants={fadeUp} initial="hidden" animate="show" custom={2} className="mt-6 max-w-xl text-lg leading-relaxed text-slate-400">
+          <p className="anim-entrada mt-6 max-w-xl text-lg leading-relaxed text-slate-400" style={escalon(2)}>
             {h.descPre}<strong className="text-slate-200">{h.descStrong}</strong>{h.descPost}
-          </motion.p>
+          </p>
 
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3} className="mt-7 flex flex-wrap items-center gap-2">
+          <div className="anim-entrada mt-7 flex flex-wrap items-center gap-2" style={escalon(3)}>
             {REVIT_VERSIONS.map((v) => (
               <span key={v} className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300">
                 {v}
               </span>
             ))}
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4} className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="anim-entrada mt-8 flex flex-wrap items-center gap-3" style={escalon(4)}>
             <a
               href="#trial"
               onClick={() => track('hero_cta_click', { cta: 'trial' })}
@@ -58,25 +53,25 @@ export default function Hero() {
             >
               {h.cta}
             </a>
-          </motion.div>
+          </div>
 
-          <motion.p variants={fadeUp} initial="hidden" animate="show" custom={5} className="mt-4 text-sm text-slate-500">
+          <p className="anim-entrada mt-4 text-sm text-slate-500" style={escalon(5)}>
             {h.subNote}
             <a href="#video-demo" className="text-slate-300 underline underline-offset-2 hover:text-white">
               {h.subNoteLink}
             </a>
-          </motion.p>
+          </p>
 
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={6} className="mt-5 flex items-center gap-2 text-sm text-slate-400">
+          <div className="anim-entrada mt-5 flex items-center gap-2 text-sm text-slate-400" style={escalon(6)}>
             <span className="font-bold text-accent-green">✓</span>
             {h.guarantee}
-          </motion.div>
+          </div>
 
           {/* Sello de confianza del Autodesk App Store (señal de legitimidad,
               no CTA principal). */}
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={7} className="mt-5">
+          <div className="anim-entrada mt-5" style={escalon(7)}>
             <AppStoreBadge />
-          </motion.div>
+          </div>
         </div>
 
         {/* Columna mockup — es un enlace real a la demo. Antes el ribbon simulaba
@@ -84,12 +79,9 @@ export default function Hero() {
             la fuente principal de dead-clicks en la primera pantalla (Clarity ~33%).
             Ahora todo el mockup es un único destino → #video-demo, y las tarjetas
             del ribbon ya NO fingen ser botones individuales. */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="relative"
-        >
+        {/* El mockup entra con su propio recorrido (escala + desplazamiento,
+            0,3 s después que el texto): .anim-mockup en index.css. */}
+        <div className="anim-mockup relative">
           <a
             href="#video-demo"
             onClick={() => track('hero_mockup_click', { target: 'video-demo' })}
@@ -135,7 +127,7 @@ export default function Hero() {
             <p className="font-display text-2xl font-extrabold text-accent-green">{h.mockup.badgeValue}</p>
             <p className="text-[0.7rem] text-slate-400">{h.mockup.badgeLabel}</p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </header>
   );

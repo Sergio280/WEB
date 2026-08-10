@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useCulqi } from './hooks/useCulqi.js';
+import { useLang } from './i18n/LanguageProvider.jsx';
+import LangBanner from './components/sections/LangBanner.jsx';
 import AnnounceBar from './components/sections/AnnounceBar.jsx';
 import Navbar from './components/sections/Navbar.jsx';
 import Hero from './components/sections/Hero.jsx';
@@ -20,6 +22,8 @@ import Footer from './components/sections/Footer.jsx';
 import BackToTop from './components/ui/BackToTop.jsx';
 
 export default function App() {
+  const { t } = useLang();
+
   // Registra el callback global window.culqi para el checkout de pagos.
   useCulqi();
 
@@ -98,6 +102,20 @@ export default function App() {
 
   return (
     <>
+      {/* Primer elemento enfocable de la página: solo aparece al llegar con
+          Tab, y salta la barra de navegación entera. Con quince secciones y
+          una barra fija, sin esto hay que recorrer todos los enlaces del menú
+          antes de alcanzar el contenido. */}
+      <a
+        href="#inicio"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-brand-500 focus:px-4 focus:py-2.5 focus:font-bold focus:text-white"
+      >
+        {t.saltarAlContenido}
+      </a>
+
+      {/* Ofrece el otro idioma a quien llega desde un país donde no se habla
+          el de esta página. Va lo primero de todo: si no se ve, no sirve. */}
+      <LangBanner />
       <AnnounceBar />
       <Navbar />
       <main>

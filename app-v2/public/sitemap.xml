@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  bimsaddin.com — https://bimsaddin.com/sitemap.xml
+
+  Los archivos de app-v2/public/ los copia Vite tal cual a la raíz del sitio.
+  Este archivo NO se edita en dist/: se regenera en cada despliegue desde aquí.
+
+  Las dos landings (español e inglés) se declaran como alternativas la una de la
+  otra con xhtml:link. Cada URL tiene que listar TODAS las variantes, incluida
+  ella misma: si la relación no es recíproca, Google la descarta entera y
+  volvemos al punto de partida — una sola versión indexada.
+
+  Las páginas de después de comprar (success, trial-success) no van aquí: no
+  tienen valor de búsqueda y llevan el correo del cliente en la URL. Tampoco
+  /legacy.html, que es la home anterior conservada solo para poder volver atrás.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://bimsaddin.com/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/"/>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/terminos.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/terminos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/terminos-en.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/terminos-en.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/terminos.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/terminos-en.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/privacy-policy.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/privacy-policy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/privacy-policy-en.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/privacy-policy-en.html</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://bimsaddin.com/privacy-policy.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://bimsaddin.com/privacy-policy-en.html"/>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://bimsaddin.com/libro-reclamaciones.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+</urlset>

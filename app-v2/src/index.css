@@ -11,6 +11,26 @@
     scroll-behavior: smooth;
   }
 
+  /* Quien pide menos movimiento no debería tragarse un scroll animado de miles
+     de píxeles al pulsar un enlace del menú. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* La barra de navegación es `sticky top-0`, así que al saltar a un ancla el
+     navegador alinea el borde de la sección con el borde de la ventana y la
+     barra TAPA la primera franja: el título de la sección a la que acabas de
+     ir queda escondido detrás. Con esto el destino se para justo debajo de la
+     barra y se ve lo que se fue a buscar. Vale para los saltos nativos
+     (#precios, #casos, #faq…) y para scrollIntoView. */
+  section[id],
+  header[id],
+  footer[id] {
+    scroll-margin-top: 4.75rem;
+  }
+
   body {
     @apply bg-ink-950 text-slate-300 font-sans antialiased;
     /* Atmósfera: dos glows azules suaves fijos detrás de todo el contenido */
@@ -27,6 +47,96 @@
 }
 
 @layer components {
+  /* ── Animaciones de entrada ──────────────────────────────────────────────
+     Antes las hacía framer-motion, que entraba entera en el bundle principal
+     (~120 KB sin comprimir) para un puñado de fundidos, un desplazamiento y una
+     altura. Todas eran expresables en CSS, así que la librería salió del camino
+     crítico: la portada, los precios y el formulario de prueba llegan antes,
+     que es donde se decide si alguien se queda.
+
+     Las que reaccionan al scroll (.reveal) las enciende un IntersectionObserver
+     desde el componente Reveal; el resto arrancan solas al montarse. */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 28px));
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  @keyframes entrada-arriba {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: none; }
+  }
+  /* Entrada escalonada del hero: cada elemento hereda su retardo por variable. */
+  .anim-entrada {
+    animation: entrada-arriba 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--anim-delay, 0s);
+  }
+
+  @keyframes entrada-mockup {
+    from { opacity: 0; transform: scale(0.94) translateY(20px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .anim-mockup {
+    animation: entrada-mockup 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+  }
+
+  @keyframes entrada-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .anim-fade { animation: entrada-fade 0.25s ease-out both; }
+
+  @keyframes entrada-modal {
+    from { opacity: 0; transform: scale(0.94) translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .anim-modal { animation: entrada-modal 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  @keyframes entrada-suave {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .anim-suave { animation: entrada-suave 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+  /* Barra que crece hasta el ancho que le pasa --barra (caso «Encofrado»). */
+  @keyframes entrada-barra {
+    from { width: 0; }
+    to   { width: var(--barra, 100%); }
+  }
+  .anim-barra {
+    width: var(--barra, 100%);
+    animation: entrada-barra 1.2s ease-out both;
+  }
+
+  /* Quien pide menos movimiento se queda con el resultado final, sin recorrido,
+     incluidas las animaciones en bucle de la portada. */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .anim-entrada,
+    .anim-mockup,
+    .anim-fade,
+    .anim-modal,
+    .anim-suave,
+    .anim-barra,
+    .animate-floaty,
+    .animate-marquee,
+    .animate-pulse-ring {
+      animation: none;
+    }
+  }
+
   /* Grid de ingeniería sutil — textura de fondo para secciones técnicas */
   .eng-grid {
     background-image:
