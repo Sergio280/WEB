@@ -15,6 +15,10 @@ const admin  = require('firebase-admin');
 // única de precios del backend en _lib/pricing.js.
 const { desglosarIgv } = require('./_lib/pricing');
 
+// Suma de meses que no desborda al mes siguiente cuando el día no existe en el
+// destino (31 de enero + 1 mes → 28 de febrero, no 3 de marzo).
+const { sumarMeses } = require('./_lib/fechas');
+
 // ── Firebase Admin (singleton) ────────────────────────────────────────────────
 if (!admin.apps.length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -329,8 +333,12 @@ async function activateLicense(email, info) {
         if (existing > now) baseDate = existing;
     }
 
-    baseDate.setMonth(baseDate.getMonth() + info.months);
-    const newExpDate = baseDate.toISOString();
+    // Suma de meses que RECORTA el día al final del mes en vez de desbordarlo.
+    // Con setMonth a secas, comprar un 31 de enero daba «31 de febrero» y el
+    // motor lo movía al 3 de marzo: dos o tres días regalados en cada compra
+    // hecha a fin de mes. Ver _lib/fechas.js.
+    const nuevaFecha = sumarMeses(baseDate, info.months);
+    const newExpDate = nuevaFecha.toISOString();
 
     console.log(`[culqi-webhook] Escribiendo licencia en: users_v2/${uid}`);
     console.log(`[culqi-webhook] Tipo previo: ${existingLicType || 'ninguno'} | Base: ${baseDate.toISOString()} | Nuevo venc.: ${newExpDate}`);

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BIMS — professional Autodesk Revit add-in that automates formwork, rebar, plastering and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.">
+    <title>BIMS — Automate formwork, plastering and DWG sheets in Revit</title>
+
+    <!-- ── Página propia para el inglés ───────────────────────────────────
+         Este archivo existe para que la versión en inglés EXISTA para un
+         buscador. Antes los dos idiomas compartían la URL "/" y el cambio lo
+         hacía React en el navegador: el HTML que se servía traía siempre el
+         <title> y la description en español, así que para Google no había
+         ninguna página en inglés que indexar — solo la española, que a veces
+         se renderizaba en inglés.
+
+         Es el MISMO bundle de React (mismo /src/main.jsx). Lo único que cambia
+         es el HTML que envuelve: idioma, metadatos, canonical y datos
+         estructurados. LanguageProvider detecta la ruta /en/ y arranca en
+         inglés sin que la geolocalización pueda pisarlo. ────────────────── -->
+    <link rel="canonical" href="https://bimsaddin.com/en/">
+    <link rel="alternate" hreflang="es" href="https://bimsaddin.com/">
+    <link rel="alternate" hreflang="en" href="https://bimsaddin.com/en/">
+    <link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/">
+
+    <!-- ── Open Graph / Social media ────── -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bimsaddin.com/en/">
+    <meta property="og:title" content="BIMS — What takes you hours in Revit, done in minutes">
+    <meta property="og:description" content="Professional Revit add-in that automates formwork, rebar, plastering and DWG export. Compatible with Revit 2024-2027.">
+    <meta property="og:image" content="https://bimsaddin.com/icono/og-cover.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="es_PE">
+    <meta property="og:site_name" content="BIMS">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="BIMS — What takes you hours in Revit, done in minutes">
+    <meta name="twitter:description" content="Professional Revit add-in that automates formwork, rebar, plastering and DWG export.">
+    <meta name="twitter:image" content="https://bimsaddin.com/icono/og-cover.jpg">
+
+    <link rel="icon" type="image/x-icon"             href="/icono/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32"  href="/icono/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16"  href="/icono/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180"     href="/icono/apple-touch-icon.png">
+
+    <!-- ── Datos estructurados ──
+         Describe el producto para que el buscador pueda enseñar precio y
+         plataforma en el resultado. NO lleva aggregateRating: no hay
+         valoraciones reales que declarar, y la sección de testimonios del
+         propio sitio dice explícitamente que no se inventan. Inventarlas aquí
+         sería mentir en un formato que Google penaliza. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "BIMS",
+      "applicationCategory": "DesignApplication",
+      "applicationSubCategory": "Autodesk Revit add-in",
+      "operatingSystem": "Windows 10, Windows 11",
+      "softwareRequirements": "Autodesk Revit 2024, 2025, 2026 or 2027",
+      "url": "https://bimsaddin.com/en/",
+      "inLanguage": "en",
+      "description": "Professional Autodesk Revit add-in that automates formwork, rebar, plastering and DWG export.",
+      "offers": {
+        "@type": "Offer",
+        "price": "16.90",
+        "priceCurrency": "USD",
+        "category": "subscription",
+        "url": "https://bimsaddin.com/en/#precios",
+        "availability": "https://schema.org/InStock"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "BIMS",
+        "url": "https://bimsaddin.com/",
+        "email": "soporte@bimsaddin.com"
+      }
+    }
+    </script>
+
+    <!-- ── Google Analytics 4 ───────────────────────────────────────── -->
+    <script async src="/ga4/gtag.js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-P5ZL4FBL4S', { transport_url: 'https://bimsaddin.com' });
+    </script>
+
+    <!-- ── Microsoft Clarity ── -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "wrtgszpyuc");
+    </script>
+
+    <!-- ── Fuentes (Google Fonts — ya permitidas por la CSP) ── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+    <!-- ── Culqi Checkout v4 ──
+         Se carga también aquí: desde /en/ se puede cambiar el método de pago a
+         Culqi (un peruano que prefiere leer en inglés sigue pagando en soles).
+         Ver el comentario largo en ../index.html sobre `defer` y sobre por qué
+         este script NO lleva integrity. -->
+    <script defer src="https://checkout.culqi.com/js/v4"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

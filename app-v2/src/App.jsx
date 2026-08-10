@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useCulqi } from './hooks/useCulqi.js';
+import LangBanner from './components/sections/LangBanner.jsx';
 import AnnounceBar from './components/sections/AnnounceBar.jsx';
 import Navbar from './components/sections/Navbar.jsx';
 import Hero from './components/sections/Hero.jsx';
@@ -98,6 +99,9 @@ export default function App() {
 
   return (
     <>
+      {/* Ofrece el otro idioma a quien llega desde un país donde no se habla
+          el de esta página. Va lo primero de todo: si no se ve, no sirve. */}
+      <LangBanner />
       <AnnounceBar />
       <Navbar />
       <main>

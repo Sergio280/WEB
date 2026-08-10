@@ -5,12 +5,24 @@ import { translations, SPANISH_COUNTRIES } from './translations.js';
 // LanguageProvider — estado global de idioma (es | en) Y región de pago.
 //
 // Prioridad de detección del IDIOMA:
-//   1. Preferencia explícita del usuario guardada en localStorage (el toggle).
-//   2. Geolocalización por IP vía la edge function /api/geo (Netlify), que
-//      determina el país real del visitante → español si es país hispano, en
-//      caso contrario inglés.
-//   3. Mientras la geo carga (o si falla), se usa el idioma del navegador como
-//      estimación instantánea para evitar un parpadeo visible.
+//   1. La RUTA. El inglés se sirve en /en/ como página propia (app-v2/en/), con
+//      su <title>, su description y su canonical. Si estamos ahí, se manda esa
+//      ruta y no la discute nadie.
+//   2. Preferencia explícita del usuario guardada en localStorage (el toggle).
+//   3. El idioma del navegador, como estimación instantánea.
+//
+// LA GEO YA NO CAMBIA EL IDIOMA — solo la región de pago. Antes sí lo cambiaba,
+// y eso dejaba la URL y el contenido diciendo cosas distintas: "/" se anuncia
+// como la versión en español (canonical + hreflang) y a la vez servía inglés a
+// medio mundo, incluido el rastreador de Google, que se conecta sobre todo
+// desde Estados Unidos. Resultado: dos URLs con el mismo contenido y ninguna
+// forma de saber cuál indexar para cada idioma.
+//
+// Tampoco se redirige por geo: "/" es la página del mercado principal y
+// mandarla a /en/ desde una IP estadounidense es justo lo que haría que Google
+// viera la versión española como una simple redirección. En su lugar, a quien
+// llega de fuera se le ofrece el cambio con un aviso visible (LangBanner) y el
+// selector de la barra. La URL y el idioma nunca se contradicen.
 //
 // REGIÓN DE PAGO (independiente del idioma): 'PE' | 'INTL'. Se deriva SOLO del
 // país real (no del idioma), porque idioma y moneda son cosas distintas: un
@@ -48,28 +60,48 @@ function savedRegionOverride() {
   }
 }
 
-// Estimación instantánea (sin red) a partir del idioma del navegador.
-function browserLang() {
-  const nav = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
-  return nav.startsWith('es') ? 'es' : 'en';
+// Idioma que impone la URL. El inglés vive en /en/ como página propia.
+export function langDeLaRuta() {
+  return /^\/en(\/|$)/.test(window.location.pathname) ? 'en' : null;
 }
 
+// Ruta de la landing en un idioma, conservando promo (?promo=), gclid y ancla:
+// cambiar de idioma no puede costarle al visitante su descuento ni el sitio
+// exacto de la página donde estaba mirando.
+export function rutaDelIdioma(lang) {
+  return (lang === 'en' ? '/en/' : '/') + window.location.search + window.location.hash;
+}
+
+// LA RUTA DECIDE, SIN EXCEPCIONES: "/" es la landing en español y "/en/" la
+// inglesa. Es lo que hace que la URL y el contenido no puedan contradecirse
+// nunca — que es justamente lo que un buscador necesita para indexar cada
+// idioma por separado, y lo que antes fallaba.
+//
+// Ni el idioma del navegador ni la preferencia guardada mandan aquí: si no
+// coinciden con la página en la que se está, se OFRECE cambiar (ver
+// `idiomaSugerido` y LangBanner), pero el texto que se pinta siempre es el que
+// esta URL declara ser en su canonical.
 function initialLang() {
-  return savedLang() || browserLang();
+  return langDeLaRuta() || 'es';
 }
 
 export function LanguageProvider({ children }) {
-  const [lang, setLangState] = useState(initialLang);
-  // Si el usuario ya eligió manualmente, la geo no debe sobreescribir el IDIOMA.
-  const [explicit, setExplicit] = useState(() => savedLang() != null);
+  // No hay setter: el idioma solo cambia navegando a la otra landing, así que
+  // dentro de una misma página es un valor fijo desde el primer render.
+  const [lang] = useState(initialLang);
+  // Idioma que el visitante eligió alguna vez. Ya NO decide qué se pinta (eso
+  // lo hace la ruta); sirve para saber si ofrecerle la otra landing y para no
+  // repetirle una oferta que ya aceptó.
+  const [idiomaGuardado] = useState(savedLang);
   // País real del visitante (ISO alpha-2). Vacío hasta que resuelve la geo.
-  // Solo alimenta la región de pago; NO lo condiciona la elección de idioma.
+  // Solo alimenta la región de pago y el aviso de idioma; NO cambia el idioma.
   const [country, setCountry] = useState('');
   // Corrección manual del usuario, si la usó (ver savedRegionOverride).
   const [regionOverride, setRegionOverrideState] = useState(savedRegionOverride);
 
-  // Refinar con geolocalización por IP. El país SIEMPRE se captura (para la
-  // región de pago); el idioma solo se ajusta si no hay elección explícita.
+  // Geolocalización por IP. Alimenta la REGIÓN DE PAGO (soles/Culqi frente a
+  // dólares/Lemon Squeezy) y el aviso de idioma. NO toca el idioma: ver la
+  // cabecera del archivo.
   useEffect(() => {
     let cancelled = false;
     fetch('/api/geo', { headers: { accept: 'application/json' } })
@@ -78,7 +110,6 @@ export function LanguageProvider({ children }) {
         if (cancelled || !data || !data.country) return;
         const cc = String(data.country).toUpperCase();
         setCountry(cc);
-        if (!explicit) setLangState(SPANISH_COUNTRIES.has(cc) ? 'es' : 'en');
 
         // El beacon de GA4 ahora pasa por nuestro proxy (bimsaddin.com/g/...)
         // para esquivar ad-blockers; Google ya no ve la IP real del visitante,
@@ -103,7 +134,7 @@ export function LanguageProvider({ children }) {
     return () => {
       cancelled = true;
     };
-  }, [explicit]);
+  }, []);
 
   // Región de pago derivada del país (no del idioma). Ver cabecera del archivo.
   // La corrección manual del usuario (regionOverride) tiene prioridad absoluta
@@ -134,21 +165,47 @@ export function LanguageProvider({ children }) {
     }
   }, [lang]);
 
+  // Cambia de idioma NAVEGANDO a la landing del otro idioma, porque cada uno
+  // es una página distinta (/ y /en/). Si solo se cambiara el estado, la URL
+  // seguiría anunciando el idioma anterior en su canonical y su hreflang.
+  //
+  // La preferencia se guarda ANTES de navegar: la página de destino la lee al
+  // arrancar, así que quien pide español desde /en/ llega a "/" y ahí se queda,
+  // sin que el aviso de idioma vuelva a ofrecerle lo que acaba de rechazar.
   function setLang(next) {
-    setExplicit(true);
-    setLangState(next);
+    if (next !== 'es' && next !== 'en') return;
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
-      /* almacenamiento no disponible: la elección dura solo esta sesión */
+      /* almacenamiento no disponible: la elección dura solo esta navegación */
     }
+    if (next === lang) return;
+    window.location.assign(rutaDelIdioma(next));
   }
 
   function toggleLang() {
     setLang(lang === 'es' ? 'en' : 'es');
   }
 
-  const value = { lang, setLang, toggleLang, t: translations[lang], country, region, setRegionOverride };
+  // Idioma que se le OFRECE al visitante, o null si no hay nada que ofrecer.
+  // Nunca se le impone: es la alternativa a redirigir por geo, que habría hecho
+  // que Google tomara la landing española por una redirección (su rastreador
+  // sale casi siempre de Estados Unidos).
+  //
+  // Dos motivos para ofrecer, por orden:
+  //   1. Ya eligió ese idioma antes y ha llegado a la otra landing — un
+  //      marcador viejo, un enlace compartido, un anuncio. Su elección pesa
+  //      más que su ubicación.
+  //   2. No ha elegido nunca y su país habla el otro idioma.
+  let sugerido = null;
+  if (idiomaGuardado && idiomaGuardado !== lang) {
+    sugerido = idiomaGuardado;
+  } else if (!idiomaGuardado && country) {
+    const porPais = SPANISH_COUNTRIES.has(country) ? 'es' : 'en';
+    if (porPais !== lang) sugerido = porPais;
+  }
+
+  const value = { lang, setLang, toggleLang, t: translations[lang], country, region, setRegionOverride, idiomaSugerido: sugerido };
   return <LangContext.Provider value={value}>{children}</LangContext.Provider>;
 }
 

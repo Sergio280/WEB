@@ -139,6 +139,18 @@ export const translations = {
       ctaLink: 'Activa tu prueba gratis →',
     },
 
+    langBanner: {
+      es: {
+        msg: 'Esta página también está en español.',
+        cta: 'Ver en español',
+        dismiss: 'Cerrar aviso',
+      },
+      en: {
+        msg: 'This page is also available in English.',
+        cta: 'View in English',
+        dismiss: 'Dismiss',
+      },
+    },
     clips: {
       eyebrow: 'En acción',
       title: 'BIMS en acción, comando por comando',
@@ -760,6 +772,18 @@ export const translations = {
       ctaLink: 'Activate your free trial →',
     },
 
+    langBanner: {
+      es: {
+        msg: 'Esta página también está en español.',
+        cta: 'Ver en español',
+        dismiss: 'Cerrar aviso',
+      },
+      en: {
+        msg: 'This page is also available in English.',
+        cta: 'View in English',
+        dismiss: 'Dismiss',
+      },
+    },
     clips: {
       eyebrow: 'In action',
       title: 'BIMS in action, command by command',
