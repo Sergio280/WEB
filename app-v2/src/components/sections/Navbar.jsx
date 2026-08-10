@@ -27,6 +27,33 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
+  // Navegación a un ancla desde el MENÚ MÓVIL.
+  //
+  // El enlace hacía dos cosas a la vez: cerrar el menú (setOpen(false)) y dejar
+  // que el navegador siguiera el href. Pero cerrar el menú DESMONTA el propio
+  // <a> antes de que el navegador ejecute la acción por defecto, y entonces el
+  // salto se pierde: el menú se cierra y la página no se mueve. Para el usuario
+  // es un clic que no hizo nada — justo lo que registran las grabaciones.
+  //
+  // Aquí se hace el recorrido a mano: se cierra el menú, se actualiza el hash
+  // (para que «atrás» y el enlace compartible sigan funcionando) y se baja a la
+  // sección en el fotograma siguiente, ya con el menú plegado, para que el alto
+  // que libera no descuadre el destino.
+  function irAlAncla(e, href) {
+    if (!href || !href.startsWith('#')) return; // enlaces externos: sin tocar
+    const destino = document.getElementById(href.slice(1));
+    if (!destino) return; // sin destino, que decida el navegador
+    e.preventDefault();
+    setOpen(false);
+    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    requestAnimationFrame(() => {
+      destino.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'start' });
+      if (window.history && typeof window.history.replaceState === 'function') {
+        window.history.replaceState(null, '', href);
+      }
+    });
+  }
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
@@ -107,7 +134,7 @@ export default function Navbar() {
             <li key={l.href}>
               <a
                 href={l.href}
-                onClick={() => setOpen(false)}
+                onClick={(e) => irAlAncla(e, l.href)}
                 className="block rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-white"
               >
                 {l.label}
@@ -117,7 +144,7 @@ export default function Navbar() {
           <li>
             <a
               href="#descargar"
-              onClick={() => { track('nav_download_click'); setOpen(false); }}
+              onClick={(e) => { track('nav_download_click'); irAlAncla(e, '#descargar'); }}
               className="mt-1 block rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-center text-sm font-bold text-slate-200"
             >
               ⬇ {t.nav.download}
@@ -126,7 +153,7 @@ export default function Navbar() {
           <li>
             <a
               href="#trial"
-              onClick={() => setOpen(false)}
+              onClick={(e) => irAlAncla(e, '#trial')}
               className="mt-1 block rounded-full bg-brand-500 px-4 py-2.5 text-center text-sm font-bold text-white"
             >
               {t.nav.cta}

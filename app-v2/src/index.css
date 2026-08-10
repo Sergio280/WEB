@@ -11,6 +11,26 @@
     scroll-behavior: smooth;
   }
 
+  /* Quien pide menos movimiento no debería tragarse un scroll animado de miles
+     de píxeles al pulsar un enlace del menú. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* La barra de navegación es `sticky top-0`, así que al saltar a un ancla el
+     navegador alinea el borde de la sección con el borde de la ventana y la
+     barra TAPA la primera franja: el título de la sección a la que acabas de
+     ir queda escondido detrás. Con esto el destino se para justo debajo de la
+     barra y se ve lo que se fue a buscar. Vale para los saltos nativos
+     (#precios, #casos, #faq…) y para scrollIntoView. */
+  section[id],
+  header[id],
+  footer[id] {
+    scroll-margin-top: 4.75rem;
+  }
+
   body {
     @apply bg-ink-950 text-slate-300 font-sans antialiased;
     /* Atmósfera: dos glows azules suaves fijos detrás de todo el contenido */

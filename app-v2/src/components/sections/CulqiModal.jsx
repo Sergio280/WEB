@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CULQI_CONFIG } from '../../data/culqi.js';
 import { PRECIOS_USD, equivalenteMensual, ahorroPct } from '../../data/pricing.js';
@@ -41,6 +41,13 @@ export default function CulqiModal({ planKey, onClose }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [processing, setProcessing] = useState(false);
+  // `processing` cubre dos etapas muy distintas y solo UNA se puede rearmar:
+  //   · checkout abierto / redirigiendo → el usuario puede echarse atrás, y
+  //     entonces hay que devolverle el botón (ver efecto de rearme abajo).
+  //   · confirmando contra nuestro servidor (ya hay token de tarjeta y la
+  //     petición está en vuelo) → NO se toca: rearmar aquí enseñaría un botón
+  //     «Pagar» activo mientras el cobro se está resolviendo.
+  const confirmando = useRef(false);
 
   // Datos para el comprobante electrónico (solo aplica al pago en Perú: fuera
   // de Perú cobra Lemon Squeezy como Merchant of Record y emite él su recibo).
@@ -60,6 +67,49 @@ export default function CulqiModal({ planKey, onClose }) {
       document.body.style.overflow = '';
     };
   }, [onClose]);
+
+  // ── Rearme del botón de pago ────────────────────────────────────────────
+  // El pago continúa FUERA de esta página (el iframe de Culqi o el checkout de
+  // Lemon Squeezy) y ninguno de los dos avisa de forma fiable cuando el usuario
+  // se echa atrás:
+  //   · Culqi: si cierra su ventana con la X, no siempre llama a window.culqi.
+  //   · Lemon Squeezy: es una navegación completa a otro dominio. Al volver con
+  //     «atrás», el navegador restaura la página TAL CUAL desde bfcache — con
+  //     el modal abierto y processing = true.
+  // En ambos casos el botón se quedaba deshabilitado («Procesando…») para
+  // siempre: el usuario vuelve, pulsa y no pasa NADA. Medido en Clarity como
+  // clic sin respuesta, con el usuario cerrando y reabriendo el modal para
+  // poder reintentar.
+  useEffect(() => {
+    if (!processing) return;
+
+    const rearmar = () => {
+      if (!confirmando.current) setProcessing(false);
+    };
+
+    // 1) Vuelta atrás desde el checkout externo (bfcache).
+    const onPageShow = (e) => { if (e.persisted) rearmar(); };
+    window.addEventListener('pageshow', onPageShow);
+
+    // 2) Cierre del widget de Culqi: inserta #culqi_checkout_frame al abrir y
+    //    lo quita al cerrar. Se vigila el DOM en vez de sondear por reloj.
+    let vistoFrame = false;
+    const obs = new MutationObserver(() => {
+      if (document.getElementById('culqi_checkout_frame')) vistoFrame = true;
+      else if (vistoFrame) rearmar();
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+
+    // 3) Red de seguridad: si el checkout nunca llegó a abrirse ni la
+    //    navegación ocurrió, el botón se rearma solo en vez de quedar muerto.
+    const t = setTimeout(rearmar, 20000);
+
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      obs.disconnect();
+      clearTimeout(t);
+    };
+  }, [processing]);
 
   const isSub = paymentType === 'subscription';
   const precioLista = isSub ? plan.subscription.price : plan[duration].price;
@@ -133,6 +183,7 @@ export default function CulqiModal({ planKey, onClose }) {
 
     setError('');
     setCpCampoError(null);
+    confirmando.current = false;
     setProcessing(true);
     track('begin_checkout', {
       plan: planKey,
@@ -158,10 +209,22 @@ export default function CulqiModal({ planKey, onClose }) {
       errLoad: c.errLoad,
       errRejected: c.errRejected,
       errPay: c.errPay,
-      onProcessing: () => setProcessing(true),
+      // A partir de aquí ya hay token y la petición al servidor está en vuelo:
+      // el botón deja de ser rearmable hasta que responda.
+      onProcessing: () => {
+        confirmando.current = true;
+        setProcessing(true);
+      },
       onError: (msg) => {
+        confirmando.current = false;
         setProcessing(false);
         setError(msg);
+      },
+      // El usuario cerró el formulario de tarjeta sin pagar: se le devuelve el
+      // botón, sin mensaje de error (no ha fallado nada, se lo pensó mejor).
+      onCancel: () => {
+        confirmando.current = false;
+        setProcessing(false);
       },
     });
   }
@@ -173,6 +236,9 @@ export default function CulqiModal({ planKey, onClose }) {
       return;
     }
     setError('');
+    // La navegación a Lemon Squeezy sale de esta página: si el usuario vuelve
+    // con «atrás», el efecto de rearme le devuelve el botón (bfcache).
+    confirmando.current = false;
     setProcessing(true);
     // En modo internacional (inglés) usamos el toggle Mensual/Anual; en español
     // (botón secundario) mapeamos la selección Culqi: 12m → anual, resto → mensual.

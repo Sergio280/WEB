@@ -1,13 +1,27 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import ErrorBoundary from '../ui/ErrorBoundary.jsx';
 import { QUICK_METRICS } from '../../data/metrics.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 // Las gráficas viven en su propio módulo y se cargan aparte: arrastran Chart.js
 // (~200 KB), que antes viajaba en el bundle principal y lo descargaba todo el
 // mundo antes de ver la portada, aunque no bajara nunca hasta aquí.
-const MetricsCharts = lazy(() => import('./MetricsCharts.jsx'));
+//
+// El import se REINTENTA una vez antes de darse por vencido: el fallo típico en
+// móvil es una petición que se corta, y a la segunda entra. Si tampoco entra,
+// la <ErrorBoundary> de abajo deja el hueco de las gráficas y la página sigue
+// viva — sin ella, este error tiraba abajo TODA la landing (pantalla en blanco:
+// ni portada, ni precios, ni formulario de prueba).
+const MetricsCharts = lazy(() =>
+  import('./MetricsCharts.jsx').catch(
+    () =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => import('./MetricsCharts.jsx').then(resolve, reject), 1200);
+      })
+  )
+);
 
 const accentBorder = {
   brand: 'border-brand-500/40',
@@ -102,9 +116,11 @@ export default function Metrics() {
           desde un enlace externo, además de contar como layout shift. */}
       <div ref={ref}>
         {visible && (
-          <Suspense fallback={<HuecoGraficas />}>
-            <MetricsCharts m={m} />
-          </Suspense>
+          <ErrorBoundary fallback={<HuecoGraficas />}>
+            <Suspense fallback={<HuecoGraficas />}>
+              <MetricsCharts m={m} />
+            </Suspense>
+          </ErrorBoundary>
         )}
         {!visible && <HuecoGraficas />}
       </div>
