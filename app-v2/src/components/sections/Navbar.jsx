@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
-import { track } from '../../lib/track.js';
+import { track, trackYNavegar } from '../../lib/track.js';
 
 // Botón para cambiar de idioma (ES ⇄ EN). Muestra el idioma al que se cambia.
 function LangToggle({ className = '' }) {
@@ -9,8 +9,10 @@ function LangToggle({ className = '' }) {
     <button
       type="button"
       onClick={() => {
-        track('lang_switch', { to: lang === 'es' ? 'en' : 'es' });
-        toggleLang();
+        // Cambiar de idioma es ahora una navegación de verdad (cada idioma es
+        // su propia página), así que hay que dar tiempo a que el evento salga.
+        const destino = lang === 'es' ? 'en' : 'es';
+        trackYNavegar('lang_switch', { to: destino }, toggleLang);
       }}
       aria-label={t.langSwitch.aria}
       title={t.langSwitch.toGo}

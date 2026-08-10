@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import Turnstile, { TURNSTILE_SITE_KEY } from '../ui/Turnstile.jsx';
-import { track } from '../../lib/track.js';
+import { track, trackYNavegar } from '../../lib/track.js';
 import { getStoredGclid } from '../../lib/gclid.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
@@ -76,9 +76,12 @@ export default function Trial() {
       });
       const data = await r.json();
       if (r.ok && data.success) {
+        // La conversión del embudo. Se espera a que salga antes de irse a la
+        // página de bienvenida: si se pierde aquí, no la ve ni GA4 ni Ads.
         track('trial_signup', { method: 'web_form' });
-        track('trial_activated', { method: 'web_form' });
-        window.location.href = tr.successUrl + '?email=' + encodeURIComponent(email.trim());
+        trackYNavegar('trial_activated', { method: 'web_form' }, () => {
+          window.location.href = tr.successUrl + '?email=' + encodeURIComponent(email.trim());
+        });
       } else {
         setFeedback({ type: 'err', msg: '✗ ' + (data.error || tr.errGeneric) });
         setSubmitting(false);

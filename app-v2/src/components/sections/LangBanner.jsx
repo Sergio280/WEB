@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
-import { track } from '../../lib/track.js';
+import { trackYNavegar } from '../../lib/track.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Aviso de idioma: «esta página también está en inglés».
@@ -56,8 +56,7 @@ export default function LangBanner() {
       <button
         type="button"
         onClick={() => {
-          track('lang_banner_switch', { to: idiomaSugerido });
-          setLang(idiomaSugerido);
+          trackYNavegar('lang_banner_switch', { to: idiomaSugerido }, () => setLang(idiomaSugerido));
         }}
         className="font-bold text-brand-200 underline underline-offset-2 hover:text-white"
       >

@@ -19,11 +19,15 @@
     <link rel="alternate" hreflang="x-default" href="https://bimsaddin.com/">
 
     <!-- ── Datos estructurados ──
-         Describe el producto para que el buscador pueda enseñar precio y
-         plataforma en el resultado. NO lleva aggregateRating: no hay
-         valoraciones reales que declarar, y la sección de testimonios del
-         propio sitio dice explícitamente que no se inventan. Inventarlas aquí
-         sería mentir en un formato que Google penaliza. -->
+         Describe el producto para que el buscador pueda enseñar precio,
+         plataforma y valoración en el resultado.
+
+         El aggregateRating y las reseñas son las REALES del Autodesk App Store
+         y se pintan en la sección de reseñas de esta misma página — requisito
+         de Google: no se puede marcar una valoración que el visitante no ve.
+         Los números salen de app-v2/src/data/reviews.js; si cambian allí, hay
+         que cambiarlos aquí y en en/index.html. Declarar una media distinta de
+         la que se enseña es justo lo que Google penaliza. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -36,6 +40,32 @@
       "url": "https://bimsaddin.com/",
       "inLanguage": "es",
       "description": "Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG.",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": 2,
+        "reviewCount": 2
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Cesar Urbina" },
+          "datePublished": "2026-08-10",
+          "name": "Una muy buena herramienta",
+          "reviewBody": "Un addins que me ayudo mucho en el inicio y me sigue ayudando en el desarrollo de mis proyectos.",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5", "worstRating": "1" }
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Franco Lescano Campos" },
+          "datePublished": "2026-08-01",
+          "name": "Excellent add-in",
+          "reviewBody": "Excellent add-in",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5", "worstRating": "1" }
+        }
+      ],
       "offers": {
         "@type": "Offer",
         "price": "60",

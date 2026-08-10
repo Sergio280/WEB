@@ -5,7 +5,7 @@ import { validarComprobante, normalizarComprobante, UMBRAL_DNI_BOLETA } from '..
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
 import { openLsCheckout } from '../../lib/lemonsqueezy.js';
-import { track } from '../../lib/track.js';
+import { track, trackYNavegar } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 
@@ -305,9 +305,14 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
     // En modo internacional (inglés) usamos el toggle Mensual/Anual; en español
     // (botón secundario) mapeamos la selección Culqi: 12m → anual, resto → mensual.
     const lsDuration = intl ? intlDuration : isSub ? 'monthly' : duration === '12m' ? 'yearly' : 'monthly';
-    track('begin_checkout', { plan: planKey, gateway: 'lemonsqueezy', duration: lsDuration, currency: 'USD' });
+    // Lemon Squeezy es una navegación a otro dominio: se espera a que el
+    // evento salga antes de abandonar la página.
     try {
-      openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() });
+      trackYNavegar(
+        'begin_checkout',
+        { plan: planKey, gateway: 'lemonsqueezy', duration: lsDuration, currency: 'USD' },
+        () => openLsCheckout({ plan: planKey, duration: lsDuration, email: email.trim() })
+      );
     } catch (e) {
       setProcessing(false);
       const msg = e.message || 'Error al iniciar el pago internacional.';
