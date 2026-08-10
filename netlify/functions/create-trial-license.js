@@ -204,9 +204,23 @@ function logSafeEmail(email) {
     return masked + '@' + dom;
 }
 
+// ⚠️ TURNSTILE_SECRET NO SE PUEDE ACTIVAR SOLO.
+// Va en pareja con VITE_TURNSTILE_SITE_KEY (la clave pública, que lee el widget
+// en app-v2/src/components/ui/Turnstile.jsx al compilar). Si se pone el secreto
+// aquí y la web se despliega SIN la clave pública, el formulario no manda token
+// y esta función rechaza el 100 % de los registros — con un error genérico, sin
+// más síntoma. Durante un tiempo el widget no existía en ninguna de las dos
+// webs, así que esa era la única consecuencia posible de activar el secreto.
+// Al añadir o rotar una, revisar la otra.
 async function verifyTurnstile(token, ip) {
     if (!process.env.TURNSTILE_SECRET) return true;  // no configurado → skip
-    if (!token) return false;
+    if (!token) {
+        // Se registra aparte de «token inválido» porque el motivo es otro y la
+        // solución también: casi siempre es la clave pública sin desplegar, no
+        // un bot. Si esto aparece para todo el mundo, falta VITE_TURNSTILE_SITE_KEY.
+        console.warn('[trial] Turnstile activo pero la petición no trae token — ¿falta VITE_TURNSTILE_SITE_KEY en el build de la web?');
+        return false;
+    }
     try {
         const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
             method: 'POST',

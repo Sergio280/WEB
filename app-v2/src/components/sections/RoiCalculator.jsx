@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
-import { precioDesde } from '../../data/pricing.js';
+import { precioDesde, PRECIOS_USD } from '../../data/pricing.js';
 
 // Fórmula EXACTA de la home actual:
 //   horasAhorradas = round(proyectos * horas * 0.80)
@@ -13,7 +13,14 @@ import { precioDesde } from '../../data/pricing.js';
 // `const PRECIO_MES = 60` que era una copia más del precio. Si se cambiaba la
 // tarifa, esta calculadora seguía prometiendo un retorno calculado sobre el
 // precio viejo — es decir, mentía al visitante justo en el argumento de venta.
-const PRECIO_MES = precioDesde('individual');
+//
+// La MONEDA depende de la región de pago, no del idioma (igual que en Pricing):
+// un ingeniero de México lee la web en español pero paga en dólares. Antes el
+// símbolo venía escrito dentro de las traducciones, y el bloque en inglés lo
+// tenía como 'S/ ': quien entraba desde fuera de Perú leía «Your professional
+// hourly rate: S/ 35» y «= S/ 4,200» en una página donde todo lo demás estaba
+// en dólares. Además el retorno se dividía SIEMPRE entre el precio en soles,
+// así que la cuenta mezclaba dos monedas.
 const AHORRO = 0.8;
 
 function Slider({ label, value, min, max, step, onChange, suffix, prefix }) {
@@ -37,8 +44,16 @@ function Slider({ label, value, min, max, step, onChange, suffix, prefix }) {
 }
 
 export default function RoiCalculator() {
-  const { t } = useLang();
+  const { t, region } = useLang();
   const r = t.roi;
+  const intlPay = region === 'INTL';
+  const curSym = intlPay ? '$' : 'S/';
+  // Precio mensual del plan de entrada EN LA MONEDA DEL VISITANTE, que es el
+  // que hay que dividir entre lo que gana por hora para saber en cuánto se le
+  // paga sola la licencia. Los USD viven como texto en pricing.js (para no
+  // perder el segundo decimal al mostrarlos: 16.90, no 16.9), así que aquí se
+  // convierten a número para poder dividir.
+  const precioMes = intlPay ? Number(PRECIOS_USD.individual.monthly) : precioDesde('individual');
   const [proj, setProj] = useState(3);
   const [hrs, setHrs] = useState(20);
   const [rate, setRate] = useState(35);
@@ -48,9 +63,9 @@ export default function RoiCalculator() {
     return {
       horasAhorradas: h,
       dinero: (h * rate).toLocaleString(r.locale),
-      diasPayback: Math.max(0.1, PRECIO_MES / (rate * 8)).toFixed(1),
+      diasPayback: Math.max(0.1, precioMes / (rate * 8)).toFixed(1),
     };
-  }, [proj, hrs, rate, r.locale]);
+  }, [proj, hrs, rate, r.locale, precioMes]);
 
   return (
     <Section>
@@ -65,7 +80,7 @@ export default function RoiCalculator() {
           <div>
             <Slider label={r.projects} value={proj} min={1} max={10} step={1} onChange={setProj} />
             <Slider label={r.hours} value={hrs} min={5} max={80} step={5} onChange={setHrs} suffix={r.hoursSuffix} />
-            <Slider label={r.rate} value={rate} min={15} max={120} step={5} onChange={setRate} prefix={r.ratePrefix} />
+            <Slider label={r.rate} value={rate} min={15} max={120} step={5} onChange={setRate} prefix={`${curSym} `} />
             <p className="mt-2 text-xs leading-relaxed text-slate-500">
               <strong className="text-slate-400">{r.note.strong}</strong>{r.note.rest}
             </p>
@@ -76,7 +91,7 @@ export default function RoiCalculator() {
             <p className="text-sm text-slate-400">{r.resultLabel}</p>
             <p className="mt-2 font-display text-5xl font-extrabold text-accent-green">{horasAhorradas}{r.resultHours}</p>
             <p className="mt-1 text-sm text-slate-400">
-              {r.moneyPre}<span className="font-bold text-white">{dinero}</span>{r.moneyPost}
+              {r.moneyPre}<span className="font-bold text-white">{curSym} {dinero}</span>{r.moneyPost}
             </p>
             <div className="mt-5 rounded-xl border border-accent-green/30 bg-accent-green/10 p-4 text-sm text-slate-300">
               {r.paybackPre}<strong className="text-accent-green">{r.paybackBold.replace('{d}', diasPayback)}</strong>{r.paybackPost}

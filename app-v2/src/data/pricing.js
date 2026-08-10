@@ -108,6 +108,31 @@ export function ahorroMaximoPct() {
   return max;
 }
 
+/**
+ * Mayor descuento del PAGO INTERNACIONAL: anual frente a doce mensualidades.
+ *
+ * Existe aparte de `ahorroMaximoPct` porque las dos ofertas no se parecen. En
+ * soles se venden cuatro duraciones (1/3/6/12 meses) y el mejor descuento ronda
+ * el 17 %; Lemon Squeezy solo tiene mensual y anual, y ahí el anual de
+ * Individual baja un 22 %. La nota al pie de Precios anunciaba a TODO el mundo
+ * las cuatro duraciones y el porcentaje en soles, así que a quien compraba
+ * fuera de Perú se le prometían opciones que su checkout no tiene y un
+ * descuento que no era el suyo.
+ *
+ * Los precios en USD son texto (para conservar el segundo decimal al
+ * mostrarlos), de ahí el Number().
+ */
+export function ahorroMaximoPctUsd() {
+  let max = 0;
+  for (const plan of Object.keys(PRECIOS_USD)) {
+    const mensual = Number(PRECIOS_USD[plan].monthly);
+    const anual   = Number(PRECIOS_USD[plan].yearly);
+    if (!mensual || !anual) continue;
+    max = Math.max(max, Math.round((1 - anual / (mensual * 12)) * 100));
+  }
+  return max;
+}
+
 /** Precio "desde" de un plan (el mensual), para tarjetas y navegación. */
 export function precioDesde(plan) {
   return precioPen(plan, '1m');

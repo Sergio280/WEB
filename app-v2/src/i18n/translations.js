@@ -381,11 +381,10 @@ export const translations = {
       hours: 'Horas de documentación por proyecto',
       rate: 'Valor de tu hora profesional',
       hoursSuffix: ' h',
-      ratePrefix: 'S/ ',
       note: { strong: 'Estimación orientativa.', rest: ' Asume una reducción del 80 % del tiempo en tareas automatizables por BIMS (encofrado, refuerzo, exportación a DWG, asignación de rejillas). El ahorro real depende del flujo de trabajo de cada estudio.' },
       resultLabel: 'Te ahorras al mes',
       resultHours: ' h',
-      moneyPre: '= S/ ',
+      moneyPre: '= ',
       moneyPost: ' en honorarios recuperados',
       paybackPre: 'La licencia se paga sola en ',
       paybackBold: '≈ {d} días',
@@ -413,6 +412,14 @@ export const translations = {
       footnoteMid: '. Mientras más larga la licencia, mayor el descuento — hasta ',
       footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' frente al precio mensual.',
+      // Nota equivalente para la región de pago internacional: Lemon Squeezy
+      // solo vende mensual y anual, así que prometer 1/3/6/12 meses ahí sería
+      // ofrecer algo que su checkout no puede darle.
+      footnoteIntlPre: 'Al comprar eliges la periodicidad: ',
+      footnoteIntlDurations: 'mensual o anual',
+      footnoteIntlMid: '. El plan anual sale hasta ',
+      footnoteIntlDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPctUsd()
+      footnoteIntlPost: ' más barato que pagar mes a mes.',
       // Solo se muestra en la región Perú (Culqi/soles). Fuera de Perú cobra
       // Lemon Squeezy como Merchant of Record y los impuestos los gestiona él.
       igvNote: 'Precios en soles con IGV incluido.',
@@ -560,6 +567,7 @@ export const translations = {
       errPwMatch: '✗ Las contraseñas no coinciden.',
       errGeneric: 'Hubo un error. Intenta de nuevo o escríbenos a soporte@bimsaddin.com',
       errConn: '✗ Error de conexión. Verifica tu internet e intenta de nuevo.',
+      errCaptcha: '✗ Completa la verificación de seguridad para continuar.',
       termsPre: 'Al continuar aceptas nuestros ',
       termsLink: 'términos',
       termsMid: ' y ',
@@ -994,11 +1002,10 @@ export const translations = {
       hours: 'Documentation hours per project',
       rate: 'Your professional hourly rate',
       hoursSuffix: ' h',
-      ratePrefix: 'S/ ',
       note: { strong: 'Indicative estimate.', rest: ' Assumes an 80% time reduction on the tasks BIMS automates (formwork, rebar, DWG export, grid assignment). Actual savings depend on each firm’s workflow.' },
       resultLabel: 'You save per month',
       resultHours: ' h',
-      moneyPre: '= S/ ',
+      moneyPre: '= ',
       moneyPost: ' in recovered fees',
       paybackPre: 'The license pays for itself in ',
       paybackBold: '≈ {d} days',
@@ -1026,6 +1033,13 @@ export const translations = {
       footnoteMid: '. The longer the license, the bigger the discount — up to ',
       footnoteDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPct()
       footnotePost: ' off the monthly price.',
+      // Same note for the international payment region: Lemon Squeezy only
+      // sells monthly and yearly.
+      footnoteIntlPre: 'When you buy you choose the billing period: ',
+      footnoteIntlDurations: 'monthly or yearly',
+      footnoteIntlMid: '. The yearly plan works out up to ',
+      footnoteIntlDiscount: '−{pct}%', // {pct} lo calcula Pricing con ahorroMaximoPctUsd()
+      footnoteIntlPost: ' cheaper than paying month to month.',
       // Ver nota de la versión en español: solo aplica a la región Perú.
       igvNote: 'Prices in soles include Peruvian VAT (IGV).',
       promoBadge: '🎁 Promo — you save S/{ahorro}',
@@ -1171,6 +1185,7 @@ export const translations = {
       errPwMatch: '✗ Passwords don’t match.',
       errGeneric: 'Something went wrong. Try again or write to us at soporte@bimsaddin.com',
       errConn: '✗ Connection error. Check your internet and try again.',
+      errCaptcha: '✗ Complete the security check to continue.',
       termsPre: 'By continuing you accept our ',
       termsLink: 'terms',
       termsMid: ' and ',

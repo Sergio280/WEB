@@ -73,6 +73,22 @@
     # para el usuario, solo un pago que nunca ocurre.
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://checkout.culqi.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://checkout.culqi.com https://secure.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://api.culqi.com https://secure.culqi.com https://checkout.culqi.com; object-src 'none'; base-uri 'self'; form-action 'self' https://secure.culqi.com https://checkout.culqi.com;"
 
+# ── Caché de los assets compilados ────────────────────────────────────────────
+# Vite pone un hash del CONTENIDO en el nombre de cada archivo que emite
+# (index-SS7IkIHz.js, index-DHYbUrOe.css…), así que uno de estos nunca cambia
+# por dentro: si cambia, cambia el nombre. Sin esta regla Netlify les aplica su
+# defecto (max-age=0, must-revalidate) y el navegador pregunta por CADA archivo
+# en CADA visita — una ida y vuelta de red regalada por archivo, que en la red
+# de una obra se nota en la primera pintura y en las visitas repetidas.
+#
+# NO extender esto a index.html: ese SÍ tiene que revalidarse en cada visita,
+# porque es quien apunta a los nombres nuevos. Cachearlo dejaría a la gente
+# pidiendo assets de un despliegue que ya no existe.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # ── Descarga de ejecutables ────────────────────────────────────────────────────
 [[headers]]
   for = "/*.exe"
