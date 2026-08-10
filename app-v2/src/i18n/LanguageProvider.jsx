@@ -4,25 +4,24 @@ import { translations, SPANISH_COUNTRIES } from './translations.js';
 // ─────────────────────────────────────────────────────────────────────────────
 // LanguageProvider — estado global de idioma (es | en) Y región de pago.
 //
-// Prioridad de detección del IDIOMA:
-//   1. La RUTA. El inglés se sirve en /en/ como página propia (app-v2/en/), con
-//      su <title>, su description y su canonical. Si estamos ahí, se manda esa
-//      ruta y no la discute nadie.
-//   2. Preferencia explícita del usuario guardada en localStorage (el toggle).
-//   3. El idioma del navegador, como estimación instantánea.
+// EL IDIOMA LO DECIDE LA RUTA, y solo la ruta: "/" es la landing en español y
+// "/en/" la inglesa, cada una con su <title>, su description y su canonical
+// (ver app-v2/en/). Aquí no se elige nada; se lee.
 //
-// LA GEO YA NO CAMBIA EL IDIOMA — solo la región de pago. Antes sí lo cambiaba,
-// y eso dejaba la URL y el contenido diciendo cosas distintas: "/" se anuncia
-// como la versión en español (canonical + hreflang) y a la vez servía inglés a
-// medio mundo, incluido el rastreador de Google, que se conecta sobre todo
-// desde Estados Unidos. Resultado: dos URLs con el mismo contenido y ninguna
-// forma de saber cuál indexar para cada idioma.
+// Suena rígido y es a propósito. Antes el idioma lo decidía la geolocalización
+// cambiando los TEXTOS sin cambiar la URL, así que "/" se anunciaba como la
+// versión en español y a la vez servía inglés a medio mundo, incluido el
+// rastreador de Google (que se conecta sobre todo desde Estados Unidos). Para
+// un buscador eran dos URLs con el mismo contenido y ninguna forma de saber
+// cuál indexar para cada idioma.
 //
-// Tampoco se redirige por geo: "/" es la página del mercado principal y
-// mandarla a /en/ desde una IP estadounidense es justo lo que haría que Google
-// viera la versión española como una simple redirección. En su lugar, a quien
-// llega de fuera se le ofrece el cambio con un aviso visible (LangBanner) y el
-// selector de la barra. La URL y el idioma nunca se contradicen.
+// A quien llega de un país no hispanohablante se le manda a /en/, pero eso lo
+// decide el EDGE (netlify/edge-functions/idioma.js) antes de servir la página:
+// así aterriza directamente en inglés, sin destello de español, y la URL y el
+// contenido siguen sin contradecirse. Aquí no se redirige nada.
+//
+// El aviso de idioma (LangBanner) cubre lo que el edge no puede: quien abre un
+// enlace compartido de la otra landing, o a quien la geo-IP le adivinó mal.
 //
 // REGIÓN DE PAGO (independiente del idioma): 'PE' | 'INTL'. Se deriva SOLO del
 // país real (no del idioma), porque idioma y moneda son cosas distintas: un
@@ -44,6 +43,18 @@ function savedLang() {
     return v === 'es' || v === 'en' ? v : null;
   } catch {
     return null;
+  }
+}
+
+// La preferencia se guarda TAMBIÉN en una cookie, no por gusto: localStorage no
+// viaja en la petición, así que el edge no puede leerlo. Sin esta cookie, quien
+// pulsara «Ver en español» desde /en/ llegaría a "/" y el edge volvería a
+// echarlo a /en/ — un bucle del que no se sale.
+function guardarCookieIdioma(lang) {
+  try {
+    document.cookie = `${STORAGE_KEY}=${lang}; path=/; max-age=31536000; SameSite=Lax`;
+  } catch {
+    /* sin cookies el edge decide por geo, que es el comportamiento por defecto */
   }
 }
 
@@ -179,6 +190,8 @@ export function LanguageProvider({ children }) {
     } catch {
       /* almacenamiento no disponible: la elección dura solo esta navegación */
     }
+    // La cookie es la que ve el edge; sin ella la geo volvería a decidir.
+    guardarCookieIdioma(next);
     if (next === lang) return;
     window.location.assign(rutaDelIdioma(next));
   }

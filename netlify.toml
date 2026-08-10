@@ -35,6 +35,16 @@
   path     = "/api/geo"
   function = "geo"
 
+# ── Reparto de idioma en la home ─────────────────────────────────────────────
+# Manda a /en/ al visitante que no está en un país hispanohablante, decidiéndolo
+# ANTES de servir nada: sin destello de español y sin esperar a una petición de
+# geo. Solo actúa en "/" — nunca en "/en/" —, respeta la cookie bims_lang si el
+# usuario ya eligió, y deja pasar a los rastreadores para que "/" se siga
+# indexando en español. El razonamiento largo está en la cabecera del archivo.
+[[edge_functions]]
+  path     = "/"
+  function = "idioma"
+
 # ── Headers de seguridad globales ─────────────────────────────────────────────
 [[headers]]
   for = "/*"

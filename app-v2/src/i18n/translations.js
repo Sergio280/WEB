@@ -11,29 +11,11 @@
 // devuelve uno de estos, la página arranca en español; en cualquier otro caso,
 // en inglés. La preferencia explícita del usuario (toggle) siempre manda.
 // ─────────────────────────────────────────────────────────────────────────────
-export const SPANISH_COUNTRIES = new Set([
-  'ES', // España
-  'MX', // México
-  'AR', // Argentina
-  'CO', // Colombia
-  'PE', // Perú
-  'VE', // Venezuela
-  'CL', // Chile
-  'EC', // Ecuador
-  'GT', // Guatemala
-  'CU', // Cuba
-  'BO', // Bolivia
-  'DO', // República Dominicana
-  'HN', // Honduras
-  'PY', // Paraguay
-  'SV', // El Salvador
-  'NI', // Nicaragua
-  'CR', // Costa Rica
-  'PA', // Panamá
-  'UY', // Uruguay
-  'PR', // Puerto Rico
-  'GQ', // Guinea Ecuatorial
-]);
+// La lista de países hispanohablantes se mudó a su propio archivo para que
+// pueda importarla también la edge function que reparte idioma (no puede
+// cargar este archivo entero). Se re-exporta para no tocar a quien ya la
+// importaba desde aquí.
+export { SPANISH_COUNTRIES } from './paises-hispanos.js';
 
 export const translations = {
   // ───────────────────────────────────────────────────────────────────────────
