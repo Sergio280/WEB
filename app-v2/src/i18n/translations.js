@@ -139,6 +139,7 @@ export const translations = {
       ctaLink: 'Activa tu prueba gratis →',
     },
 
+    saltarAlContenido: 'Saltar al contenido',
     langBanner: {
       es: {
         msg: 'Esta página también está en español.',
@@ -158,14 +159,14 @@ export const translations = {
       soon: 'Video próximamente',
       close: 'Cerrar ✕',
       closeAria: 'Cerrar',
-      items: [
-        { title: 'Encofrado de todo el edificio en 1 clic', desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.' },
-        { title: 'Exporta planos a DWG con las imágenes adentro', desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.' },
-        { title: 'Tarrajeo de todos los ambientes', desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.' },
-        { title: 'Importa DWG, escala sólidos y exporta a familia .RFA', desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.' },
-        { title: 'Asigna rejillas a cientos de elementos', desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.' },
-        { title: 'Refuerzo de columnas y vigas en minutos', desc: 'Calcula y coloca el acero estructural automáticamente.' },
-      ],
+      items: {
+        encofrado: { title: 'Encofrado de todo el edificio en 1 clic', desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.' },
+        dwg: { title: 'Exporta planos a DWG con las imágenes adentro', desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.' },
+        tarrajeo: { title: 'Tarrajeo de todos los ambientes', desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.' },
+        rfa: { title: 'Importa DWG, escala sólidos y exporta a familia .RFA', desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.' },
+        rejillas: { title: 'Asigna rejillas a cientos de elementos', desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.' },
+        refuerzo: { title: 'Refuerzo de columnas y vigas en minutos', desc: 'Calcula y coloca el acero estructural automáticamente.' },
+      },
     },
 
     bento: {
@@ -772,6 +773,7 @@ export const translations = {
       ctaLink: 'Activate your free trial →',
     },
 
+    saltarAlContenido: 'Skip to content',
     langBanner: {
       es: {
         msg: 'Esta página también está en español.',
@@ -791,14 +793,14 @@ export const translations = {
       soon: 'Video coming soon',
       close: 'Close ✕',
       closeAria: 'Close',
-      items: [
-        { title: 'Formwork for the whole building in 1 click', desc: 'Generates formwork walls and floors over the structure, automatically.' },
-        { title: 'Export sheets to DWG with the images inside', desc: 'Images stay embedded in the DWG, not as external references.' },
-        { title: 'Plastering for every room', desc: 'Creates wall and floor finishes per room, ready to quantify.' },
-        { title: 'Import DWG, scale solids and export to .RFA family', desc: 'Turns a DWG’s solids into editable Revit objects: scale them and export them as an .RFA family.' },
-        { title: 'Assign grids to hundreds of elements', desc: 'Each element gets its nearest grids with no manual selection.' },
-        { title: 'Column and beam reinforcement in minutes', desc: 'Calculates and places the structural rebar automatically.' },
-      ],
+      items: {
+        encofrado: { title: 'Formwork for the whole building in 1 click', desc: 'Generates formwork walls and floors over the structure, automatically.' },
+        dwg: { title: 'Export sheets to DWG with the images inside', desc: 'Images stay embedded in the DWG, not as external references.' },
+        tarrajeo: { title: 'Plastering for every room', desc: 'Creates wall and floor finishes per room, ready to quantify.' },
+        rfa: { title: 'Import DWG, scale solids and export to .RFA family', desc: 'Turns a DWG’s solids into editable Revit objects: scale them and export them as an .RFA family.' },
+        rejillas: { title: 'Assign grids to hundreds of elements', desc: 'Each element gets its nearest grids with no manual selection.' },
+        refuerzo: { title: 'Column and beam reinforcement in minutes', desc: 'Calculates and places the structural rebar automatically.' },
+      },
     },
 
     bento: {

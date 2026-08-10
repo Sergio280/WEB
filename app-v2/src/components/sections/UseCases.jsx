@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import BeforeAfterSlider from '../ui/BeforeAfterSlider.jsx';
@@ -25,12 +24,11 @@ function EncofradoVisual() {
           <div key={r.label} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
             <div className="mb-2 text-xs text-slate-400">{r.label}</div>
             <div className="h-2 overflow-hidden rounded-full bg-white/5">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: r.w }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: 'easeOut' }}
-                className={`h-full rounded-full bg-gradient-to-r ${r.from} ${r.to}`}
+              {/* Crece de 0 hasta su ancho: el destino viaja en --barra
+                  (.anim-barra en index.css). */}
+              <div
+                style={{ '--barra': r.w }}
+                className={`anim-barra h-full rounded-full bg-gradient-to-r ${r.from} ${r.to}`}
               />
             </div>
           </div>
@@ -198,15 +196,10 @@ export default function UseCases() {
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={uc.id}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35 }}
-          className="mt-10 grid items-start gap-10 lg:grid-cols-2"
-        >
+      <div
+        key={uc.id}
+        className="anim-suave mt-10 grid items-start gap-10 lg:grid-cols-2"
+      >
           {/* Stepper */}
           <div>
             <h3 className="font-display text-lg font-bold leading-snug text-white">
@@ -248,8 +241,7 @@ export default function UseCases() {
           <div className="rounded-2xl border border-white/10 glass p-5 lg:sticky lg:top-24">
             <Visual />
           </div>
-        </motion.div>
-      </AnimatePresence>
+      </div>
     </Section>
   );
 }

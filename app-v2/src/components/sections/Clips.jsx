@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import { CLIPS } from '../../data/nav.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
+import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 
 // Lightbox modal que reproduce el clip de YouTube seleccionado.
 function Lightbox({ clip, onClose, labels }) {
+  const cajaRef = useRef(null);
+  useFocusTrap(cajaRef);
+
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
@@ -19,11 +22,8 @@ function Lightbox({ clip, onClose, labels }) {
   }, [onClose]);
 
   return (
-    <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
+      className="anim-fade fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       {/* El ancho se limita por DOS cosas a la vez: el máximo de diseño (56rem)
@@ -32,13 +32,14 @@ function Lightbox({ clip, onClose, labels }) {
           ventana y el botón de cerrar —que va por encima del marco— quedaba
           fuera de la pantalla. Se descuentan 9rem: el botón de cerrar arriba,
           el título abajo y el margen del overlay. */}
-      <motion.div
-        className="relative w-full max-w-4xl"
+      <div
+        ref={cajaRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={clip.title}
+        tabIndex={-1}
+        className="anim-modal relative w-full max-w-4xl focus:outline-none"
         style={{ width: 'min(56rem, calc((100dvh - 9rem) * 16 / 9))' }}
-        initial={{ scale: 0.92, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.92, y: 20 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 26 }}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -58,8 +59,8 @@ function Lightbox({ clip, onClose, labels }) {
           />
         </div>
         <p className="mt-3 text-center font-display font-bold text-white">{clip.title}</p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -111,8 +112,11 @@ export default function Clips() {
   const { t } = useLang();
   const [active, setActive] = useState(null);
 
-  // Combina los IDs de YouTube (data) con los textos del idioma activo.
-  const clips = CLIPS.map((c, i) => ({ yt: c.yt, ...t.clips.items[i] }));
+  // Combina los vídeos (data) con los textos del idioma activo, emparejados por
+  // ID y no por posición en el array. Un clip cuyo texto falte se descarta en
+  // vez de tumbar la sección: antes se leía items[i], y un clip añadido sin su
+  // traducción daba undefined y reventaba al pedirle el título.
+  const clips = CLIPS.map((c) => ({ id: c.id, yt: c.yt, ...t.clips.items[c.id] })).filter((c) => c.title);
 
   function play(clip) {
     setActive(clip);
@@ -130,20 +134,18 @@ export default function Clips() {
       <Reveal delay={0.1} className="mt-12">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {clips.map((clip) => (
-            <ClipCard key={clip.title} clip={clip} onPlay={play} soonLabel={t.clips.soon} />
+            <ClipCard key={clip.id} clip={clip} onPlay={play} soonLabel={t.clips.soon} />
           ))}
         </div>
       </Reveal>
 
-      <AnimatePresence>
-        {active && (
-          <Lightbox
-            clip={active}
-            onClose={() => setActive(null)}
-            labels={{ close: t.clips.close, closeAria: t.clips.closeAria }}
-          />
-        )}
-      </AnimatePresence>
+      {active && (
+        <Lightbox
+          clip={active}
+          onClose={() => setActive(null)}
+          labels={{ close: t.clips.close, closeAria: t.clips.closeAria }}
+        />
+      )}
     </Section>
   );
 }

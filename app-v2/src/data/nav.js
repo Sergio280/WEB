@@ -32,37 +32,21 @@ export const APPSTORE_URL = {
   en: 'https://marketplace.autodesk.com/apps/534cf400-2d5e-42ff-b43b-7b8a579b052c',
 };
 
-// Galería de clips cortos — IDs de YouTube verbatim de la home original.
+// Galería de clips cortos. Aquí vive SOLO lo que no es texto: el identificador
+// del clip y su vídeo de YouTube. Los títulos y descripciones están en
+// i18n/translations.js (clips.items), emparejados por ESE identificador.
+//
+// Antes se emparejaban por posición en el array —CLIPS[i] con items[i]— y
+// además este archivo arrastraba una copia en español de los textos que ya no
+// se usaba: la pisaba la traducción. Añadir un clip aquí y olvidarlo allí
+// dejaba items[i] en undefined y la sección entera reventaba al leer el título.
+//
 // yt vacío => tarjeta "Próximamente" (sin reproducción).
 export const CLIPS = [
-  {
-    yt: 'U9LvemehIkQ',
-    title: 'Encofrado de todo el edificio en 1 clic',
-    desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.',
-  },
-  {
-    yt: 'no7dvQfRitI',
-    title: 'Exporta planos a DWG con las imágenes adentro',
-    desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.',
-  },
-  {
-    yt: 'b-g0enh0D6o',
-    title: 'Tarrajeo de todos los ambientes',
-    desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.',
-  },
-  {
-    yt: 'LHT5X_6WhLE',
-    title: 'Importa DWG, escala sólidos y exporta a familia .RFA',
-    desc: 'Convierte los sólidos de un DWG en objetos editables de Revit: escálalos y expórtalos como familia .RFA.',
-  },
-  {
-    yt: '',
-    title: 'Asigna rejillas a cientos de elementos',
-    desc: 'Cada elemento recibe sus ejes más cercanos sin selección manual.',
-  },
-  {
-    yt: '',
-    title: 'Refuerzo de columnas y vigas en minutos',
-    desc: 'Calcula y coloca el acero estructural automáticamente.',
-  },
+  { id: 'encofrado', yt: 'U9LvemehIkQ' },
+  { id: 'dwg',       yt: 'no7dvQfRitI' },
+  { id: 'tarrajeo',  yt: 'b-g0enh0D6o' },
+  { id: 'rfa',       yt: 'LHT5X_6WhLE' },
+  { id: 'rejillas',  yt: '' },
+  { id: 'refuerzo',  yt: '' },
 ];

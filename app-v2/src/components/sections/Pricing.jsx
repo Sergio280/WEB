@@ -3,7 +3,7 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG } from '../../data/culqi.js';
-import { PRECIOS_USD, ahorroMaximoPct, ahorroMaximoPctUsd } from '../../data/pricing.js';
+import { PRECIOS_USD, ahorroMaximoPct, ahorroMaximoPctUsd, formatoUsd } from '../../data/pricing.js';
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
@@ -156,7 +156,7 @@ export default function Pricing() {
                             {curSym}{c.priceFrom}
                           </span>
                         )}
-                        {curSym}{intlPay ? (USD_FROM[c.key] ?? c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
+                        {curSym}{intlPay ? (USD_FROM[c.key] != null ? formatoUsd(USD_FROM[c.key]) : c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
                         <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                       </p>
                       {promoPorPlan[c.key] && (

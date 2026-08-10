@@ -44,10 +44,26 @@ export const PRECIOS_PEN = {
 // Merchant of Record — vende a su nombre, gestiona los impuestos de cada país y
 // nos liquida a nosotros. Nuestro cliente es LS, no el usuario final.
 // Estos valores son SOLO para mostrar: los cobra LS según su propio panel.
+// NÚMEROS, no texto. Estuvieron guardados como cadenas ('16.90', '159') para
+// que al mostrarlos no se perdiera el segundo decimal, pero eso convertía en
+// trampa cualquier cuenta que se hiciera con ellos: '16.90' * 12 cuela, y
+// '159' + algo concatena en vez de sumar, sin avisar. El formateo es cosa de la
+// vista: para eso está `formatoUsd`.
 export const PRECIOS_USD = {
-  individual:  { monthly: '16.90', yearly: '159' },
-  profesional: { monthly: '26.90', yearly: '269' },
+  individual:  { monthly: 16.90, yearly: 159 },
+  profesional: { monthly: 26.90, yearly: 269 },
 };
+
+/**
+ * Formatea un importe en dólares para enseñarlo: dos decimales si los tiene,
+ * ninguno si es redondo. 16.9 → "16.90"; 159 → "159". Es la regla que seguían
+ * los valores cuando eran texto, ahora en un solo sitio.
+ */
+export function formatoUsd(valor) {
+  const n = Number(valor);
+  if (!Number.isFinite(n)) return '';
+  return Number.isInteger(n) ? String(n) : n.toFixed(2);
+}
 
 // Meses de licencia que otorga cada duración.
 export const MESES_POR_DURACION = { '1m': 1, '3m': 3, '6m': 6, '12m': 12 };
@@ -118,15 +134,12 @@ export function ahorroMaximoPct() {
  * las cuatro duraciones y el porcentaje en soles, así que a quien compraba
  * fuera de Perú se le prometían opciones que su checkout no tiene y un
  * descuento que no era el suyo.
- *
- * Los precios en USD son texto (para conservar el segundo decimal al
- * mostrarlos), de ahí el Number().
  */
 export function ahorroMaximoPctUsd() {
   let max = 0;
   for (const plan of Object.keys(PRECIOS_USD)) {
-    const mensual = Number(PRECIOS_USD[plan].monthly);
-    const anual   = Number(PRECIOS_USD[plan].yearly);
+    const mensual = PRECIOS_USD[plan].monthly;
+    const anual   = PRECIOS_USD[plan].yearly;
     if (!mensual || !anual) continue;
     max = Math.max(max, Math.round((1 - anual / (mensual * 12)) * 100));
   }

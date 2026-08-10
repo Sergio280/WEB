@@ -7,12 +7,6 @@
 User-agent: *
 Allow: /
 
-# La home anterior se conserva publicada solo para poder volver atrás rápido si
-# la landing nueva fallara. Es el MISMO contenido con otra URL, así que dejarla
-# indexar competiría consigo misma; y sus precios están escritos a mano, fuera
-# del verificador, así que un buscador podría enseñar una tarifa vieja.
-Disallow: /legacy.html
-
 # Páginas de después de comprar o de registrarse. No tienen valor de búsqueda y
 # llevan el correo del cliente en la URL.
 Disallow: /success.html

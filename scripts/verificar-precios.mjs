@@ -11,8 +11,16 @@
 // Si se separan, el usuario ve un precio en la web y se le cobra otro. Este
 // script compara ambos y falla con código 1 si no cuadran.
 //
+// PRECIOS INTERNACIONALES (dólares): el mismo problema, con un agravante — lo
+// que se cobra NO está en este repositorio, lo decide el panel de Lemon Squeezy.
+// Hasta ahora lo único que unía PRECIOS_USD con la realidad era un comentario
+// en _lib/ls-plans.js. Si se le pasa LS_API_KEY, el script pregunta a la API de
+// LS cuánto cuesta de verdad cada variant y lo compara. Sin la clave avisa y
+// sigue: el resto de comprobaciones no dependen de la red.
+//
 // Uso:
 //   node scripts/verificar-precios.mjs
+//   LS_API_KEY=... node scripts/verificar-precios.mjs   (incluye los dólares)
 //
 // Correrlo SIEMPRE antes de desplegar un cambio de precios.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -37,6 +45,10 @@ const cpFront = await import(
   'file://' + path.join(raíz, 'app-v2', 'src', 'lib', 'comprobante.js')
 );
 const cpBack = require(path.join(raíz, 'netlify', 'functions', '_lib', 'comprobante.js'));
+
+// Mapa variant de Lemon Squeezy → plan. Es lo que el webhook usa para saber qué
+// licencia dar por cada compra internacional.
+const lsPlans = require(path.join(raíz, 'netlify', 'functions', '_lib', 'ls-plans.js'));
 
 let errores = 0;
 const fallo = (msg) => { console.error('  ✗ ' + msg); errores++; };
@@ -144,6 +156,65 @@ for (const [datos, total, esperado, caso] of CASOS) {
   if (b !== esperado) fallo(`validarComprobante backend (${caso}): se esperaba ${esperado} y dio ${b}`);
 }
 
+// ── Precios internacionales contra Lemon Squeezy ─────────────────────────────
+// Se comprueban dos cosas distintas:
+//   a) que cada combinación plan+periodo que la web ofrece tenga un variant al
+//      que mandar al comprador (esto no necesita red);
+//   b) que el importe de ese variant en LS sea el que la web anuncia (esto sí).
+console.log('  Precios internacionales (USD, sin IGV — los impuestos los gestiona LS):\n');
+
+const PERIODOS = { monthly: 'mensual', yearly: 'anual' };
+const variantesEsperadas = [];
+for (const plan of Object.keys(front.PRECIOS_USD)) {
+  for (const periodo of Object.keys(PERIODOS)) {
+    const anunciado = front.PRECIOS_USD[plan][periodo];
+    const variantId = lsPlans.variantIdFor(plan, periodo);
+    if (!variantId) {
+      fallo(`sin variant de Lemon Squeezy para ${plan} ${PERIODOS[periodo]}: la web lo ofrece y el checkout no puede cobrarlo`);
+      continue;
+    }
+    if (typeof anunciado !== 'number' || !Number.isFinite(anunciado)) {
+      fallo(`PRECIOS_USD.${plan}.${periodo} no es un número (${JSON.stringify(anunciado)})`);
+      continue;
+    }
+    variantesEsperadas.push({ plan, periodo, anunciado, variantId });
+    console.log(
+      '    ' + plan.padEnd(14) + PERIODOS[periodo].padEnd(9) +
+      ('$' + front.formatoUsd(anunciado)).padStart(9) +
+      '   variant ' + variantId
+    );
+  }
+}
+
+const LS_API_KEY = process.env.LS_API_KEY || '';
+if (!LS_API_KEY) {
+  console.log('\n    ⚠ Sin LS_API_KEY: no se ha comprobado contra Lemon Squeezy lo que');
+  console.log('      REALMENTE se cobra. Exporta la clave y vuelve a correrlo antes de');
+  console.log('      desplegar un cambio de precios internacionales.');
+} else {
+  for (const v of variantesEsperadas) {
+    try {
+      const r = await fetch(`https://api.lemonsqueezy.com/v1/variants/${v.variantId}`, {
+        headers: { Accept: 'application/vnd.api+json', Authorization: `Bearer ${LS_API_KEY}` },
+      });
+      if (!r.ok) { fallo(`Lemon Squeezy respondió HTTP ${r.status} para el variant ${v.variantId} (${v.plan} ${v.periodo})`); continue; }
+      const json = await r.json();
+      // LS devuelve el importe en centavos.
+      const centavos = json?.data?.attributes?.price;
+      if (typeof centavos !== 'number') { fallo(`el variant ${v.variantId} no trae precio en la respuesta de LS`); continue; }
+      const real = centavos / 100;
+      if (Math.abs(real - v.anunciado) > 0.005) {
+        fallo(`${v.plan} ${v.periodo}: la web anuncia $${front.formatoUsd(v.anunciado)} y Lemon Squeezy cobra $${front.formatoUsd(real)}`);
+      }
+    } catch (e) {
+      fallo(`no se pudo consultar el variant ${v.variantId}: ${e?.message || e}`);
+    }
+  }
+  if (!errores) console.log('\n    ✓ Comprobado contra la API de Lemon Squeezy: cobra lo que se anuncia.');
+}
+
+console.log('');
+
 // ── Resumen legible de la tabla vigente ──────────────────────────────────────
 console.log('  Tabla vigente (soles, IGV incluido):\n');
 console.log('    plan          dur     total      base      IGV');
@@ -166,4 +237,5 @@ if (errores) {
   process.exit(1);
 }
 console.log('✓ Precios sincronizados · desglose de IGV exacto al céntimo · validaciones');
-console.log('  de RUC/DNI idénticas en frontend y backend.\n');
+console.log('  de RUC/DNI idénticas en frontend y backend · cada plan internacional');
+console.log('  tiene variant en Lemon Squeezy' + (process.env.LS_API_KEY ? ' y cobra lo anunciado.' : ' (importes sin comprobar: falta LS_API_KEY).') + '\n');

@@ -23,20 +23,27 @@ import { precioDesde, PRECIOS_USD } from '../../data/pricing.js';
 // así que la cuenta mezclaba dos monedas.
 const AHORRO = 0.8;
 
-function Slider({ label, value, min, max, step, onChange, suffix, prefix }) {
+function Slider({ id, label, value, min, max, step, onChange, suffix, prefix }) {
   const pct = ((value - min) / (max - min)) * 100;
+  // `htmlFor` + `id` atan la etiqueta al control: sin eso el <label> era
+  // decorativo y un lector de pantalla anunciaba «control deslizante, 35» sin
+  // decir de qué. Además hace que pulsar sobre el texto enfoque el control.
   return (
     <div className="mb-6">
-      <label className="mb-2 block text-sm font-semibold text-slate-300">
+      <label htmlFor={id} className="mb-2 block text-sm font-semibold text-slate-300">
         {label}: <span className="font-extrabold text-brand-300">{prefix}{value}{suffix}</span>
       </label>
       <input
+        id={id}
         type="range"
         min={min}
         max={max}
         step={step}
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value, 10))}
+        // El valor que se anuncia lleva su unidad o su moneda; el número pelado
+        // («35») no dice nada por sí solo.
+        aria-valuetext={`${prefix || ''}${value}${suffix || ''}`}
         style={{ '--pct': `${pct}%` }}
       />
     </div>
@@ -50,10 +57,8 @@ export default function RoiCalculator() {
   const curSym = intlPay ? '$' : 'S/';
   // Precio mensual del plan de entrada EN LA MONEDA DEL VISITANTE, que es el
   // que hay que dividir entre lo que gana por hora para saber en cuánto se le
-  // paga sola la licencia. Los USD viven como texto en pricing.js (para no
-  // perder el segundo decimal al mostrarlos: 16.90, no 16.9), así que aquí se
-  // convierten a número para poder dividir.
-  const precioMes = intlPay ? Number(PRECIOS_USD.individual.monthly) : precioDesde('individual');
+  // paga sola la licencia.
+  const precioMes = intlPay ? PRECIOS_USD.individual.monthly : precioDesde('individual');
   const [proj, setProj] = useState(3);
   const [hrs, setHrs] = useState(20);
   const [rate, setRate] = useState(35);
@@ -78,9 +83,9 @@ export default function RoiCalculator() {
         <div className="mt-9 grid items-center gap-8 lg:grid-cols-2">
           {/* Controles */}
           <div>
-            <Slider label={r.projects} value={proj} min={1} max={10} step={1} onChange={setProj} />
-            <Slider label={r.hours} value={hrs} min={5} max={80} step={5} onChange={setHrs} suffix={r.hoursSuffix} />
-            <Slider label={r.rate} value={rate} min={15} max={120} step={5} onChange={setRate} prefix={`${curSym} `} />
+            <Slider id="roi-proyectos" label={r.projects} value={proj} min={1} max={10} step={1} onChange={setProj} />
+            <Slider id="roi-horas" label={r.hours} value={hrs} min={5} max={80} step={5} onChange={setHrs} suffix={r.hoursSuffix} />
+            <Slider id="roi-tarifa" label={r.rate} value={rate} min={15} max={120} step={5} onChange={setRate} prefix={`${curSym} `} />
             <p className="mt-2 text-xs leading-relaxed text-slate-500">
               <strong className="text-slate-400">{r.note.strong}</strong>{r.note.rest}
             </p>
