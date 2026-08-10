@@ -102,6 +102,11 @@ export const translations = {
       // "Disponible en" (no "Verificado"): coincide con el badge oficial y evita
       // insinuar el Certified Apps Program, del que BIMS no forma parte.
       badge: 'Disponible en el Autodesk App Store',
+      // El recuento va SIEMPRE con la media: «5,0» a secas insinúa un respaldo
+      // que dos reseñas todavía no dan. La fuente se oculta en pantallas
+      // estrechas —donde el sello no cabe entero— pero el recuento nunca.
+      ratingCount: '{n} reseñas',
+      ratingSource: 'en el Autodesk App Store',
     },
 
     midCta: {
@@ -743,6 +748,11 @@ export const translations = {
       // "Available on" (not "Verified"): matches the official badge and avoids
       // implying the Certified Apps Program, which BIMS is not part of.
       badge: 'Available on the Autodesk App Store',
+      // The count always travels with the average: a bare "5.0" implies a
+      // backing that two reviews don't yet give. The source is hidden on narrow
+      // screens — where the badge doesn't fit — but the count never is.
+      ratingCount: '{n} reviews',
+      ratingSource: 'on the Autodesk App Store',
     },
 
     midCta: {

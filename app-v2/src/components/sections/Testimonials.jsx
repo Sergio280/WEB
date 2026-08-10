@@ -12,9 +12,9 @@ import { useLang } from '../../i18n/LanguageProvider.jsx';
 // El texto de cada reseña va tal como lo escribió su autor, sin traducir, en
 // las dos versiones del sitio.
 
-function Estrellas({ n, etiqueta }) {
+function Estrellas({ n, etiqueta, className = '' }) {
   return (
-    <span className="inline-flex items-center gap-0.5 text-accent-amber" role="img" aria-label={etiqueta}>
+    <span className={`inline-flex items-center gap-0.5 text-accent-amber ${className}`} role="img" aria-label={etiqueta}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span key={i} aria-hidden="true" className={i <= n ? '' : 'text-slate-600'}>
           ★
@@ -37,31 +37,40 @@ export default function Testimonials() {
     });
 
   return (
-    <Section>
+    <Section id="resenas">
       <Reveal className="text-center">
         <span className="eyebrow">{tt.eyebrow}</span>
         <h2 className="section-title mt-4">{tt.title}</h2>
         <p className="mx-auto mt-3 max-w-2xl text-slate-400">{tt.desc}</p>
       </Reveal>
 
-      {/* Resumen de valoración */}
-      <Reveal delay={0.05} className="mx-auto mt-9 flex max-w-md flex-col items-center gap-3 rounded-2xl border border-amber-400/20 bg-amber-500/[0.06] p-6 text-center">
-        <p className="font-display text-5xl font-extrabold leading-none text-white">
-          {RESUMEN.media.toFixed(1)}
-        </p>
-        <Estrellas n={5} etiqueta={tt.starsAria.replace('{n}', RESUMEN.media.toFixed(1))} />
-        <p className="text-sm text-slate-400">
-          {tt.summary.replace('{n}', RESUMEN.total)}
-        </p>
-        <a
-          href={fichaUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => track('appstore_reviews_click', { lang })}
-          className="text-sm font-semibold text-brand-300 underline-offset-2 hover:text-white hover:underline"
-        >
-          {tt.verify} →
-        </a>
+      {/* Resumen de valoración. Banda ancha y con glow: es el dato que tiene
+          que verse desde lejos al pasar scrolleando. */}
+      <Reveal delay={0.05} className="mx-auto mt-10 flex max-w-3xl flex-col items-center gap-5 rounded-3xl border border-amber-400/30 bg-gradient-to-br from-amber-500/[0.12] via-amber-500/[0.05] to-transparent p-8 text-center shadow-glow sm:flex-row sm:justify-center sm:gap-10 sm:text-left">
+        <div className="flex flex-col items-center gap-2">
+          <p className="font-display text-7xl font-extrabold leading-none text-white">
+            {RESUMEN.media.toFixed(1)}
+          </p>
+          <Estrellas
+            n={5}
+            etiqueta={tt.starsAria.replace('{n}', RESUMEN.media.toFixed(1))}
+            className="text-xl tracking-wide"
+          />
+        </div>
+        <div className="max-w-xs">
+          <p className="text-base font-semibold text-slate-100">
+            {tt.summary.replace('{n}', RESUMEN.total)}
+          </p>
+          <a
+            href={fichaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => track('appstore_reviews_click', { lang })}
+            className="mt-2 inline-block text-sm font-semibold text-brand-300 underline-offset-2 hover:text-white hover:underline"
+          >
+            {tt.verify} →
+          </a>
+        </div>
       </Reveal>
 
       {/* Reseñas */}
@@ -71,18 +80,18 @@ export default function Testimonials() {
       <div className="mx-auto mt-8 grid max-w-4xl items-start gap-5 sm:grid-cols-2">
         {REVIEWS.map((r, i) => (
           <Reveal key={r.id} delay={0.1 + i * 0.08}>
-            <figure className="flex flex-col rounded-2xl border border-white/10 glass p-6">
-              <Estrellas n={r.estrellas} etiqueta={tt.starsAria.replace('{n}', r.estrellas)} />
+            <figure className="flex flex-col rounded-2xl border border-white/10 glass p-7 transition-colors hover:border-amber-400/25">
+              <Estrellas n={r.estrellas} etiqueta={tt.starsAria.replace('{n}', r.estrellas)} className="text-lg" />
               <blockquote className="mt-3">
-                <p className="font-display font-bold text-white">{r.titulo}</p>
+                <p className="font-display text-xl font-bold leading-snug text-white">{r.titulo}</p>
                 {/* El texto puede repetir el título cuando el autor escribió lo
                     mismo en los dos campos; no se inventa relleno para evitarlo. */}
                 {r.texto !== r.titulo && (
-                  <p className="mt-2 text-sm leading-relaxed text-slate-300">“{r.texto}”</p>
+                  <p className="mt-2.5 text-base leading-relaxed text-slate-300">“{r.texto}”</p>
                 )}
               </blockquote>
               <figcaption className="mt-4 border-t border-white/10 pt-3 text-sm">
-                <span className="font-semibold text-slate-200">{r.autor}</span>
+                <span className="font-bold text-slate-100">{r.autor}</span>
                 <span className="block text-xs text-slate-500">
                   <time dateTime={r.fecha}>{fecha(r.fecha)}</time> · {tt.source}
                 </span>
