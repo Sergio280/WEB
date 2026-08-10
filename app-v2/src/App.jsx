@@ -129,8 +129,11 @@ export default function App() {
         <Metrics />
         <RoiCalculator />
         <Trial />
-        <Pricing />
+        {/* Las reseñas van ANTES de los precios, no después: la prueba social
+            hace su trabajo justo antes de pedir la decisión. Detrás de Precios
+            solo la leía quien ya se había decidido. */}
         <Testimonials />
+        <Pricing />
         <Faq />
         <Download />
       </main>

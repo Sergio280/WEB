@@ -22,9 +22,14 @@ export default function Hero() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-20 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pt-24">
         {/* Columna texto */}
         <div>
-          <span className="anim-entrada eyebrow" style={escalon(0)}>
-            {h.eyebrow}
-          </span>
+          {/* La valoración vive AQUÍ, en la fila del eyebrow, y no abajo con la
+              garantía: el hero es alto, y más abajo quedaba fuera del pliegue en
+              cualquier portátil de 720-800 px y en móvil. Aquí se ve siempre, en
+              hueco que estaba vacío, sin empujar nada. */}
+          <div className="anim-entrada flex flex-wrap items-center gap-3" style={escalon(0)}>
+            <span className="eyebrow">{h.eyebrow}</span>
+            <AppStoreBadge />
+          </div>
 
           <h1
             className="anim-entrada mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl" style={escalon(1)}
@@ -65,12 +70,6 @@ export default function Hero() {
           <div className="anim-entrada mt-5 flex items-center gap-2 text-sm text-slate-400" style={escalon(6)}>
             <span className="font-bold text-accent-green">✓</span>
             {h.guarantee}
-          </div>
-
-          {/* Sello de confianza del Autodesk App Store (señal de legitimidad,
-              no CTA principal). */}
-          <div className="anim-entrada mt-5" style={escalon(7)}>
-            <AppStoreBadge />
           </div>
         </div>
 
