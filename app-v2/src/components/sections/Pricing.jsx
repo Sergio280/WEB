@@ -30,6 +30,9 @@ export default function Pricing() {
   const intlPay = region === 'INTL';
   const curSym = intlPay ? '$' : 'S/';
   const [modalPlan, setModalPlan] = useState(null);
+  // Motivo de un pago que falló DESPUÉS de cerrarse el modal (ver más abajo).
+  const [errorPago, setErrorPago] = useState('');
+  const planEnCurso = useRef(null); // último plan cuyo checkout se abrió
   const sectionRef = useRef(null);
 
   // Promoción por enlace (?promo=CODIGO): si hay una vigente, la tarjeta enseña
@@ -86,7 +89,21 @@ export default function Pricing() {
 
   function openPlan(key) {
     track('select_plan', { plan: key });
+    planEnCurso.current = key;
+    setErrorPago('');
     setModalPlan(key);
+  }
+
+  // El formulario de tarjeta de Culqi se dibuja ENCIMA del modal y sigue vivo
+  // aunque el modal se cierre, así que un pago puede fallar cuando ya no hay
+  // modal donde enseñarlo: el mensaje moría en un componente desmontado y el
+  // comprador se quedaba creyendo que había pagado. Esta sección no se
+  // desmonta nunca, así que puede recoger el aviso y reabrir el modal del plan
+  // que estaba comprando, con el motivo delante.
+  function reportarErrorPago(msg) {
+    if (!planEnCurso.current) return;
+    setErrorPago(msg);
+    setModalPlan(planEnCurso.current);
   }
 
   return (
@@ -245,7 +262,14 @@ export default function Pricing() {
         </table>
       </Reveal>
 
-      {modalPlan && <CulqiModal planKey={modalPlan} onClose={() => setModalPlan(null)} />}
+      {modalPlan && (
+        <CulqiModal
+          planKey={modalPlan}
+          errorInicial={errorPago}
+          onErrorTrasCierre={reportarErrorPago}
+          onClose={() => setModalPlan(null)}
+        />
+      )}
     </Section>
   );
 }
