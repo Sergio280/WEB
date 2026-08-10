@@ -226,6 +226,10 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
     setProcessing(true);
     track('begin_checkout', {
       plan: planKey,
+      // Sin esto, el `begin_checkout` de Culqi era el único evento de pago sin
+      // `gateway`, y en GA4 había que leerlo como "pasarela vacía = Culqi".
+      // La dimensión personalizada se rompía en cuanto entrara una tercera.
+      gateway: 'culqi',
       payment_type: isSub ? 'subscription' : 'onetime',
       duration: isSub ? 'sub' : duration,
       value: price,
