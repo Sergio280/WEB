@@ -75,7 +75,16 @@ export default function Navbar() {
           BIMS
         </a>
 
-        <ul className="ml-auto hidden items-center gap-1 md:flex">
+        {/* EL MENÚ COMPLETO EMPIEZA EN `lg`, NO EN `md`.
+            Los seis enlaces más Descargar, el idioma y el CTA ocupan 870 px en
+            español (805 px en inglés). En `md` (768 px) solo hay 728 px útiles
+            tras el padding, así que la fila se salía y arrastraba con ella el
+            scroll horizontal de TODA la página — en iPad vertical, que es
+            exactamente 768 px, y hasta los 899 px.
+            En `lg` (1024 px) quedan 984 px útiles: caben los 870 con holgura.
+            Entre 768 y 1023 px se muestra la hamburguesa, que ya se medía
+            limpia en todos esos anchos. */}
+        <ul className="ml-auto hidden items-center gap-1 lg:flex">
           {t.nav.links.map((l) => (
             <li key={l.href}>
               <a
@@ -106,8 +115,8 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* Toggle de idioma + hamburguesa (móvil) */}
-        <div className="ml-auto flex items-center gap-2 md:hidden">
+        {/* Toggle de idioma + hamburguesa (hasta `lg`, ver el bloque de arriba) */}
+        <div className="ml-auto flex items-center gap-2 lg:hidden">
           <LangToggle />
           <button
             className="flex h-10 w-10 flex-col items-center justify-center gap-1.5"
@@ -129,7 +138,7 @@ export default function Navbar() {
           scrollee por dentro. */}
       {open && (
         <ul
-          className="flex max-h-[calc(100vh-4rem)] flex-col gap-1 overflow-y-auto overscroll-contain border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl md:hidden"
+          className="flex max-h-[calc(100vh-4rem)] flex-col gap-1 overflow-y-auto overscroll-contain border-t border-white/10 bg-ink-900/95 px-5 py-3 backdrop-blur-xl lg:hidden"
           style={{ maxHeight: 'calc(100dvh - 4rem)' }}
         >
           {t.nav.links.map((l) => (
