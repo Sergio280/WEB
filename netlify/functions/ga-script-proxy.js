@@ -13,13 +13,17 @@
 // Ver netlify/functions/_lib/proxy-core.js para el diseño compartido (mismo
 // patrón que gauth-proxy/gdb-proxy, ya validado en producción).
 // ─────────────────────────────────────────────────────────────────────────────
-const { forward, gate } = require('./_lib/proxy-core');
+const { forward, gate, RL_ANALITICA } = require('./_lib/proxy-core');
 
 // El measurement ID de GA4 del sitio (público por diseño, va en el HTML igual).
 const GA_MEASUREMENT_ID = 'G-P5ZL4FBL4S';
 
 exports.handler = async function (event) {
-    const blocked = gate(event, ['GET']);
+    // Con el tope del plugin (60/min/IP), una oficina donde muchos abren la web
+    // a la vez recibía 429 AQUÍ: gtag.js no llegaba a cargar y esas visitas no
+    // se medían en absoluto. El script se cachea una hora, así que el gasto real
+    // de subir el tope es mínimo.
+    const blocked = gate(event, ['GET'], { maxPorMinuto: RL_ANALITICA });
     if (blocked) return blocked;
 
     // gtag.js se sirve siempre para el mismo measurement ID de este sitio;
