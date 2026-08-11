@@ -57,9 +57,24 @@ function ipHash(ip) {
 // justo lo que este proxy protege). Ventana deslizante simple.
 const RL_WINDOW_MS = 60 * 1000;
 const RL_MAX = 60; // 60 req/min/IP por instancia — holgado para uso legítimo
+
+// Tope para los proxies de ANALÍTICA. Una visita dispara entre cinco y treinta
+// beacons, así que 300/min/IP da margen para unos quince visitantes simultáneos
+// saliendo por la misma IP pública — una constructora entera navegando a la vez.
+// Sigue habiendo tope: esto son invocaciones de Lambda y se pagan.
+const RL_ANALITICA = 300;
 const _hits = new Map();
 
-function rateLimited(headers) {
+// `max` es configurable porque los dos usos de este módulo tienen escalas muy
+// distintas. Un login del plugin es una petición aislada; una sola visita a la
+// web dispara entre cinco y treinta beacons de analítica, y una constructora
+// entera sale por una única IP pública (NAT). Con el tope pensado para el login,
+// esa oficina perdía medición. Ver RL_ANALITICA.
+//
+// OJO: el cupo NO se comparte entre funciones. Cada function de Netlify es su
+// propio Lambda y carga su propia copia de este módulo, así que `_hits` es
+// independiente por proxy: la analítica no puede agotar el cupo del login.
+function rateLimited(headers, max = RL_MAX) {
     const key = ipHash(clientIp(headers));
     const now = Date.now();
     const arr = (_hits.get(key) || []).filter((t) => now - t < RL_WINDOW_MS);
@@ -67,13 +82,33 @@ function rateLimited(headers) {
     _hits.set(key, arr);
     // Limpieza oportunista para no crecer sin límite.
     if (_hits.size > 5000) _hits.clear();
-    return arr.length > RL_MAX;
+    return arr.length > max;
 }
 
 // Reenvía la petición al destino ya validado. Preserva método, body y el
 // Content-Type. Devuelve la respuesta de Google/Firebase VERBATIM (status +
 // cuerpo), para que el plugin la procese igual que si viniera directa.
-async function forward(targetUrl, event) {
+// `opts.reenviarCliente` añade las cabeceras que identifican al VISITANTE:
+// su navegador, su IP y su idioma. Por defecto NO se reenvían, que es como
+// funcionaban los proxies del plugin desde el principio y no se toca.
+//
+// Lo necesita la analítica, y no es un detalle: sin ellas, a Google le llegaba
+// cada beacon con `user-agent: node` desde una IP de datacenter de Netlify en
+// EE.UU. Eso rompe la geolocalización de TODO el tráfico —de ahí que existiera
+// ya la propiedad `real_country` como parche— y es además la firma exacta de un
+// bot, con el agravante de que el filtrado de bots de GA4 no se puede
+// desactivar. El propio producto de Google para esto (server-side Tagging)
+// reenvía obligatoriamente estas mismas cabeceras: es el contrato de un proxy
+// de primera parte, y aquí no se estaba cumpliendo.
+//
+// La IP sale de `clientIp()`, que prefiere `x-nf-client-connection-ip` —la que
+// pone el edge de Netlify y el cliente no puede falsear—, nunca del
+// `x-forwarded-for` que mande el navegador.
+//
+// NO se reenvían cookies a propósito: gtag ya manda el client id dentro del
+// payload (`cid`), así que pasarlas no aportaría nada y sería dar más de lo
+// necesario.
+async function forward(targetUrl, event, opts = {}) {
     const method = event.httpMethod;
     let body;
     if (method !== 'GET' && method !== 'HEAD' && event.body != null) {
@@ -81,11 +116,27 @@ async function forward(targetUrl, event) {
     }
     const contentType = event.headers['content-type'] || event.headers['Content-Type'] || 'application/json';
 
+    let headers;
+    if (body != null) headers = { 'Content-Type': contentType };
+    if (opts.reenviarCliente) {
+        const h = event.headers || {};
+        const delCliente = {
+            'User-Agent': h['user-agent'] || h['User-Agent'] || '',
+            'X-Forwarded-For': clientIp(h),
+            'Accept-Language': h['accept-language'] || h['Accept-Language'] || '',
+            Referer: h.referer || h.Referer || '',
+        };
+        // Una cabecera vacía es peor que ninguna: se omiten las que no vengan.
+        for (const [k, v] of Object.entries(delCliente)) {
+            if (v && v !== 'unknown') headers = { ...(headers || {}), [k]: v };
+        }
+    }
+
     let upstream;
     try {
         upstream = await fetch(targetUrl, {
             method,
-            headers: body != null ? { 'Content-Type': contentType } : undefined,
+            headers,
             body,
         });
     } catch (e) {
@@ -106,14 +157,16 @@ async function forward(targetUrl, event) {
 
 // Barrera común: método permitido, origen, rate-limit. Devuelve una respuesta de
 // error si algo falla, o null si puede continuar.
-function gate(event, allowedMethods) {
+// `opts.maxPorMinuto` sube el tope solo para quien lo pida; sin él se mantiene
+// el de siempre (60), que es el que usan los proxies del plugin.
+function gate(event, allowedMethods, opts = {}) {
     if (!allowedMethods.includes(event.httpMethod)) {
         return { statusCode: 405, body: 'method not allowed' };
     }
     if (!originAllowed(event)) {
         return { statusCode: 403, body: 'origin not allowed' };
     }
-    if (rateLimited(event.headers)) {
+    if (rateLimited(event.headers, opts.maxPorMinuto)) {
         return { statusCode: 429, body: 'rate limited' };
     }
     return null;
@@ -130,4 +183,4 @@ function subAfter(pathname, markers) {
     return null;
 }
 
-module.exports = { forward, gate, subAfter };
+module.exports = { forward, gate, subAfter, RL_ANALITICA };

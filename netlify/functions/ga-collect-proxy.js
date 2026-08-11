@@ -12,10 +12,10 @@
 // con body) ambos posibles según el navegador; se reenvían ambos tal cual.
 // Ver _lib/proxy-core.js para el diseño compartido.
 // ─────────────────────────────────────────────────────────────────────────────
-const { forward, gate, subAfter } = require('./_lib/proxy-core');
+const { forward, gate, subAfter, RL_ANALITICA } = require('./_lib/proxy-core');
 
 exports.handler = async function (event) {
-    const blocked = gate(event, ['GET', 'POST']);
+    const blocked = gate(event, ['GET', 'POST'], { maxPorMinuto: RL_ANALITICA });
     if (blocked) return blocked;
 
     let u;
@@ -28,5 +28,9 @@ exports.handler = async function (event) {
     if (sub == null) return { statusCode: 400, body: 'bad path' };
 
     const target = `https://www.google-analytics.com/g/${sub}${u.search}`;
-    return forward(target, event);
+    // `reenviarCliente`: sin esto, a Google le llegaba cada beacon con
+    // `user-agent: node` desde la IP del datacenter de Netlify. Rompía la geo de
+    // todo el tráfico y hacía que cada visita pareciera un bot. Ver el comentario
+    // largo en _lib/proxy-core.js → forward().
+    return forward(target, event, { reenviarCliente: true });
 };
