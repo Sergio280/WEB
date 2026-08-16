@@ -5,6 +5,19 @@
 // Mantenimiento: agregar nuevos dominios al final del array. NO eliminar
 // dominios (puede crear inconsistencias con trials ya creados).
 //
+// ⚠️ ANTES DE AMPLIAR ESTA LISTA, LEER ESTO (medido el 2026-08-16)
+//   El coste de un FALSO POSITIVO hoy es muy superior al de un falso negativo.
+//   En agosto se crearon 4 trials externos EN TODO EL MES. A ese volumen,
+//   rechazar a un interesado real cuesta un 25 % del embudo; colar a un
+//   abusador no cuesta casi nada, porque maxActivations=1 ya limita el daño.
+//   Dato concreto: el único registro que se coló por un dominio desechable
+//   (applamos.com) fue de los usuarios MÁS enganchados del mes — activó y
+//   volvió cuatro días después. Y `cesar.urbina.8.2026@yopmail.com` descargó
+//   desde el Autodesk App Store el 10-ago y la lista lo rechazó; nunca volvió.
+//   Mientras el problema sea la ESCASEZ de trials y no el abuso, endurecer
+//   esta lista empuja en la dirección contraria. Ver la propuesta de pasar de
+//   rechazo duro a "marcar y dejar pasar" en trialMeta.
+//
 // Fuente inicial: combinación de las listas más usadas en el ecosistema
 // anti-abuso (disposable-email-domains, mailchecker, etc.).
 // ─────────────────────────────────────────────────────────────────────────────
@@ -40,6 +53,11 @@ const DISPOSABLE_DOMAINS = [
     'mvrht.net', 'mvrht.com', 'getairmail.net',
     'smailpro.com', 'cuirushi.org', 'rootfest.net',
     'mailtm.com', 'developermail.com',
+    // 2026-08: se coló en un registro real (narot43042@applamos.com, 6-ago).
+    // Se añade por COHERENCIA con yopmail, no porque bloquear sea gratis:
+    // ese usuario activó y volvió 4 días después, o sea que era de los
+    // más enganchados del mes. Leer la nota de abajo antes de ampliar la lista.
+    'applamos.com',
     // edu/test patterns (NO bloquear .edu reales)
     'example.com', 'example.org', 'example.net', 'test.com',
 ];
