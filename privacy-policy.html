@@ -144,52 +144,148 @@
 
 <div class="container">
 
-    <p class="update-date">Última actualización: 23 de febrero de 2026</p>
+    <p class="update-date">Última actualización: 16 de agosto de 2026</p>
 
     <div class="highlight-box">
         <p>
             Esta política describe qué datos recopila el plugin BIMS, cómo los usamos y qué derechos tiene
-            el usuario sobre ellos. BIMS recopila únicamente los datos mínimos indispensables para
-            el funcionamiento del sistema de licencias.
+            el usuario sobre ellos. BIMS recopila los datos mínimos indispensables para el funcionamiento
+            del sistema de licencias y, además, unos eventos técnicos mínimos que nos permiten detectar
+            fallos y saber qué funciones se utilizan. <strong>Nunca recopilamos su modelo BIM ni ningún
+            contenido de su trabajo.</strong>
         </p>
     </div>
 
     <h2>1. Información que Recopilamos</h2>
-    <p>BIMS recopila exclusivamente:</p>
+
+    <p><strong>a) Datos de su cuenta</strong></p>
     <ul>
-        <li><strong>Correo electrónico:</strong> Para crear y gestionar su cuenta de usuario.</li>
-        <li><strong>ID de licencia:</strong> Para validar su licencia de uso del software.</li>
-        <li><strong>ID de hardware:</strong> Un identificador único generado a partir de las características
-            de su equipo (placa base, procesador) para controlar el número de activaciones de licencia.</li>
-        <li><strong>Fecha y hora de validaciones:</strong> Registro de cuándo se valida la licencia (para auditoría y soporte).</li>
-        <li><strong>Versión del software instalada:</strong> Para gestionar actualizaciones automáticas.</li>
+        <li><strong>Correo electrónico y contraseña:</strong> Para crear y gestionar su cuenta. La contraseña
+            nunca llega a nuestros servidores en claro: la gestiona Firebase Authentication con hash seguro.</li>
+        <li><strong>Nombre y empresa:</strong> Los que usted indique al registrarse (la empresa es opcional).</li>
     </ul>
-    <p>No recopilamos datos del modelo BIM, archivos de proyecto Revit ni ningún contenido del trabajo del usuario.</p>
+
+    <p><strong>b) Datos de licencia y activación</strong></p>
+    <ul>
+        <li><strong>ID de hardware:</strong> Un identificador único y no reversible (hash SHA-256) calculado a
+            partir del identificador de instalación de Windows, el número de serie del volumen del sistema y
+            el número de procesadores. Sirve para controlar el número de activaciones de su licencia.</li>
+        <li><strong>Nombre del equipo y nombre de usuario de Windows:</strong> Se guardan asociados a cada
+            activación para que usted pueda reconocer sus propios equipos en el panel de licencia y para que
+            el soporte pueda ayudarle a liberar una activación.</li>
+        <li><strong>Tipo y estado de licencia, fechas de alta, expiración y última validación, y número de
+            validaciones.</strong></li>
+        <li><strong>Versión de BIMS instalada:</strong> Para gestionar actualizaciones y dar soporte.</li>
+    </ul>
+
+    <p><strong>c) Datos específicos de la prueba gratuita</strong></p>
+    <ul>
+        <li><strong>País e idioma:</strong> Deducidos de la conexión, para enviarle los correos de la prueba
+            en su idioma.</li>
+        <li><strong>Huella de la dirección IP:</strong> Guardamos un <em>hash</em> de su IP, nunca la dirección
+            en claro, únicamente para limitar el abuso (evitar registros masivos automatizados).</li>
+        <li><strong>Identificador de clic publicitario (gclid):</strong> Solo si llegó a nuestra web desde un
+            anuncio de Google. Nos permite saber qué anuncios generan pruebas reales.</li>
+    </ul>
+
+    <p><strong>d) Datos de uso y diagnóstico del plugin</strong></p>
+    <p>
+        Para saber qué funciones se utilizan y enterarnos de los fallos que ocurren en su equipo —que de otro
+        modo no llegaríamos a conocer nunca— el plugin envía eventos mínimos. Cada evento contiene únicamente
+        un identificador de su cuenta, la versión de BIMS, la fecha y <strong>una etiqueta corta elegida por
+        nosotros en el código</strong>:
+    </p>
+    <ul>
+        <li><strong>Función utilizada:</strong> El nombre del botón que ejecutó, y qué parámetros
+            <code>BIMS_</code> ha dejado BIMS en el modelo abierto (los mismos que usted ya ve en las
+            propiedades de los elementos que BIMS genera).</li>
+        <li><strong>Fallos:</strong> El <em>tipo</em> de error (por ejemplo <em>InvalidOperation</em>) y la
+            etiqueta de la operación en curso. El identificador público de Autodesk de los avisos de Revit.</li>
+        <li><strong>Problemas de conexión:</strong> Cuando el inicio de sesión falla por red, un código que
+            resume la causa probable (por ejemplo, que un proxy corporativo exige autenticación) y cuál de
+            nuestros tres servidores respondió. Sirve para detectar redes de empresa que bloquean BIMS.</li>
+    </ul>
+
+    <div class="highlight-box">
+        <p>
+            <strong>Lo que nunca sale de su equipo.</strong> No recopilamos su modelo BIM, ni archivos de
+            proyecto de Revit, ni geometría, ni ningún contenido de su trabajo. Tampoco enviamos el
+            <em>mensaje</em> de los errores ni su traza técnica —porque suelen arrastrar rutas de archivo,
+            nombres de proyecto y nombres de elementos de sus modelos—, ni su dirección IP en claro, ni la
+            dirección de su proxy corporativo. El detalle completo de cualquier fallo se queda en el registro
+            local de su equipo, y solo se comparte si usted decide enviárnoslo.
+        </p>
+    </div>
 
     <h2>2. Cómo Recopilamos la Información</h2>
     <ul>
-        <li>Directamente de usted al crear una cuenta (correo electrónico y contraseña).</li>
-        <li>Automáticamente cuando el plugin se conecta a nuestros servidores para validar la licencia al iniciar Revit.</li>
-        <li>A través de <strong>Firebase Authentication</strong> y <strong>Firebase Realtime Database</strong> (servicios de Google LLC).</li>
+        <li>Directamente de usted al crear una cuenta o solicitar la prueba gratuita.</li>
+        <li>Automáticamente cuando el plugin se conecta a nuestros servidores para validar su licencia
+            al ejecutar una función.</li>
+        <li>Automáticamente, en segundo plano, cuando el plugin envía un evento de uso o de diagnóstico
+            de los descritos en el punto 1.d.</li>
     </ul>
+    <p>
+        Toda esa comunicación viaja cifrada (HTTPS/TLS) hacia <strong>bimsaddin.com</strong> y hacia los
+        servicios de <strong>Firebase</strong> (Google LLC). Cuando la red de su empresa bloquea los
+        servidores de Google, el plugin reintenta automáticamente a través de nuestro propio servidor en
+        <strong>bimsaddin.com</strong>, que reenvía la petición sin almacenar sus credenciales.
+    </p>
 
     <h2>3. Uso de la Información</h2>
     <p>Utilizamos sus datos únicamente para:</p>
     <ul>
         <li>Validar y gestionar licencias de software.</li>
-        <li>Prevenir el uso no autorizado del plugin.</li>
+        <li>Prevenir el uso no autorizado del plugin y el abuso del registro de pruebas gratuitas.</li>
         <li>Distribuir actualizaciones automáticas de software.</li>
-        <li>Ofrecer soporte técnico cuando usted lo solicite.</li>
+        <li><strong>Detectar y corregir fallos</strong> del plugin, y detectar redes corporativas que
+            impiden su funcionamiento.</li>
+        <li><strong>Saber qué funciones se usan</strong>, para decidir con datos qué mejorar y qué incluir
+            en la prueba gratuita.</li>
+        <li>Enviarle los correos de la prueba gratuita y ofrecer soporte técnico cuando usted lo solicite.</li>
+        <li>Medir la eficacia de nuestra publicidad, cuando usted llegó desde un anuncio.</li>
         <li>Notificar cambios importantes en el servicio o la política de privacidad.</li>
     </ul>
+    <p>
+        <strong>Base legal.</strong> El tratamiento de los datos de cuenta y licencia es necesario para
+        ejecutar el contrato de uso del software. El tratamiento de los datos de uso y diagnóstico se apoya
+        en nuestro interés legítimo en mantener el producto en funcionamiento y seguro, interés que hemos
+        ponderado limitando esos datos al mínimo descrito en el punto 1.d. Puede oponerse a este último
+        tratamiento en cualquier momento (puntos 7 y 8).
+    </p>
 
     <h2>4. Compartir Información con Terceros</h2>
-    <p>Sus datos se almacenan en:</p>
+    <p>
+        No vendemos ni cedemos sus datos. Nos apoyamos en los siguientes proveedores, que los tratan
+        únicamente por cuenta nuestra y para las finalidades indicadas:
+    </p>
     <ul>
         <li>
-            <strong>Firebase (Google LLC):</strong> Plataforma utilizada para autenticación de usuarios y
-            almacenamiento de datos de licencias. Firebase cumple con el GDPR y está certificado bajo
-            SOC 2 e ISO 27001.
+            <strong>Firebase (Google LLC):</strong> Autenticación de usuarios y almacenamiento de los datos
+            de licencia y de los eventos de uso. Certificado SOC 2 e ISO 27001.
+        </li>
+        <li>
+            <strong>Netlify (Netlify Inc.):</strong> Alojamiento de bimsaddin.com y de las funciones que
+            atienden el registro de pruebas, la validación de licencias y la recepción de eventos. Al ser el
+            punto de entrada de esas peticiones, procesa su dirección IP.
+        </li>
+        <li>
+            <strong>Resend (Resend Inc.):</strong> Envío de los correos de la prueba gratuita y de soporte.
+            Recibe su correo electrónico y su nombre.
+        </li>
+        <li>
+            <strong>Culqi (Perú) y Lemon Squeezy (internacional):</strong> Procesamiento de pagos. Los datos
+            de su tarjeta se introducen directamente en sus formularios y <strong>nunca pasan por nuestros
+            servidores</strong>.
+        </li>
+        <li>
+            <strong>Cloudflare (Turnstile):</strong> Verificación anti-robot del formulario de prueba
+            gratuita, cuando está activada. Recibe su dirección IP para validar el desafío.
+        </li>
+        <li>
+            <strong>Google Ads:</strong> Si llegó desde uno de nuestros anuncios, comunicamos a Google que
+            ese clic terminó en una activación, usando el identificador de clic (gclid). No se envía su
+            correo ni ningún otro dato personal.
         </li>
     </ul>
     <p>
@@ -209,6 +305,11 @@
         <li>Su licencia esté activa.</li>
         <li>Durante los 90 días posteriores a la expiración de su licencia (para facilitar renovaciones).</li>
     </ul>
+    <p>
+        Los <strong>eventos de uso y diagnóstico</strong> (punto 1.d) se conservan de forma agregada para
+        analizar tendencias de estabilidad y uso. Al eliminar su cuenta se borra el identificador que los
+        vincula a usted, con lo que dejan de ser datos personales.
+    </p>
     <p>Puede solicitar la eliminación inmediata de sus datos en cualquier momento.</p>
 
     <h2>6. Seguridad de los Datos</h2>
@@ -242,9 +343,17 @@
 
     <h2>9. Cookies y Seguimiento</h2>
     <p>
-        BIMS es un plugin de escritorio. <strong>No utiliza cookies</strong> ni tecnologías de seguimiento
-        en navegadores web. La única comunicación de red del plugin es con los servidores de Firebase
-        para validación de licencias y descarga de actualizaciones.
+        <strong>En el plugin:</strong> BIMS es una aplicación de escritorio y <strong>no utiliza
+        cookies</strong>. Sus comunicaciones de red son las descritas en el punto 2: validación de licencia,
+        registro de la prueba gratuita, descarga de actualizaciones y los eventos de uso y diagnóstico
+        del punto 1.d.
+    </p>
+    <p>
+        <strong>En este sitio web:</strong> bimsaddin.com utiliza <strong>Google Analytics</strong> para
+        medir el tráfico y entender qué páginas resultan útiles. Analytics instala cookies en su navegador.
+        Puede impedirlo bloqueando las cookies en su navegador o usando cualquier extensión de bloqueo; el
+        sitio y la descarga funcionan igual. Este uso es independiente del plugin: instalar BIMS no implica
+        ningún seguimiento por cookies.
     </p>
 
     <h2>10. Menores de Edad</h2>
