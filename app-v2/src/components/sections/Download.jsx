@@ -3,7 +3,7 @@ import Reveal from '../ui/Reveal.jsx';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
-const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe';
+const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS.msi';
 
 export default function Download() {
   const { t } = useLang();

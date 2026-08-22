@@ -64,7 +64,7 @@ export const BENTO = [
     size: 'md',
     icon: '🧰',
     title: 'Importar y Convertir DWG',
-    desc: 'Convierte y descompone los sólidos de un archivo DWG en objetos manipulables dentro de Revit (DirectShapes). Una vez convertidos, puedes escalarlos, exportarlos como familia .rfa editable o prepararlos para coordinación. Ideal para reutilizar geometría externa (DWG, SAT, IFC) sin depender del archivo original.',
+    desc: 'Convierte y descompone los sólidos de un archivo DWG en objetos manipulables dentro de Revit (modelos genéricos). Una vez convertidos, puedes escalarlos, exportarlos como familia .rfa editable o prepararlos para coordinación. Ideal para reutilizar geometría externa (DWG, SAT, IFC) sin depender del archivo original.',
     points: [
       'Importa y descompone sólidos del DWG a objetos de Revit',
       'Opción independiente: la geometría no se borra al quitar el DWG',
@@ -78,10 +78,10 @@ export const BENTO = [
     size: 'sm',
     icon: '📐',
     title: 'Herramientas de Geometría',
-    desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a DirectShape o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
+    desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a modelo genérico o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
     points: [
       'Escalar Sólido (factor configurable)',
-      'Convertir a DirectShape',
+      'Convertir a modelo genérico',
       'Exportar a Familia (.rfa) editable',
     ],
     accent: 'violet',

@@ -61,7 +61,7 @@ export const translations = {
         'Exportar Planos a DWG', 'Encofrado Automatizado', 'Tarrajeo Habitación', 'Acero Columnas',
         'Estribos Columnas', 'Acero Vigas', 'Acero Muros', 'Acero Losas', 'Registros Sanitarios',
         'Calcular Longitud', 'Asignar Cota Tapa', 'Asignar Sector', 'Numerar Aparatos',
-        'Escalar Sólido', 'Convertir a DirectShape', 'Exportar a Familia (.rfa)',
+        'Escalar Sólido', 'Convertir a modelo genérico', 'Exportar a Familia (.rfa)',
       ],
     },
 
@@ -203,7 +203,7 @@ export const translations = {
         },
         utilidades: {
           title: 'Importar y Convertir DWG',
-          desc: 'Convierte y descompone los sólidos de un archivo DWG en objetos manipulables dentro de Revit (DirectShapes). Una vez convertidos, puedes escalarlos, exportarlos como familia .rfa editable o prepararlos para coordinación. Ideal para reutilizar geometría externa (DWG, SAT, IFC) sin depender del archivo original.',
+          desc: 'Convierte y descompone los sólidos de un archivo DWG en objetos manipulables dentro de Revit (modelos genéricos). Una vez convertidos, puedes escalarlos, exportarlos como familia .rfa editable o prepararlos para coordinación. Ideal para reutilizar geometría externa (DWG, SAT, IFC) sin depender del archivo original.',
           points: [
             'Importa y descompone sólidos del DWG a objetos de Revit',
             'Opción independiente: la geometría no se borra al quitar el DWG',
@@ -213,10 +213,10 @@ export const translations = {
         },
         geometria: {
           title: 'Herramientas de Geometría',
-          desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a DirectShape o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
+          desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a modelo genérico o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
           points: [
             'Escalar Sólido (factor configurable)',
-            'Convertir a DirectShape',
+            'Convertir a modelo genérico',
             'Exportar a Familia (.rfa) editable',
           ],
         },
@@ -284,7 +284,7 @@ export const translations = {
             { n: '01', t: 'Selecciona los tipos y los elementos', d: 'Eliges el tipo de muro y de suelo que se usarán como encofrado, y luego seleccionas las columnas, vigas, losas o escaleras del modelo (directamente o por filtros de categoría).' },
             { n: '02', t: 'BIMS clasifica y genera cada cara', d: 'El sistema identifica el tipo de cada elemento y crea el encofrado como muros y suelos nativos de Revit, extruidos siempre hacia afuera: columnas → muros perimetrales, vigas → muros laterales + suelo de fondo, losas → suelo, escaleras → muros verticales + suelos inclinados.' },
             { n: '03', t: 'Recortes automáticos entre elementos', d: 'BIMS detecta los elementos contiguos y elimina los solapamientos entre encofrados de vigas y columnas, preservando curvas y geometría compleja para que el área sea exacta, sin sobre-metrados.' },
-            { n: '04', t: 'Listo para cuantificar', d: 'El encofrado queda integrado en el modelo como Wall/Floor nativos, cuantificable y detallable directamente en las tablas de Revit, sin pasos adicionales.' },
+            { n: '04', t: 'Listo para cuantificar', d: 'El encofrado queda integrado en el modelo como muros/suelos nativos, cuantificable y detallable directamente en las tablas de Revit, sin pasos adicionales.' },
           ],
           compliance: [
             { k: 'LOD 300 → 400:', v: 'El encofrado pasa de representación conceptual a geometría de construcción detallada, validada y lista para cuantificación directa desde el modelo.' },
@@ -311,7 +311,7 @@ export const translations = {
           intro: 'Modelar el tarrajeo cara por cara es lento y propenso a error. Con BIMS seleccionas las habitaciones y el sistema crea automáticamente el revestimiento de muros y el contrapiso de cada ambiente como elementos nativos y medibles.',
           steps: [
             { n: '01', t: 'Selecciona tipos y habitaciones', d: 'Eliges el tipo de muro y/o suelo para el tarrajeo y seleccionas una o varias habitaciones (rooms) del modelo arquitectónico, incluso desde modelos vinculados.' },
-            { n: '02', t: 'BIMS detecta los límites y genera el tarrajeo', d: 'El sistema reconoce los muros y columnas que limitan cada habitación, crea muros de tarrajeo en las caras verticales internas y genera el suelo (contrapiso) siguiendo el contorno del ambiente, usando tipos nativos (Wall/Floor).' },
+            { n: '02', t: 'BIMS detecta los límites y genera el tarrajeo', d: 'El sistema reconoce los muros y columnas que limitan cada habitación, crea muros de tarrajeo en las caras verticales internas y genera el suelo (contrapiso) siguiendo el contorno del ambiente, usando tipos nativos (muros/suelos).' },
             { n: '03', t: 'Acabados listos para metrar', d: 'Cada superficie queda como elemento cuantificable, listo para el metrado de revestimientos y el presupuesto de acabados por ambiente.' },
           ],
           compliance: [
@@ -336,11 +336,11 @@ export const translations = {
         'dwg-nwc': {
           tab: '📐 Importación DWG → NWC',
           title: 'Importación DWG → NWC — Geometría externa lista para manipular y coordinar',
-          intro: 'Convierte y descompone los sólidos de un archivo DWG en objetos nativos de Revit (DirectShapes) que puedes escalar, exportar a familia .rfa o preparar para coordinación. Ideal para integrar geometría de proveedores o especialidades sin depender del archivo original.',
+          intro: 'Convierte y descompone los sólidos de un archivo DWG en objetos nativos de Revit (modelos genéricos) que puedes escalar, exportar a familia .rfa o preparar para coordinación. Ideal para integrar geometría de proveedores o especialidades sin depender del archivo original.',
           steps: [
-            { n: '01', t: 'Importa el DWG externo', d: 'BIMS lee el archivo DWG y descompone sus sólidos en objetos nativos de Revit (DirectShapes). Con la opción independiente, la geometría no se elimina al borrar el DWG.' },
-            { n: '02', t: 'Manipula la geometría en Revit', d: 'Una vez convertidos, los objetos son editables: puedes escalarlos con un factor, convertirlos a DirectShape o exportarlos como familia .rfa con sólidos editables, además de calcular sus volúmenes.' },
-            { n: '03', t: 'Exporta a NWC para Navisworks', d: 'Convierte los DirectShapes a categorías compatibles (Mass / Generic Model) y prepara el modelo federado para coordinación y detección de interferencias en Navisworks.' },
+            { n: '01', t: 'Importa el DWG externo', d: 'BIMS lee el archivo DWG y descompone sus sólidos en objetos nativos de Revit (modelos genéricos). Con la opción independiente, la geometría no se elimina al borrar el DWG.' },
+            { n: '02', t: 'Manipula la geometría en Revit', d: 'Una vez convertidos, los objetos son editables: puedes escalarlos con un factor, convertirlos a modelo genérico o exportarlos como familia .rfa con sólidos editables, además de calcular sus volúmenes.' },
+            { n: '03', t: 'Exporta a NWC para Navisworks', d: 'Convierte los modelos genéricos a categorías compatibles (Mass / Generic Model) y prepara el modelo federado para coordinación y detección de interferencias en Navisworks.' },
           ],
           compliance: [
             { k: 'Federación de modelos (ISO 19650-3):', v: 'Integra disciplinas externas al modelo coordinado, habilitando la revisión multidisciplinaria desde una fuente única.' },
@@ -606,7 +606,7 @@ export const translations = {
         { q: '¿Es compatible con mi versión de Revit?', a: 'BIMS funciona en Revit 2024, 2025, 2026 y 2027 sobre Windows 10 / 11. La instalación toma menos de un minuto y no requiere configuración manual.' },
         { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
         { q: '¿Puedo cambiar de plan o instalar en varios equipos?', a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.' },
-        { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS es un add-in nuevo y aún está en proceso de obtener su firma digital, por lo que Windows SmartScreen puede mostrar un aviso de “editor desconocido”. No es un virus. Para instalarlo: ejecuta BIMS_Setup.exe, si aparece la ventana azul haz clic en “Más información” y luego en “Ejecutar de todas formas”. Estamos tramitando la firma para eliminar este aviso en próximas versiones.' },
+        { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.' },
         { q: '¿BIMS funciona con modelos vinculados?', a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.' },
       ],
     },
@@ -619,14 +619,14 @@ export const translations = {
       ctaDownload: '⬇ Descargar instalador (requiere clave)',
       pills: ['Windows 10 / 11', 'Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'],
       smartTitle: '¿Windows muestra un aviso al instalar? Es normal — así lo abres',
-      smartDesc: { pre: 'BIMS es un add-in nuevo y todavía está en proceso de obtener su firma digital (certificado). Por eso, al ejecutar el instalador, ', strong: 'Windows SmartScreen', post: ' puede mostrar una advertencia azul de “editor desconocido”. No es un virus: solo significa que Microsoft aún no reconoce al editor. Para instalarlo igualmente:' },
+      smartDesc: { pre: 'BIMS está firmado digitalmente, así que Windows muestra el nombre del editor verificado, no “editor desconocido”. Como el certificado es reciente, ', strong: 'Windows SmartScreen', post: ' todavía puede mostrar un aviso azul hasta que acumule descargas. Si aparece, para instalarlo:' },
       smartSteps: [
-        'Ejecuta el archivo BIMS_Setup.exe que descargaste.',
+        'Ejecuta el archivo BIMS.msi que descargaste.',
         'Si aparece la ventana azul “Windows protegió tu PC”, haz clic en “Más información”.',
         'Pulsa el botón “Ejecutar de todas formas” que aparece abajo.',
         'Continúa con el instalador con normalidad — toma menos de un minuto.',
       ],
-      smartFootPre: 'Estamos tramitando la firma digital para eliminar este aviso en próximas versiones. Si tienes cualquier duda, escríbenos a ',
+      smartFootPre: 'La firma se puede comprobar en las propiedades del archivo, y el aviso desaparece a medida que crecen las descargas. Si tienes cualquier duda, escríbenos a ',
       smartFootPost: ' o por WhatsApp.',
       privacyTitle: 'Privacidad y Seguridad',
       privacyDesc: 'BIMS solo recopila los datos estrictamente necesarios para activar tu licencia y entregar actualizaciones. Toda la información se almacena de forma segura en servidores de Google Cloud. Nunca vendemos ni compartimos tus datos con terceros para fines de marketing. ',
@@ -707,7 +707,7 @@ export const translations = {
         'Export Sheets to DWG', 'Automated Formwork', 'Room Plastering', 'Column Rebar',
         'Column Stirrups', 'Beam Rebar', 'Wall Rebar', 'Slab Rebar', 'Inspection Chambers',
         'Calculate Length', 'Assign Cover Level', 'Assign Sector', 'Number Fixtures',
-        'Scale Solid', 'Convert to DirectShape', 'Export to Family (.rfa)',
+        'Scale Solid', 'Convert to generic model', 'Export to Family (.rfa)',
       ],
     },
 
@@ -849,7 +849,7 @@ export const translations = {
         },
         utilidades: {
           title: 'Import and Convert DWG',
-          desc: 'Converts and decomposes the solids of a DWG file into objects you can manipulate inside Revit (DirectShapes). Once converted, you can scale them, export them as an editable .rfa family or prepare them for coordination. Ideal for reusing external geometry (DWG, SAT, IFC) without depending on the original file.',
+          desc: 'Converts and decomposes the solids of a DWG file into objects you can manipulate inside Revit (generic models). Once converted, you can scale them, export them as an editable .rfa family or prepare them for coordination. Ideal for reusing external geometry (DWG, SAT, IFC) without depending on the original file.',
           points: [
             'Imports and decomposes DWG solids into Revit objects',
             'Standalone option: geometry isn’t deleted when removing the DWG',
@@ -859,10 +859,10 @@ export const translations = {
         },
         geometria: {
           title: 'Geometry Tools',
-          desc: 'Manipulate the geometry of any element with solids: scale it with a configurable factor, convert it to DirectShape or export it (one or several elements) as an .rfa family with editable solids.',
+          desc: 'Manipulate the geometry of any element with solids: scale it with a configurable factor, convert it to generic model or export it (one or several elements) as an .rfa family with editable solids.',
           points: [
             'Scale Solid (configurable factor)',
-            'Convert to DirectShape',
+            'Convert to generic model',
             'Export to Family (.rfa), editable',
           ],
         },
@@ -957,7 +957,7 @@ export const translations = {
           intro: 'Modeling plaster face by face is slow and error-prone. With BIMS you select the rooms and the system automatically creates the wall finish and the screed of each room as native, measurable elements.',
           steps: [
             { n: '01', t: 'Select types and rooms', d: 'You choose the wall and/or floor type for the plaster and select one or more rooms from the architectural model, even from linked models.' },
-            { n: '02', t: 'BIMS detects the boundaries and generates the plaster', d: 'The system recognizes the walls and columns bounding each room, creates plaster walls on the interior vertical faces and generates the floor (screed) following the room outline, using native types (Wall/Floor).' },
+            { n: '02', t: 'BIMS detects the boundaries and generates the plaster', d: 'The system recognizes the walls and columns bounding each room, creates plaster walls on the interior vertical faces and generates the floor (screed) following the room outline, using native types (walls/floors).' },
             { n: '03', t: 'Finishes ready to quantify', d: 'Each surface becomes a quantifiable element, ready for finish take-off and the finishes budget per room.' },
           ],
           compliance: [
@@ -982,11 +982,11 @@ export const translations = {
         'dwg-nwc': {
           tab: '📐 DWG → NWC Import',
           title: 'DWG → NWC Import — External geometry ready to manipulate and coordinate',
-          intro: 'Converts and decomposes the solids of a DWG file into native Revit objects (DirectShapes) you can scale, export to an .rfa family or prepare for coordination. Ideal for integrating vendor or discipline geometry without depending on the original file.',
+          intro: 'Converts and decomposes the solids of a DWG file into native Revit objects (generic models) you can scale, export to an .rfa family or prepare for coordination. Ideal for integrating vendor or discipline geometry without depending on the original file.',
           steps: [
-            { n: '01', t: 'Import the external DWG', d: 'BIMS reads the DWG file and decomposes its solids into native Revit objects (DirectShapes). With the standalone option, the geometry isn’t removed when you delete the DWG.' },
-            { n: '02', t: 'Manipulate the geometry in Revit', d: 'Once converted, the objects are editable: you can scale them with a factor, convert them to DirectShape or export them as an .rfa family with editable solids, as well as calculate their volumes.' },
-            { n: '03', t: 'Export to NWC for Navisworks', d: 'Convert the DirectShapes to compatible categories (Mass / Generic Model) and prepare the federated model for coordination and clash detection in Navisworks.' },
+            { n: '01', t: 'Import the external DWG', d: 'BIMS reads the DWG file and decomposes its solids into native Revit objects (generic models). With the standalone option, the geometry isn’t removed when you delete the DWG.' },
+            { n: '02', t: 'Manipulate the geometry in Revit', d: 'Once converted, the objects are editable: you can scale them with a factor, convert them to generic model or export them as an .rfa family with editable solids, as well as calculate their volumes.' },
+            { n: '03', t: 'Export to NWC for Navisworks', d: 'Convert the generic models to compatible categories (Mass / Generic Model) and prepare the federated model for coordination and clash detection in Navisworks.' },
           ],
           compliance: [
             { k: 'Model federation (ISO 19650-3):', v: 'Integrates external disciplines into the coordinated model, enabling multidisciplinary review from a single source.' },
@@ -1249,7 +1249,7 @@ export const translations = {
         { q: 'Is it compatible with my version of Revit?', a: 'BIMS works on Revit 2024, 2025, 2026 and 2027 on Windows 10 / 11. Installation takes less than a minute and requires no manual setup.' },
         { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at soporte@bimsaddin.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
         { q: 'Can I change plans or install on several machines?', a: 'Yes. The Individual plan covers 1 machine, Professional up to 3, and the Enterprise plan has no limit. You can upgrade at any time — you only pay the prorated difference.' },
-        { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is a new add-in and is still in the process of obtaining its digital signature, so Windows SmartScreen may show an “unknown publisher” notice. It’s not a virus. To install it: run BIMS_Setup.exe, if the blue window appears click “More info” and then “Run anyway”. We’re processing the signature to remove this notice in upcoming versions.' },
+        { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is digitally signed, so Windows shows a verified publisher instead of “unknown publisher”. Because the certificate is recent, SmartScreen may still show a notice until it builds download reputation: if it appears, click “More info” and then “Run anyway”. The installer is signed and its signature can be verified in the file’s properties.' },
         { q: 'Does BIMS work with linked models?', a: 'Yes. Several commands —especially in the Formwork and Room Plastering modules— are designed to work with linked models, recognizing walls, columns and other elements from the linked documents.' },
       ],
     },
@@ -1262,14 +1262,14 @@ export const translations = {
       ctaDownload: '⬇ Download installer (key required)',
       pills: ['Windows 10 / 11', 'Revit 2024', 'Revit 2025', 'Revit 2026', 'Revit 2027'],
       smartTitle: 'Does Windows show a warning on install? It’s normal — here’s how to open it',
-      smartDesc: { pre: 'BIMS is a new add-in and is still in the process of obtaining its digital signature (certificate). That’s why, when you run the installer, ', strong: 'Windows SmartScreen', post: ' may show a blue “unknown publisher” warning. It’s not a virus: it just means Microsoft doesn’t recognize the publisher yet. To install it anyway:' },
+      smartDesc: { pre: 'BIMS is digitally signed, so Windows shows the verified publisher name, not “unknown publisher”. Because the certificate is recent, ', strong: 'Windows SmartScreen', post: ' may still show a blue notice until it builds download reputation. If it appears, to install it:' },
       smartSteps: [
-        'Run the BIMS_Setup.exe file you downloaded.',
+        'Run the BIMS.msi file you downloaded.',
         'If the blue “Windows protected your PC” window appears, click “More info”.',
         'Press the “Run anyway” button that appears below.',
         'Continue with the installer as usual — it takes less than a minute.',
       ],
-      smartFootPre: 'We’re processing the digital signature to remove this notice in upcoming versions. If you have any questions, write to us at ',
+      smartFootPre: 'The signature can be verified in the file’s properties, and the notice fades as downloads grow. If you have any questions, write to us at ',
       smartFootPost: ' or via WhatsApp.',
       privacyTitle: 'Privacy and Security',
       privacyDesc: 'BIMS only collects the data strictly necessary to activate your license and deliver updates. All information is stored securely on Google Cloud servers. We never sell or share your data with third parties for marketing purposes. ',

@@ -22,7 +22,7 @@ export const FAQ = [
   },
   {
     q: '¿Por qué Windows muestra una advertencia al instalar BIMS?',
-    a: 'BIMS es un add-in nuevo y aún está en proceso de obtener su firma digital, por lo que Windows SmartScreen puede mostrar un aviso de “editor desconocido”. No es un virus. Para instalarlo: ejecuta BIMS_Setup.exe, si aparece la ventana azul haz clic en “Más información” y luego en “Ejecutar de todas formas”. Estamos tramitando la firma para eliminar este aviso en próximas versiones.',
+    a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.',
   },
   {
     q: '¿BIMS funciona con modelos vinculados?',

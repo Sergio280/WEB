@@ -13,7 +13,7 @@ export const USE_CASES = [
       { n: '01', t: 'Selecciona los tipos y los elementos', d: 'Eliges el tipo de muro y de suelo que se usarán como encofrado, y luego seleccionas las columnas, vigas, losas o escaleras del modelo (directamente o por filtros de categoría).' },
       { n: '02', t: 'BIMS clasifica y genera cada cara', d: 'El sistema identifica el tipo de cada elemento y crea el encofrado como muros y suelos nativos de Revit, extruidos siempre hacia afuera: columnas → muros perimetrales, vigas → muros laterales + suelo de fondo, losas → suelo, escaleras → muros verticales + suelos inclinados.' },
       { n: '03', t: 'Recortes automáticos entre elementos', d: 'BIMS detecta los elementos contiguos y elimina los solapamientos entre encofrados de vigas y columnas, preservando curvas y geometría compleja para que el área sea exacta, sin sobre-metrados.' },
-      { n: '04', t: 'Listo para cuantificar', d: 'El encofrado queda integrado en el modelo como Wall/Floor nativos, cuantificable y detallable directamente en las tablas de Revit, sin pasos adicionales.' },
+      { n: '04', t: 'Listo para cuantificar', d: 'El encofrado queda integrado en el modelo como muros/suelos nativos, cuantificable y detallable directamente en las tablas de Revit, sin pasos adicionales.' },
     ],
     visual: 'encofrado',
     compliance: {
@@ -52,7 +52,7 @@ export const USE_CASES = [
       'Modelar el tarrajeo cara por cara es lento y propenso a error. Con BIMS seleccionas las habitaciones y el sistema crea automáticamente el revestimiento de muros y el contrapiso de cada ambiente como elementos nativos y medibles.',
     steps: [
       { n: '01', t: 'Selecciona tipos y habitaciones', d: 'Eliges el tipo de muro y/o suelo para el tarrajeo y seleccionas una o varias habitaciones (rooms) del modelo arquitectónico, incluso desde modelos vinculados.' },
-      { n: '02', t: 'BIMS detecta los límites y genera el tarrajeo', d: 'El sistema reconoce los muros y columnas que limitan cada habitación, crea muros de tarrajeo en las caras verticales internas y genera el suelo (contrapiso) siguiendo el contorno del ambiente, usando tipos nativos (Wall/Floor).' },
+      { n: '02', t: 'BIMS detecta los límites y genera el tarrajeo', d: 'El sistema reconoce los muros y columnas que limitan cada habitación, crea muros de tarrajeo en las caras verticales internas y genera el suelo (contrapiso) siguiendo el contorno del ambiente, usando tipos nativos (muros/suelos).' },
       { n: '03', t: 'Acabados listos para metrar', d: 'Cada superficie queda como elemento cuantificable, listo para el metrado de revestimientos y el presupuesto de acabados por ambiente.' },
     ],
     visual: 'tarrajeo',
@@ -89,11 +89,11 @@ export const USE_CASES = [
     tab: '📐 Importación DWG → NWC',
     title: 'Importación DWG → NWC — Geometría externa lista para manipular y coordinar',
     intro:
-      'Convierte y descompone los sólidos de un archivo DWG en objetos nativos de Revit (DirectShapes) que puedes escalar, exportar a familia .rfa o preparar para coordinación. Ideal para integrar geometría de proveedores o especialidades sin depender del archivo original.',
+      'Convierte y descompone los sólidos de un archivo DWG en objetos nativos de Revit (modelos genéricos) que puedes escalar, exportar a familia .rfa o preparar para coordinación. Ideal para integrar geometría de proveedores o especialidades sin depender del archivo original.',
     steps: [
-      { n: '01', t: 'Importa el DWG externo', d: 'BIMS lee el archivo DWG y descompone sus sólidos en objetos nativos de Revit (DirectShapes). Con la opción independiente, la geometría no se elimina al borrar el DWG.' },
-      { n: '02', t: 'Manipula la geometría en Revit', d: 'Una vez convertidos, los objetos son editables: puedes escalarlos con un factor, convertirlos a DirectShape o exportarlos como familia .rfa con sólidos editables, además de calcular sus volúmenes.' },
-      { n: '03', t: 'Exporta a NWC para Navisworks', d: 'Convierte los DirectShapes a categorías compatibles (Mass / Generic Model) y prepara el modelo federado para coordinación y detección de interferencias en Navisworks.' },
+      { n: '01', t: 'Importa el DWG externo', d: 'BIMS lee el archivo DWG y descompone sus sólidos en objetos nativos de Revit (modelos genéricos). Con la opción independiente, la geometría no se elimina al borrar el DWG.' },
+      { n: '02', t: 'Manipula la geometría en Revit', d: 'Una vez convertidos, los objetos son editables: puedes escalarlos con un factor, convertirlos a modelo genérico o exportarlos como familia .rfa con sólidos editables, además de calcular sus volúmenes.' },
+      { n: '03', t: 'Exporta a NWC para Navisworks', d: 'Convierte los modelos genéricos a categorías compatibles (Mass / Generic Model) y prepara el modelo federado para coordinación y detección de interferencias en Navisworks.' },
     ],
     visual: 'nwc',
     compliance: {

@@ -36,6 +36,6 @@ export const RIBBON_COMMANDS = [
   'Numerar Aparatos',
   // ── Panel Geometría ──
   'Escalar Sólido',
-  'Convertir a DirectShape',
+  'Convertir a modelo genérico',
   'Exportar a Familia (.rfa)',
 ];

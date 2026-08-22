@@ -229,7 +229,7 @@
             <div id="dlSpinner" style="width:18px;height:18px;border:2.5px solid #334155;border-top-color:#009EE3;border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;"></div>
             <span id="dlStatus" style="font-size:.9rem;color:#94a3b8;">Preparing the BIMS installer download…</span>
         </div>
-        <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe" id="dlManual" download
+        <a href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.msi" id="dlManual" download
            style="display:none;font-size:.85rem;color:#009EE3;text-decoration:none;">
             ↓ Click here if the download does not start automatically
         </a>
@@ -239,18 +239,18 @@
     <div class="steps">
         <p>Next steps</p>
         <ol>
-            <li><strong>Install the downloaded .msi / .exe file</strong></li>
+            <li><strong>Install the downloaded .msi file</strong></li>
             <li><strong>Check your email</strong> — you will receive a link to create your BIMS password</li>
             <li><strong>Open Revit</strong> and activate with your email — your license will already be ready</li>
         </ol>
     </div>
 
-    <!-- SmartScreen notice: BIMS_Setup.exe not yet code-signed (EV certificate).
+    <!-- SmartScreen notice: BIMS.msi not yet code-signed (EV certificate).
          Reduces drop-off between download and install. -->
     <div class="steps" style="border-left:4px solid #f59e0b;">
         <p style="color:#f59e0b;">⚠️ If Windows shows a warning during installation</p>
         <p style="font-size:.85rem;font-weight:400;text-transform:none;letter-spacing:normal;color:#cbd5e1;line-height:1.55;margin:0;">
-            BIMS is getting its digital signature, so <strong style="color:#e2e8f0;">Windows SmartScreen</strong> may show an “unknown publisher” notice. <strong style="color:#e2e8f0;">It's not a virus.</strong> If the blue “Windows protected your PC” window appears, click <strong style="color:#e2e8f0;">“More info”</strong> and then <strong style="color:#e2e8f0;">“Run anyway”</strong>.
+            BIMS is digitally signed and Windows shows the verified publisher name. Because the certificate is recent, <strong style="color:#e2e8f0;">Windows SmartScreen</strong> may still show a blue notice; if “Windows protected your PC” appears, click <strong style="color:#e2e8f0;">“More info”</strong> and then <strong style="color:#e2e8f0;">“Run anyway”</strong>.
         </p>
     </div>
 
@@ -270,10 +270,10 @@
     'use strict';
 
     // ── URL del instalador BIMS en GitHub Releases ────────────────────────────
-    // El .exe se sube al release con el nombre fijo BIMS_Setup.exe para que esta
-    // URL siempre funcione sin importar la versión (el archivo local del .iss se
-    // llama BIMS_v1.1.0_R242526_Setup.exe; se renombra al subirlo al release).
-    var INSTALLER_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe';
+    // El .msi se sube al release con el nombre fijo BIMS.msi para que esta
+    // URL siempre funcione sin importar la versión (el archivo local se llama
+    // BIMS_v1.1.8_R24252627.msi; se renombra a BIMS.msi al subirlo al release).
+    var INSTALLER_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS.msi';
 
     var PLAN_LABELS     = { individual: 'Individual', profesional: 'Professional' };
     var DURATION_LABELS = { '1m': '1 month', '3m': '3 months', '6m': '6 months', '12m': '1 year' };
@@ -335,7 +335,7 @@
             // Disparar descarga invisible
             var link    = document.createElement('a');
             link.href   = INSTALLER_URL;
-            link.download = 'BIMS_Setup.exe';
+            link.download = 'BIMS.msi';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

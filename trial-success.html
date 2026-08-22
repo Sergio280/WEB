@@ -238,7 +238,7 @@
         <div class="smartscreen-note" style="background:#fff8e6;border:1px solid #f3d27a;border-left:4px solid #f5a623;border-radius:14px;padding:18px 20px;margin:0 0 22px;text-align:left;line-height:1.55;">
             <strong style="display:block;font-size:1.05em;color:#8a5a00;margin-bottom:8px;">🛡️ Importante: Windows mostrará un aviso azul — es normal</strong>
             <span style="font-size:0.9em;color:#5c4a1a;display:block;">
-                Como BIMS es un programa nuevo (aún tramitando su firma digital), <strong>Windows SmartScreen</strong> muestra la pantalla azul «Windows protegió tu PC» a <strong>todos</strong> los que lo instalan por primera vez. <strong>No es un virus ni un error</strong> — solo significa que el editor todavía no es “conocido”. Pasarlo toma 3 segundos:
+                BIMS está firmado digitalmente, así que Windows muestra el nombre del editor verificado. Como el certificado es reciente, <strong>Windows SmartScreen</strong> todavía puede mostrar la pantalla azul «Windows protegió tu PC» al instalarlo. No hay de qué preocuparse — pasarla toma 3 segundos:
             </span>
 
             <!-- Paso 1 -->
@@ -268,7 +268,7 @@
         </div>
 
         <div class="actions">
-            <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe" class="btn btn-primary" download>
+            <a id="manualDownloadBtn" href="https://github.com/Sergio280/WEB/releases/latest/download/BIMS.msi" class="btn btn-primary" download>
                 ⬇ Descargar instalador
             </a>
             <a href="/" class="btn btn-secondary">← Volver al inicio</a>
@@ -300,9 +300,9 @@
             // ── Auto-trigger de descarga ───────────────────────────────────
             // 600ms de retraso: deja que el DOM pinte el banner antes de iniciar
             // la descarga, así el usuario ve "Descargando..." y entiende qué pasa.
-            // URL fija: BIMS_Setup.exe (al subir el release a GitHub, el .exe
+            // URL fija: BIMS.msi (al subir el release a GitHub, el .msi
             // se sube con ese nombre estable, independiente de la versión).
-            const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS_Setup.exe';
+            const DOWNLOAD_URL = 'https://github.com/Sergio280/WEB/releases/latest/download/BIMS.msi';
             const spinner   = document.getElementById('dlSpinner');
             const checkIcon = document.getElementById('dlCheck');
             const title     = document.getElementById('dlTitle');
@@ -312,7 +312,7 @@
                 try {
                     const a = document.createElement('a');
                     a.href = DOWNLOAD_URL;
-                    a.download = 'BIMS_Setup.exe';
+                    a.download = 'BIMS.msi';
                     a.rel = 'noopener';
                     a.style.display = 'none';
                     document.body.appendChild(a);
