@@ -21,7 +21,7 @@ export const YOUTUBE_ID = 'U9LvemehIkQ';
 // consulta para avisar de actualizaciones, y con el instalador que sirve
 // GitHub Releases. Ojo: la ficha del Autodesk App Store lleva su propio número
 // y se actualiza aparte, al subir el bundle a revisión.
-export const PLUGIN_VERSION = '1.1.6';
+export const PLUGIN_VERSION = '1.2.0';
 
 // Fichas oficiales de BIMS en el Autodesk App Store (publicado 2026-07-10).
 // El sello usa la del idioma activo (la web es bilingüe por geo). Sirve de señal

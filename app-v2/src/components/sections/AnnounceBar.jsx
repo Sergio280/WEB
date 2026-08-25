@@ -11,8 +11,16 @@ export default function AnnounceBar() {
           {t.announce.cta}
         </a>
         {t.announce.version && (
-          <span className="ml-3 inline-flex items-center gap-1 rounded-full bg-brand-500/15 px-2.5 py-0.5 text-[0.72rem] font-semibold text-brand-200 ring-1 ring-brand-400/30">
+          <span className="ml-3 inline-flex items-center gap-1.5 rounded-full bg-brand-500/15 px-2.5 py-0.5 text-[0.72rem] font-semibold text-brand-200 ring-1 ring-brand-400/30">
             ✨ {t.announce.version}
+            {/* El detalle se oculta en pantallas estrechas: en móvil la barra ya va
+                justa y partir esta píldora en dos líneas descoloca el resto. Lo que
+                importa siempre —que hay versión nueva— se ve en cualquier ancho. */}
+            {t.announce.versionDetail && (
+              <span className="hidden font-normal text-brand-300/90 lg:inline">
+                · {t.announce.versionDetail}
+              </span>
+            )}
           </span>
         )}
       </div>
