@@ -506,6 +506,12 @@ export const translations = {
       // Lemon Squeezy como Merchant of Record y los impuestos los gestiona él.
       igvNote: 'Precios en soles con IGV incluido.',
       promoBadge: '🎁 Promoción — ahorras S/{ahorro}',
+      // Rótulo del precio rebajado y nota que declara cuál es el precio
+      // regular. El tachado tiene que poder leerse como lo que es —un precio
+      // de lanzamiento sobre una tarifa regular declarada—, no como un número
+      // suelto. Los importes los rellena Pricing desde data/pricing.js.
+      launchBadge: '🚀 Precio de lanzamiento',
+      launchNote: 'Precio de lanzamiento, vigente hasta nuevo aviso. El precio regular es {ind} al mes en Individual y {pro} al mes en Profesional.',
       regionAskIntl: '¿Ves precios en dólares por error? Cambiar a soles (Perú)',
       regionAskPe: '¿Pagas desde fuera de Perú? Ver precios en dólares',
       tableHead: 'Qué incluye',
@@ -543,6 +549,7 @@ export const translations = {
       // por idioma: seis strings que había que recordar actualizar a la vez.
       savingsTpl: 'Equivale a S/{mensual}/mes — ahorras {pct}% vs mensual',
       igvNote: 'IGV incluido',
+      launchBadge: '🚀 Precio de lanzamiento — el regular es {lista}',
       promoApplied: '🎁 Promoción aplicada — ahorras S/{ahorro}',
       // Bloque de datos para el comprobante electrónico (solo pagos en Perú).
       cpTitle: '¿Necesitas comprobante?',
@@ -1234,6 +1241,8 @@ export const translations = {
       // Ver nota de la versión en español: solo aplica a la región Perú.
       igvNote: 'Prices in soles include Peruvian VAT (IGV).',
       promoBadge: '🎁 Promo — you save S/{ahorro}',
+      launchBadge: '🚀 Launch price',
+      launchNote: 'Launch price, in effect until further notice. The regular price is {ind} a month on Individual and {pro} a month on Professional.',
       regionAskIntl: 'Seeing USD prices by mistake? Switch to soles (Peru)',
       regionAskPe: 'Paying from outside Peru? See prices in USD',
       tableHead: 'What’s included',
@@ -1269,6 +1278,7 @@ export const translations = {
       // desde data/pricing.js; aquí solo vive el texto.
       savingsTpl: 'Equals S/{mensual}/mo — save {pct}% vs monthly',
       igvNote: 'VAT (IGV) included',
+      launchBadge: '🚀 Launch price — the regular one is {lista}',
       promoApplied: '🎁 Promo applied — you save S/{ahorro}',
       // Tax receipt block (Peru payments only). Kept in English for consistency
       // with the rest of the UI, but the documents themselves are Peruvian.

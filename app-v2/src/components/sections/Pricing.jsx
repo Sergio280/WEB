@@ -173,10 +173,12 @@ export default function Pricing() {
                         {curSym}{intlPay ? (USD_FROM[c.key] != null ? formatoUsd(USD_FROM[c.key]) : c.priceFrom) : (promoPorPlan[c.key]?.total ?? c.priceFrom)}
                         <span className="text-sm font-semibold text-slate-500">{p.perMonth}</span>
                       </p>
-                      {promoPorPlan[c.key] && (
+                      {promoPorPlan[c.key] ? (
                         <p className="mt-1 text-xs font-bold text-accent-green">
                           {p.promoBadge.replace('{ahorro}', promoPorPlan[c.key].ahorro)}
                         </p>
+                      ) : (
+                        <p className="mt-1 text-xs font-bold text-accent-green">{p.launchBadge}</p>
                       )}
                     </>
                   ) : (
@@ -233,6 +235,16 @@ export default function Pricing() {
             {p.footnotePre}<strong className="text-slate-300">{p.footnoteDurations}</strong>{p.footnoteMid}<strong className="text-slate-300">{p.footnoteDiscount.replace('{pct}', ahorroMaximoPct())}</strong>{p.footnotePost}
           </>
         )}
+      </p>
+
+      {/* El tachado de las tarjetas solo es honesto si en algún sitio se dice
+          cuál es el precio regular y qué es el número rebajado. Los importes NO
+          se escriben aquí: salen de data/pricing.js, igual que el tachado, para
+          que no puedan contradecirse. */}
+      <p className="mx-auto mt-2 max-w-xl text-center text-xs text-slate-500">
+        {p.launchNote
+          .replace('{ind}', intlPay ? `$${formatoUsd(precioListaUsd('individual', 'monthly'))}` : `S/${precioListaMensualPen('individual')}`)
+          .replace('{pro}', intlPay ? `$${formatoUsd(precioListaUsd('profesional', 'monthly'))}` : `S/${precioListaMensualPen('profesional')}`)}
       </p>
 
       {/* Aviso de IGV: solo en la región Perú, donde cobra Culqi en soles y el

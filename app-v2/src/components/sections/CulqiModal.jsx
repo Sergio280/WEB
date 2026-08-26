@@ -426,6 +426,11 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
                     {intlDuration === 'yearly' ? c.intlPerYear : c.intlPerMonth}
                   </span>
                 </div>
+                {listaUsdTachada != null && (
+                  <p className="mb-1 text-center text-xs font-bold text-accent-green">
+                    {c.launchBadge.replace('{lista}', `$${formatoUsd(listaUsdTachada)}`)}
+                  </p>
+                )}
                 {intlDuration === 'yearly' && (
                   <p className="mb-4 text-center text-xs font-semibold text-accent-green">{c.intlYearNote}</p>
                 )}
@@ -491,10 +496,16 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
                   <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>
                   <span className="ml-2 align-middle text-xs font-semibold text-slate-500">{c.igvNote}</span>
                 </div>
-                {promo && (
+                {promo ? (
                   <p className="mb-1 text-center text-xs font-bold text-accent-green">
                     {c.promoApplied.replace('{ahorro}', promo.ahorro)}
                   </p>
+                ) : (
+                  listaTachada != null && (
+                    <p className="mb-1 text-center text-xs font-bold text-accent-green">
+                      {c.launchBadge.replace('{lista}', `S/${listaTachada}`)}
+                    </p>
+                  )
                 )}
                 <p className="mb-2 text-center text-sm text-slate-400">{periodText}</p>
                 {savingsNote && (
