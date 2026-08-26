@@ -26,7 +26,7 @@ export const translations = {
 
     meta: {
       title: 'BIMS — Automatiza encofrado, tarrajeo y planos DWG en Revit',
-      description: 'BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, refuerzo, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.',
+      description: 'BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, metrados, refuerzo, despiece de acero, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.',
     },
 
     announce: {
@@ -34,8 +34,8 @@ export const translations = {
       free: '14 días GRATIS',
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
-      version: 'Ya disponible la versión 1.2.0',
-      versionDetail: 'Acero automático por norma · Importación IFC · Mejoras en encofrado',
+      version: 'Ya disponible la versión 1.2.1',
+      versionDetail: 'Despiece de acero a Excel · Metrado de encofrado en tablas · Encofrado más preciso',
     },
 
     nav: {
@@ -59,8 +59,9 @@ export const translations = {
         'Marca Anfitrión', 'Asignar Host ID', 'Asignar Ambiente', 'Importar DWG',
         'Importar DWG (Independiente)', 'Exportar NWC', 'Calcular Volúmenes', 'Estilo de Notas',
         'Sólido → Masa', 'Agregar CAD a Selección', 'Resaltar Selección', 'Igualar Gráficos',
-        'Exportar Planos a DWG', 'Encofrado Automatizado', 'Tarrajeo Habitación', 'Acero Columnas',
-        'Estribos Columnas', 'Acero Vigas', 'Acero Muros', 'Acero Losas', 'Registros Sanitarios',
+        'Exportar Planos a DWG', 'Encofrado Automatizado', 'Metrado de Encofrado', 'Tarrajeo Habitación',
+        'Acero Columnas', 'Estribos Columnas', 'Acero Vigas', 'Acero Muros', 'Acero Losas', 'Despiece',
+        'Registros Sanitarios',
         'Calcular Longitud', 'Asignar Cota Tapa', 'Asignar Sector', 'Numerar Aparatos',
         'Escalar Sólido', 'Convertir a modelo genérico', 'Exportar a Familia (.rfa)',
       ],
@@ -183,6 +184,17 @@ export const translations = {
             'Recortes automáticos, integrado con tablas de Revit',
           ],
         },
+        metrado: {
+          badge: 'Nuevo en 1.2.1',
+          title: 'Metrado de Encofrado en tablas de Revit',
+          desc: 'Una vez generado el encofrado, BIMS crea las tablas de planificación con el área de contacto agrupada por la categoría del elemento anfitrión —columnas, vigas, losas, muros, escaleras y cimentación—, con subtotales por nivel y una tabla RESUMEN. El metrado sale del propio modelo, no de una hoja aparte.',
+          points: [
+            'Una tabla por categoría + RESUMEN con subtotales',
+            'Área de contacto sumable, con total por nivel y general',
+            'Verifica la conservación: nada se pierde ni se cuenta dos veces',
+            'Los paños no metrables se listan con su motivo y se seleccionan',
+          ],
+        },
         acero: {
           title: 'Acero de Refuerzo',
           desc: 'Calcula y coloca la armadura en los elementos estructurales. En columnas genera el refuerzo longitudinal (rectangular o circular) y los estribos con sus zonas de confinamiento y ganchos a 135°, conforme a la normativa sismorresistente peruana.',
@@ -192,6 +204,17 @@ export const translations = {
             'Ganchos a 135° según norma',
           ],
           tags: ['LOD 400', 'E.030', 'E.060'],
+        },
+        despiece: {
+          badge: 'Nuevo en 1.2.1',
+          title: 'Despiece de Acero y planilla de corte en Excel',
+          desc: 'Lee la armadura ya modelada y resuelve cómo cortarla a partir de barras comerciales minimizando la chatarra. Entrega un Excel con el resumen para compras, el detalle por diámetro, los patrones de corte para el fierrero y la trazabilidad pieza a pieza. Solo lee el modelo: no lo modifica.',
+          points: [
+            'Compara la barra de 9 m con la de 12 m para decidir la compra',
+            'Declara el mínimo teórico: cuánto margen queda de verdad',
+            'Avisa de las piezas que no caben en la barra y exigen empalme',
+            'Con selección despieza solo eso; sin selección, todo el proyecto',
+          ],
         },
         tarrajeo: {
           title: 'Tarrajeo por Habitación',
@@ -232,7 +255,7 @@ export const translations = {
         },
         alcance: {
           title: '30+ comandos · Revit 2024-2027',
-          desc: 'Un add-in completo para estructura, encofrado, tarrajeo, geometría y documentación, organizado en los paneles General, Estructuras y Geometría. Compatible con Windows 10/11 y Revit 2024 a 2027.',
+          desc: 'Un add-in completo para estructura, encofrado, metrados, tarrajeo, geometría y documentación, organizado en los paneles General, Estructuras, Geometría y Sistema. La interfaz se muestra en el idioma en que esté instalado Revit. Compatible con Windows 10/11 y Revit 2024 a 2027.',
           points: [],
         },
       },
@@ -270,6 +293,15 @@ export const translations = {
           svgLabel: 'Columna reforzada',
           svgAria: 'Sección de columna con refuerzo',
           note: 'Barras longitudinales + estribos a 135° con confinamiento',
+        },
+        despiece: {
+          caption: 'Esquema — Patrón de corte sobre una barra comercial',
+          barLabel: 'Barra de 9 m troceada en piezas del modelo',
+          scrapLabel: '↯ retal',
+          bar9: 'estándar peruano',
+          bar12: 'comparativa para la compra',
+          sheets: ['Resumen', 'Por diámetro', 'Patrones', 'Piezas', 'No caben'],
+          note: 'Esquema ilustrativo: el reparto real lo calcula BIMS con la armadura de tu modelo.',
         },
         nwc: {
           caption: 'Flujo — DWG externo a modelo federado',
@@ -332,6 +364,20 @@ export const translations = {
           compliance: [
             { k: 'LOD 400:', v: 'Barras longitudinales y estribos con posicionamiento exacto, ganchos a 135° y zonas de confinamiento definidas.' },
             { k: 'E.030 / E.060 (NTP):', v: 'Confinamiento y geometría conforme a las normas peruanas de diseño sismorresistente y concreto armado.' },
+          ],
+        },
+        despiece: {
+          tab: '📋 Despiece de Acero',
+          title: 'Despiece de Acero — De la armadura modelada a la planilla de corte, en un clic',
+          intro: 'El despiece se sigue rehaciendo a mano en una hoja aparte, y cada cambio del modelo lo deja desfasado. BIMS lee la armadura que ya está modelada, resuelve cómo cortarla a partir de barras comerciales minimizando la chatarra y entrega la planilla en Excel, lista para compras y para el fierrero.',
+          steps: [
+            { n: '01', t: 'Ejecuta sobre la selección o sobre todo el proyecto', d: 'Con elementos seleccionados despieza solo esos; sin selección, el modelo entero. Es un comando de solo lectura: no abre ninguna transacción ni modifica el proyecto, así que cancelar es seguro en cualquier punto.' },
+            { n: '02', t: 'BIMS resuelve el corte y compara la barra', d: 'Agrupa las piezas por diámetro y calcula cómo obtenerlas de barras comerciales de 9 m dejando el mínimo desperdicio, y repite el cálculo con barras de 12 m para decidir la compra con criterio. Los pesos salen del catálogo de BIMS, no de los parámetros que cada quien haya modelado.' },
+            { n: '03', t: 'Planilla en Excel, lista para obra', d: 'Un archivo con cinco hojas: Resumen (cuánto acero pedir y en qué barra), Por diámetro, Patrones de corte para el fierrero, Piezas para trazabilidad, y las piezas que no caben en la barra y exigen empalme. Nada se omite en silencio: lo que no se pudo despiezar se declara con su motivo.' },
+          ],
+          compliance: [
+            { k: '5D BIM:', v: 'El metrado de acero (kg por diámetro y barras a comprar) se extrae del propio modelo, de modo que presupuesto, compras y geometría comparten una única fuente.' },
+            { k: 'Trazabilidad:', v: 'Cada línea de la planilla se puede seguir hasta la pieza del modelo de la que salió, y las que quedan fuera se reportan con su causa en lugar de desaparecer del total.' },
           ],
         },
         'dwg-nwc': {
@@ -608,6 +654,7 @@ export const translations = {
         { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
         { q: '¿Puedo cambiar de plan o instalar en varios equipos?', a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.' },
         { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.' },
+        { q: '¿El despiece de acero y el metrado de encofrado modifican mi modelo?', a: 'No. El despiece es de solo lectura: lee la armadura ya modelada y escribe un Excel aparte, sin tocar el proyecto. El metrado de encofrado tampoco cambia la geometría: crea tablas de planificación en el Navegador de proyectos con el área de contacto agrupada por categoría, y te avisa de los paños que no pudo medir en lugar de omitirlos del total.' },
         { q: '¿BIMS funciona con modelos vinculados?', a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.' },
       ],
     },
@@ -673,7 +720,7 @@ export const translations = {
 
     meta: {
       title: 'BIMS — Automate formwork, plastering and DWG sheets in Revit',
-      description: 'BIMS — Professional Autodesk Revit add-in that automates formwork, rebar, plastering and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.',
+      description: 'BIMS — Professional Autodesk Revit add-in that automates formwork, quantities, rebar, cutting lists, plastering and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.',
     },
 
     announce: {
@@ -681,8 +728,8 @@ export const translations = {
       free: '14 days FREE',
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
-      version: 'Version 1.2.0 now available',
-      versionDetail: 'Code-based automatic rebar · IFC import · Formwork improvements',
+      version: 'Version 1.2.1 now available',
+      versionDetail: 'Rebar cutting list to Excel · Formwork quantities in schedules · Sharper formwork',
     },
 
     nav: {
@@ -706,8 +753,9 @@ export const translations = {
         'Host Mark', 'Assign Host ID', 'Assign Room', 'Import DWG',
         'Import DWG (Standalone)', 'Export NWC', 'Calculate Volumes', 'Note Style',
         'Solid → Mass', 'Add CAD to Selection', 'Highlight Selection', 'Match Graphics',
-        'Export Sheets to DWG', 'Automated Formwork', 'Room Plastering', 'Column Rebar',
-        'Column Stirrups', 'Beam Rebar', 'Wall Rebar', 'Slab Rebar', 'Inspection Chambers',
+        'Export Sheets to DWG', 'Automated Formwork', 'Formwork Quantities', 'Room Plastering',
+        'Column Rebar', 'Column Stirrups', 'Beam Rebar', 'Wall Rebar', 'Slab Rebar', 'Cutting List',
+        'Inspection Chambers',
         'Calculate Length', 'Assign Cover Level', 'Assign Sector', 'Number Fixtures',
         'Scale Solid', 'Convert to generic model', 'Export to Family (.rfa)',
       ],
@@ -830,6 +878,17 @@ export const translations = {
             'Automatic trimming, integrated with Revit schedules',
           ],
         },
+        metrado: {
+          badge: 'New in 1.2.1',
+          title: 'Formwork Quantities as Revit schedules',
+          desc: 'Once the formwork is generated, BIMS builds the schedules with the contact area grouped by the host element category — columns, beams, slabs, walls, stairs and foundations — with subtotals per level and a SUMMARY schedule. The take-off comes from the model itself, not from a separate sheet.',
+          points: [
+            'One schedule per category + SUMMARY with subtotals',
+            'Contact area that adds up, with totals per level and overall',
+            'Conservation check: nothing is lost or counted twice',
+            'Panels that cannot be measured are listed with their reason',
+          ],
+        },
         acero: {
           title: 'Reinforcing Steel',
           desc: 'Calculates and places the rebar in structural elements. In columns it generates the longitudinal reinforcement (rectangular or circular) and the stirrups with their confinement zones and 135° hooks, compliant with Peruvian seismic-resistant code.',
@@ -839,6 +898,17 @@ export const translations = {
             '135° hooks per code',
           ],
           tags: ['LOD 400', 'E.030', 'E.060'],
+        },
+        despiece: {
+          badge: 'New in 1.2.1',
+          title: 'Rebar Cutting List in Excel',
+          desc: 'It reads the rebar already modelled and works out how to cut it from commercial bars while minimising scrap. You get an Excel file with the purchasing summary, the breakdown per diameter, the cutting patterns for the steel fixer and piece-by-piece traceability. It only reads the model: it never modifies it.',
+          points: [
+            'Compares the 9 m bar against the 12 m one before you buy',
+            'States the theoretical minimum: how much margin is really left',
+            'Flags pieces that do not fit the bar and need a splice',
+            'With a selection it cuts only that; with none, the whole project',
+          ],
         },
         tarrajeo: {
           title: 'Room-based Plastering',
@@ -879,7 +949,7 @@ export const translations = {
         },
         alcance: {
           title: '30+ commands · Revit 2024-2027',
-          desc: 'A complete add-in for structure, formwork, plastering, geometry and documentation, organized into the General, Structures and Geometry panels. Compatible with Windows 10/11 and Revit 2024 to 2027.',
+          desc: 'A complete add-in for structure, formwork, quantities, plastering, geometry and documentation, organized into the General, Structures, Geometry and System panels. The interface follows the language Revit is installed in. Compatible with Windows 10/11 and Revit 2024 to 2027.',
           points: [],
         },
       },
@@ -917,6 +987,15 @@ export const translations = {
           svgLabel: 'Reinforced column',
           svgAria: 'Column section with reinforcement',
           note: 'Longitudinal bars + 135° stirrups with confinement',
+        },
+        despiece: {
+          caption: 'Diagram — Cutting pattern on a commercial bar',
+          barLabel: '9 m bar split into pieces from the model',
+          scrapLabel: '↯ off-cut',
+          bar9: 'Peruvian standard',
+          bar12: 'comparison before buying',
+          sheets: ['Summary', 'Per diameter', 'Patterns', 'Pieces', 'Do not fit'],
+          note: 'Illustrative diagram: the real split is computed by BIMS from the rebar in your model.',
         },
         nwc: {
           caption: 'Flow — External DWG to federated model',
@@ -979,6 +1058,20 @@ export const translations = {
           compliance: [
             { k: 'LOD 400:', v: 'Longitudinal bars and stirrups with exact positioning, 135° hooks and defined confinement zones.' },
             { k: 'E.030 / E.060 (NTP):', v: 'Confinement and geometry compliant with Peruvian seismic-resistant design and reinforced-concrete standards.' },
+          ],
+        },
+        despiece: {
+          tab: '📋 Rebar Cutting List',
+          title: 'Rebar Cutting List — From modelled rebar to the cutting schedule in one click',
+          intro: 'Cutting lists are still rebuilt by hand in a separate sheet, and every model change leaves them out of date. BIMS reads the rebar already modelled, works out how to cut it from commercial bars with the least scrap, and delivers the schedule in Excel, ready for purchasing and for the steel fixer.',
+          steps: [
+            { n: '01', t: 'Run it on a selection or on the whole project', d: 'With elements selected it processes only those; with nothing selected, the entire model. It is a read-only command: it opens no transaction and does not modify the project, so cancelling is safe at any point.' },
+            { n: '02', t: 'BIMS solves the cut and compares the bar', d: 'It groups pieces by diameter and works out how to obtain them from 9 m commercial bars with the least waste, then repeats the calculation with 12 m bars so the purchase can be decided on evidence. Weights come from the BIMS catalogue, not from whatever parameters were modelled.' },
+            { n: '03', t: 'Excel schedule, ready for site', d: 'A file with five sheets: Summary (how much steel to order and in which bar), Per diameter, Cutting patterns for the steel fixer, Pieces for traceability, and the pieces that do not fit the bar and need a splice. Nothing is dropped silently: whatever could not be cut is reported with its reason.' },
+          ],
+          compliance: [
+            { k: '5D BIM:', v: 'The steel take-off (kg per diameter and bars to purchase) is extracted from the model itself, so budgeting, purchasing and geometry share a single source.' },
+            { k: 'Traceability:', v: 'Every line of the schedule can be traced back to the model piece it came from, and whatever falls outside is reported with its cause instead of vanishing from the total.' },
           ],
         },
         'dwg-nwc': {
@@ -1252,6 +1345,7 @@ export const translations = {
         { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at soporte@bimsaddin.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
         { q: 'Can I change plans or install on several machines?', a: 'Yes. The Individual plan covers 1 machine, Professional up to 3, and the Enterprise plan has no limit. You can upgrade at any time — you only pay the prorated difference.' },
         { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is digitally signed, so Windows shows a verified publisher instead of “unknown publisher”. Because the certificate is recent, SmartScreen may still show a notice until it builds download reputation: if it appears, click “More info” and then “Run anyway”. The installer is signed and its signature can be verified in the file’s properties.' },
+        { q: 'Do the rebar cutting list and the formwork quantities modify my model?', a: 'No. The cutting list is read-only: it reads the rebar already modelled and writes a separate Excel file without touching the project. Formwork quantities do not change the geometry either: they create schedules in the Project Browser with the contact area grouped by category, and report the panels that could not be measured instead of dropping them from the total.' },
         { q: 'Does BIMS work with linked models?', a: 'Yes. Several commands —especially in the Formwork and Room Plastering modules— are designed to work with linked models, recognizing walls, columns and other elements from the linked documents.' },
       ],
     },

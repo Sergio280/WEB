@@ -25,6 +25,10 @@ export const FAQ = [
     a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.',
   },
   {
+    q: '¿El despiece de acero y el metrado de encofrado modifican mi modelo?',
+    a: 'No. El despiece es de solo lectura: lee la armadura ya modelada y escribe un Excel aparte, sin tocar el proyecto. El metrado de encofrado tampoco cambia la geometría: crea tablas de planificación en el Navegador de proyectos con el área de contacto agrupada por categoría, y te avisa de los paños que no pudo medir en lugar de omitirlos del total.',
+  },
+  {
     q: '¿BIMS funciona con modelos vinculados?',
     a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.',
   },

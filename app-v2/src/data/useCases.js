@@ -85,6 +85,26 @@ export const USE_CASES = [
     },
   },
   {
+    id: 'despiece',
+    tab: '📋 Despiece de Acero',
+    title: 'Despiece de Acero — De la armadura modelada a la planilla de corte, en un clic',
+    intro:
+      'El despiece se sigue rehaciendo a mano en una hoja aparte, y cada cambio del modelo lo deja desfasado. BIMS lee la armadura que ya está modelada, resuelve cómo cortarla a partir de barras comerciales minimizando la chatarra y entrega la planilla en Excel, lista para compras y para el fierrero.',
+    steps: [
+      { n: '01', t: 'Ejecuta sobre la selección o sobre todo el proyecto', d: 'Con elementos seleccionados despieza solo esos; sin selección, el modelo entero. Es un comando de solo lectura: no abre ninguna transacción ni modifica el proyecto, así que cancelar es seguro en cualquier punto.' },
+      { n: '02', t: 'BIMS resuelve el corte y compara la barra', d: 'Agrupa las piezas por diámetro y calcula cómo obtenerlas de barras comerciales de 9 m dejando el mínimo desperdicio, y repite el cálculo con barras de 12 m para decidir la compra con criterio. Los pesos salen del catálogo de BIMS, no de los parámetros que cada quien haya modelado.' },
+      { n: '03', t: 'Planilla en Excel, lista para obra', d: 'Un archivo con cinco hojas: Resumen (cuánto acero pedir y en qué barra), Por diámetro, Patrones de corte para el fierrero, Piezas para trazabilidad, y las piezas que no caben en la barra y exigen empalme. Nada se omite en silencio: lo que no se pudo despiezar se declara con su motivo.' },
+    ],
+    visual: 'despiece',
+    compliance: {
+      title: '📐 Aporte a las Normativas BIM',
+      items: [
+        { k: '5D BIM:', v: 'El metrado de acero (kg por diámetro y barras a comprar) se extrae del propio modelo, de modo que presupuesto, compras y geometría comparten una única fuente.' },
+        { k: 'Trazabilidad:', v: 'Cada línea de la planilla se puede seguir hasta la pieza del modelo de la que salió, y las que quedan fuera se reportan con su causa en lugar de desaparecer del total.' },
+      ],
+    },
+  },
+  {
     id: 'dwg-nwc',
     tab: '📐 Importación DWG → NWC',
     title: 'Importación DWG → NWC — Geometría externa lista para manipular y coordinar',

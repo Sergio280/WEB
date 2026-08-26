@@ -156,11 +156,80 @@ function NwcVisual() {
   );
 }
 
+function DespieceVisual() {
+  const { t } = useLang();
+  const v = t.useCases.visuals.despiece;
+  // Los tramos son un ESQUEMA de cómo se reparte una barra comercial, no la
+  // medición de ningún proyecto: se etiquetan con su longitud y el retal que
+  // sobra al final. Los anchos suman 100 % de la barra de 9 m.
+  const tramos = [
+    { label: '3,40 m', w: '37.8%', clase: 'from-brand-600 to-brand-400' },
+    { label: '3,40 m', w: '37.8%', clase: 'from-brand-600 to-brand-400' },
+    { label: '2,10 m', w: '23.3%', clase: 'from-violet-600 to-violet-400' },
+  ];
+  return (
+    <div>
+      <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
+        {v.caption}
+      </span>
+
+      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        <div className="mb-2 flex items-baseline justify-between text-xs text-slate-400">
+          <span>{v.barLabel}</span>
+          <span className="text-slate-500">{v.scrapLabel}</span>
+        </div>
+        {/* Una barra comercial troceada: cada tramo es una pieza del modelo y
+            la franja final, el retal que el optimizador deja sin usar. */}
+        <div className="flex h-9 w-full overflow-hidden rounded-lg border border-white/10 bg-white/5">
+          {tramos.map((tr, i) => (
+            <div
+              key={`${tr.label}-${i}`}
+              style={{ width: tr.w }}
+              className={`flex items-center justify-center border-r border-slate-950/60 bg-gradient-to-b ${tr.clase} text-[0.7rem] font-bold text-white`}
+            >
+              {tr.label}
+            </div>
+          ))}
+          {/* El retal es el 1,1 % que sobra de la barra: se le da un ancho
+              mínimo para que siga siendo visible, y se etiqueta arriba. */}
+          <div className="min-w-[10px] flex-1 bg-rose-500/25" />
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="rounded-xl border border-brand-400/20 bg-brand-500/10 p-3 text-center">
+            <div className="font-display text-lg font-extrabold text-brand-200">9 m</div>
+            <div className="text-xs text-slate-400">{v.bar9}</div>
+          </div>
+          <div className="rounded-xl border border-violet-400/20 bg-violet-500/10 p-3 text-center">
+            <div className="font-display text-lg font-extrabold text-violet-200">12 m</div>
+            <div className="text-xs text-slate-400">{v.bar12}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Las hojas del Excel que se entrega. */}
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {v.sheets.map((h) => (
+          <span
+            key={h}
+            className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[0.65rem] font-semibold text-slate-400"
+          >
+            {h}
+          </span>
+        ))}
+      </div>
+
+      <p className="mt-3 text-xs text-slate-500">{v.note}</p>
+    </div>
+  );
+}
+
 const VISUALS = {
   encofrado: EncofradoVisual,
   dwg: DwgVisual,
   tarrajeo: TarrajeoVisual,
   acero: AceroVisual,
+  despiece: DespieceVisual,
   nwc: NwcVisual,
 };
 

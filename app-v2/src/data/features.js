@@ -1,4 +1,6 @@
 // Bento de features — SOLO funciones activas para los usuarios.
+// Orden y tamaños cuadran la rejilla de 3 columnas: lg=2, wide=3, resto=1.
+// Suman 12 celdas antes de 'alcance', así que no queda ningún hueco.
 // (El módulo Refuerzo / Planilla BBS está oculto en el sitio actual, por eso
 //  no aparece aquí.) Descripciones basadas en los tooltips reales de cada
 //  comando en Application.cs del add-in.
@@ -33,6 +35,21 @@ export const BENTO = [
     accent: 'emerald',
   },
   {
+    id: 'metrado',
+    size: 'lg', // 2 columnas: es la salida del encofrado, va junto a él
+    badge: 'Nuevo en 1.2.1',
+    icon: '📊',
+    title: 'Metrado de Encofrado en tablas de Revit',
+    desc: 'Una vez generado el encofrado, BIMS crea las tablas de planificación con el área de contacto agrupada por la categoría del elemento anfitrión —columnas, vigas, losas, muros, escaleras y cimentación—, con subtotales por nivel y una tabla RESUMEN. El metrado sale del propio modelo, no de una hoja aparte.',
+    points: [
+      'Una tabla por categoría + RESUMEN con subtotales',
+      'Área de contacto sumable, con total por nivel y general',
+      'Verifica la conservación: nada se pierde ni se cuenta dos veces',
+      'Los paños no metrables se listan con su motivo y se seleccionan',
+    ],
+    accent: 'emerald',
+  },
+  {
     id: 'acero',
     size: 'md',
     icon: '🔩',
@@ -45,6 +62,21 @@ export const BENTO = [
     ],
     accent: 'violet',
     tags: ['LOD 400', 'E.030', 'E.060'],
+  },
+  {
+    id: 'despiece',
+    size: 'lg', // 2 columnas: entregable completo (Excel), no una utilidad suelta
+    badge: 'Nuevo en 1.2.1',
+    icon: '📋',
+    title: 'Despiece de Acero y planilla de corte en Excel',
+    desc: 'Lee la armadura ya modelada y resuelve cómo cortarla a partir de barras comerciales minimizando la chatarra. Entrega un Excel con el resumen para compras, el detalle por diámetro, los patrones de corte para el fierrero y la trazabilidad pieza a pieza. Solo lee el modelo: no lo modifica.',
+    points: [
+      'Compara la barra de 9 m con la de 12 m para decidir la compra',
+      'Declara el mínimo teórico: cuánto margen queda de verdad',
+      'Avisa de las piezas que no caben en la barra y exigen empalme',
+      'Con selección despieza solo eso; sin selección, todo el proyecto',
+    ],
+    accent: 'violet',
   },
   {
     id: 'tarrajeo',
@@ -104,7 +136,7 @@ export const BENTO = [
     size: 'wide',
     icon: '⚡',
     title: '30+ comandos · Revit 2024-2027',
-    desc: 'Un add-in completo para estructura, encofrado, tarrajeo, geometría y documentación, organizado en los paneles General, Estructuras y Geometría. Compatible con Windows 10/11 y Revit 2024 a 2027.',
+    desc: 'Un add-in completo para estructura, encofrado, metrados, tarrajeo, geometría y documentación, organizado en los paneles General, Estructuras, Geometría y Sistema. La interfaz se muestra en el idioma en que esté instalado Revit. Compatible con Windows 10/11 y Revit 2024 a 2027.',
     points: [],
     accent: 'violet',
   },
