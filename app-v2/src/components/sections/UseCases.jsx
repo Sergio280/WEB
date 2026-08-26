@@ -224,12 +224,54 @@ function DespieceVisual() {
   );
 }
 
+function IfcVisual() {
+  const { t } = useLang();
+  const v = t.useCases.visuals.ifc;
+  const pasos = [
+    { icon: '📄', label: v.steps[0] },
+    { icon: '⚙️', label: v.steps[1] },
+    { icon: '🏛️', label: v.steps[2] },
+  ];
+  return (
+    <div>
+      <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
+        {v.caption}
+      </span>
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+        {pasos.map((p, i) => (
+          <div key={p.label} className="flex flex-1 items-center gap-2">
+            <div className="flex-1 text-center">
+              <div className="text-3xl">{p.icon}</div>
+              <div className="mt-1 text-xs text-slate-400">{p.label}</div>
+            </div>
+            {i < pasos.length - 1 && <span className="text-xl text-brand-400">→</span>}
+          </div>
+        ))}
+      </div>
+
+      {/* La auditoría es lo que separa esto de una conversión "a ojo": son las
+          tolerancias reales con las que el importador da por bueno un elemento. */}
+      <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-center">
+        <div className="text-xs font-semibold uppercase tracking-wider text-emerald-300/80">
+          {v.auditLabel}
+        </div>
+        <div className="mt-1 font-display text-sm font-extrabold text-accent-green">
+          {v.auditValue}
+        </div>
+      </div>
+
+      <p className="mt-3 text-xs text-slate-500">{v.note}</p>
+    </div>
+  );
+}
+
 const VISUALS = {
   encofrado: EncofradoVisual,
   dwg: DwgVisual,
   tarrajeo: TarrajeoVisual,
   acero: AceroVisual,
   despiece: DespieceVisual,
+  ifc: IfcVisual,
   nwc: NwcVisual,
 };
 

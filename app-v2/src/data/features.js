@@ -1,6 +1,10 @@
-// Bento de features — SOLO funciones activas para los usuarios.
+// Bento de features — funciones activas para los usuarios, más las que están
+// en BETA y se entregan con el acceso anticipado de los planes Profesional y
+// Empresa (marcadas con su distintivo: no prometas en la cinta lo que aún no
+// está en la cinta de todos).
 // Orden y tamaños cuadran la rejilla de 3 columnas: lg=2, wide=3, resto=1.
-// Suman 12 celdas antes de 'alcance', así que no queda ningún hueco.
+// Cada fila es una tarjeta ancha + una estrecha; suman 15 celdas antes de
+// 'alcance', así que no queda ningún hueco.
 // (El módulo Refuerzo / Planilla BBS está oculto en el sitio actual, por eso
 //  no aparece aquí.) Descripciones basadas en los tooltips reales de cada
 //  comando en Application.cs del add-in.
@@ -50,18 +54,45 @@ export const BENTO = [
     accent: 'emerald',
   },
   {
-    id: 'acero',
-    size: 'md',
-    icon: '🔩',
-    title: 'Acero de Refuerzo',
-    desc: 'Calcula y coloca la armadura en los elementos estructurales. En columnas genera el refuerzo longitudinal (rectangular o circular) y los estribos con sus zonas de confinamiento y ganchos a 135°, conforme a la normativa sismorresistente peruana.',
+    id: 'tarrajeo',
+    size: 'sm',
+    icon: '🎨',
+    title: 'Tarrajeo por Habitación',
+    desc: 'Selecciona una o varias habitaciones y BIMS detecta los muros y columnas que las limitan, generando muros de tarrajeo hacia el interior y el suelo (contrapiso) como elementos nativos cuantificables. Funciona también con modelos vinculados.',
     points: [
-      'Refuerzo longitudinal en columnas',
-      'Estribos con zonas de confinamiento automáticas',
-      'Ganchos a 135° según norma',
+      'Selección múltiple de habitaciones',
+      'Detecta elementos límite automáticamente',
+      'Muros + contrapiso listos para metrar',
+    ],
+    accent: 'brand',
+  },
+  {
+    id: 'acero',
+    size: 'lg', // 2 columnas: cubre TODO el esqueleto, no solo columnas
+    icon: '🔩',
+    title: 'Acero de Refuerzo automático según la E.060',
+    desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. Las vigas se arman por eje continuo —el fierro atraviesa los apoyos de lado a lado, como en obra— y los empalmes se crean como objetos nativos de Revit, así que salen en las tablas y sobreviven a los cambios del modelo.',
+    points: [
+      'Vigas por eje continuo, sin empalmar en el apoyo (21.5.2.3)',
+      'Confinamiento y ganchos a 135° del capítulo sismorresistente',
+      'Malla en muros, losas y cimientos, con barras en las aberturas',
+      'Escaleras y losa aligerada (viguetas + acero de temperatura)',
     ],
     accent: 'violet',
     tags: ['LOD 400', 'E.030', 'E.060'],
+  },
+  {
+    id: 'geometria',
+    size: 'sm',
+    icon: '📐',
+    title: 'Herramientas de Geometría',
+    desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a modelo genérico o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
+    points: [
+      'Escalar Sólido (factor configurable)',
+      'Convertir a modelo genérico',
+      'Exportar a Familia (.rfa) editable',
+    ],
+    accent: 'violet',
   },
   {
     id: 'despiece',
@@ -79,15 +110,30 @@ export const BENTO = [
     accent: 'violet',
   },
   {
-    id: 'tarrajeo',
+    id: 'general',
     size: 'sm',
-    icon: '🎨',
-    title: 'Tarrajeo por Habitación',
-    desc: 'Selecciona una o varias habitaciones y BIMS detecta los muros y columnas que las limitan, generando muros de tarrajeo hacia el interior y el suelo (contrapiso) como elementos nativos cuantificables. Funciona también con modelos vinculados.',
+    icon: '🎯',
+    title: 'Productividad y Parámetros',
+    desc: 'Acelera tareas repetitivas: asigna rejillas a cientos de elementos a la vez, transfiere o une parámetros, asigna ambientes a muros y suelos, e iguala gráficos entre elementos de una vista.',
     points: [
-      'Selección múltiple de habitaciones',
-      'Detecta elementos límite automáticamente',
-      'Muros + contrapiso listos para metrar',
+      'Asignar Rejillas a todo el modelo',
+      'Transferir / Unir Parámetros',
+      'Asignar Ambiente · Igualar Gráficos',
+    ],
+    accent: 'brand',
+  },
+  {
+    id: 'ifc',
+    size: 'lg', // 2 columnas: es la novedad grande, y necesita explicar el matiz
+    badge: 'Beta',
+    icon: '🔁',
+    title: 'Importar IFC a elementos nativos',
+    desc: 'El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno.',
+    points: [
+      'De CYPE, Tekla o ArchiCAD; o de Revit, recargando sus familias',
+      'Auditoría de fidelidad: 1 mm de posición y 1 % de volumen',
+      'Reanudable: repetirlo no duplica lo que ya se importó',
+      'Beta: acceso anticipado de los planes Profesional y Empresa',
     ],
     accent: 'brand',
   },
@@ -104,32 +150,6 @@ export const BENTO = [
       'Calcula volúmenes y exporta NWC para Navisworks',
     ],
     accent: 'emerald',
-  },
-  {
-    id: 'geometria',
-    size: 'sm',
-    icon: '📐',
-    title: 'Herramientas de Geometría',
-    desc: 'Manipula la geometría de cualquier elemento con sólidos: escálalo con un factor configurable, conviértelo a modelo genérico o expórtalo (uno o varios elementos) como familia .rfa con sólidos editables.',
-    points: [
-      'Escalar Sólido (factor configurable)',
-      'Convertir a modelo genérico',
-      'Exportar a Familia (.rfa) editable',
-    ],
-    accent: 'violet',
-  },
-  {
-    id: 'general',
-    size: 'sm',
-    icon: '🎯',
-    title: 'Productividad y Parámetros',
-    desc: 'Acelera tareas repetitivas: asigna rejillas a cientos de elementos a la vez, transfiere o une parámetros, asigna ambientes a muros y suelos, e iguala gráficos entre elementos de una vista.',
-    points: [
-      'Asignar Rejillas a todo el modelo',
-      'Transferir / Unir Parámetros',
-      'Asignar Ambiente · Igualar Gráficos',
-    ],
-    accent: 'brand',
   },
   {
     id: 'alcance',

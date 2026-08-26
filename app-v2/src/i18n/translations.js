@@ -35,7 +35,7 @@ export const translations = {
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
       version: 'Ya disponible la versión 1.2.1',
-      versionDetail: 'Despiece de acero a Excel · Metrado de encofrado en tablas · Encofrado más preciso',
+      versionDetail: 'Despiece de acero · Metrado de encofrado · Importar IFC (beta)',
     },
 
     nav: {
@@ -196,12 +196,13 @@ export const translations = {
           ],
         },
         acero: {
-          title: 'Acero de Refuerzo',
-          desc: 'Calcula y coloca la armadura en los elementos estructurales. En columnas genera el refuerzo longitudinal (rectangular o circular) y los estribos con sus zonas de confinamiento y ganchos a 135°, conforme a la normativa sismorresistente peruana.',
+          title: 'Acero de Refuerzo automático según la E.060',
+          desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. Las vigas se arman por eje continuo —el fierro atraviesa los apoyos de lado a lado, como en obra— y los empalmes se crean como objetos nativos de Revit, así que salen en las tablas y sobreviven a los cambios del modelo.',
           points: [
-            'Refuerzo longitudinal en columnas',
-            'Estribos con zonas de confinamiento automáticas',
-            'Ganchos a 135° según norma',
+            'Vigas por eje continuo, sin empalmar en el apoyo (21.5.2.3)',
+            'Confinamiento y ganchos a 135° del capítulo sismorresistente',
+            'Malla en muros, losas y cimientos, con barras en las aberturas',
+            'Escaleras y losa aligerada (viguetas + acero de temperatura)',
           ],
           tags: ['LOD 400', 'E.030', 'E.060'],
         },
@@ -242,6 +243,17 @@ export const translations = {
             'Escalar Sólido (factor configurable)',
             'Convertir a modelo genérico',
             'Exportar a Familia (.rfa) editable',
+          ],
+        },
+        ifc: {
+          badge: 'Beta',
+          title: 'Importar IFC a elementos nativos',
+          desc: 'El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno.',
+          points: [
+            'De CYPE, Tekla o ArchiCAD; o de Revit, recargando sus familias',
+            'Auditoría de fidelidad: 1 mm de posición y 1 % de volumen',
+            'Reanudable: repetirlo no duplica lo que ya se importó',
+            'Beta: acceso anticipado de los planes Profesional y Empresa',
           ],
         },
         general: {
@@ -303,6 +315,13 @@ export const translations = {
           sheets: ['Resumen', 'Por diámetro', 'Patrones', 'Piezas', 'No caben'],
           note: 'Esquema ilustrativo: el reparto real lo calcula BIMS con la armadura de tu modelo.',
         },
+        ifc: {
+          caption: 'Flujo — De IFC a elementos nativos de Revit',
+          steps: ['IFC de CYPE / Tekla', 'BIMS lee ejes y perfiles', 'Muros, vigas y columnas nativos'],
+          auditLabel: 'Auditoría de cada elemento',
+          auditValue: 'posición ≤ 1 mm · volumen ≤ 1 %',
+          note: 'Beta — acceso anticipado en los planes Profesional y Empresa.',
+        },
         nwc: {
           caption: 'Flujo — DWG externo a modelo federado',
           steps: ['DWG externo', 'Objeto Revit', 'NWC Navisworks'],
@@ -353,17 +372,18 @@ export const translations = {
           ],
         },
         acero: {
-          tab: '🔩 Acero en Columna',
-          title: 'Acero en Columna — Refuerzo longitudinal y estribos según norma',
-          intro: 'BIMS calcula y coloca la armadura de tus columnas: genera las barras longitudinales y los estribos con sus zonas de confinamiento y ganchos a 135°, conforme a la normativa sismorresistente peruana, dejando el modelo de armadura listo para revisión.',
+          tab: '🔩 Acero de Refuerzo',
+          title: 'Acero de Refuerzo — La armadura de todo el esqueleto, calculada con la E.060',
+          intro: 'BIMS no dibuja barras: aplica la norma. Calcula y coloca la armadura de columnas, vigas, muros, losas, cimientos, escaleras y losa aligerada, deduciendo longitudes de desarrollo, ganchos, traslapes y zonas de confinamiento de la E.060, artículo por artículo.',
           steps: [
-            { n: '01', t: 'Selecciona las columnas', d: 'Eliges una o varias columnas, rectangulares o circulares.' },
-            { n: '02', t: 'Define el refuerzo', d: 'Configuras diámetros, cantidad de barras y la distribución de estribos con sus zonas de confinamiento.' },
-            { n: '03', t: 'BIMS coloca la armadura', d: 'Genera las barras longitudinales y los estribos a 135°, con las zonas de confinamiento calculadas automáticamente según la norma sismorresistente, sobre el elemento estructural.' },
+            { n: '01', t: 'Elige los elementos y su acero', d: 'Seleccionas columnas, vigas, muros, losas y cimientos, escaleras o losa aligerada, y defines diámetros, recubrimiento y separaciones. Los valores por defecto ya son los de obra: f’c 210 kg/cm² y acero grado 60.' },
+            { n: '02', t: 'La viga se arma por eje continuo, no tramo a tramo', d: 'BIMS reconoce las vigas alineadas y consecutivas que en obra se arman como una sola: el fierro longitudinal atraviesa las columnas de lado a lado. Armar cada tramo por separado cortaría las barras justo en el apoyo, donde el momento negativo es máximo y donde la norma prohíbe empalmar.' },
+            { n: '03', t: 'Confinamiento, ganchos y traslapes por norma', d: 'Las zonas de confinamiento, el espaciamiento de estribos y los ganchos a 135° salen del capítulo sismorresistente; los traslapes se calculan como clase B a partir de la longitud de desarrollo. En muros y losas la malla va en las dos direcciones, con las barras de refuerzo alrededor de las aberturas.' },
+            { n: '04', t: 'Armadura nativa, viva y cuantificable', d: 'Las barras son objetos de armadura de Revit y los empalmes son empalmes reales: aparecen en las tablas, se recorren en cadena y se mantienen si el elemento cambia. De ahí sale directo el despiece a Excel.' },
           ],
           compliance: [
-            { k: 'LOD 400:', v: 'Barras longitudinales y estribos con posicionamiento exacto, ganchos a 135° y zonas de confinamiento definidas.' },
-            { k: 'E.030 / E.060 (NTP):', v: 'Confinamiento y geometría conforme a las normas peruanas de diseño sismorresistente y concreto armado.' },
+            { k: 'LOD 400:', v: 'Barras y estribos con posicionamiento exacto, ganchos a 135°, zonas de confinamiento definidas y empalmes como objetos reales del modelo.' },
+            { k: 'E.030 / E.060 (NTP):', v: 'Longitud de desarrollo, traslapes clase B, confinamiento y veto de empalmes en zona sísmica calculados con la norma peruana, no estimados a ojo.' },
           ],
         },
         despiece: {
@@ -378,6 +398,20 @@ export const translations = {
           compliance: [
             { k: '5D BIM:', v: 'El metrado de acero (kg por diámetro y barras a comprar) se extrae del propio modelo, de modo que presupuesto, compras y geometría comparten una única fuente.' },
             { k: 'Trazabilidad:', v: 'Cada línea de la planilla se puede seguir hasta la pieza del modelo de la que salió, y las que quedan fuera se reportan con su causa en lugar de desaparecer del total.' },
+          ],
+        },
+        ifc: {
+          tab: '🔁 Importar IFC (Beta)',
+          title: 'Importar IFC a nativo — Del bloque que no se puede tocar al elemento de Revit',
+          intro: 'Vincular un IFC en Revit da geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo y reconstruye el modelo con elementos nativos. Está en beta y se entrega con el acceso anticipado de los planes Profesional y Empresa.',
+          steps: [
+            { n: '01', t: 'Dile de dónde viene el archivo', d: 'De otro programa (CYPE, Tekla, ArchiCAD…), y la reconstrucción se hace por geometría exacta; o de un Revit exportado con «Exportar IFC» de BIMS, que deja junto al archivo las familias originales para recargarlas tal cual — incluso si el modelo venía de una versión de Revit distinta.' },
+            { n: '02', t: 'BIMS reconstruye el modelo', d: 'Crea niveles, columnas, vigas, muros, losas, escaleras con sus descansos, zapatas, instalaciones, puertas, ventanas y rejillas. Lo que no tiene lectura paramétrica cae a geometría exacta en vez de perderse, y los empalmes de pocos centímetros que dejan los modelos de cálculo se filtran en lugar de ensuciar el modelo.' },
+            { n: '03', t: 'Con auditoría, no con fe', d: 'Cada elemento creado se compara contra el sólido del IFC: posición dentro de 1 mm y volumen dentro del 1 %. Lo que no pasa se reporta con su motivo en un log, la importación se puede cancelar a mitad, y repetirla no duplica lo ya creado.' },
+          ],
+          compliance: [
+            { k: 'Interoperabilidad (openBIM / IFC):', v: 'El modelo de la especialidad externa deja de ser una referencia muerta y pasa a ser modelo editable, medible y coordinable dentro de Revit.' },
+            { k: 'Trazabilidad de la conversión:', v: 'Cada elemento importado queda auditado contra la geometría original y lo que no pasa se declara en el log, en lugar de darse por bueno en silencio.' },
           ],
         },
         'dwg-nwc': {
@@ -654,6 +688,7 @@ export const translations = {
         { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
         { q: '¿Puedo cambiar de plan o instalar en varios equipos?', a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.' },
         { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.' },
+        { q: '¿En qué se diferencia importar un IFC con BIMS de vincularlo en Revit?', a: 'El vínculo de Revit trae la geometría como bloques que no se editan ni se cuantifican por tipo. BIMS lee los datos paramétricos del IFC y crea elementos nativos —muros, vigas, columnas, losas, escaleras— que se editan, se miden y entran en tus tablas. Cada elemento se audita contra la geometría original (1 mm de posición, 1 % de volumen) y lo que no pasa se reporta en un log. La función está en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.' },
         { q: '¿El despiece de acero y el metrado de encofrado modifican mi modelo?', a: 'No. El despiece es de solo lectura: lee la armadura ya modelada y escribe un Excel aparte, sin tocar el proyecto. El metrado de encofrado tampoco cambia la geometría: crea tablas de planificación en el Navegador de proyectos con el área de contacto agrupada por categoría, y te avisa de los paños que no pudo medir en lugar de omitirlos del total.' },
         { q: '¿BIMS funciona con modelos vinculados?', a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.' },
       ],
@@ -729,7 +764,7 @@ export const translations = {
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
       version: 'Version 1.2.1 now available',
-      versionDetail: 'Rebar cutting list to Excel · Formwork quantities in schedules · Sharper formwork',
+      versionDetail: 'Rebar cutting list · Formwork quantities · IFC import (beta)',
     },
 
     nav: {
@@ -890,12 +925,13 @@ export const translations = {
           ],
         },
         acero: {
-          title: 'Reinforcing Steel',
-          desc: 'Calculates and places the rebar in structural elements. In columns it generates the longitudinal reinforcement (rectangular or circular) and the stirrups with their confinement zones and 135° hooks, compliant with Peruvian seismic-resistant code.',
+          title: 'Automatic rebar to Peruvian code E.060',
+          desc: 'Calculates and places the rebar for the whole frame: columns, beams, walls, slabs, foundations, stairs and ribbed slabs. Beams are reinforced along the continuous axis — the bars run right through the supports, the way they are tied on site — and lap splices are created as native Revit objects, so they show up in schedules and survive changes to the model.',
           points: [
-            'Longitudinal reinforcement in columns',
-            'Stirrups with automatic confinement zones',
-            '135° hooks per code',
+            'Beams along the continuous axis, never spliced at the support',
+            'Confinement zones and 135° hooks from the seismic chapter',
+            'Mesh in walls, slabs and footings, with bars around openings',
+            'Stairs and ribbed slabs (joist bars + temperature steel)',
           ],
           tags: ['LOD 400', 'E.030', 'E.060'],
         },
@@ -936,6 +972,17 @@ export const translations = {
             'Scale Solid (configurable factor)',
             'Convert to generic model',
             'Export to Family (.rfa), editable',
+          ],
+        },
+        ifc: {
+          badge: 'Beta',
+          title: 'IFC import into native elements',
+          desc: 'A Revit IFC link brings in geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file — levels, axes and profiles — and places native walls, beams, columns, slabs and stairs. Every element created is audited against the IFC solid before it is accepted.',
+          points: [
+            'From CYPE, Tekla or ArchiCAD; or from Revit, reloading its families',
+            'Fidelity audit: 1 mm on position and 1 % on volume',
+            'Resumable: running it again does not duplicate what was imported',
+            'Beta: early access on the Professional and Company plans',
           ],
         },
         general: {
@@ -997,6 +1044,13 @@ export const translations = {
           sheets: ['Summary', 'Per diameter', 'Patterns', 'Pieces', 'Do not fit'],
           note: 'Illustrative diagram: the real split is computed by BIMS from the rebar in your model.',
         },
+        ifc: {
+          caption: 'Flow — From IFC to native Revit elements',
+          steps: ['IFC from CYPE / Tekla', 'BIMS reads axes and profiles', 'Native walls, beams, columns'],
+          auditLabel: 'Audit on every element',
+          auditValue: 'position ≤ 1 mm · volume ≤ 1 %',
+          note: 'Beta — early access on the Professional and Company plans.',
+        },
         nwc: {
           caption: 'Flow — External DWG to federated model',
           steps: ['External DWG', 'Revit object', 'NWC Navisworks'],
@@ -1047,17 +1101,18 @@ export const translations = {
           ],
         },
         acero: {
-          tab: '🔩 Column Rebar',
-          title: 'Column Rebar — Longitudinal reinforcement and stirrups per code',
-          intro: 'BIMS calculates and places your columns’ rebar: it generates the longitudinal bars and the stirrups with their confinement zones and 135° hooks, compliant with Peruvian seismic-resistant code, leaving the rebar model ready for review.',
+          tab: '🔩 Reinforcing Steel',
+          title: 'Reinforcing Steel — The rebar for the whole frame, computed with code E.060',
+          intro: 'BIMS does not draw bars: it applies the code. It calculates and places the rebar for columns, beams, walls, slabs, footings, stairs and ribbed slabs, deriving development lengths, hooks, lap splices and confinement zones from E.060, article by article.',
           steps: [
-            { n: '01', t: 'Select the columns', d: 'You pick one or more columns, rectangular or circular.' },
-            { n: '02', t: 'Define the reinforcement', d: 'You configure diameters, bar counts and the stirrup distribution with their confinement zones.' },
-            { n: '03', t: 'BIMS places the rebar', d: 'It generates the longitudinal bars and the 135° stirrups, with confinement zones automatically calculated per the seismic-resistant code, on the structural element.' },
+            { n: '01', t: 'Pick the elements and their steel', d: 'You select columns, beams, walls, slabs and footings, stairs or ribbed slabs, and set diameters, cover and spacing. The defaults are the ones used on site: f’c 210 kg/cm² and grade 60 steel.' },
+            { n: '02', t: 'Beams are reinforced along the axis, not span by span', d: 'BIMS recognises the aligned, consecutive beams that are tied as a single one on site: the longitudinal bars run right through the columns. Reinforcing each span separately would cut the bars at the support — exactly where the hogging moment peaks and where the code forbids splicing.' },
+            { n: '03', t: 'Confinement, hooks and laps from the code', d: 'Confinement zones, stirrup spacing and 135° hooks come from the seismic chapter; laps are computed as class B from the development length. In walls and slabs the mesh runs both ways, with trimmer bars around the openings.' },
+            { n: '04', t: 'Native rebar, live and quantifiable', d: 'The bars are Revit rebar objects and the splices are real splices: they appear in schedules, can be walked as a chain and survive changes to the element. The Excel cutting list comes straight out of them.' },
           ],
           compliance: [
-            { k: 'LOD 400:', v: 'Longitudinal bars and stirrups with exact positioning, 135° hooks and defined confinement zones.' },
-            { k: 'E.030 / E.060 (NTP):', v: 'Confinement and geometry compliant with Peruvian seismic-resistant design and reinforced-concrete standards.' },
+            { k: 'LOD 400:', v: 'Bars and stirrups placed exactly, 135° hooks, defined confinement zones and lap splices as real model objects.' },
+            { k: 'E.030 / E.060 (Peruvian code):', v: 'Development length, class B laps, confinement and the ban on splicing in the seismic zone are computed from the code, not eyeballed.' },
           ],
         },
         despiece: {
@@ -1072,6 +1127,20 @@ export const translations = {
           compliance: [
             { k: '5D BIM:', v: 'The steel take-off (kg per diameter and bars to purchase) is extracted from the model itself, so budgeting, purchasing and geometry share a single source.' },
             { k: 'Traceability:', v: 'Every line of the schedule can be traced back to the model piece it came from, and whatever falls outside is reported with its cause instead of vanishing from the total.' },
+          ],
+        },
+        ifc: {
+          tab: '🔁 IFC Import (Beta)',
+          title: 'IFC import into native elements — From untouchable block to Revit element',
+          intro: 'Linking an IFC in Revit gives you geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file and rebuilds the model with native elements. It is in beta and ships with the early access of the Professional and Company plans.',
+          steps: [
+            { n: '01', t: 'Tell it where the file comes from', d: 'From another program (CYPE, Tekla, ArchiCAD…), where the rebuild is done from the exact geometry; or from a Revit model exported with the BIMS “Export IFC”, which leaves the original families next to the file so they can be reloaded as they are — even if the model came from a different Revit version.' },
+            { n: '02', t: 'BIMS rebuilds the model', d: 'It creates levels, columns, beams, walls, slabs, stairs with their landings, footings, services, doors, windows and grids. Whatever has no parametric reading falls back to exact geometry instead of being lost, and the few-centimetre stubs that analysis models leave behind are filtered out rather than cluttering the model.' },
+            { n: '03', t: 'With an audit, not on faith', d: 'Every element created is compared against the IFC solid: position within 1 mm and volume within 1 %. Whatever fails is reported with its reason in a log, the import can be cancelled halfway, and running it again does not duplicate what was already created.' },
+          ],
+          compliance: [
+            { k: 'Interoperability (openBIM / IFC):', v: 'The external discipline’s model stops being a dead reference and becomes an editable, measurable, coordinatable model inside Revit.' },
+            { k: 'Traceability of the conversion:', v: 'Every imported element is audited against the original geometry, and whatever fails is declared in the log instead of being silently accepted.' },
           ],
         },
         'dwg-nwc': {
@@ -1345,6 +1414,7 @@ export const translations = {
         { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at soporte@bimsaddin.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
         { q: 'Can I change plans or install on several machines?', a: 'Yes. The Individual plan covers 1 machine, Professional up to 3, and the Enterprise plan has no limit. You can upgrade at any time — you only pay the prorated difference.' },
         { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is digitally signed, so Windows shows a verified publisher instead of “unknown publisher”. Because the certificate is recent, SmartScreen may still show a notice until it builds download reputation: if it appears, click “More info” and then “Run anyway”. The installer is signed and its signature can be verified in the file’s properties.' },
+        { q: 'How is importing an IFC with BIMS different from linking it in Revit?', a: 'A Revit link brings the geometry in as blocks you cannot edit or schedule by type. BIMS reads the parametric data in the IFC and creates native elements — walls, beams, columns, slabs, stairs — that you can edit, measure and put in your schedules. Every element is audited against the original geometry (1 mm on position, 1 % on volume) and whatever fails is reported in a log. The feature is in beta: it ships with the early access of the Professional and Company plans.' },
         { q: 'Do the rebar cutting list and the formwork quantities modify my model?', a: 'No. The cutting list is read-only: it reads the rebar already modelled and writes a separate Excel file without touching the project. Formwork quantities do not change the geometry either: they create schedules in the Project Browser with the contact area grouped by category, and report the panels that could not be measured instead of dropping them from the total.' },
         { q: 'Does BIMS work with linked models?', a: 'Yes. Several commands —especially in the Formwork and Room Plastering modules— are designed to work with linked models, recognizing walls, columns and other elements from the linked documents.' },
       ],

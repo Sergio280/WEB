@@ -25,6 +25,10 @@ export const FAQ = [
     a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.',
   },
   {
+    q: '¿En qué se diferencia importar un IFC con BIMS de vincularlo en Revit?',
+    a: 'El vínculo de Revit trae la geometría como bloques que no se editan ni se cuantifican por tipo. BIMS lee los datos paramétricos del IFC y crea elementos nativos —muros, vigas, columnas, losas, escaleras— que se editan, se miden y entran en tus tablas. Cada elemento se audita contra la geometría original (1 mm de posición, 1 % de volumen) y lo que no pasa se reporta en un log. La función está en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.',
+  },
+  {
     q: '¿El despiece de acero y el metrado de encofrado modifican mi modelo?',
     a: 'No. El despiece es de solo lectura: lee la armadura ya modelada y escribe un Excel aparte, sin tocar el proyecto. El metrado de encofrado tampoco cambia la geometría: crea tablas de planificación en el Navegador de proyectos con el área de contacto agrupada por categoría, y te avisa de los paños que no pudo medir en lugar de omitirlos del total.',
   },

@@ -66,21 +66,22 @@ export const USE_CASES = [
   },
   {
     id: 'acero',
-    tab: '🔩 Acero en Columna',
-    title: 'Acero en Columna — Refuerzo longitudinal y estribos según norma',
+    tab: '🔩 Acero de Refuerzo',
+    title: 'Acero de Refuerzo — La armadura de todo el esqueleto, calculada con la E.060',
     intro:
-      'BIMS calcula y coloca la armadura de tus columnas: genera las barras longitudinales y los estribos con sus zonas de confinamiento y ganchos a 135°, conforme a la normativa sismorresistente peruana, dejando el modelo de armadura listo para revisión.',
+      'BIMS no dibuja barras: aplica la norma. Calcula y coloca la armadura de columnas, vigas, muros, losas, cimientos, escaleras y losa aligerada, deduciendo longitudes de desarrollo, ganchos, traslapes y zonas de confinamiento de la E.060, artículo por artículo.',
     steps: [
-      { n: '01', t: 'Selecciona las columnas', d: 'Eliges una o varias columnas, rectangulares o circulares.' },
-      { n: '02', t: 'Define el refuerzo', d: 'Configuras diámetros, cantidad de barras y la distribución de estribos con sus zonas de confinamiento.' },
-      { n: '03', t: 'BIMS coloca la armadura', d: 'Genera las barras longitudinales y los estribos a 135°, con las zonas de confinamiento calculadas automáticamente según la norma sismorresistente, sobre el elemento estructural.' },
+      { n: '01', t: 'Elige los elementos y su acero', d: 'Seleccionas columnas, vigas, muros, losas y cimientos, escaleras o losa aligerada, y defines diámetros, recubrimiento y separaciones. Los valores por defecto ya son los de obra: f’c 210 kg/cm² y acero grado 60.' },
+      { n: '02', t: 'La viga se arma por eje continuo, no tramo a tramo', d: 'BIMS reconoce las vigas alineadas y consecutivas que en obra se arman como una sola: el fierro longitudinal atraviesa las columnas de lado a lado. Armar cada tramo por separado cortaría las barras justo en el apoyo, donde el momento negativo es máximo y donde la norma prohíbe empalmar.' },
+      { n: '03', t: 'Confinamiento, ganchos y traslapes por norma', d: 'Las zonas de confinamiento, el espaciamiento de estribos y los ganchos a 135° salen del capítulo sismorresistente; los traslapes se calculan como clase B a partir de la longitud de desarrollo. En muros y losas la malla va en las dos direcciones, con las barras de refuerzo alrededor de las aberturas.' },
+      { n: '04', t: 'Armadura nativa, viva y cuantificable', d: 'Las barras son objetos de armadura de Revit y los empalmes son empalmes reales: aparecen en las tablas, se recorren en cadena y se mantienen si el elemento cambia. De ahí sale directo el despiece a Excel.' },
     ],
     visual: 'acero',
     compliance: {
       title: '📐 Aporte a las Normativas BIM',
       items: [
-        { k: 'LOD 400:', v: 'Barras longitudinales y estribos con posicionamiento exacto, ganchos a 135° y zonas de confinamiento definidas.' },
-        { k: 'E.030 / E.060 (NTP):', v: 'Confinamiento y geometría conforme a las normas peruanas de diseño sismorresistente y concreto armado.' },
+        { k: 'LOD 400:', v: 'Barras y estribos con posicionamiento exacto, ganchos a 135°, zonas de confinamiento definidas y empalmes como objetos reales del modelo.' },
+        { k: 'E.030 / E.060 (NTP):', v: 'Longitud de desarrollo, traslapes clase B, confinamiento y veto de empalmes en zona sísmica calculados con la norma peruana, no estimados a ojo.' },
       ],
     },
   },
@@ -101,6 +102,26 @@ export const USE_CASES = [
       items: [
         { k: '5D BIM:', v: 'El metrado de acero (kg por diámetro y barras a comprar) se extrae del propio modelo, de modo que presupuesto, compras y geometría comparten una única fuente.' },
         { k: 'Trazabilidad:', v: 'Cada línea de la planilla se puede seguir hasta la pieza del modelo de la que salió, y las que quedan fuera se reportan con su causa en lugar de desaparecer del total.' },
+      ],
+    },
+  },
+  {
+    id: 'ifc',
+    tab: '🔁 Importar IFC (Beta)',
+    title: 'Importar IFC a nativo — Del bloque que no se puede tocar al elemento de Revit',
+    intro:
+      'Vincular un IFC en Revit da geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo y reconstruye el modelo con elementos nativos. Está en beta y se entrega con el acceso anticipado de los planes Profesional y Empresa.',
+    steps: [
+      { n: '01', t: 'Dile de dónde viene el archivo', d: 'De otro programa (CYPE, Tekla, ArchiCAD…), y la reconstrucción se hace por geometría exacta; o de un Revit exportado con «Exportar IFC» de BIMS, que deja junto al archivo las familias originales para recargarlas tal cual — incluso si el modelo venía de una versión de Revit distinta.' },
+      { n: '02', t: 'BIMS reconstruye el modelo', d: 'Crea niveles, columnas, vigas, muros, losas, escaleras con sus descansos, zapatas, instalaciones, puertas, ventanas y rejillas. Lo que no tiene lectura paramétrica cae a geometría exacta en vez de perderse, y los empalmes de pocos centímetros que dejan los modelos de cálculo se filtran en lugar de ensuciar el modelo.' },
+      { n: '03', t: 'Con auditoría, no con fe', d: 'Cada elemento creado se compara contra el sólido del IFC: posición dentro de 1 mm y volumen dentro del 1 %. Lo que no pasa se reporta con su motivo en un log, la importación se puede cancelar a mitad, y repetirla no duplica lo ya creado.' },
+    ],
+    visual: 'ifc',
+    compliance: {
+      title: '📐 Aporte a las Normativas BIM',
+      items: [
+        { k: 'Interoperabilidad (openBIM / IFC):', v: 'El modelo de la especialidad externa deja de ser una referencia muerta y pasa a ser modelo editable, medible y coordinable dentro de Revit.' },
+        { k: 'Trazabilidad de la conversión:', v: 'Cada elemento importado queda auditado contra la geometría original y lo que no pasa se declara en el log, en lugar de darse por bueno en silencio.' },
       ],
     },
   },
