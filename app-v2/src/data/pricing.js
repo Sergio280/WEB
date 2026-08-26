@@ -146,6 +146,73 @@ export function ahorroMaximoPctUsd() {
   return max;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PRECIO DE LISTA — SOLO VITRINA, NUNCA SE COBRA.
+//
+// Es el número TACHADO que se enseña al lado del precio real. No entra en
+// ningún cobro: el importe que se cobra sale de PRECIOS_PEN / PRECIOS_USD y lo
+// recalcula el servidor, así que este bloque no puede desincronizar un cargo.
+// Por eso vive aquí y NO en netlify/functions/_lib/pricing.js: el backend no
+// tiene por qué conocer un número que no cobra.
+//
+// LA BASE ES S/120 AL MES. De ahí sale todo lo demás, en vez de escribir doce
+// números a mano que se contradirían al primer cambio de tarifa:
+//
+//   factor        = 120 / mensual de Individual (hoy S/60) = 2
+//   lista mensual = mensual del plan × factor    (Individual 120, Profesional 200)
+//   lista de N meses = lista mensual × N         (sin descuento por duración:
+//                      el ahorro por comprar largo es justamente lo que se
+//                      quiere enseñar)
+//
+// Si mañana cambia una tarifa, el tachado se recalcula solo y mantiene la misma
+// proporción. Si se quiere otra base, se toca SOLO la constante de abajo.
+//
+// ⚠️ Un precio de referencia tachado debe corresponder a un precio real de
+//    lista del producto. Quien publica es el titular del negocio.
+export const PRECIO_LISTA_BASE_PEN = 120;
+
+/** Cuántas veces el precio de lista es mayor que el precio real. */
+export const FACTOR_LISTA = PRECIO_LISTA_BASE_PEN / PRECIOS_PEN.individual['1m'];
+
+/** Precio de lista mensual de un plan, en soles. Redondeado a sol entero. */
+export function precioListaMensualPen(plan) {
+  const mensual = precioPen(plan, '1m');
+  if (mensual == null) return null;
+  return Math.round(mensual * FACTOR_LISTA);
+}
+
+/**
+ * Precio de lista tachado de un plan y duración, en soles.
+ * `dur` puede ser 'sub' (suscripción), que se compara contra el mensual.
+ */
+export function precioListaPen(plan, dur) {
+  const mensual = precioListaMensualPen(plan);
+  if (mensual == null) return null;
+  if (dur === 'sub') return mensual;
+  const meses = MESES_POR_DURACION[dur];
+  return meses ? mensual * meses : null;
+}
+
+/**
+ * Precio de lista tachado en dólares. Mismo criterio que en soles: el factor
+ * sobre el mensual, y el anual son doce mensualidades de lista.
+ * `ciclo` es 'monthly' o 'yearly'.
+ */
+export function precioListaUsd(plan, ciclo) {
+  const tabla = PRECIOS_USD[plan];
+  if (!tabla?.monthly) return null;
+  const mensual = Math.round(tabla.monthly * FACTOR_LISTA * 100) / 100;
+  return ciclo === 'yearly' ? Math.round(mensual * 12 * 100) / 100 : mensual;
+}
+
+/** Descuento que enseña el tachado, en entero. 0 si no hay precio de lista. */
+export function descuentoListaPct(plan, dur) {
+  const lista = precioListaPen(plan, dur);
+  const real  = precioPen(plan, dur);
+  if (!lista || real == null) return 0;
+  return Math.round((1 - real / lista) * 100);
+}
+
 /** Precio "desde" de un plan (el mensual), para tarjetas y navegación. */
 export function precioDesde(plan) {
   return precioPen(plan, '1m');

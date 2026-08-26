@@ -73,7 +73,7 @@ export const USE_CASES = [
     steps: [
       { n: '01', t: 'Elige los elementos y su acero', d: 'Seleccionas columnas, vigas, muros, losas y cimientos, escaleras o losa aligerada, y defines diámetros, recubrimiento y separaciones. Los valores por defecto ya son los de obra: f’c 210 kg/cm² y acero grado 60.' },
       { n: '02', t: 'La viga se arma por eje continuo, no tramo a tramo', d: 'BIMS reconoce las vigas alineadas y consecutivas que en obra se arman como una sola: el fierro longitudinal atraviesa las columnas de lado a lado. Armar cada tramo por separado cortaría las barras justo en el apoyo, donde el momento negativo es máximo y donde la norma prohíbe empalmar.' },
-      { n: '03', t: 'Confinamiento, ganchos y traslapes por norma', d: 'Las zonas de confinamiento, el espaciamiento de estribos y los ganchos a 135° salen del capítulo sismorresistente; los traslapes se calculan como clase B a partir de la longitud de desarrollo. En muros y losas la malla va en las dos direcciones, con las barras de refuerzo alrededor de las aberturas.' },
+      { n: '03', t: 'Confinamiento, ganchos y traslapes por norma', d: 'Las zonas de confinamiento, el espaciamiento de estribos y los ganchos a 135° salen del capítulo sismorresistente; los traslapes se calculan como clase B a partir de la longitud de desarrollo. Son las expresiones del marco ACI 318 que la E.060 adopta, resueltas con la f’c y la fy que declares. En muros y losas la malla va en las dos direcciones, con las barras de refuerzo alrededor de las aberturas.' },
       { n: '04', t: 'Armadura nativa, viva y cuantificable', d: 'Las barras son objetos de armadura de Revit y los empalmes son empalmes reales: aparecen en las tablas, se recorren en cadena y se mantienen si el elemento cambia. De ahí sale directo el despiece a Excel.' },
     ],
     visual: 'acero',
@@ -107,10 +107,10 @@ export const USE_CASES = [
   },
   {
     id: 'ifc',
-    tab: '🔁 Importar IFC (Beta)',
+    tab: '🔁 Importar IFC (Nuevo · Beta)',
     title: 'Importar IFC a nativo — Del bloque que no se puede tocar al elemento de Revit',
     intro:
-      'Vincular un IFC en Revit da geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo y reconstruye el modelo con elementos nativos. Está en beta y se entrega con el acceso anticipado de los planes Profesional y Empresa.',
+      'Nuevo en la versión 1.2.1. Vincular un IFC en Revit da geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo y reconstruye el modelo con elementos nativos. Llega en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.',
     steps: [
       { n: '01', t: 'Dile de dónde viene el archivo', d: 'De otro programa (CYPE, Tekla, ArchiCAD…), y la reconstrucción se hace por geometría exacta; o de un Revit exportado con «Exportar IFC» de BIMS, que deja junto al archivo las familias originales para recargarlas tal cual — incluso si el modelo venía de una versión de Revit distinta.' },
       { n: '02', t: 'BIMS reconstruye el modelo', d: 'Crea niveles, columnas, vigas, muros, losas, escaleras con sus descansos, zapatas, instalaciones, puertas, ventanas y rejillas. Lo que no tiene lectura paramétrica cae a geometría exacta en vez de perderse, y los empalmes de pocos centímetros que dejan los modelos de cálculo se filtran en lugar de ensuciar el modelo.' },

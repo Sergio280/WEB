@@ -70,16 +70,16 @@ export const BENTO = [
     id: 'acero',
     size: 'lg', // 2 columnas: cubre TODO el esqueleto, no solo columnas
     icon: '🔩',
-    title: 'Acero de Refuerzo automático según la E.060',
-    desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. Las vigas se arman por eje continuo —el fierro atraviesa los apoyos de lado a lado, como en obra— y los empalmes se crean como objetos nativos de Revit, así que salen en las tablas y sobreviven a los cambios del modelo.',
+    title: 'Acero de Refuerzo automático (E.060 · marco ACI 318)',
+    desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. El detallado —longitud de desarrollo, traslapes clase B, confinamiento y ganchos a 135°— sale de la E.060, que adopta el marco de la ACI 318; f’c y fy son datos de entrada, así que el cálculo se ajusta a los materiales de cada proyecto.',
     points: [
       'Vigas por eje continuo, sin empalmar en el apoyo (21.5.2.3)',
+      'Longitud de desarrollo y traslapes clase B del marco ACI 318',
       'Confinamiento y ganchos a 135° del capítulo sismorresistente',
-      'Malla en muros, losas y cimientos, con barras en las aberturas',
-      'Escaleras y losa aligerada (viguetas + acero de temperatura)',
+      'Malla en muros y losas, escaleras y losa aligerada (viguetas)',
     ],
     accent: 'violet',
-    tags: ['LOD 400', 'E.030', 'E.060'],
+    tags: ['LOD 400', 'E.060', 'ACI 318', 'E.030'],
   },
   {
     id: 'geometria',
@@ -125,7 +125,7 @@ export const BENTO = [
   {
     id: 'ifc',
     size: 'lg', // 2 columnas: es la novedad grande, y necesita explicar el matiz
-    badge: 'Beta',
+    badge: 'Nuevo en 1.2.1 · Beta',
     icon: '🔁',
     title: 'Importar IFC a elementos nativos',
     desc: 'El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno.',

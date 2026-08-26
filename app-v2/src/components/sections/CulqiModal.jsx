@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CULQI_CONFIG } from '../../data/culqi.js';
-import { PRECIOS_USD, equivalenteMensual, ahorroPct, formatoUsd } from '../../data/pricing.js';
+import {
+  PRECIOS_USD, equivalenteMensual, ahorroPct, formatoUsd,
+  precioListaPen, precioListaUsd,
+} from '../../data/pricing.js';
 import { validarComprobante, normalizarComprobante, UMBRAL_DNI_BOLETA } from '../../lib/comprobante.js';
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { openCulqiCheckout } from '../../hooks/useCulqi.js';
@@ -181,6 +184,12 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
   // Precio que se muestra y que se le pasa al widget de Culqi. El importe que
   // realmente se cobra lo recalcula el servidor; esto es solo la vitrina.
   const price = promo ? promo.total : precioLista;
+
+  // Precio de LISTA tachado (S/120 al mes de base; ver data/pricing.js). Solo
+  // se enseña si NO hay promoción: con promo ya se tacha el precio normal, y
+  // dos tachados seguidos no se leen como una oferta, se leen como un error.
+  const listaTachada = promo ? null : precioListaPen(planKey, isSub ? 'sub' : duration);
+  const listaUsdTachada = precioListaUsd(planKey, intlDuration);
 
   // El texto de ahorro se compone aquí: la traducción aporta el formato
   // (c.savingsTpl) y pricing.js los números. Antes había seis frases escritas a
@@ -407,6 +416,11 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
                   </button>
                 </div>
                 <div className="mb-1 text-center">
+                  {listaUsdTachada != null && (
+                    <span className="mr-2 align-middle text-lg font-semibold text-slate-500 line-through">
+                      ${formatoUsd(listaUsdTachada)}
+                    </span>
+                  )}
                   <span className="font-display text-4xl font-extrabold text-white">${usdTexto}</span>
                   <span className="text-sm font-semibold text-slate-500">
                     {intlDuration === 'yearly' ? c.intlPerYear : c.intlPerMonth}
@@ -467,6 +481,11 @@ export default function CulqiModal({ planKey, onClose, errorInicial = '', onErro
                   {promo && (
                     <span className="mr-2 align-middle text-lg font-semibold text-slate-500 line-through">
                       S/{promo.totalOriginal}
+                    </span>
+                  )}
+                  {listaTachada != null && (
+                    <span className="mr-2 align-middle text-lg font-semibold text-slate-500 line-through">
+                      S/{listaTachada}
                     </span>
                   )}
                   <span className="font-display text-4xl font-extrabold text-white">S/{price}</span>

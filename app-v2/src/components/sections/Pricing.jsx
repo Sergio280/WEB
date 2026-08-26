@@ -3,7 +3,10 @@ import Section from '../ui/Section.jsx';
 import Reveal from '../ui/Reveal.jsx';
 import CulqiModal from './CulqiModal.jsx';
 import { CATALOG } from '../../data/culqi.js';
-import { PRECIOS_USD, ahorroMaximoPct, ahorroMaximoPctUsd, formatoUsd } from '../../data/pricing.js';
+import {
+  PRECIOS_USD, ahorroMaximoPct, ahorroMaximoPctUsd, formatoUsd,
+  precioListaMensualPen, precioListaUsd,
+} from '../../data/pricing.js';
 import { leerPromo, consultarPromo } from '../../lib/promo.js';
 import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
@@ -147,6 +150,17 @@ export default function Pricing() {
                 <div className="mt-5">
                   {c.priceFrom != null ? (
                     <>
+                      {/* Sin promoción, el PRECIO DE LISTA tachado va en su propia
+                          línea (S/120 al mes de base; ver data/pricing.js). En línea
+                          con el precio cabía a 1440 px pero partía "/mes" en cuanto
+                          la tarjeta se estrechaba, y cada tarjeta rompía por un
+                          sitio distinto. Con promoción no se pinta: ya hay un
+                          tachado abajo y dos seguidos no se leen como oferta. */}
+                      {!promoPorPlan[c.key] && (
+                        <p className="font-display text-lg font-semibold text-slate-500 line-through">
+                          {curSym}{intlPay ? formatoUsd(precioListaUsd(c.key, 'monthly')) : precioListaMensualPen(c.key)}
+                        </p>
+                      )}
                       <p className="font-display text-3xl font-extrabold text-white">
                         {p.priceFrom}
                         {/* Con promoción se tacha el precio de lista al lado para
