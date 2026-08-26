@@ -196,6 +196,7 @@ export const translations = {
           ],
         },
         acero: {
+          badge: 'Nuevo en 1.2.1',
           title: 'Acero de Refuerzo automático (E.060 · marco ACI 318)',
           desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. El detallado —longitud de desarrollo, traslapes clase B, confinamiento y ganchos a 135°— sale de la E.060, que adopta el marco de la ACI 318; f’c y fy son datos de entrada, así que el cálculo se ajusta a los materiales de cada proyecto.',
           points: [
@@ -925,6 +926,7 @@ export const translations = {
           ],
         },
         acero: {
+          badge: 'New in 1.2.1',
           title: 'Automatic rebar (E.060 · ACI 318 framework)',
           desc: 'Calculates and places the rebar for the whole frame: columns, beams, walls, slabs, foundations, stairs and ribbed slabs. The detailing — development length, class B laps, confinement and 135° hooks — comes from Peruvian code E.060, which adopts the ACI 318 framework; f’c and fy are inputs, so the calculation follows the materials of each project.',
           points: [

@@ -69,6 +69,7 @@ export const BENTO = [
   {
     id: 'acero',
     size: 'lg', // 2 columnas: cubre TODO el esqueleto, no solo columnas
+    badge: 'Nuevo en 1.2.1',
     icon: '🔩',
     title: 'Acero de Refuerzo automático (E.060 · marco ACI 318)',
     desc: 'Calcula y coloca la armadura de todo el esqueleto: columnas, vigas, muros, losas, cimentación, escaleras y losa aligerada. El detallado —longitud de desarrollo, traslapes clase B, confinamiento y ganchos a 135°— sale de la E.060, que adopta el marco de la ACI 318; f’c y fy son datos de entrada, así que el cálculo se ajusta a los materiales de cada proyecto.',
