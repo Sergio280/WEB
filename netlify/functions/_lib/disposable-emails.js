@@ -58,6 +58,14 @@ const DISPOSABLE_DOMAINS = [
     // ese usuario activó y volvió 4 días después, o sea que era de los
     // más enganchados del mes. Leer la nota de abajo antes de ampliar la lista.
     'applamos.com',
+    // 2026-08-23: se coló en un registro real (sogovek870@prodbits.com, 23-ago).
+    // Verificado: riesgo 91/100, operado por temp-mail.org. Comparte la huella de
+    // applamos (NS a granel dnsowl, SPF falso con -all, sin web en el ápice).
+    // Se añade tras la actualización de términos que prohíbe expresamente los
+    // correos temporales. ⚠️ Sigue siendo un parche: el clúster al que pertenece
+    // tenía 916 dominios dados de alta entre abril y agosto de 2026 — una lista
+    // fija nunca alcanza a un proveedor que ROTA de dominio.
+    'prodbits.com',
     // edu/test patterns (NO bloquear .edu reales)
     'example.com', 'example.org', 'example.net', 'test.com',
 ];

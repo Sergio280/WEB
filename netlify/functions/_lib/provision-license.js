@@ -18,6 +18,8 @@ const admin  = require('firebase-admin');
 // Suma de meses que no desborda al mes siguiente cuando el día no existe en el
 // destino (31 de enero + 1 mes → 28 de febrero, no 3 de marzo).
 const { sumarMeses } = require('./fechas');
+const { isCorporateDomain } = require('./personal-email-domains');
+const { sendEmail } = require('./mailer');
 
 // ── Firebase Admin (singleton, idéntico al resto de functions) ───────────────
 if (!admin.apps.length) {
@@ -137,6 +139,9 @@ async function provisionLicense(email, info) {
         maxActivations: maxDevices,
         updatedAt:      now.toISOString(),
         ...(isNewUser && { createdAt: now.toISOString(), validationCount: 0, activations: {} }),
+        // Canal de empresa: si el correo es de un dominio corporativo, marcarlo
+        // para el seguimiento comercial (planes por asientos). No afecta la licencia.
+        ...(isCorporateDomain(email) && { accountType: 'corporate', company: email.split('@')[1] }),
     };
     await db.ref(`users_v2/${uid}`).update(updates);
 
@@ -175,6 +180,26 @@ async function provisionLicense(email, info) {
     // Mismo criterio que culqi-webhook. Mandar un correo de más aquí es barato;
     // no mandarlo deja a un cliente que ya pagó sin forma de entrar.
     if (isNewUser || !currentExp) await sendActivationEmail(email);
+
+    // 7) Canal de empresa: avisar a soporte cuando COMPRA alguien de un dominio
+    // corporativo (lead de mayor valor que un trial: ya pagó → oportunidad de
+    // vender asientos para el resto del equipo). Solo en el primer pago.
+    if (isCorporateDomain(email) && (isNewUser || !currentExp)) {
+        await sendEmail({
+            to:      'soporte@bimsaddin.com',
+            subject: `💰🏢 Compra corporativa en BIMS: @${email.split('@')[1]}`,
+            html:    `<!DOCTYPE html><html><body style="font-family:Segoe UI,system-ui,sans-serif;color:#1f2937;line-height:1.6;">
+<p><strong>Un correo corporativo acaba de COMPRAR una licencia.</strong></p>
+<ul>
+  <li>Correo: <strong>${email}</strong></li>
+  <li>Dominio: <strong>@${email.split('@')[1]}</strong></li>
+  <li>Plan: <strong>${info.licenseType} / ${info.plan || '—'}</strong> · ${info.gateway || ''}</li>
+</ul>
+<p>Es el mejor momento para ofrecer un <strong>plan de equipo</strong> (más asientos para su oficina).</p>
+</body></html>`,
+            replyTo: email,
+        }).catch(e => console.warn('[provision] aviso compra corporativa falló:', e.message));
+    }
 
     console.log(`✅ [provision] licencia ${info.gateway}: ${email} | ${info.licenseType} | vence ${newExpDate}`);
 }

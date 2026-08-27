@@ -28,6 +28,7 @@ const admin  = require('firebase-admin');
 const { isDisposable } = require('./_lib/disposable-emails');
 const { sendEmail }     = require('./_lib/mailer');
 const { getTrialEmail } = require('./_lib/trial-emails');
+const { isCorporateDomain } = require('./_lib/personal-email-domains');
 const { resolveLang }   = require('./_lib/spanish-countries');
 
 // ── Inicialización Firebase Admin (singleton) ────────────────────────────────
@@ -415,6 +416,38 @@ exports.handler = async function (event) {
         return resp(500, { error: 'No se pudo crear el usuario. Intenta de nuevo.' }, origin);
     }
 
+    // Aviso a soporte de un registro con dominio de empresa. El objetivo es que
+    // el correo baste para decidir si contactar sin abrir el panel: quién es, de
+    // dónde, y por qué canal entró (el alta desde el plugin implica que ya
+    // descargó e instaló, que es una señal mucho más fuerte que la web).
+    async function avisarLeadCorporativo({ email, name, company, country, source }) {
+        const dom = email.split('@')[1];
+        const fila = (k, v) => v
+            ? `<tr><td style="padding:4px 12px 4px 0;color:#6b7280;">${k}</td><td style="padding:4px 0;color:#111827;"><strong>${v}</strong></td></tr>`
+            : '';
+        await sendEmail({
+            to:      'soporte@bimsaddin.com',
+            replyTo: email,
+            subject: `🏢 Lead corporativo: @${dom}`,
+            html: `<!DOCTYPE html><html><body style="font-family:Segoe UI,system-ui,sans-serif;color:#1f2937;line-height:1.6;">
+<p><strong>Nueva prueba desde un dominio de empresa.</strong></p>
+<table style="border-collapse:collapse;font-size:14px;margin:14px 0;">
+${fila('Correo', email)}
+${fila('Nombre', name)}
+${fila('Dominio', '@' + dom)}
+${fila('Empresa (declarada)', company)}
+${fila('País', country)}
+${fila('Origen', source === 'plugin' ? 'plugin — ya descargó e instaló' : source)}
+${fila('Prueba vence', new Date(Date.now() + TRIAL_DAYS * 86400 * 1000).toISOString().slice(0, 10))}
+</table>
+<p>Puedes responder a este correo para escribirle directamente.</p>
+<p style="color:#6b7280;font-size:13px;">Antes de darlo por lead: comprueba que el dominio
+corresponde a una empresa real. La clasificación es automática por dominio y no verifica
+quién hay detrás.</p>
+</body></html>`,
+        });
+    }
+
     const now       = new Date();
     const expiresAt = new Date(now.getTime() + TRIAL_DAYS * 86400 * 1000);
 
@@ -467,6 +500,28 @@ exports.handler = async function (event) {
     }
 
     console.log(`[trial] OK · ${logSafeEmail(email)} · uid=${uid} · vence=${expiresAt.toISOString().slice(0,10)}`);
+
+    // ── Canal de empresa: marcar corporativo + avisar a soporte ───────────────
+    // Esta rama existía SOLO en verify-otp (camino passwordless). Como el OTP aún
+    // no ha llegado a los clientes, todos los leads corporativos reales entraban
+    // por aquí SIN dejar aviso: el caso de TMS (fabricante de encofrados, 24-ago)
+    // pasó en silencio y se detectó a mano. No bloqueante: si algo falla, el trial
+    // ya está creado y el usuario no se ve afectado.
+    if (isCorporateDomain(email)) {
+        try {
+            // Solo accountType: `company` NO se toca porque en este camino lo
+            // escribe el propio usuario en el formulario y su valor es mejor que
+            // el dominio (en verify-otp no hay formulario, por eso allí sí se usa).
+            await db.ref(`users_v2/${uid}`).update({ accountType: 'corporate' });
+        } catch (e) {
+            console.warn('[trial] no se pudo marcar corporativo (no crítico):', e.message);
+        }
+        try {
+            await avisarLeadCorporativo({ email, name, company, country, source });
+        } catch (e) {
+            console.warn('[trial] aviso de lead corporativo falló (no crítico):', e.message);
+        }
+    }
 
     // ── Correo de bienvenida + ayuda SmartScreen (día 0) ─────────────────────
     // NO bloqueante: el trial ya está creado; si el email falla no revertimos
