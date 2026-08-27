@@ -155,10 +155,41 @@
   to     = "/.netlify/functions/admin-create-license"
   status = 200
 
+# Borrado COMPLETO de una cuenta (Auth + licencia + índice de correo + ledger +
+# cupo de IP). El panel es cliente y no puede borrar el usuario de Firebase Auth,
+# por eso un correo eliminado desde el panel seguía apareciendo "ya registrado".
+[[redirects]]
+  from   = "/api/admin-delete-user"
+  to     = "/.netlify/functions/admin-delete-user"
+  status = 200
+
 # ── Endpoint público: registro de trial 14 días ───────────────────────────────
 [[redirects]]
   from   = "/api/trial"
   to     = "/.netlify/functions/create-trial-license"
+  status = 200
+
+# ── Login/registro SIN contraseña (passwordless por código OTP) ────────────────
+# send-otp: envía un código de 6 dígitos al correo. verify-otp: lo valida, crea/
+# loguea al usuario y devuelve un Firebase custom token. Conviven con el registro
+# clásico email+contraseña (create-trial-license) y con la contraseña de compra.
+[[redirects]]
+  from   = "/api/send-otp"
+  to     = "/.netlify/functions/send-otp"
+  status = 200
+
+[[redirects]]
+  from   = "/api/verify-otp"
+  to     = "/.netlify/functions/verify-otp"
+  status = 200
+
+# ── Ledger de hardware: un trial por máquina ──────────────────────────────────
+# El plugin llama aquí al ACTIVAR (no al crear el trial: 27 de 40 altas nacen en
+# la web, donde el hardware ID no existe). Arranca en modo 'log' — registra y
+# avisa, sin bloquear a nadie. El modo se cambia desde el AdminPanel.
+[[redirects]]
+  from   = "/api/claim-hardware"
+  to     = "/.netlify/functions/claim-trial-hardware"
   status = 200
 
 # ── Veredicto de licencia firmado (lo consume el plugin) ──────────────────────
