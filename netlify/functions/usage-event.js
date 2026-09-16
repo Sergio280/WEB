@@ -14,6 +14,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 const admin = require('firebase-admin');
+const { evaluarVersion } = require('./_lib/version-gate');
 
 if (!admin.apps.length) {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -80,6 +81,14 @@ exports.handler = async function (event) {
                 lastVersionAt: new Date().toISOString(),
             });
         } catch { /* best-effort: no romper la telemetría por esto */ }
+    }
+
+    // Cierre a las versiones antiguas para las PRUEBAS: un plugin < 1.2.0 no
+    // reclama el equipo en el ledger y así se salta el límite de una prueba por
+    // equipo. Toda la lógica y su guarda contra telemetría falsificada están en
+    // _lib/version-gate.js. Nunca lanza: la telemetría sigue aunque falle.
+    if (uid && ver) {
+        await evaluarVersion(db, { uid, ver, lic });
     }
 
     try {
