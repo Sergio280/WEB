@@ -34,8 +34,8 @@ export const translations = {
       free: '14 días GRATIS',
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
-      version: 'Ya disponible la versión 1.2.2',
-      versionDetail: 'Despiece de acero · Metrado de encofrado · Importar IFC (beta)',
+      version: 'Ya disponible la versión 1.2.6',
+      versionDetail: 'Importar IFC con uniones de acero de Tekla y Advance Steel · Despiece de acero · Metrado de encofrado',
     },
 
     nav: {
@@ -249,9 +249,10 @@ export const translations = {
         ifc: {
           badge: 'Nuevo en 1.2.1 · Beta',
           title: 'Importar IFC a elementos nativos',
-          desc: 'La novedad grande de la 1.2.1. El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno.',
+          desc: 'La novedad grande de la 1.2.1. El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno. Desde la 1.2.6, las uniones de acero de Tekla y Advance Steel llegan como conexiones de acero de Revit.',
           points: [
-            'De CYPE, Tekla o ArchiCAD; o de Revit, recargando sus familias',
+            'De CYPE, Tekla, Advance Steel o ArchiCAD; o de Revit, recargando sus familias',
+            'Nuevo en 1.2.6: placas base, cartelas y testas como conexiones de Revit; el resto, una familia editable por unión',
             'Auditoría de fidelidad: 1 mm de posición y 1 % de volumen',
             'Reanudable: repetirlo no duplica lo que ya se importó',
             'Beta: acceso anticipado de los planes Profesional y Empresa',
@@ -406,13 +407,13 @@ export const translations = {
           title: 'Importar IFC a nativo — Del bloque que no se puede tocar al elemento de Revit',
           intro: 'Nuevo en la versión 1.2.1. Vincular un IFC en Revit da geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo y reconstruye el modelo con elementos nativos. Llega en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.',
           steps: [
-            { n: '01', t: 'Dile de dónde viene el archivo', d: 'De otro programa (CYPE, Tekla, ArchiCAD…), y la reconstrucción se hace por geometría exacta; o de un Revit exportado con «Exportar IFC» de BIMS, que deja junto al archivo las familias originales para recargarlas tal cual — incluso si el modelo venía de una versión de Revit distinta.' },
-            { n: '02', t: 'BIMS reconstruye el modelo', d: 'Crea niveles, columnas, vigas, muros, losas, escaleras con sus descansos, zapatas, instalaciones, puertas, ventanas y rejillas. Lo que no tiene lectura paramétrica cae a geometría exacta en vez de perderse, y los empalmes de pocos centímetros que dejan los modelos de cálculo se filtran en lugar de ensuciar el modelo.' },
-            { n: '03', t: 'Con auditoría, no con fe', d: 'Cada elemento creado se compara contra el sólido del IFC: posición dentro de 1 mm y volumen dentro del 1 %. Lo que no pasa se reporta con su motivo en un log, la importación se puede cancelar a mitad, y repetirla no duplica lo ya creado.' },
+            { n: '01', t: 'Dile de dónde viene el archivo', d: 'De otro programa (CYPE, Tekla, Advance Steel, ArchiCAD…), y la reconstrucción se hace por geometría exacta; o de un Revit exportado con «Exportar IFC» de BIMS, que deja junto al archivo las familias originales para recargarlas tal cual — incluso si el modelo venía de una versión de Revit distinta.' },
+            { n: '02', t: 'BIMS reconstruye el modelo', d: 'Crea niveles, columnas, vigas, muros, losas, escaleras con sus descansos, zapatas, instalaciones, puertas, ventanas y rejillas. Lo que no tiene lectura paramétrica cae a geometría exacta en vez de perderse, y los empalmes de pocos centímetros que dejan los modelos de cálculo se filtran en lugar de ensuciar el modelo. En estructuras de acero de Tekla y Advance Steel (nuevo en 1.2.6), cada unión que Revit tiene en su catálogo —placas base, cartelas de pórtico, cumbreras, testas— se crea como conexión de acero de Revit, con sus chapas y pernos en su sitio; la que Revit no tiene llega como UNA familia editable, no como piezas sueltas, y los conjuntos de fabricación se conservan.' },
+            { n: '03', t: 'Con auditoría, no con fe', d: 'Cada elemento creado se compara contra el sólido del IFC: posición dentro de 1 mm y volumen dentro del 1 %. Lo que no pasa se cuenta en el resumen final, la importación se puede cancelar a mitad, y repetirla no duplica lo ya creado.' },
           ],
           compliance: [
             { k: 'Interoperabilidad (openBIM / IFC):', v: 'El modelo de la especialidad externa deja de ser una referencia muerta y pasa a ser modelo editable, medible y coordinable dentro de Revit.' },
-            { k: 'Trazabilidad de la conversión:', v: 'Cada elemento importado queda auditado contra la geometría original y lo que no pasa se declara en el log, en lugar de darse por bueno en silencio.' },
+            { k: 'Trazabilidad de la conversión:', v: 'Cada elemento importado queda auditado contra la geometría original y lo que no pasa se declara en el resumen final, en lugar de darse por bueno en silencio.' },
           ],
         },
         'dwg-nwc': {
@@ -696,7 +697,7 @@ export const translations = {
         { q: '¿Cómo es la garantía de devolución?', a: 'Si dentro de los primeros 7 días después de comprar decides que BIMS no es para ti, nos escribes a soporte@bimsaddin.com o por WhatsApp y te devolvemos el 100 % de tu dinero. Sin preguntas, sin formularios largos.' },
         { q: '¿Puedo cambiar de plan o instalar en varios equipos?', a: 'Sí. El plan Individual cubre 1 equipo, el Profesional hasta 3, y el plan Empresa no tiene límite. Puedes subir de plan en cualquier momento — solo pagas la diferencia prorrateada.' },
         { q: '¿Por qué Windows muestra una advertencia al instalar BIMS?', a: 'BIMS está firmado digitalmente, así que Windows muestra un editor verificado en lugar de “editor desconocido”. Como el certificado es reciente, SmartScreen todavía puede mostrar un aviso hasta que acumule descargas: si aparece, haz clic en “Más información” y luego en “Ejecutar de todas formas”. El instalador está firmado y su firma se puede comprobar en las propiedades del archivo.' },
-        { q: '¿En qué se diferencia importar un IFC con BIMS de vincularlo en Revit?', a: 'El vínculo de Revit trae la geometría como bloques que no se editan ni se cuantifican por tipo. BIMS lee los datos paramétricos del IFC y crea elementos nativos —muros, vigas, columnas, losas, escaleras— que se editan, se miden y entran en tus tablas. Cada elemento se audita contra la geometría original (1 mm de posición, 1 % de volumen) y lo que no pasa se reporta en un log. La función está en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.' },
+        { q: '¿En qué se diferencia importar un IFC con BIMS de vincularlo en Revit?', a: 'El vínculo de Revit trae la geometría como bloques que no se editan ni se cuantifican por tipo. BIMS lee los datos paramétricos del IFC y crea elementos nativos —muros, vigas, columnas, losas, escaleras— que se editan, se miden y entran en tus tablas. Cada elemento se audita contra la geometría original (1 mm de posición, 1 % de volumen) y lo que no pasa se cuenta en el resumen final. Desde la 1.2.6 trae además las uniones de acero de Tekla y Advance Steel como conexiones de Revit. La función está en beta: se entrega con el acceso anticipado de los planes Profesional y Empresa.' },
         { q: '¿El despiece de acero y el metrado de encofrado modifican mi modelo?', a: 'No. El despiece es de solo lectura: lee la armadura ya modelada y escribe un Excel aparte, sin tocar el proyecto. El metrado de encofrado tampoco cambia la geometría: crea tablas de planificación en el Navegador de proyectos con el área de contacto agrupada por categoría, y te avisa de los paños que no pudo medir en lugar de omitirlos del total.' },
         { q: '¿BIMS funciona con modelos vinculados?', a: 'Sí. Varios comandos —en especial del módulo Encofrado y Tarrajeo por Habitación— están diseñados para trabajar con modelos vinculados, reconociendo muros, columnas y demás elementos de los documentos enlazados.' },
       ],
@@ -771,8 +772,8 @@ export const translations = {
       free: '14 days FREE',
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
-      version: 'Version 1.2.2 now available',
-      versionDetail: 'Rebar cutting list · Formwork quantities · IFC import (beta)',
+      version: 'Version 1.2.6 now available',
+      versionDetail: 'IFC import with Tekla and Advance Steel steel connections · Rebar cutting list · Formwork quantities',
     },
 
     nav: {
@@ -986,9 +987,10 @@ export const translations = {
         ifc: {
           badge: 'New in 1.2.1 · Beta',
           title: 'IFC import into native elements',
-          desc: 'The headline addition in 1.2.1. A Revit IFC link brings in geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file — levels, axes and profiles — and places native walls, beams, columns, slabs and stairs. Every element created is audited against the IFC solid before it is accepted.',
+          desc: 'The headline addition in 1.2.1. A Revit IFC link brings in geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file — levels, axes and profiles — and places native walls, beams, columns, slabs and stairs. Every element created is audited against the IFC solid before it is accepted. Since 1.2.6, Tekla and Advance Steel steel joints arrive as Revit steel connections.',
           points: [
-            'From CYPE, Tekla or ArchiCAD; or from Revit, reloading its families',
+            'From CYPE, Tekla, Advance Steel or ArchiCAD; or from Revit, reloading its families',
+            'New in 1.2.6: base plates, haunches and end plates as Revit connections; the rest, one editable family per joint',
             'Fidelity audit: 1 mm on position and 1 % on volume',
             'Resumable: running it again does not duplicate what was imported',
             'Beta: early access on the Professional and Company plans',
@@ -1143,13 +1145,13 @@ export const translations = {
           title: 'IFC import into native elements — From untouchable block to Revit element',
           intro: 'New in version 1.2.1. Linking an IFC in Revit gives you geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file and rebuilds the model with native elements. It arrives in beta: it ships with the early access of the Professional and Company plans.',
           steps: [
-            { n: '01', t: 'Tell it where the file comes from', d: 'From another program (CYPE, Tekla, ArchiCAD…), where the rebuild is done from the exact geometry; or from a Revit model exported with the BIMS “Export IFC”, which leaves the original families next to the file so they can be reloaded as they are — even if the model came from a different Revit version.' },
-            { n: '02', t: 'BIMS rebuilds the model', d: 'It creates levels, columns, beams, walls, slabs, stairs with their landings, footings, services, doors, windows and grids. Whatever has no parametric reading falls back to exact geometry instead of being lost, and the few-centimetre stubs that analysis models leave behind are filtered out rather than cluttering the model.' },
-            { n: '03', t: 'With an audit, not on faith', d: 'Every element created is compared against the IFC solid: position within 1 mm and volume within 1 %. Whatever fails is reported with its reason in a log, the import can be cancelled halfway, and running it again does not duplicate what was already created.' },
+            { n: '01', t: 'Tell it where the file comes from', d: 'From another program (CYPE, Tekla, Advance Steel, ArchiCAD…), where the rebuild is done from the exact geometry; or from a Revit model exported with the BIMS “Export IFC”, which leaves the original families next to the file so they can be reloaded as they are — even if the model came from a different Revit version.' },
+            { n: '02', t: 'BIMS rebuilds the model', d: 'It creates levels, columns, beams, walls, slabs, stairs with their landings, footings, services, doors, windows and grids. Whatever has no parametric reading falls back to exact geometry instead of being lost, and the few-centimetre stubs that analysis models leave behind are filtered out rather than cluttering the model. In Tekla and Advance Steel steel structures (new in 1.2.6), every joint that Revit has in its catalogue — base plates, portal haunches, apexes, end plates — is created as a Revit steel connection, with its plates and bolts in place; one that Revit does not have arrives as ONE editable family, not as loose parts, and fabrication assemblies are kept.' },
+            { n: '03', t: 'With an audit, not on faith', d: 'Every element created is compared against the IFC solid: position within 1 mm and volume within 1 %. Whatever fails is counted in the final summary, the import can be cancelled halfway, and running it again does not duplicate what was already created.' },
           ],
           compliance: [
             { k: 'Interoperability (openBIM / IFC):', v: 'The external discipline’s model stops being a dead reference and becomes an editable, measurable, coordinatable model inside Revit.' },
-            { k: 'Traceability of the conversion:', v: 'Every imported element is audited against the original geometry, and whatever fails is declared in the log instead of being silently accepted.' },
+            { k: 'Traceability of the conversion:', v: 'Every imported element is audited against the original geometry, and whatever fails is declared in the final summary instead of being silently accepted.' },
           ],
         },
         'dwg-nwc': {
@@ -1426,7 +1428,7 @@ export const translations = {
         { q: 'How does the money-back guarantee work?', a: 'If within the first 7 days after buying you decide BIMS isn’t for you, write to us at soporte@bimsaddin.com or via WhatsApp and we’ll refund 100% of your money. No questions, no long forms.' },
         { q: 'Can I change plans or install on several machines?', a: 'Yes. The Individual plan covers 1 machine, Professional up to 3, and the Enterprise plan has no limit. You can upgrade at any time — you only pay the prorated difference.' },
         { q: 'Why does Windows show a warning when installing BIMS?', a: 'BIMS is digitally signed, so Windows shows a verified publisher instead of “unknown publisher”. Because the certificate is recent, SmartScreen may still show a notice until it builds download reputation: if it appears, click “More info” and then “Run anyway”. The installer is signed and its signature can be verified in the file’s properties.' },
-        { q: 'How is importing an IFC with BIMS different from linking it in Revit?', a: 'A Revit link brings the geometry in as blocks you cannot edit or schedule by type. BIMS reads the parametric data in the IFC and creates native elements — walls, beams, columns, slabs, stairs — that you can edit, measure and put in your schedules. Every element is audited against the original geometry (1 mm on position, 1 % on volume) and whatever fails is reported in a log. The feature is in beta: it ships with the early access of the Professional and Company plans.' },
+        { q: 'How is importing an IFC with BIMS different from linking it in Revit?', a: 'A Revit link brings the geometry in as blocks you cannot edit or schedule by type. BIMS reads the parametric data in the IFC and creates native elements — walls, beams, columns, slabs, stairs — that you can edit, measure and put in your schedules. Every element is audited against the original geometry (1 mm on position, 1 % on volume) and whatever fails is counted in the final summary. Since 1.2.6 it also brings Tekla and Advance Steel steel joints in as Revit connections. The feature is in beta: it ships with the early access of the Professional and Company plans.' },
         { q: 'Do the rebar cutting list and the formwork quantities modify my model?', a: 'No. The cutting list is read-only: it reads the rebar already modelled and writes a separate Excel file without touching the project. Formwork quantities do not change the geometry either: they create schedules in the Project Browser with the contact area grouped by category, and report the panels that could not be measured instead of dropping them from the total.' },
         { q: 'Does BIMS work with linked models?', a: 'Yes. Several commands —especially in the Formwork and Room Plastering modules— are designed to work with linked models, recognizing walls, columns and other elements from the linked documents.' },
       ],
