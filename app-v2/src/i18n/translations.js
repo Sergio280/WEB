@@ -34,7 +34,7 @@ export const translations = {
       free: '14 días GRATIS',
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
-      version: 'Ya disponible la versión 1.2.6',
+      version: 'Ya disponible la versión 1.2.8',
       versionDetail: 'Importar IFC con uniones de acero de Tekla y Advance Steel · Despiece de acero · Metrado de encofrado',
     },
 
@@ -252,7 +252,8 @@ export const translations = {
           desc: 'La novedad grande de la 1.2.1. El vínculo IFC de Revit trae geometría que no se edita ni se cuantifica por tipo: sirve para mirar, no para trabajar. BIMS lee los datos paramétricos del archivo —niveles, ejes y perfiles— y coloca muros, vigas, columnas, losas y escaleras nativos. Cada elemento creado se audita contra el sólido del IFC antes de darlo por bueno. Desde la 1.2.6, las uniones de acero de Tekla y Advance Steel llegan como conexiones de acero de Revit.',
           points: [
             'De CYPE, Tekla, Advance Steel o ArchiCAD; o de Revit, recargando sus familias',
-            'Nuevo en 1.2.6: placas base, cartelas y testas como conexiones de Revit; el resto, una familia editable por unión',
+            'Nuevo en 1.2.8: también convierte DWG 3D en vigas y columnas nativas, bloqueadas a planos de referencia',
+            'Placas base, cartelas y testas como conexiones de Revit; el resto, una familia editable por unión',
             'Auditoría de fidelidad: 1 mm de posición y 1 % de volumen',
             'Reanudable: repetirlo no duplica lo que ya se importó',
             'Beta: acceso anticipado de los planes Profesional y Empresa',
@@ -772,7 +773,7 @@ export const translations = {
       free: '14 days FREE',
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
-      version: 'Version 1.2.6 now available',
+      version: 'Version 1.2.8 now available',
       versionDetail: 'IFC import with Tekla and Advance Steel steel connections · Rebar cutting list · Formwork quantities',
     },
 
@@ -990,7 +991,8 @@ export const translations = {
           desc: 'The headline addition in 1.2.1. A Revit IFC link brings in geometry you cannot edit or schedule by type: fine to look at, useless to work with. BIMS reads the parametric data in the file — levels, axes and profiles — and places native walls, beams, columns, slabs and stairs. Every element created is audited against the IFC solid before it is accepted. Since 1.2.6, Tekla and Advance Steel steel joints arrive as Revit steel connections.',
           points: [
             'From CYPE, Tekla, Advance Steel or ArchiCAD; or from Revit, reloading its families',
-            'New in 1.2.6: base plates, haunches and end plates as Revit connections; the rest, one editable family per joint',
+            'New in 1.2.8: it also converts 3D DWG files into native beams and columns, locked to reference planes',
+            'Base plates, haunches and end plates as Revit connections; the rest, one editable family per joint',
             'Fidelity audit: 1 mm on position and 1 % on volume',
             'Resumable: running it again does not duplicate what was imported',
             'Beta: early access on the Professional and Company plans',
