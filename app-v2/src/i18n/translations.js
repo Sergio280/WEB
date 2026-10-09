@@ -34,7 +34,7 @@ export const translations = {
       free: '14 días GRATIS',
       desc: ' — Prueba BIMS sin tarjeta · Revit 2024/2025/2026/2027',
       cta: 'Empezar trial →',
-      version: 'Ya disponible la versión 1.2.8',
+      version: 'Ya disponible la versión 1.2.9',
       versionDetail: 'Importar IFC con uniones de acero de Tekla y Advance Steel · Despiece de acero · Metrado de encofrado',
     },
 
@@ -773,7 +773,7 @@ export const translations = {
       free: '14 days FREE',
       desc: ' — Try BIMS, no card required · Revit 2024/2025/2026/2027',
       cta: 'Start trial →',
-      version: 'Version 1.2.8 now available',
+      version: 'Version 1.2.9 now available',
       versionDetail: 'IFC import with Tekla and Advance Steel steel connections · Rebar cutting list · Formwork quantities',
     },
 
