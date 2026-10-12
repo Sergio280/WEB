@@ -75,7 +75,7 @@ export const translations = {
       descPost: ' para estructura, refuerzo, encofrado y exportación de planos a DWG con imágenes embebidas — único en su categoría.',
       cta: 'Empezar prueba gratis de 14 días →',
       subNote: 'Sin tarjeta de crédito · Activación instantánea · ',
-      subNoteLink: 'Ver demo de 45 s',
+      subNoteLink: 'Ver demo de menos de 2 min',
       guarantee: 'Garantía de devolución del 100% en 7 días si no te convence',
       mockup: {
         title: 'Proyecto-Estructural.rvt — Autodesk Revit 2027',
@@ -119,7 +119,7 @@ export const translations = {
     },
 
     videoDemo: {
-      title: 'Mira BIMS en acción (45 s)',
+      title: 'Mira BIMS en acción (menos de 2 min)',
       subtitle: 'Demostración real en un proyecto estructural',
       iframeTitle: 'Demostración de BIMS en Revit',
       playAria: 'Reproducir demo de BIMS en Revit',
@@ -815,7 +815,7 @@ export const translations = {
       descPost: ' for structure, rebar, formwork and sheet-to-DWG export with embedded images — one of a kind.',
       cta: 'Start your 14-day free trial →',
       subNote: 'No credit card · Instant activation · ',
-      subNoteLink: 'Watch the 45s demo',
+      subNoteLink: 'Watch the under-2-min demo',
       guarantee: '100% money-back guarantee within 7 days if you’re not convinced',
       mockup: {
         title: 'Structural-Project.rvt — Autodesk Revit 2027',
@@ -859,7 +859,7 @@ export const translations = {
     },
 
     videoDemo: {
-      title: 'See BIMS in action (45s)',
+      title: 'See BIMS in action (under 2 min)',
       subtitle: 'A real demonstration on a structural project',
       iframeTitle: 'BIMS demonstration in Revit',
       playAria: 'Play BIMS demo in Revit',

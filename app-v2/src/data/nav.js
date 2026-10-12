@@ -10,7 +10,11 @@ export const NAV_LINKS = [
 
 export const WHATSAPP_URL = 'https://wa.me/51989455558';
 export const EMAIL = 'soporte@bimsaddin.com';
-export const YOUTUBE_ID = 'U9LvemehIkQ';
+// Demo principal: el encofrado en 1:43 (ZKd-99eEF50). Antes apuntaba a la
+// versión larga de 11:43 (U9LvemehIkQ, que sigue en la galería de clips)
+// mientras los textos anunciaban «45 s». Si se cambia el vídeo, revisar la
+// duración que dicen hero.subNoteLink y videoDemo.title en translations.js.
+export const YOUTUBE_ID = 'ZKd-99eEF50';
 
 // Versión del plugin que se ofrece en la web. Vive aquí y NO en los textos
 // traducidos porque es un dato, no una frase: escrito a mano en cada idioma se
