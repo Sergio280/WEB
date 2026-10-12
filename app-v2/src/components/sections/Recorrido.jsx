@@ -3,9 +3,9 @@ import { track } from '../../lib/track.js';
 import { useLang } from '../../i18n/LanguageProvider.jsx';
 
 // ── Recorrido con el scroll ──────────────────────────────────────────────────
-// Un edificio que se convierte y se encofra mientras el visitante baja. No es
-// un vídeo: son N fotogramas exportados de Revit (el edificio de ejemplo de
-// CYPECAD importado y encofrado con BIMS) que se pintan en un <canvas> según
+// Un edificio que pasa de IFC a elementos nativos mientras el visitante baja.
+// No es un vídeo: son N fotogramas exportados de Revit (el edificio de ejemplo
+// de CYPECAD importado con BIMS) que se pintan en un <canvas> según
 // cuánto se ha avanzado dentro de la sección. Bajar avanza, subir retrocede.
 //
 // Por qué fotogramas y no un <video> con currentTime: el vídeo solo se puede
@@ -30,13 +30,20 @@ export const RECORRIDO_FOTOGRAMAS = 160;
 const CARPETA = '/recorrido';
 
 // Tramos del avance (0..1) en los que manda cada texto. Deben coincidir con los
-// tiempos con los que se generaron los fotogramas: fantasma, conversión,
-// encofrado y edificio completo.
+// tiempos con los que se generaron los fotogramas: el IFC como fantasma, la
+// conversión de abajo arriba y el edificio completo girando.
+//
+// #region Fase de encofrado retirada (11-oct-2026)
+// Hubo un cuarto tramo con el encofrado apareciendo en ámbar. Se quitó porque
+// en este modelo el encofrado generado tenía defectos visibles (dientes de
+// sierra en los bordes curvos de las losas, paneles sueltos y encofrado bajo la
+// losa apoyada en el terreno). Volverá cuando el motor lo resuelva.
+// const TRAMOS = [[0, 0.12], [0.12, 0.55], [0.55, 0.85], [0.85, 1.01]];
+// #endregion
 const TRAMOS = [
-  [0, 0.12],
-  [0.12, 0.55],
-  [0.55, 0.85],
-  [0.85, 1.01],
+  [0, 0.15],
+  [0.15, 0.7],
+  [0.7, 1.01],
 ];
 
 // Color del borde inferior de los renders (fondo degradado de la vista 3D):
