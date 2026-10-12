@@ -7,6 +7,7 @@ import Navbar from './components/sections/Navbar.jsx';
 import Hero from './components/sections/Hero.jsx';
 import MarqueeStrip from './components/sections/MarqueeStrip.jsx';
 import VideoDemo from './components/sections/VideoDemo.jsx';
+import Recorrido from './components/sections/Recorrido.jsx';
 import Clips from './components/sections/Clips.jsx';
 import Bento from './components/sections/Bento.jsx';
 import UseCases from './components/sections/UseCases.jsx';
@@ -121,6 +122,9 @@ export default function App() {
       <main>
         <Hero />
         <MarqueeStrip />
+        {/* El recorrido va justo después del hero: es lo primero que se
+            ve al empezar a bajar, y enseña el producto en vez de contarlo. */}
+        <Recorrido />
         <VideoDemo />
         <Clips />
         <Bento />

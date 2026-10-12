@@ -141,6 +141,18 @@ export const translations = {
         dismiss: 'Dismiss',
       },
     },
+    recorrido: {
+      eyebrow: 'Desliza y míralo construirse',
+      canvasAria: 'Edificio de concreto en Revit: primero como IFC, luego convertido a elementos nativos y por último encofrado con BIMS',
+      pasos: [
+        { titulo: 'Tu IFC llega como un bloque', texto: 'Vincular un IFC en Revit da geometría que se ve, pero que no se edita ni se metra por tipo.' },
+        { titulo: 'BIMS lo convierte en elementos de Revit', texto: 'Columnas, vigas, losas y muros nativos, con su perfil y sus niveles. En este edificio de CYPECAD: 45 columnas, 101 vigas, 87 losas y 14 muros, sin un solo fallo.' },
+        { titulo: 'Y encofra el edificio entero', texto: 'Muros y suelos de encofrado nativos sobre columnas, vigas, muros y losas: 755 piezas y 1 743 m² en este edificio, con un comando por categoría.' },
+        { titulo: 'Listo para metrar y documentar', texto: 'Todo lo que ves son elementos de Revit: se seleccionan, se editan y entran en tus tablas de cantidades.' },
+      ],
+      cta: 'Pruébalo en tu proyecto, gratis 14 días →',
+      nota: 'Imágenes reales exportadas de Revit 2027 con BIMS. El edificio es un modelo de ejemplo de CYPE.',
+    },
     clips: {
       eyebrow: 'En acción',
       title: 'BIMS en acción, comando por comando',
@@ -880,6 +892,18 @@ export const translations = {
         cta: 'View in English',
         dismiss: 'Dismiss',
       },
+    },
+    recorrido: {
+      eyebrow: 'Scroll and watch it build',
+      canvasAria: 'Concrete building in Revit: first as an IFC, then converted into native elements and finally formed with BIMS',
+      pasos: [
+        { titulo: 'Your IFC arrives as a block', texto: 'Linking an IFC in Revit gives you geometry you can look at, but cannot edit or schedule by type.' },
+        { titulo: 'BIMS turns it into Revit elements', texto: 'Native columns, beams, floors and walls, with their profiles and levels. In this CYPECAD building: 45 columns, 101 beams, 87 floors and 14 walls, with zero failures.' },
+        { titulo: 'And forms the whole building', texto: 'Native formwork walls and floors over columns, beams, walls and slabs: 755 pieces and 1,743 m² in this building, with one command per category.' },
+        { titulo: 'Ready to quantify and document', texto: 'Everything you see is a Revit element: select it, edit it, and it lands in your quantity schedules.' },
+      ],
+      cta: 'Try it on your project, free for 14 days →',
+      nota: 'Real images exported from Revit 2027 with BIMS. The building is a CYPE sample model.',
     },
     clips: {
       eyebrow: 'In action',
