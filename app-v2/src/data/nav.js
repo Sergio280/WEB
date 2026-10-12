@@ -42,7 +42,11 @@ export const APPSTORE_URL = {
 // dejaba items[i] en undefined y la sección entera reventaba al leer el título.
 //
 // yt vacío => tarjeta "Próximamente" (sin reproducción).
+// yt también puede ser { es, en }: un vídeo por idioma cuando los rótulos van
+// grabados en la imagen (el de Importar IFC). Clips.jsx elige el del idioma
+// activo y, si falta, cae al español.
 export const CLIPS = [
+  { id: 'ifc',       yt: { es: '_HXvNKKLr9s', en: '3sRRIMvPq3w' } },
   { id: 'encofrado', yt: 'U9LvemehIkQ' },
   { id: 'dwg',       yt: 'no7dvQfRitI' },
   { id: 'tarrajeo',  yt: 'b-g0enh0D6o' },

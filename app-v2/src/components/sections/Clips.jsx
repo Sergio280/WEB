@@ -109,14 +109,18 @@ function ClipCard({ clip, onPlay, soonLabel }) {
 }
 
 export default function Clips() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [active, setActive] = useState(null);
 
   // Combina los vídeos (data) con los textos del idioma activo, emparejados por
   // ID y no por posición en el array. Un clip cuyo texto falte se descarta en
   // vez de tumbar la sección: antes se leía items[i], y un clip añadido sin su
   // traducción daba undefined y reventaba al pedirle el título.
-  const clips = CLIPS.map((c) => ({ id: c.id, yt: c.yt, ...t.clips.items[c.id] })).filter((c) => c.title);
+  //
+  // yt puede venir por idioma ({ es, en }); se resuelve aquí para que la
+  // tarjeta y el visor sigan recibiendo un único identificador.
+  const ytDe = (yt) => (yt && typeof yt === 'object' ? yt[lang] || yt.es : yt);
+  const clips = CLIPS.map((c) => ({ id: c.id, yt: ytDe(c.yt), ...t.clips.items[c.id] })).filter((c) => c.title);
 
   function play(clip) {
     setActive(clip);

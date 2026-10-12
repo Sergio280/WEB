@@ -26,7 +26,7 @@ export const translations = {
 
     meta: {
       title: 'BIMS — Automatiza encofrado, tarrajeo y planos DWG en Revit',
-      description: 'BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, metrados, refuerzo, despiece de acero, tarrajeo y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.',
+      description: 'BIMS — Add-in profesional para Autodesk Revit que automatiza encofrado, metrados, refuerzo, despiece de acero, tarrajeo, importación IFC a elementos nativos y exportación DWG. Compatible con Revit 2024, 2025, 2026 y 2027.',
     },
 
     announce: {
@@ -149,6 +149,7 @@ export const translations = {
       close: 'Cerrar ✕',
       closeAria: 'Cerrar',
       items: {
+        ifc: { title: 'Importa IFC a Revit como elementos nativos', desc: 'Tekla, CYPECAD y DWG 3D: columnas, vigas, losas y muros editables, con su perfil y sus niveles.' },
         encofrado: { title: 'Encofrado de todo el edificio en 1 clic', desc: 'Genera muros y suelos de encofrado sobre la estructura, automático.' },
         dwg: { title: 'Exporta planos a DWG con las imágenes adentro', desc: 'Las imágenes quedan incrustadas en el DWG, no como referencia externa.' },
         tarrajeo: { title: 'Tarrajeo de todos los ambientes', desc: 'Crea el revestimiento de muros y pisos por habitación, listo para metrar.' },
@@ -765,7 +766,7 @@ export const translations = {
 
     meta: {
       title: 'BIMS — Automate formwork, plastering and DWG sheets in Revit',
-      description: 'BIMS — Professional Autodesk Revit add-in that automates formwork, quantities, rebar, cutting lists, plastering and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.',
+      description: 'BIMS — Professional Autodesk Revit add-in that automates formwork, quantities, rebar, cutting lists, plastering, IFC import into native elements and DWG export. Compatible with Revit 2024, 2025, 2026 and 2027.',
     },
 
     announce: {
@@ -888,6 +889,7 @@ export const translations = {
       close: 'Close ✕',
       closeAria: 'Close',
       items: {
+        ifc: { title: 'Import IFC into Revit as native elements', desc: 'Tekla, CYPECAD and 3D DWG: editable columns, beams, floors and walls, with their profiles and levels.' },
         encofrado: { title: 'Formwork for the whole building in 1 click', desc: 'Generates formwork walls and floors over the structure, automatically.' },
         dwg: { title: 'Export sheets to DWG with the images inside', desc: 'Images stay embedded in the DWG, not as external references.' },
         tarrajeo: { title: 'Plastering for every room', desc: 'Creates wall and floor finishes per room, ready to quantify.' },
