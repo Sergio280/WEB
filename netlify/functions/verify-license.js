@@ -14,7 +14,7 @@
 //
 // Body: { userId, hardwareId, idToken, nonce }
 // Respuesta 200: { data: "<json firmado, bytes exactos>", signature: "<base64>" }
-//   data = JSON.stringify({ userId, hardwareId, valid, reason, expiresAt, serverTime, nonce })
+//   data = JSON.stringify({ userId, hardwareId, valid, reason, expiresAt, serverTime, nonce, leaseMs })
 //   El cliente verifica la firma sobre los BYTES EXACTOS de `data` y luego lo parsea.
 //
 // Seguridad:
@@ -41,6 +41,18 @@ if (!admin.apps.length) {
 
 const db   = admin.database();
 const auth = admin.auth();
+
+// Permiso del canal de asistentes de IA (MCP) del plugin: cuánto puede reutilizar el
+// plugin un veredicto VÁLIDO antes de volver a preguntar (cada consulta cuesta ~0,75 s
+// desde Perú y una conversación lanza 10-30 llamadas). Solo lo usa el canal MCP, nunca
+// la cinta, y el plugin lo topa en 15 min. Configurable en Netlify con MCP_LEASE_MS;
+// 0 = sin permiso (cada llamada consulta en vivo): sirve de interruptor de emergencia.
+const LEASE_TOPE_MS = 15 * 60 * 1000;
+function leaseMsConfigurado() {
+    const n = Number(process.env.MCP_LEASE_MS ?? 5 * 60 * 1000);
+    if (!Number.isFinite(n) || n <= 0) return 0;
+    return Math.min(Math.floor(n), LEASE_TOPE_MS);
+}
 
 // Clave privada de FIRMA de licencias (ECDSA P-256 PKCS8 PEM). DISTINTA de la de
 // Firebase. Se configura en Netlify como LICENSE_SIGNING_PRIVATE_KEY. Se usa EC en
@@ -181,6 +193,7 @@ exports.handler = async function (event) {
         expiresAt: expiresAtMs,   // ms epoch o null
         serverTime,               // ms epoch UTC del servidor (firmado)
         nonce,                    // eco del nonce del cliente (anti-replay)
+        leaseMs: valid ? leaseMsConfigurado() : 0,  // permiso del canal MCP (0 = ninguno)
     };
 
     const signed = signVerdict(payload);
