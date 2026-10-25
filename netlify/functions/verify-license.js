@@ -110,8 +110,21 @@ function signVerdict(payloadObj) {
     return { data, signature };
 }
 
+// Un error sin capturar daba 502 sin rastro (24-oct-2026: TODAS las verificaciones reales
+// fallaban así y el plugin caía en silencio al verificador clásico sin firma). Ahora se
+// responde 500 con un código técnico SIN secretos para que el plugin lo anote.
 exports.handler = async function (event) {
-    const origin = event.headers.origin || event.headers.Origin || '';
+    const origin = (event.headers && (event.headers.origin || event.headers.Origin)) || '';
+    try {
+        return await atender(event, origin);
+    } catch (e) {
+        const code = String((e && (e.code || e.name)) || 'error').slice(0, 80);
+        console.error('[verify] error no capturado:', code, e && e.message);
+        return resp(500, { error: 'Error interno al verificar la licencia', code }, origin);
+    }
+};
+
+async function atender(event, origin) {
 
     if (event.httpMethod === 'OPTIONS')
         return { statusCode: 204, headers: corsHeadersFor(origin), body: '' };
@@ -199,4 +212,4 @@ exports.handler = async function (event) {
     const signed = signVerdict(payload);
     console.log(`[verify] uid=${userId} hw=${hardwareId.slice(0,8)}… valid=${valid} reason=${reason}`);
     return resp(200, signed, origin);
-};
+}
