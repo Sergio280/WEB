@@ -60,6 +60,29 @@ function leaseMsConfigurado() {
 // de variables de entorno de AWS Lambda.
 const SIGNING_KEY = (process.env.LICENSE_SIGNING_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 
+// 24-oct-2026: la variable de Netlify dejó de leerse (ERR_OSSL_UNSUPPORTED en CADA firma)
+// y el plugin llevaba tiempo cayendo al verificador clásico sin firma. La clave se
+// reconstruye tolerando los daños típicos al pegarla: comillas alrededor, «\n» literales,
+// saltos de línea perdidos o cambiados por espacios, o solo el cuerpo base64 sin cabeceras.
+// Se intenta PKCS8 y SEC1 («EC PRIVATE KEY»). No relaja nada: la clave es la misma.
+function claveDeFirma(bruta) {
+    let s = String(bruta || '').trim().replace(/^["']|["']$/g, '').replace(/\\n/g, '\n').replace(/\r/g, '');
+    const m = s.match(/-----BEGIN ([A-Z ]+)-----([\s\S]*?)-----END \1-----/);
+    const cuerpo = (m ? m[2] : s).replace(/[^A-Za-z0-9+/=]/g, '');
+    if (!cuerpo) return null;
+    const tipos = m ? [m[1]] : ['PRIVATE KEY', 'EC PRIVATE KEY'];
+    for (const tipo of tipos) {
+        const pem = `-----BEGIN ${tipo}-----\n${cuerpo.match(/.{1,64}/g).join('\n')}\n-----END ${tipo}-----\n`;
+        try { return crypto.createPrivateKey(pem); } catch { /* siguiente formato */ }
+    }
+    for (const type of ['pkcs8', 'sec1']) {
+        try { return crypto.createPrivateKey({ key: Buffer.from(cuerpo, 'base64'), format: 'der', type }); } catch { /* siguiente */ }
+    }
+    return null;
+}
+const CLAVE_FIRMA = SIGNING_KEY ? claveDeFirma(SIGNING_KEY) : null;
+if (SIGNING_KEY && !CLAVE_FIRMA) console.error('[verify] LICENSE_SIGNING_PRIVATE_KEY no es una clave EC legible');
+
 // ── Allowlist de orígenes (consistente con /api/trial) ───────────────────────
 // Se permiten AMBOS dominios de producción de forma EXPLÍCITA: los plugins ya
 // distribuidos mandan Origin: https://bimsapp.netlify.app compilado en la DLL,
@@ -106,7 +129,7 @@ function signVerdict(payloadObj) {
     // dsaEncoding 'ieee-p1363' = firma EC como r||s crudo (64 bytes en P-256).
     // Es el formato que espera ECDsa.VerifyData en .NET Framework (net48), que NO
     // acepta el DER/ASN.1 por defecto de OpenSSL.
-    const signature = signer.sign({ key: SIGNING_KEY, dsaEncoding: 'ieee-p1363' }).toString('base64');
+    const signature = signer.sign({ key: CLAVE_FIRMA || SIGNING_KEY, dsaEncoding: 'ieee-p1363' }).toString('base64');
     return { data, signature };
 }
 
@@ -135,6 +158,8 @@ async function atender(event, origin) {
         console.error('[verify] LICENSE_SIGNING_PRIVATE_KEY no configurada');
         return resp(500, { error: 'Servidor no configurado para firmar licencias' }, origin);
     }
+    if (!CLAVE_FIRMA)
+        return resp(500, { error: 'Servidor no configurado para firmar licencias', code: 'signing-key-unreadable' }, origin);
 
     let body;
     try { body = JSON.parse(event.body || '{}'); }
