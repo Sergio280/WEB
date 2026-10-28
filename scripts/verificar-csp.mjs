@@ -41,6 +41,8 @@ const csp = m[1];
 const RECURSOS = [
   // El iframe del checkout de Culqi: ESTE es el que estuvo bloqueado.
   { tipo: 'frame',   url: 'https://checkout.culqi.com/v4?pk=demo',            nota: 'iframe del checkout de Culqi' },
+  // 2026-10-27: Culqi movió el iframe a este subdominio y rompió los pagos.
+  { tipo: 'frame',   url: 'https://checkoutview.culqi.com/',                  nota: 'iframe del checkout de Culqi (dominio nuevo)' },
   { tipo: 'script',  url: 'https://checkout.culqi.com/js/v4',                 nota: 'script de Culqi' },
   { tipo: 'connect', url: 'https://secure.culqi.com/tokens',                  nota: 'tokenización de tarjeta' },
   { tipo: 'connect', url: 'https://api.culqi.com/v2/validate-iin?iin=411111', nota: 'validación de BIN' },
