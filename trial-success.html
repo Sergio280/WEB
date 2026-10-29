@@ -23,6 +23,20 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "wrtgszpyuc");
     </script>
+    <!-- ── TikTok Pixel (BIMS web bimsaddin.com) ── -->
+    <!-- Mide las conversiones de las promociones de TikTok. Los eventos los
+         dispara track.js (InitiateCheckout, Download, Contact) y las páginas de
+         bienvenida (CompleteRegistration) y de pago (CompletePayment). -->
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+      ttq.load('DBHAIN3C77U4SEFNRMTG');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
 
     <link rel="icon" type="image/x-icon" href="/icono/favicon.ico">
 
@@ -296,6 +310,9 @@
             // Tracking de conversión (activación de trial)
             if (typeof gtag === 'function')    gtag('event', 'trial_activated', { method: 'web_form' });
             if (typeof clarity === 'function') clarity('event', 'trial_activated');
+            // TikTok: la conversión de registro se marca aquí, en la página de
+            // bienvenida, y no en el formulario: allí la página se va enseguida.
+            if (window.ttq) ttq.track('CompleteRegistration', { content_name: 'trial' });
 
             // ── Auto-trigger de descarga ───────────────────────────────────
             // 600ms de retraso: deja que el DOM pinte el banner antes de iniciar

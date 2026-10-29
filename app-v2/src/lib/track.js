@@ -5,10 +5,28 @@
 //   hero_cta_click · view_pricing · select_plan · begin_checkout ·
 //   download_click · video_play · clip_play · faq_click · whatsapp_click ·
 //   trial_signup · trial_activated
+
+// Eventos del embudo que también van al píxel de TikTok, con su nombre estándar.
+// El registro (CompleteRegistration) y la compra (CompletePayment) NO van aquí:
+// los marcan las páginas de bienvenida y de pago al cargar, que es donde no se
+// pierden por la navegación.
+const TIKTOK = {
+  begin_checkout: 'InitiateCheckout',
+  download_click: 'Download',
+  nav_download_click: 'Download',
+  whatsapp_click: 'Contact',
+};
+
+function tiktok(event) {
+  const nombre = TIKTOK[event];
+  if (nombre && window.ttq && typeof window.ttq.track === 'function') window.ttq.track(nombre);
+}
+
 export function track(event, params = {}) {
   try {
     if (typeof window.gtag === 'function') window.gtag('event', event, params);
     if (typeof window.clarity === 'function') window.clarity('event', event);
+    tiktok(event);
   } catch {
     /* nunca romper la UI por analítica */
   }
@@ -55,8 +73,9 @@ export function trackYNavegar(event, params, navegar) {
   const plazo = setTimeout(seguir, PLAZO_ENVIO);
 
   try {
-    // Clarity primero: solo encola, no bloquea.
+    // Clarity y TikTok primero: solo encolan, no bloquean.
     if (typeof window.clarity === 'function') window.clarity('event', event);
+    tiktok(event);
 
     if (typeof window.gtag === 'function') {
       window.gtag('event', event, {
