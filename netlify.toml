@@ -62,7 +62,8 @@
     #     regionales de tiktok.com).
     #   frame-src: Turnstile, el CHECKOUT de Culqi, 3DS de Culqi, YouTube.
     #   connect-src: GA4, Clarity, Firebase RTDB, Identity Toolkit, Turnstile,
-    #     API de Culqi y tokenización (secure.culqi.com), píxel de TikTok.
+    #     API de Culqi y tokenización (secure.culqi.com), píxel de TikTok
+    #     (*.tiktok.com y analytics-ipv6.tiktokw.us, que cruza la IPv6).
     #   img-src 'https:': YouTube thumbnails (i.ytimg.com) + datos en general.
     # 'unsafe-inline' se mantiene porque GA4/Clarity y la propia index.html
     # usan scripts/styles inline; sustituible por nonce/hash si en el futuro
@@ -86,7 +87,7 @@
     #   • *.culqi.com en connect-src → API de tokenización y validación (secure/api).
     #   • *.culqi.com en script-src  → el js/v4 del checkout.
     # Tras tocar esta línea, correr `node scripts/verificar-csp.mjs`.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://*.culqi.com https://cdn.jsdelivr.net https://*.tiktok.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://*.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://*.culqi.com https://*.tiktok.com; object-src 'none'; base-uri 'self'; form-action 'self' https://*.culqi.com;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://challenges.cloudflare.com https://*.culqi.com https://cdn.jsdelivr.net https://*.tiktok.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-src https://challenges.cloudflare.com https://*.culqi.com https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.clarity.ms https://bims-8d507-default-rtdb.firebaseio.com https://identitytoolkit.googleapis.com https://challenges.cloudflare.com https://*.culqi.com https://*.tiktok.com https://*.tiktokw.us; object-src 'none'; base-uri 'self'; form-action 'self' https://*.culqi.com;"
 
 # ── Caché de los assets compilados ────────────────────────────────────────────
 # Vite pone un hash del CONTENIDO en el nombre de cada archivo que emite

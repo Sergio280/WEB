@@ -54,6 +54,7 @@ const RECURSOS = [
   { tipo: 'script',  url: 'https://cdn.jsdelivr.net/npm/chart.js',            nota: 'jsDelivr' },
   { tipo: 'script',  url: 'https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=DBHAIN3C77U4SEFNRMTG&lib=ttq', nota: 'píxel de TikTok' },
   { tipo: 'connect', url: 'https://analytics.tiktok.com/api/v2/pixel',         nota: 'envíos del píxel de TikTok' },
+  { tipo: 'connect', url: 'https://analytics-ipv6.tiktokw.us/ipv6/enrich_ipv6', nota: 'píxel de TikTok (IPv6)' },
   { tipo: 'style',   url: 'https://fonts.googleapis.com/css2?family=Inter',   nota: 'Google Fonts (hoja)' },
   { tipo: 'connect', url: 'https://bims-8d507-default-rtdb.firebaseio.com/.json', nota: 'Firebase RTDB' },
   { tipo: 'connect', url: 'https://identitytoolkit.googleapis.com/v1/test',   nota: 'Firebase Auth' },
